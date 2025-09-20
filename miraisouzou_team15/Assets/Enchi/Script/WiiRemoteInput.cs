@@ -11,21 +11,21 @@ public class WiiRemoteInput : MonoBehaviour
     [SerializeField] int _stickValueMax = 90;
     [SerializeField] int _stickValueMin = 10;
 
-    private bool oneTime = false;
+    private bool oneTimeRemoteSetting = false;
     void Start()
     {
         bool found = WiimoteManager.FindWiimotes();
         if (WiimoteManager.Wiimotes.Count > 0)
         {
+            Debug.Log("remoteCount : " + WiimoteManager.Wiimotes.Count);
             wiimote = WiimoteManager.Wiimotes;
             // 加速度対応レポートモードに設定（必要に応じて）
             //wiimote.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL);
             foreach (var wm in wiimote)
             {
                 Debug.Log("Wiimote found: " + found);
-                wm.SetupIRCamera(IRDataType.EXTENDED);
-                wm.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL);
-                wm.SendPlayerLED(true, false, false, false);
+                //wm.SetupIRCamera(IRDataType.EXTENDED);
+                //wm.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL);
             }
         }
         else
@@ -45,21 +45,28 @@ public class WiiRemoteInput : MonoBehaviour
             int ret;
             do { ret = wm.ReadWiimoteData(); } while (ret > 0);
 
-            if (wm.Nunchuck == null)
-            {
-                Debug.Log("no numchuck");
-            }
-            else
+             
+            if (wm.Nunchuck != null)
             {
                 //// 拡張がNunchuckならデータレポートモードを拡張対応に切り替え
-                if (wm.current_ext == ExtensionController.NUNCHUCK && !oneTime )
+                if (wm.current_ext == ExtensionController.NUNCHUCK && !oneTimeRemoteSetting)
                 {
                     wm.SetupIRCamera(IRDataType.BASIC);
-                    //wm.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL_IR10_EXT6); //←加速度〇
-                    wm.SendDataReportMode(InputDataType.REPORT_BUTTONS_IR10_EXT9); //←加速度×
+
+                    wm.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL_IR10_EXT6); //←加速度〇
+                    //wm.SendDataReportMode(InputDataType.REPORT_BUTTONS_IR10_EXT9); //←加速度×
 
                     //wm.SetupIRCamera();
-                    oneTime = true;
+                    oneTimeRemoteSetting = true;
+                    if (i == 0)
+                    {
+                        wm.SendPlayerLED(true, false, false, false);
+                        oneTimeRemoteSetting = false;
+                    }
+                    if (i == 1)
+                    {
+                        wm.SendPlayerLED(true, true, false, false);
+                    }
 
                     //NunchuckData nunchuck = wm.Nunchuck;
                     //Debug.Log($"Stick: {nunchuck.stick}, C:{nunchuck.c}, Z:{nunchuck.z}");
@@ -234,6 +241,7 @@ public class WiiRemoteInput : MonoBehaviour
         {
             vectorWii.x = wiimote[wiiRemoteNum].Nunchuck.stick[0] - 128;
             vectorWii.y = wiimote[wiiRemoteNum].Nunchuck.stick[1] - 128;
+            Debug.Log(wiimote[wiiRemoteNum].Nunchuck.stick[0] + "," + wiimote[wiiRemoteNum].Nunchuck.stick[1]);
             if (vectorWii.x > 0)
             {
                 if (vectorWii.x >= _stickValueMax)

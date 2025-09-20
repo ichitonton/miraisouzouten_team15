@@ -3,6 +3,7 @@ using UnityEngine;
 public class MovePlayer : MonoBehaviour
 {
     [SerializeField]WiiRemoteInput _wiiInput;
+    [SerializeField] int _playerNum = 1;
     [SerializeField] float _moveSpeed = 3.0f;
 
     Vector2Int _Stick;
@@ -11,6 +12,7 @@ public class MovePlayer : MonoBehaviour
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
+        _playerNum -= 1;
     }
 
     // Update is called once per frame
@@ -23,7 +25,7 @@ public class MovePlayer : MonoBehaviour
     {
         Vector3 _moveVector = Vector3.zero;
 
-        _Stick = _wiiInput.GetStick(0);
+        _Stick = _wiiInput.GetStick(_playerNum);
         _moveVector.x = (float)_Stick.x / 100.0f;
         _moveVector.z = (float)_Stick.y / 100.0f;
 
