@@ -23,10 +23,9 @@ public class WiiRemoteInput : MonoBehaviour
             foreach (var wm in wiimote)
             {
                 Debug.Log("Wiimote found: " + found);
-                wm.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL_IR12);
-                wm.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL_EXT16);
-                //wm.SendDataReportMode(InputDataType.REPORT_EXT21);
-                wm.SetupIRCamera();
+                wm.SetupIRCamera(IRDataType.EXTENDED);
+                wm.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL);
+                wm.SendPlayerLED(true, false, false, false);
             }
         }
         else
@@ -55,7 +54,11 @@ public class WiiRemoteInput : MonoBehaviour
                 //// 拡張がNunchuckならデータレポートモードを拡張対応に切り替え
                 if (wm.current_ext == ExtensionController.NUNCHUCK && !oneTime )
                 {
-                    wm.SendDataReportMode(InputDataType.REPORT_EXT21);
+                    wm.SetupIRCamera(IRDataType.BASIC);
+                    //wm.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL_IR10_EXT6); //←加速度〇
+                    wm.SendDataReportMode(InputDataType.REPORT_BUTTONS_IR10_EXT9); //←加速度×
+
+                    //wm.SetupIRCamera();
                     oneTime = true;
 
                     //NunchuckData nunchuck = wm.Nunchuck;

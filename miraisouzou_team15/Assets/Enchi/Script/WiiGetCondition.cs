@@ -19,12 +19,12 @@ public class WiiGetCondition : MonoBehaviour
     void Update()
     {
         _text.SetText(
-            "Accel[X]" + _wiiInput.GetAccel()[0] + "\n" +
-            "Accel[Y]" + _wiiInput.GetAccel()[1] + "\n" +
-            "Accel[Z]" + _wiiInput.GetAccel()[2] + "\n" +
-            "pointing" + _wiiInput.GetIR()[0] + "\n" + 
-            "pointing" + _wiiInput.GetIR()[1] + "\n" + 
-            "nunchuk[X]" + _wiiInput.GetStick().x + "\n" + 
-            "nunchuk[Y]" + _wiiInput.GetStick().y + "\n");
+            "Accel[X]" + _wiiInput.GetAccel(0)[0] + "\n" +
+            "Accel[Y]" + _wiiInput.GetAccel(0)[1] + "\n" +
+            "Accel[Z]" + _wiiInput.GetAccel(0)[2] + "\n" +
+            "pointing" + _wiiInput.GetIR(0)[0] + "\n" + 
+            "pointing" + _wiiInput.GetIR(0)[1] + "\n" + 
+            "nunchuk[X]" + _wiiInput.GetStick(0).x + "\n" + 
+            "nunchuk[Y]" + _wiiInput.GetStick(0).y + "\n");
     }
 }
