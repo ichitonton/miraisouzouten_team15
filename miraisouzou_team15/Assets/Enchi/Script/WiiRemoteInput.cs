@@ -6,19 +6,28 @@ using WiimoteApi;
 
 public class WiiRemoteInput : MonoBehaviour
 {
-    private Wiimote wiimote;
+    private List<Wiimote> wiimote;
 
+    [SerializeField] int _stickValueMax = 90;
+    [SerializeField] int _stickValueMin = 10;
+
+    private bool oneTime = false;
     void Start()
     {
         bool found = WiimoteManager.FindWiimotes();
-        Debug.Log("Wiimote found: " + found); 
         if (WiimoteManager.Wiimotes.Count > 0)
         {
-            wiimote = WiimoteManager.Wiimotes[0];
+            wiimote = WiimoteManager.Wiimotes;
             // 加速度対応レポートモードに設定（必要に応じて）
-            wiimote.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL);
-            wiimote.SetupIRCamera();
-            wiimote.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL_EXT16);
+            //wiimote.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL);
+            foreach (var wm in wiimote)
+            {
+                Debug.Log("Wiimote found: " + found);
+                wm.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL_IR12);
+                wm.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL_EXT16);
+                //wm.SendDataReportMode(InputDataType.REPORT_EXT21);
+                wm.SetupIRCamera();
+            }
         }
         else
         {
@@ -28,16 +37,40 @@ public class WiiRemoteInput : MonoBehaviour
     void Update()
     {
         if (!WiimoteManager.HasWiimote()) return;
-
-        wiimote = WiimoteManager.Wiimotes[0];
-
-        int ret;
-        do
+        wiimote = WiimoteManager.Wiimotes;
+        for (int i = 0; i < wiimote.Count; i++)
         {
-            ret = wiimote.ReadWiimoteData();
-        } while (ret > 0);
+            var wm = wiimote[i];
+            if (wm == null) continue;
 
-        //if (wiimote.Button.a)
+            int ret;
+            do { ret = wm.ReadWiimoteData(); } while (ret > 0);
+
+            if (wm.Nunchuck == null)
+            {
+                Debug.Log("no numchuck");
+            }
+            else
+            {
+                //// 拡張がNunchuckならデータレポートモードを拡張対応に切り替え
+                if (wm.current_ext == ExtensionController.NUNCHUCK && !oneTime )
+                {
+                    wm.SendDataReportMode(InputDataType.REPORT_EXT21);
+                    oneTime = true;
+
+                    //NunchuckData nunchuck = wm.Nunchuck;
+                    //Debug.Log($"Stick: {nunchuck.stick}, C:{nunchuck.c}, Z:{nunchuck.z}");
+                }
+            }
+
+        }
+        //int ret;
+        //do
+        //{
+        //    ret = wiimote.ReadWiimoteData();
+        //} while (ret > 0);
+
+        //if (wiimote[0].Button.a)
         //    Debug.Log("A button pressed!");
         //if (wiimote.Button.b)
         //    Debug.Log("B button pressed!");
@@ -71,137 +104,212 @@ public class WiiRemoteInput : MonoBehaviour
         //Debug.Log($"Accel: X={ax:F2}, Y={ay:F2}, Z={az:F2}");
 
         //Debug.Log(wiimote);
-        if (wiimote.Nunchuck == null)
+        //if (wiimote.Nunchuck == null)
+        //{
+        //    Debug.Log("ヌンチャク接続中");
+        //}
+
+
+
+        //if (wiimote.Nunchuck != null)
+        //{
+
+        //    Debug.Log("ヌンチャク接続完了");
+        //    Debug.Log(wiimote.Nunchuck.stick[1]);
+        //}
+
+        if (GetButtonZ(0))
         {
-            Debug.Log("ヌンチャク接続中");
-        }
-
-
-
-        if (wiimote.Nunchuck != null)
-        {
-
-            Debug.Log("ヌンチャク接続完了");
-            Debug.Log(wiimote.Nunchuck.stick[1]);
+            Debug.Log("ZZZZZZZ");
         }
     }
 
-    public bool GetButtonA()
+    public bool GetButtonA(int wiiRemoteNum)
     {
-        return wiimote.Button.a;
+        return wiimote[wiiRemoteNum].Button.a;
     }
 
-    public bool GetButtonB()
+    public bool GetButtonB(int wiiRemoteNum)
     {
-        return wiimote.Button.b;
+        return wiimote[wiiRemoteNum].Button.b;
     }
 
-    public bool GetButtonOne()
+    public bool GetButtonOne(int wiiRemoteNum)
     {
-        return wiimote.Button.one;
+        return wiimote[wiiRemoteNum].Button.one;
     }
-    public bool GetButtonTwo()
+    public bool GetButtonTwo(int wiiRemoteNum)
     {
-        return wiimote.Button.two;
+        return wiimote[wiiRemoteNum].Button.two;
     }
-    public bool GetButtonPlus()
+    public bool GetButtonPlus(int wiiRemoteNum)
     {
-        return wiimote.Button.plus;
+        return wiimote[wiiRemoteNum].Button.plus;
     }
-    public bool GetButtonMinus()
+    public bool GetButtonMinus(int wiiRemoteNum)
     {
-        return wiimote.Button.minus;
+        return wiimote[wiiRemoteNum].Button.minus;
     }
-    public bool GetButtonHome()
+    public bool GetButtonHome(int wiiRemoteNum)
     {
-        return wiimote.Button.home;
+        return wiimote[wiiRemoteNum].Button.home;
     }
-    public bool GetButtonUp()
+    public bool GetButtonUp(int wiiRemoteNum)
     {
-        return wiimote.Button.d_up;
+        return wiimote[wiiRemoteNum].Button.d_up;
     }
-    public bool GetButtonDown()
+    public bool GetButtonDown(int wiiRemoteNum)
     {
-        return wiimote.Button.d_down;
+        return wiimote[wiiRemoteNum].Button.d_down;
     }
-    public bool GetButtonRight()
+    public bool GetButtonRight(int wiiRemoteNum)
     {
-        return wiimote.Button.d_right;
-    }
-
-    public bool GetButtonLeft()
-    {
-        return wiimote.Button.d_left;
+        return wiimote[wiiRemoteNum].Button.d_right;
     }
 
-    public Vector3 GetAccel()
+    public bool GetButtonLeft(int wiiRemoteNum)
+    {
+        return wiimote[wiiRemoteNum].Button.d_left;
+    }
+
+    public Vector3 GetAccel(int wiiRemoteNum)
     {
         Vector3 vector3 = new Vector3();
-        vector3.x = wiimote.Accel.GetCalibratedAccelData()[0];
-        vector3.y = wiimote.Accel.GetCalibratedAccelData()[1];
-        vector3.z = wiimote.Accel.GetCalibratedAccelData()[2];
+        vector3.x = wiimote[wiiRemoteNum].Accel.GetCalibratedAccelData()[0];
+        vector3.y = wiimote[wiiRemoteNum].Accel.GetCalibratedAccelData()[1];
+        vector3.z = wiimote[wiiRemoteNum].Accel.GetCalibratedAccelData()[2];
         return vector3;
     }
 
-    public Vector2 GetIR()
+    public Vector2 GetIR(int wiiRemoteNum)
     {
         Vector2 vector2 = new Vector2();
-        vector2.x = wiimote.Ir.GetPointingPosition()[0];
-        vector2.y = wiimote.Ir.GetPointingPosition()[1];
+        vector2.x = wiimote[wiiRemoteNum].Ir.GetPointingPosition()[0] * Screen.width;
+        vector2.y = wiimote[wiiRemoteNum].Ir.GetPointingPosition()[1] * Screen.height;
         return vector2;
     }
 
-    public bool GetButtonC()
+    public bool GetButtonC(int wiiRemoteNum)
     {
         bool C = false;
-        if (wiimote.Nunchuck != null)
+        if (wiimote[wiiRemoteNum].Nunchuck != null)
         {
-            if (wiimote.Nunchuck.c)
+            if (wiimote[wiiRemoteNum].Nunchuck.c)
             {
                 C = true;
             }
         }
-        if (wiimote.Nunchuck == null)
+        if (wiimote[wiiRemoteNum].Nunchuck == null)
         {
             C = false;
         }
         return C;
     }
 
-    public bool GetButtonZ()
+    public bool GetButtonZ(int wiiRemoteNum)
     {
         bool Z = false;
-        if (wiimote.Nunchuck != null)
+        if (wiimote[wiiRemoteNum].Nunchuck != null)
         {
-            if (wiimote.Nunchuck.c)
+            if (wiimote[wiiRemoteNum].Nunchuck.z)
             {
                 Z = true;
             }
         }
-        if (wiimote.Nunchuck == null)
+        if (wiimote[wiiRemoteNum].Nunchuck == null)
         {
             Z = false;
         }
         return Z;
     }
 
-    public Vector2Int GetStick()
+    public Vector2Int GetStick(int wiiRemoteNum)
     {
-        Vector2Int vector2 = new Vector2Int(0,0);
-        if (wiimote.Nunchuck != null)
+        Vector2Int vector2 = new Vector2Int(0, 0);
+        Vector2Int vectorWii = new Vector2Int(0, 0);
+        if (wiimote[wiiRemoteNum].Nunchuck != null)
         {
-            vector2.x = wiimote.Nunchuck.stick[0];
-            vector2.y = wiimote.Nunchuck.stick[1];
+            vectorWii.x = wiimote[wiiRemoteNum].Nunchuck.stick[0] - 128;
+            vectorWii.y = wiimote[wiiRemoteNum].Nunchuck.stick[1] - 128;
+            if (vectorWii.x > 0)
+            {
+                if (vectorWii.x >= _stickValueMax)
+                {
+                    vector2.x = _stickValueMax;
+                }
+                else if (vectorWii.x >= _stickValueMin)
+                {
+                    vector2.x = vectorWii.x;
+                }
+                else
+                {
+                    vector2.x = 0;
+                }
+            }
+            else if (vectorWii.x <= 0)
+            {
+                if (vectorWii.x <= -_stickValueMax)
+                {
+                    vector2.x = -_stickValueMax;
+                }
+                else if (vectorWii.x <= -_stickValueMin)
+                {
+                    vector2.x = vectorWii.x;
+                }
+                else
+                {
+                    vector2.x = 0;
+                }
+            }
+
+            if (vectorWii.y > 0)
+            {
+                if (vectorWii.y >= _stickValueMax)
+                {
+                    vector2.y = _stickValueMax;
+                }
+                else if (vectorWii.y >= _stickValueMin)
+                {
+                    vector2.y = vectorWii.y;
+                }
+                else
+                {
+                    vector2.y = 0;
+                }
+            }
+            else if (vectorWii.y <= 0)
+            {
+                if (vectorWii.y <= -_stickValueMax)
+                {
+                    vector2.y = -_stickValueMax;
+                }
+                else if (vectorWii.y <= -_stickValueMin)
+                {
+                    vector2.y = vectorWii.y;
+                }
+                else
+                {
+                    vector2.y = 0;
+                }
+            }
+
             return vector2;
         }
         return vector2;
     }
 
-
-
     void OnApplicationQuit()
     {
         if (wiimote != null)
-            WiimoteManager.Cleanup(wiimote);
+        {
+            for (int i = wiimote.Count - 1; i >= 0; i--)
+            {
+                var wm = wiimote[i];
+                if (wm != null)
+                    WiimoteManager.Cleanup(wm);
+            }
+        }
+
     }
+
 }

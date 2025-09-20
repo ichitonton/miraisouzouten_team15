@@ -19,7 +19,7 @@ public class WiiRemoteTest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (_wiiInput.GetButtonA())
+        if (_wiiInput.GetButtonA(0))
         {
 
         }
@@ -27,15 +27,15 @@ public class WiiRemoteTest : MonoBehaviour
         // ピッチ・ロール計算
         Vector3 _angles = Vector3.zero;
 
-        float pitch = 
+        float pitch =
             Mathf.Atan2(
-                _wiiInput.GetAccel().x, 
+                _wiiInput.GetAccel(0).x,
                 Mathf.Sqrt(
-                    _wiiInput.GetAccel().y * _wiiInput.GetAccel().y + 
-                _wiiInput.GetAccel().z * _wiiInput.GetAccel().z)) * Mathf.Rad2Deg;
-        float roll = 
+                    _wiiInput.GetAccel(0).y * _wiiInput.GetAccel(0).y +
+                _wiiInput.GetAccel(0).z * _wiiInput.GetAccel(0).z)) * Mathf.Rad2Deg;
+        float roll =
             Mathf.Atan2(
-                _wiiInput.GetAccel().y, _wiiInput.GetAccel().z) * Mathf.Rad2Deg;
+                _wiiInput.GetAccel(0).y, _wiiInput.GetAccel(0).z) * Mathf.Rad2Deg;
 
         _angles.x = pitch;
         _angles.z = roll;
