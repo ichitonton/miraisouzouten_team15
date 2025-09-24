@@ -241,7 +241,6 @@ public class WiiRemoteInput : MonoBehaviour
         {
             vectorWii.x = wiimote[wiiRemoteNum].Nunchuck.stick[0] - 128;
             vectorWii.y = wiimote[wiiRemoteNum].Nunchuck.stick[1] - 128;
-            Debug.Log(wiimote[wiiRemoteNum].Nunchuck.stick[0] + "," + wiimote[wiiRemoteNum].Nunchuck.stick[1]);
             if (vectorWii.x > 0)
             {
                 if (vectorWii.x >= _stickValueMax)
