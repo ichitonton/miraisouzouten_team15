@@ -1,14 +1,3 @@
-# OS
-.DS_Store
-Thumbs.db
-
-# Visual Studio / Rider
-.vs/
-*.csproj
-*.sln
-*.user
-*.userprefs
-
 # Unity generated
 Library/
 Temp/
@@ -17,18 +6,23 @@ Build/
 Builds/
 Logs/
 MemoryCaptures/
+UserSettings/
 
-# Crash Reports
+# VS / Rider
+.vs/
+*.csproj
+*.sln
+*.user
+*.userprefs
+.idea/
+
+# Unity packages cache
+Packages/com.unity.*
+!Packages/manifest.json
+!Packages/packages-lock.json
+
+# Other
 sysinfo.txt
-
-# Cache
 *.pidb
 *.booproj
 *.svd
-
-# IDE settings
-.idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln.docstates
