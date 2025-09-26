@@ -58,11 +58,19 @@
         },
         {
             "userAdded": false,
+            "type": "UnityEngine.PhysicMaterial",
+            "defaultInstantiationMode": 0
+        },
+        {
+            "userAdded": false,
+<<<<<<< HEAD
             "type": "UnityEngine.PhysicsMaterial",
             "defaultInstantiationMode": 0
         },
         {
             "userAdded": false,
+=======
+>>>>>>> feature/sekiya
             "type": "UnityEngine.PhysicsMaterial2D",
             "defaultInstantiationMode": 0
         },
