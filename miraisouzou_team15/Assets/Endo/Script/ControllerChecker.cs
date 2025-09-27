@@ -8,7 +8,7 @@ public class ControllerChecker : MonoBehaviour
     [SerializeField] private TMP_Text _ui;
     [SerializeField] private GameObject _playerManager;
     [SerializeField] private GameObject _rope;
-    private int _playerCount = 0;
+    //private int _playerCount = 0;
     // Update is called once per frame
     void Update()
     {
