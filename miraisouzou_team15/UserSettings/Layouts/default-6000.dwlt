@@ -326,7 +326,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Endo/Prefab
+    - Assets/Endo/Script
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -336,16 +336,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Endo/Prefab
+  - Assets/Endo/Script
   m_LastFoldersGridSize: -1
   m_LastProjectPath: "C:\\Program Files\\\u30C7\u30B9\u30AF\u30C8\u30C3\u30D7\\unity\\\u672A\u6765\u5275\u9020\u5C55\\miraisouzou_team15"
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 31}
-    m_SelectedIDs: 247f0000
-    m_LastClickedID: 32548
-    m_ExpandedIDs: 00000000c07e0000c27e0000c47e0000ffffff7f
+    scrollPos: {x: 0, y: 60}
+    m_SelectedIDs: 407f0000
+    m_LastClickedID: 32576
+    m_ExpandedIDs: 00000000da7e0000dc7e0000de7e0000ffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -362,7 +362,7 @@ MonoBehaviour:
       m_OriginalEventType: 11
       m_IsRenamingFilename: 1
       m_TrimLeadingAndTrailingWhitespace: 0
-      m_ClientGUIView: {fileID: 0}
+      m_ClientGUIView: {fileID: 5}
     m_SearchString: 
     m_CreateAssetUtility:
       m_EndAction: {fileID: 0}
@@ -374,7 +374,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000c07e0000c27e0000c47e0000
+    m_ExpandedIDs: 00000000da7e0000dc7e0000de7e0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -503,7 +503,7 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 5a7f0000
+      m_SelectedIDs: a4210000
       m_LastClickedID: 0
       m_ExpandedIDs: 1efbffff
       m_RenameOverlay:
