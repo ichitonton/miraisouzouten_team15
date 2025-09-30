@@ -63,6 +63,7 @@ public class ConnectPlayers : MonoBehaviour
         drive.maximumForce = Mathf.Infinity;
         joint.xDrive = joint.yDrive = joint.zDrive = drive;
 
+        //一応出す
         Debug.Log("プレイヤーコネクト完了");
 
     }
