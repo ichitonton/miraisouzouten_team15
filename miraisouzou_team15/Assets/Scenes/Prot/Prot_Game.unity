@@ -3012,8 +3012,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f526e5855c7da1a48b347cc438e91998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::freezepos
---- !u!65 &1735808883
-BoxCollider:
+--- !u!135 &1735808890
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -3031,7 +3031,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.020698726, y: 0.018834867, z: 0.021387022}
+  m_Radius: 0.010693511
   m_Center: {x: 0.000048065092, y: -0.00058256695, z: 0.00008304464}
 --- !u!1 &1808059553
 GameObject:
@@ -3671,15 +3671,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4514281126800591915, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
       propertyPath: m_LocalScale.x
-      value: 145.56
+      value: 193.04
       objectReference: {fileID: 0}
     - target: {fileID: 4514281126800591915, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
       propertyPath: m_LocalScale.y
-      value: 145.56
+      value: 193.04
       objectReference: {fileID: 0}
     - target: {fileID: 4514281126800591915, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
       propertyPath: m_LocalScale.z
-      value: 145.56
+      value: 193.04
       objectReference: {fileID: 0}
     - target: {fileID: 4514281126800591915, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3727,7 +3727,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5827047986467540028, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6074344535974363758, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
       propertyPath: m_Mass
@@ -3738,6 +3738,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6074344535974363758, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
+      propertyPath: m_IsKinematic
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6074344535974363758, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
       propertyPath: m_CenterOfMass.y
       value: -0.5
       objectReference: {fileID: 0}
@@ -3745,7 +3749,8 @@ PrefabInstance:
       propertyPath: m_CollisionDetection
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5827047986467540028, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -3754,7 +3759,7 @@ PrefabInstance:
       addedObject: {fileID: 1735808876}
     - targetCorrespondingSourceObject: {fileID: 3886081362725394065, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1735808883}
+      addedObject: {fileID: 1735808890}
   m_SourcePrefab: {fileID: 100100000, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
 --- !u!1001 &8855959614942302456
 PrefabInstance:

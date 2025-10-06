@@ -6,7 +6,7 @@ public class player_identity : MonoBehaviour
 	[Min(0)] public int teamId = 0;
 	[Range(1, 2)] public int memberId = 1;
 
-	[Header("”CˆÓ: ƒŠƒXƒ|[ƒ“ˆÊ’ui–¢w’è‚È‚ç‰ŠúˆÊ’uj")]
+	[Header("ï¿½Cï¿½ï¿½: ï¿½ï¿½ï¿½Xï¿½|ï¿½[ï¿½ï¿½ï¿½Ê’uï¿½iï¿½ï¿½ï¿½wï¿½ï¿½È‚ç‰ï¿½ï¿½ï¿½Ê’uï¿½j")]
 	[SerializeField] Transform respawnPoint;
 
 	Vector3 startPos;
@@ -20,7 +20,7 @@ public class player_identity : MonoBehaviour
 		rb = GetComponent<Rigidbody>();
 	}
 
-	// TeamRespawnCoordinator ‚©‚ç SendMessage ‚ÅŒÄ‚Î‚ê‚é‘z’è
+	// TeamRespawnCoordinator ï¿½ï¿½ï¿½ï¿½ SendMessage ï¿½ÅŒÄ‚Î‚ï¿½ï¿½zï¿½ï¿½
 	void SetReset()
 	{
 		var pos = respawnPoint ? respawnPoint.position : startPos;
@@ -30,7 +30,7 @@ public class player_identity : MonoBehaviour
 
 		if (rb != null)
 		{
-			rb.velocity = Vector3.zero;
+			rb.linearVelocity = Vector3.zero;
 			rb.angularVelocity = Vector3.zero;
 		}
 	}

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2787826973205745809}
   - component: {fileID: 3341974260066128830}
   - component: {fileID: 514258402100304012}
-  - component: {fileID: 2376639266949547821}
+  - component: {fileID: 7056430480008214764}
   m_Layer: 0
   m_Name: Sphere (9)
   m_TagString: Untagged
@@ -31,8 +31,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 2, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.3, y: 1.9, z: 0.3}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9170898420211538494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -100,7 +100,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 60450030988930626}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.7
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -116,7 +116,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!153 &514258402100304012
@@ -141,12 +141,12 @@ ConfigurableJoint:
   m_AngularYMotion: 2
   m_AngularZMotion: 2
   m_LinearLimitSpring:
-    spring: 800
-    damper: 50
+    spring: 1000
+    damper: 100
   m_LinearLimit:
-    limit: 0.25
+    limit: 0.2
     bounciness: 1
-    contactDistance: 0
+    contactDistance: 5
   m_AngularXLimitSpring:
     spring: 0
     damper: 0
@@ -221,14 +221,14 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!65 &2376639266949547821
-BoxCollider:
+--- !u!136 &7056430480008214764
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 60450030988930626}
-  m_Material: {fileID: 13400000, guid: 53e0ebbcac30b2342b368213f935656a, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -239,8 +239,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 6.09, z: 1}
+  serializedVersion: 2
+  m_Radius: 0.49999997
+  m_Height: 0.99999994
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &508065091550693020
 GameObject:
@@ -255,7 +257,7 @@ GameObject:
   - component: {fileID: 2074967299735342757}
   - component: {fileID: 7809904685008192033}
   - component: {fileID: 2171927751010999848}
-  - component: {fileID: 4870661102126667882}
+  - component: {fileID: 6116700811343000094}
   m_Layer: 0
   m_Name: Sphere (2)
   m_TagString: Untagged
@@ -273,8 +275,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.6, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.3, y: 1.9, z: 0.3}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9170898420211538494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -342,7 +344,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 508065091550693020}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.7
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -358,7 +360,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!153 &2171927751010999848
@@ -383,12 +385,12 @@ ConfigurableJoint:
   m_AngularYMotion: 2
   m_AngularZMotion: 2
   m_LinearLimitSpring:
-    spring: 800
-    damper: 50
+    spring: 1000
+    damper: 100
   m_LinearLimit:
-    limit: 0.25
+    limit: 0.2
     bounciness: 1
-    contactDistance: 0
+    contactDistance: 5
   m_AngularXLimitSpring:
     spring: 0
     damper: 0
@@ -463,14 +465,14 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!65 &4870661102126667882
-BoxCollider:
+--- !u!136 &6116700811343000094
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 508065091550693020}
-  m_Material: {fileID: 13400000, guid: 53e0ebbcac30b2342b368213f935656a, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -481,8 +483,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 6.09, z: 1}
+  serializedVersion: 2
+  m_Radius: 0.49999997
+  m_Height: 0.99999994
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &923264351873807225
 GameObject:
@@ -608,7 +612,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 923264351873807225}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.7
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -624,7 +628,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!114 &2986706167828929913
@@ -639,7 +643,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3587127cb99193c4ab6a4458c3439608, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovePlayerKey
-  _moveSpeed: 3
+  _moveSpeed: 5
 --- !u!153 &3191578283303589940
 ConfigurableJoint:
   m_ObjectHideFlags: 0
@@ -662,12 +666,12 @@ ConfigurableJoint:
   m_AngularYMotion: 2
   m_AngularZMotion: 2
   m_LinearLimitSpring:
-    spring: 800
-    damper: 50
+    spring: 1000
+    damper: 100
   m_LinearLimit:
-    limit: 0.25
+    limit: 0.2
     bounciness: 1
-    contactDistance: 0
+    contactDistance: 5
   m_AngularXLimitSpring:
     spring: 0
     damper: 0
@@ -865,7 +869,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1542741720743930243}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.7
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -881,7 +885,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!114 &7500860929140112592
@@ -896,7 +900,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af3e5cda85ac41438309e8811a44a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovePlayerKey
-  _moveSpeed: 3
+  _moveSpeed: 5
 --- !u!1 &1931757156365714585
 GameObject:
   m_ObjectHideFlags: 0
@@ -910,7 +914,7 @@ GameObject:
   - component: {fileID: 338816445977832501}
   - component: {fileID: 1017871496526152014}
   - component: {fileID: 2700926258190819434}
-  - component: {fileID: 2532669403431687867}
+  - component: {fileID: 2874674484707572685}
   m_Layer: 0
   m_Name: Sphere (1)
   m_TagString: Untagged
@@ -928,8 +932,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.4, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.3, y: 1.9, z: 0.3}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9170898420211538494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -997,7 +1001,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1931757156365714585}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.7
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -1013,7 +1017,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!153 &2700926258190819434
@@ -1038,12 +1042,12 @@ ConfigurableJoint:
   m_AngularYMotion: 2
   m_AngularZMotion: 2
   m_LinearLimitSpring:
-    spring: 800
-    damper: 50
+    spring: 1000
+    damper: 100
   m_LinearLimit:
-    limit: 0.25
+    limit: 0.2
     bounciness: 1
-    contactDistance: 0
+    contactDistance: 5
   m_AngularXLimitSpring:
     spring: 0
     damper: 0
@@ -1118,14 +1122,14 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!65 &2532669403431687867
-BoxCollider:
+--- !u!136 &2874674484707572685
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1931757156365714585}
-  m_Material: {fileID: 13400000, guid: 53e0ebbcac30b2342b368213f935656a, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1136,8 +1140,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 6.09, z: 1}
+  serializedVersion: 2
+  m_Radius: 0.49999997
+  m_Height: 0.99999994
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2076852630158208071
 GameObject:
@@ -1152,7 +1158,7 @@ GameObject:
   - component: {fileID: 6486575833496802591}
   - component: {fileID: 522269939912989035}
   - component: {fileID: 4981039236687901301}
-  - component: {fileID: 6949505430201312997}
+  - component: {fileID: 8195694061874657402}
   m_Layer: 0
   m_Name: Sphere (3)
   m_TagString: Untagged
@@ -1170,8 +1176,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.8, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.3, y: 1.9, z: 0.3}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9170898420211538494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1239,7 +1245,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2076852630158208071}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.7
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -1255,7 +1261,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!153 &4981039236687901301
@@ -1280,12 +1286,12 @@ ConfigurableJoint:
   m_AngularYMotion: 2
   m_AngularZMotion: 2
   m_LinearLimitSpring:
-    spring: 800
-    damper: 50
+    spring: 1000
+    damper: 100
   m_LinearLimit:
-    limit: 0.25
+    limit: 0.2
     bounciness: 1
-    contactDistance: 0
+    contactDistance: 5
   m_AngularXLimitSpring:
     spring: 0
     damper: 0
@@ -1360,14 +1366,14 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!65 &6949505430201312997
-BoxCollider:
+--- !u!136 &8195694061874657402
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2076852630158208071}
-  m_Material: {fileID: 13400000, guid: 53e0ebbcac30b2342b368213f935656a, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1378,8 +1384,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 6.09, z: 1}
+  serializedVersion: 2
+  m_Radius: 0.49999997
+  m_Height: 0.99999994
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2783749458827564220
 GameObject:
@@ -1394,7 +1402,7 @@ GameObject:
   - component: {fileID: 2253417531977117278}
   - component: {fileID: 2532283888612391585}
   - component: {fileID: 464508021812019197}
-  - component: {fileID: 133745883824812012}
+  - component: {fileID: 4713343111088890480}
   m_Layer: 0
   m_Name: Sphere (10)
   m_TagString: Untagged
@@ -1412,8 +1420,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 2.2, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.3, y: 1.9, z: 0.3}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9170898420211538494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1481,7 +1489,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2783749458827564220}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.7
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -1497,7 +1505,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!153 &464508021812019197
@@ -1522,12 +1530,12 @@ ConfigurableJoint:
   m_AngularYMotion: 2
   m_AngularZMotion: 2
   m_LinearLimitSpring:
-    spring: 800
-    damper: 50
+    spring: 1000
+    damper: 100
   m_LinearLimit:
-    limit: 0.25
+    limit: 0.2
     bounciness: 1
-    contactDistance: 0
+    contactDistance: 5
   m_AngularXLimitSpring:
     spring: 0
     damper: 0
@@ -1602,14 +1610,14 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!65 &133745883824812012
-BoxCollider:
+--- !u!136 &4713343111088890480
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2783749458827564220}
-  m_Material: {fileID: 13400000, guid: 53e0ebbcac30b2342b368213f935656a, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1620,8 +1628,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 6.09, z: 1}
+  serializedVersion: 2
+  m_Radius: 0.49999997
+  m_Height: 0.99999994
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2795859088930051274
 GameObject:
@@ -1636,7 +1646,7 @@ GameObject:
   - component: {fileID: 1002390228391584364}
   - component: {fileID: 7219843570978718216}
   - component: {fileID: 6532013739521854936}
-  - component: {fileID: 8445329985820569005}
+  - component: {fileID: 3635797946805653028}
   m_Layer: 0
   m_Name: Sphere (5)
   m_TagString: Untagged
@@ -1654,8 +1664,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1.2, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.3, y: 1.9, z: 0.3}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9170898420211538494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1723,7 +1733,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2795859088930051274}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.7
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -1739,7 +1749,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!153 &6532013739521854936
@@ -1764,12 +1774,12 @@ ConfigurableJoint:
   m_AngularYMotion: 2
   m_AngularZMotion: 2
   m_LinearLimitSpring:
-    spring: 800
-    damper: 50
+    spring: 1000
+    damper: 100
   m_LinearLimit:
-    limit: 0.25
+    limit: 0.2
     bounciness: 1
-    contactDistance: 0
+    contactDistance: 5
   m_AngularXLimitSpring:
     spring: 0
     damper: 0
@@ -1844,14 +1854,14 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!65 &8445329985820569005
-BoxCollider:
+--- !u!136 &3635797946805653028
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2795859088930051274}
-  m_Material: {fileID: 13400000, guid: 53e0ebbcac30b2342b368213f935656a, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1862,8 +1872,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 6.09, z: 1}
+  serializedVersion: 2
+  m_Radius: 0.49999997
+  m_Height: 0.99999994
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6339024502791135511
 GameObject:
@@ -1878,7 +1890,7 @@ GameObject:
   - component: {fileID: 1224941960000430157}
   - component: {fileID: 2007217070127391288}
   - component: {fileID: 6570186006495145708}
-  - component: {fileID: 2386114655318493288}
+  - component: {fileID: 1332065052849167710}
   m_Layer: 0
   m_Name: Sphere (7)
   m_TagString: Untagged
@@ -1896,8 +1908,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1.6, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.3, y: 1.9, z: 0.3}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9170898420211538494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1965,7 +1977,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6339024502791135511}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.7
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -1981,7 +1993,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!153 &6570186006495145708
@@ -2006,12 +2018,12 @@ ConfigurableJoint:
   m_AngularYMotion: 2
   m_AngularZMotion: 2
   m_LinearLimitSpring:
-    spring: 800
-    damper: 50
+    spring: 1000
+    damper: 100
   m_LinearLimit:
-    limit: 0.25
+    limit: 0.2
     bounciness: 1
-    contactDistance: 0
+    contactDistance: 5
   m_AngularXLimitSpring:
     spring: 0
     damper: 0
@@ -2086,14 +2098,14 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!65 &2386114655318493288
-BoxCollider:
+--- !u!136 &1332065052849167710
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6339024502791135511}
-  m_Material: {fileID: 13400000, guid: 53e0ebbcac30b2342b368213f935656a, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -2104,8 +2116,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 6.09, z: 1}
+  serializedVersion: 2
+  m_Radius: 0.49999997
+  m_Height: 0.99999994
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6435180715307287599
 GameObject:
@@ -2120,7 +2134,7 @@ GameObject:
   - component: {fileID: 8062870850062147196}
   - component: {fileID: 6551288340121296087}
   - component: {fileID: 646199457848554907}
-  - component: {fileID: 3679648251389306331}
+  - component: {fileID: 5157784094402851632}
   m_Layer: 0
   m_Name: Sphere (6)
   m_TagString: Untagged
@@ -2138,8 +2152,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1.4, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.3, y: 1.9, z: 0.3}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9170898420211538494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2207,7 +2221,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6435180715307287599}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.7
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -2223,7 +2237,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!153 &646199457848554907
@@ -2248,12 +2262,12 @@ ConfigurableJoint:
   m_AngularYMotion: 2
   m_AngularZMotion: 2
   m_LinearLimitSpring:
-    spring: 800
-    damper: 50
+    spring: 1000
+    damper: 100
   m_LinearLimit:
-    limit: 0.25
+    limit: 0.2
     bounciness: 1
-    contactDistance: 0
+    contactDistance: 5
   m_AngularXLimitSpring:
     spring: 0
     damper: 0
@@ -2328,14 +2342,14 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!65 &3679648251389306331
-BoxCollider:
+--- !u!136 &5157784094402851632
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6435180715307287599}
-  m_Material: {fileID: 13400000, guid: 53e0ebbcac30b2342b368213f935656a, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -2346,8 +2360,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 6.09, z: 1}
+  serializedVersion: 2
+  m_Radius: 0.49999997
+  m_Height: 0.99999994
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6555793608424926938
 GameObject:
@@ -2362,7 +2378,7 @@ GameObject:
   - component: {fileID: 2149295705156324757}
   - component: {fileID: 5002608032504895750}
   - component: {fileID: 7472683588363800417}
-  - component: {fileID: 3557333538273220428}
+  - component: {fileID: 4805770542083747469}
   m_Layer: 0
   m_Name: Sphere (8)
   m_TagString: Untagged
@@ -2380,8 +2396,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1.8, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.3, y: 1.9, z: 0.3}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9170898420211538494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2449,7 +2465,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6555793608424926938}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.7
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -2465,7 +2481,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!153 &7472683588363800417
@@ -2490,12 +2506,12 @@ ConfigurableJoint:
   m_AngularYMotion: 2
   m_AngularZMotion: 2
   m_LinearLimitSpring:
-    spring: 800
-    damper: 50
+    spring: 1000
+    damper: 100
   m_LinearLimit:
-    limit: 0.25
+    limit: 0.2
     bounciness: 1
-    contactDistance: 0
+    contactDistance: 5
   m_AngularXLimitSpring:
     spring: 0
     damper: 0
@@ -2570,14 +2586,14 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!65 &3557333538273220428
-BoxCollider:
+--- !u!136 &4805770542083747469
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6555793608424926938}
-  m_Material: {fileID: 13400000, guid: 53e0ebbcac30b2342b368213f935656a, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -2588,8 +2604,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 6.09, z: 1}
+  serializedVersion: 2
+  m_Radius: 0.49999997
+  m_Height: 0.99999994
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7750333315546753054
 GameObject:
@@ -2604,7 +2622,7 @@ GameObject:
   - component: {fileID: 7895664313680021488}
   - component: {fileID: 3608699176212631481}
   - component: {fileID: 3813737045879469704}
-  - component: {fileID: 6977370238320643323}
+  - component: {fileID: 6838694078901421128}
   m_Layer: 0
   m_Name: Sphere (4)
   m_TagString: Untagged
@@ -2622,8 +2640,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.3, y: 1.9, z: 0.3}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9170898420211538494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2691,7 +2709,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7750333315546753054}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.7
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -2707,7 +2725,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!153 &3813737045879469704
@@ -2732,12 +2750,12 @@ ConfigurableJoint:
   m_AngularYMotion: 2
   m_AngularZMotion: 2
   m_LinearLimitSpring:
-    spring: 800
-    damper: 50
+    spring: 1000
+    damper: 100
   m_LinearLimit:
-    limit: 0.25
+    limit: 0.2
     bounciness: 1
-    contactDistance: 0
+    contactDistance: 5
   m_AngularXLimitSpring:
     spring: 0
     damper: 0
@@ -2812,14 +2830,14 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!65 &6977370238320643323
-BoxCollider:
+--- !u!136 &6838694078901421128
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7750333315546753054}
-  m_Material: {fileID: 13400000, guid: 53e0ebbcac30b2342b368213f935656a, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -2830,8 +2848,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 6.09, z: 1}
+  serializedVersion: 2
+  m_Radius: 0.49999997
+  m_Height: 0.99999994
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7971948434918243434
 GameObject:
@@ -2890,7 +2910,7 @@ GameObject:
   - component: {fileID: 652075326725461142}
   - component: {fileID: 8450878477469173545}
   - component: {fileID: 1685983045950946577}
-  - component: {fileID: 6577692719333172314}
+  - component: {fileID: 5413831700756307012}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -2908,8 +2928,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.2, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.3, y: 1.9, z: 0.3}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9170898420211538494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2977,7 +2997,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8168540144084955798}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.7
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -2993,7 +3013,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!153 &1685983045950946577
@@ -3018,12 +3038,12 @@ ConfigurableJoint:
   m_AngularYMotion: 2
   m_AngularZMotion: 2
   m_LinearLimitSpring:
-    spring: 800
-    damper: 50
+    spring: 1000
+    damper: 100
   m_LinearLimit:
-    limit: 0.25
+    limit: 0.2
     bounciness: 1
-    contactDistance: 0
+    contactDistance: 5
   m_AngularXLimitSpring:
     spring: 0
     damper: 0
@@ -3098,14 +3118,14 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!65 &6577692719333172314
-BoxCollider:
+--- !u!136 &5413831700756307012
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8168540144084955798}
-  m_Material: {fileID: 13400000, guid: 53e0ebbcac30b2342b368213f935656a, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -3116,6 +3136,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 6.09, z: 1}
+  serializedVersion: 2
+  m_Radius: 0.49999997
+  m_Height: 0.99999994
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
