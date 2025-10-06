@@ -81,20 +81,20 @@ public class CameraController : MonoBehaviour
 
 
         // 広め（ズームアウト判定）
-        float outerBorder = 0.15f;
+        float outerBorder = 0.10f;
         bool outsideP1 = (viewPos1.x < outerBorder || viewPos1.x > 1f - outerBorder ||
                           viewPos1.y < outerBorder || viewPos1.y > 1f - outerBorder);
         bool outsideP2 = (viewPos2.x < outerBorder || viewPos2.x > 1f - outerBorder ||
                           viewPos2.y < outerBorder || viewPos2.y > 1f - outerBorder);
 
         // 狭め（ズームイン許可判定）
-        float innerBorder = 0.25f;
+        float innerBorder = 0.30f;
         bool wellInsideP1 = (viewPos1.x >= innerBorder && viewPos1.x <= 1f - innerBorder &&
                              viewPos1.y >= innerBorder && viewPos1.y <= 1f - innerBorder);
         bool wellInsideP2 = (viewPos2.x >= innerBorder && viewPos2.x <= 1f - innerBorder &&
                              viewPos2.y >= innerBorder && viewPos2.y <= 1f - innerBorder);
 
-        // ヒステリシス判定
+        //ヒステリシス判定
         if (outsideP1 || outsideP2)
         {
             // 外に出たらズームアウト
