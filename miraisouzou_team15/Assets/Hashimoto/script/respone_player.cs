@@ -1,16 +1,38 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class respone_player : MonoBehaviour
+public class respawn_player : MonoBehaviour
 {
 	[SerializeField] string playerTag = "Player";
 
+	Vector3 startPos;
+	Quaternion startRot;
+	Rigidbody rb;
+
+	void Start()
+	{
+		startPos = transform.position;
+		startRot = transform.rotation;
+		rb = GetComponent<Rigidbody>();
+	}
+
+	void SetReset()
+	{
+		// 位置・回転を初期状態に戻す
+		transform.SetPositionAndRotation(startPos, startRot);
+
+		// 速度を止める（重要）
+		if (rb != null)
+		{
+			rb.linearVelocity = Vector3.zero;
+			rb.angularVelocity = Vector3.zero;
+		}
+	}
 	void Reset()
 	{
 		var col = GetComponent<Collider>();
 		col.isTrigger = true;
-		// プレイヤー側にRigidbodyが無いなら、ゾーン側に Kinematic Rigidbody を付けると確実
-		// var rb = gameObject.AddComponent<Rigidbody>(); rb.isKinematic = true; rb.useGravity = false;
+		// Rigidbodyはプレイヤー側にあるので、こっちには不要！
 	}
 
 	void OnTriggerEnter(Collider other)
@@ -18,7 +40,7 @@ public class respone_player : MonoBehaviour
 		if (!other.CompareTag(playerTag)) return;
 
 		var pid = other.GetComponentInParent<player_identity>() ?? other.GetComponent<player_identity>();
-		if (!pid) return;
+		if (pid == null) return;
 
 		TeamRespawnCoordinator.Instance.MarkTouched(pid);
 	}
