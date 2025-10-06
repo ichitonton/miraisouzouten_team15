@@ -88,7 +88,7 @@ public class CameraController : MonoBehaviour
                           viewPos2.y < outerBorder || viewPos2.y > 1f - outerBorder);
 
         // 狭め（ズームイン許可判定）
-        float innerBorder = 0.30f;
+        float innerBorder = 0.35f;
         bool wellInsideP1 = (viewPos1.x >= innerBorder && viewPos1.x <= 1f - innerBorder &&
                              viewPos1.y >= innerBorder && viewPos1.y <= 1f - innerBorder);
         bool wellInsideP2 = (viewPos2.x >= innerBorder && viewPos2.x <= 1f - innerBorder &&
