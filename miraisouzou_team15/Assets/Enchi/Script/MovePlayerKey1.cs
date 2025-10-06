@@ -23,19 +23,19 @@ public class MovePlayerKey1 : MonoBehaviour
         _moveVector.x = 0.0f;
         _moveVector.z = 0.0f;
 
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.I))
         {
             _moveVector.z = _moveSpeed;
         }
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetKey(KeyCode.J))
         {
             _moveVector.x = -_moveSpeed;
         }
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetKey(KeyCode.K))
         {
             _moveVector.z = -_moveSpeed;
         }
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.L))
         {
             _moveVector.x = _moveSpeed;
         }
