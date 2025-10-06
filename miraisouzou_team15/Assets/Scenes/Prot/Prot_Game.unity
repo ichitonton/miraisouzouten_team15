@@ -1548,7 +1548,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 832575519}
-  - component: {fileID: 832575518}
   m_Layer: 0
   m_Name: Global Volume
   m_TagString: Untagged
@@ -1556,18 +1555,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &832575518
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 832575517}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &832575519
 Transform:
   m_ObjectHideFlags: 0
@@ -3025,6 +3012,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f526e5855c7da1a48b347cc438e91998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::freezepos
+--- !u!65 &1735808883
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735808869}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.020698726, y: 0.018834867, z: 0.021387022}
+  m_Center: {x: 0.000048065092, y: -0.00058256695, z: 0.00008304464}
 --- !u!1 &1808059553
 GameObject:
   m_ObjectHideFlags: 0
@@ -3663,15 +3671,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4514281126800591915, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
       propertyPath: m_LocalScale.x
-      value: 176.87999
+      value: 145.56
       objectReference: {fileID: 0}
     - target: {fileID: 4514281126800591915, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
       propertyPath: m_LocalScale.y
-      value: 176.87999
+      value: 145.56
       objectReference: {fileID: 0}
     - target: {fileID: 4514281126800591915, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
       propertyPath: m_LocalScale.z
-      value: 176.87999
+      value: 145.56
       objectReference: {fileID: 0}
     - target: {fileID: 4514281126800591915, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3717,6 +3725,14 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5827047986467540028, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6074344535974363758, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
+      propertyPath: m_Mass
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 6074344535974363758, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
       propertyPath: m_ImplicitCom
       value: 0
@@ -3727,7 +3743,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6074344535974363758, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
       propertyPath: m_CollisionDetection
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3736,6 +3752,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3886081362725394065, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1735808876}
+    - targetCorrespondingSourceObject: {fileID: 3886081362725394065, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1735808883}
   m_SourcePrefab: {fileID: 100100000, guid: bef713ff14c356e40bc062fa6a9c0317, type: 3}
 --- !u!1001 &8855959614942302456
 PrefabInstance:
