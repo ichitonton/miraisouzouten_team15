@@ -11,6 +11,11 @@ public class GameManager : MonoBehaviour
     private GameObject _rope = null;
     private GameObject[] _players;
 
+
+    private void Awake()
+    {
+        Application.targetFrameRate = 60;
+    }
     private void OnEnable()
     {
 
