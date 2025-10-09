@@ -1,11 +1,14 @@
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class CameraController : MonoBehaviour
 {
 
+    [SerializeField] private GameObject _GameManager;
     private GameObject _player1;
     private GameObject _player2;
+
+    private GameObject[] _players;
+    
 
     [Header("カメラ設定")]
     [SerializeField] private Vector3 _offset = new Vector3(0, 15, -15);
@@ -33,18 +36,27 @@ public class CameraController : MonoBehaviour
     private void LateUpdate()
     {
         //プレイヤーを登録
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        _players = GameObject.FindGameObjectsWithTag("Player");
 
         //二人いないなら
-        if (players.Length < 2)
+        if (_players.Length == 1)
         {
             //Debug.LogError("プレイヤー二人いねーよ");
             Debug.Log("プレイヤー二人いないから繋げれねーってばよ");
-            return;
+            SinglePlayer();
         }
+        else if (_players.Length == 2)
+        {
+            PairPlayer();
+        }
+    }
 
-        _player1 = players[0];
-        _player2 = players[1];
+
+    private void PairPlayer()
+    {
+
+        _player1 = _players[0];
+        _player2 = _players[1];
 
         //キー入力でピッチ角を変更
         if (Input.GetKey(KeyCode.UpArrow))
@@ -87,35 +99,53 @@ public class CameraController : MonoBehaviour
         bool outsideP2 = (viewPos2.x < outerBorder || viewPos2.x > 1f - outerBorder ||
                           viewPos2.y < outerBorder || viewPos2.y > 1f - outerBorder);
 
-        // 狭め（ズームイン許可判定）
-        float innerBorder = 0.35f;
-        bool wellInsideP1 = (viewPos1.x >= innerBorder && viewPos1.x <= 1f - innerBorder &&
-                             viewPos1.y >= innerBorder && viewPos1.y <= 1f - innerBorder);
-        bool wellInsideP2 = (viewPos2.x >= innerBorder && viewPos2.x <= 1f - innerBorder &&
-                             viewPos2.y >= innerBorder && viewPos2.y <= 1f - innerBorder);
+        //Debug.Log(_cam.fieldOfView);
+        //Debug.Log(targetZoom);
+        Debug.Log("プレイヤー1 " + viewPos1);
+        Debug.Log("プレイヤー2 " + viewPos2);
 
-        //ヒステリシス判定
-        if (outsideP1 || outsideP2)
-        {
-            // 外に出たらズームアウト
-            //_wasClipped = true;
-            targetZoom = targetZoom + _zoomView;
-            Debug.Log("見切れ → ズームアウト補正");
-        }
-        else if (wellInsideP1 && wellInsideP2)
-        {
-            // 内側に戻ったらズームイン許可
-            //_wasClipped = false;
-            Debug.Log("ズームイン");
-        }
 
         // スムーズに補間
         _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, targetZoom, Time.deltaTime * _zoomSpeed);
 
-
-
         //見る位置
+        center.y -= 1f;
         transform.LookAt(center);
 
     }
+
+    private void SinglePlayer()
+    {
+        _player1 = _players[0];
+
+        //キー入力でピッチ角を変更
+        if (Input.GetKey(KeyCode.UpArrow))
+            _pitch += _rotateSpeed * Time.deltaTime;
+        if (Input.GetKey(KeyCode.DownArrow))
+            _pitch -= _rotateSpeed * Time.deltaTime;
+
+        // クランプ（角度制限、真上から真横までぐらい）
+        _pitch = Mathf.Clamp(_pitch, -30f, 30f);
+
+        Debug.Log(_pitch);
+
+        //プレイヤー間の真ん中を見る
+        Vector3 center = _player1.transform.position;
+
+        //ピッチ角を offset に反映
+        Quaternion rotation = Quaternion.Euler(_pitch, 0f, 0f);
+        Vector3 rotatedOffset = rotation * (_offset / 2f);
+
+
+        //カメラの位置
+        Vector3 targetPosition = center + rotatedOffset;
+
+        //追従を線形補完で滑らかに
+        transform.position = Vector3.Lerp(transform.position, targetPosition, _smoothSpeed * Time.deltaTime);
+
+        //見る位置
+        center.y -= 1f;
+        transform.LookAt(center);
+    }
+
 }

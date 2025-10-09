@@ -11,13 +11,14 @@ GameObject:
   - component: {fileID: 2055833425311058395}
   - component: {fileID: 1207151099734043217}
   - component: {fileID: 3114065283401687500}
+  - component: {fileID: 5507201307407844904}
   m_Layer: 0
   m_Name: Rope
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2055833425311058395
 Transform:
   m_ObjectHideFlags: 0
@@ -155,3 +156,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4afa98f2db306a4f878598fa9d16b80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RopeRenderer
+--- !u!114 &5507201307407844904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4539873046796818136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8453a30d51a2a324b8b83cafc6cffeba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ConnectPlayers
+  _ropeLength: 8

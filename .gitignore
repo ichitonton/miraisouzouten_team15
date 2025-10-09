@@ -74,3 +74,23 @@ PlasticSCM/
 Packages/com.unity.*
 !Packages/manifest.json
 !Packages/packages-lock.json
+
+# 実行ファイル類
+*.exe
+*.dll
+*.pdb
+*.lib
+
+# 一時ファイル
+*.obj
+*.log
+*.tmp
+
+# ビルドフォルダ
+/bin/
+/build/
+/Binaries/
+/Library/
+/Temp/
+/obj/
+/DerivedDataCache/
