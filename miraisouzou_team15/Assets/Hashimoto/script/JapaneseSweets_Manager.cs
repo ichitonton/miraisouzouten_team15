@@ -7,11 +7,11 @@ public class JapaneseSweets_Manager : MonoBehaviour
 
 	[SerializeField] private float weight = 0.0f;               // オブジェクトの重さ
 	[SerializeField] private Transform m_transform;               // オブジェクトの座標
-	Vector3 SetTransform;
+	//Vector3 SetTransform;
 
 	private void Start()
 	{
-		SetTransform = m_transform.position;
+		//SetTransform = m_transform.position;
 	}
 
 	public float GetWeight() {
@@ -20,6 +20,6 @@ public class JapaneseSweets_Manager : MonoBehaviour
 
 	public void SetReset()
 	{
-		this.gameObject.transform.position = SetTransform;
+		//this.gameObject.transform.position = SetTransform;
 	}
 }

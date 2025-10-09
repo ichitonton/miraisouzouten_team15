@@ -56,6 +56,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dorayaki
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 69b40a6f23c146f47a74239425bdbcc4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 69b40a6f23c146f47a74239425bdbcc4, type: 3}
+      propertyPath: m_TagString
+      value: Sweets
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -69,6 +77,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 69b40a6f23c146f47a74239425bdbcc4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7238690801802994769}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 69b40a6f23c146f47a74239425bdbcc4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2079218212081864432}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 69b40a6f23c146f47a74239425bdbcc4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -650712223551295168}
   m_SourcePrefab: {fileID: 100100000, guid: 69b40a6f23c146f47a74239425bdbcc4, type: 3}
 --- !u!1 &6054109441477451513 stripped
 GameObject:
@@ -146,3 +160,31 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -5076798556035486163, guid: 69b40a6f23c146f47a74239425bdbcc4, type: 3}
+--- !u!114 &2079218212081864432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6054109441477451513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c95a8225af3a7f2488f0a95c7b07ef35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::JapaneseSweets_Manager
+  weight: 1
+  m_transform: {fileID: 0}
+--- !u!114 &-650712223551295168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6054109441477451513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f5ed39751300084cbe808c4bf750f24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Resporn
+  _respornEreaTag: Retry_Board
+  _respornTranse: {fileID: 0}

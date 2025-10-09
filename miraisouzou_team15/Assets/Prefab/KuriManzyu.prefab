@@ -54,7 +54,11 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 243f385518881bb46a0af3407e8ccb9f, type: 2}
     - target: {fileID: 919132149155446097, guid: beb75670dfc154746871b6308f446f2a, type: 3}
       propertyPath: m_Name
-      value: Model_KuriManzyu
+      value: KuriManzyu
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: beb75670dfc154746871b6308f446f2a, type: 3}
+      propertyPath: m_TagString
+      value: Sweets
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -66,6 +70,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: beb75670dfc154746871b6308f446f2a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4462891424347060871}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: beb75670dfc154746871b6308f446f2a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1956859316658115012}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: beb75670dfc154746871b6308f446f2a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3725637556171368728}
   m_SourcePrefab: {fileID: 100100000, guid: beb75670dfc154746871b6308f446f2a, type: 3}
 --- !u!1 &431793296319550402 stripped
 GameObject:
@@ -122,3 +132,31 @@ CapsuleCollider:
   m_Height: 1.5
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1956859316658115012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 431793296319550402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c95a8225af3a7f2488f0a95c7b07ef35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::JapaneseSweets_Manager
+  weight: 1
+  m_transform: {fileID: 0}
+--- !u!114 &3725637556171368728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 431793296319550402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f5ed39751300084cbe808c4bf750f24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Resporn
+  _respornEreaTag: Retry_Board
+  _respornTranse: {fileID: 0}

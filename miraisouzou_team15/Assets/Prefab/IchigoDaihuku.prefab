@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: IchigoDaihuku
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 884722d4ddc9869428827420cc82bb3b, type: 3}
+      propertyPath: m_TagString
+      value: Sweets
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -66,6 +70,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 884722d4ddc9869428827420cc82bb3b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5260252553032463662}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 884722d4ddc9869428827420cc82bb3b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -581472889782785002}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 884722d4ddc9869428827420cc82bb3b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -1187067494325995610}
   m_SourcePrefab: {fileID: 100100000, guid: 884722d4ddc9869428827420cc82bb3b, type: 3}
 --- !u!1 &8551194386558996871 stripped
 GameObject:
@@ -120,3 +130,31 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.85
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-581472889782785002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8551194386558996871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c95a8225af3a7f2488f0a95c7b07ef35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::JapaneseSweets_Manager
+  weight: 1
+  m_transform: {fileID: 0}
+--- !u!114 &-1187067494325995610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8551194386558996871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f5ed39751300084cbe808c4bf750f24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Resporn
+  _respornEreaTag: Retry_Board
+  _respornTranse: {fileID: 0}
