@@ -1,5 +1,4 @@
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class ConnectPlayers : MonoBehaviour
 {
@@ -16,13 +15,17 @@ public class ConnectPlayers : MonoBehaviour
         //二人いないなら
         if (players.Length < 2)
         {
-            Debug.LogError("プレイヤー二人いねーよ");
+            Debug.Log("プレイヤー二人いねーよ");
             Debug.Log("プレイヤー二人いないから繋げれねーってばよ");
             return;
         }
 
         _player1 = players[0];
         _player2 = players[1];
+
+        _player1.GetComponent<Transform>().position = new Vector3(0.0f, 2.0f, 0.0f);
+        _player2.GetComponent<Transform>().position = new Vector3(3.0f, 2.0f, 0.0f);
+
 
         Rigidbody rb1 = _player1.GetComponent<Rigidbody>();
         Rigidbody rb2 = _player2.GetComponent<Rigidbody>();

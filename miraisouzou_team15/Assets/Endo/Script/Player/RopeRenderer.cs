@@ -18,7 +18,7 @@ public class RopeRenderer : MonoBehaviour
         //
         if (players.Length < 2)
         {
-            Debug.LogError("プレイヤー二人いねーよ");
+            Debug.Log("プレイヤー二人いねーよ");
             Debug.Log("プレイヤー二人いないから繋げれねーってばよ");
             return;
         }
