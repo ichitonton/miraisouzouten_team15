@@ -17,16 +17,19 @@ public class freezepos : MonoBehaviour
         {
             if (!_isFreeze)
             {
-                _rb.constraints |= RigidbodyConstraints.FreezePosition;
-                _rb.constraints |= RigidbodyConstraints.FreezeRotation;
+                //_rb.constraints |= RigidbodyConstraints.FreezePosition;
+                //_rb.constraints |= RigidbodyConstraints.FreezeRotation;
+
+                _rb.isKinematic = true;
 
                 _isFreeze = true;
             }
             else if(_isFreeze)
             {
-                _rb.constraints &= ~RigidbodyConstraints.FreezePosition;
-                _rb.constraints &= ~RigidbodyConstraints.FreezeRotation;
+                //_rb.constraints &= ~RigidbodyConstraints.FreezePosition;
+                //_rb.constraints &= ~RigidbodyConstraints.FreezeRotation;
 
+                _rb.isKinematic = false;
 
                 _isFreeze = false;
             }

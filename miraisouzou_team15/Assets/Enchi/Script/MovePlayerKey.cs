@@ -19,7 +19,7 @@ public class MovePlayerKey : MonoBehaviour
 
     void Move()
     {
-        Vector3 _moveVector = _rb.linearVelocity;
+        Vector3 _moveVector = Vector3.zero;
         _moveVector.x = 0.0f;
         _moveVector.z = 0.0f;
 
@@ -41,6 +41,9 @@ public class MovePlayerKey : MonoBehaviour
         {
             _moveVector.x = _moveSpeed;
         }
+        _moveVector.Normalize();
+        _moveVector *= _moveSpeed;
+        _moveVector.y = _rb.linearVelocity.y;
         _rb.linearVelocity = _moveVector;
     }
 }
