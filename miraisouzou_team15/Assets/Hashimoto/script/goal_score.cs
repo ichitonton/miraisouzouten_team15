@@ -38,6 +38,9 @@ public class goal_score : MonoBehaviour
 	// List
 	List<GameObject> list = new List<GameObject>();
 
+	//スポナー参照
+	[SerializeField] private SpawnManager spawnManager;
+
 	// --- 参照の確定を Awake で（Inspector 優先 / 無ければ子から拾う） ---
 	private void Awake()
 	{
@@ -89,12 +92,17 @@ public class goal_score : MonoBehaviour
 					if (!go) { list.RemoveAt(i); continue; }
 
 					if (go.TryGetComponent<JapaneseSweets_Manager>(out var sweet))
+					{
+						spawnManager.DestroySweets(go);
 						sweet.SetReset();
+					}	
 
 					if (go.TryGetComponent<obstacles_Manager>(out var obs))
 						obs.SetReset();
+
+					
 				}
-			}
+            }
 		}
 		// そろっていない → カウントを巻き戻す
 		else

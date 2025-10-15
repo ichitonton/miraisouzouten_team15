@@ -27,14 +27,21 @@ public class movingPlatformPassenger : MonoBehaviour
 
 	Collider col;
 
+	Transform memo;
+
 	void Awake()
 	{
 		col = GetComponent<Collider>();
 		col.isTrigger = useTrigger;
 	}
 
-	// -------- 衝突検出（useTrigger=false のとき） --------
-	void OnCollisionEnter(Collision c)
+    //private void Update()
+    //{
+		
+    //}
+
+    // -------- 衝突検出（useTrigger=false のとき） --------
+    void OnCollisionEnter(Collision c)
 	{
 		if (useTrigger) return;
 		TryAttach(c.transform);
@@ -102,7 +109,11 @@ public class movingPlatformPassenger : MonoBehaviour
 			if (rb.interpolation == RigidbodyInterpolation.None)
 				rb.interpolation = RigidbodyInterpolation.Interpolate;
 		}
-	}
+
+		//スケール固定
+        //transform.c= target.lossyScale;
+		
+    }
 
 	// 解除処理
 	void TryDetach(Transform target)
