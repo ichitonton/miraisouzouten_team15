@@ -2459,7 +2459,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4497896437308561768, guid: 664548aeeefb158418a6583a948fe3b5, type: 3}
       propertyPath: countdownMinutes
-      value: 2
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5381989591911033181, guid: 664548aeeefb158418a6583a948fe3b5, type: 3}
       propertyPath: m_Name
