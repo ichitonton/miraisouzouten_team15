@@ -66,7 +66,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: 5147b1eb54c3ac44289913e301eed11a, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -164,10 +164,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 822244d689fc4194ca37e41f5a704553, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ExplosionSample.Explosion
-  _futtobiPower: 72.8
+  _futtobiPower: 30
   _startDelaySeconds: 0
   _durationFrameCount: 3
-  _stopSeconds: 2.12
-  _effect: {fileID: 6733920456118388162, guid: 77e8f0e664a4bc5468bce9724dfc97e5, type: 3}
+  _stopSeconds: 2
+  _effect: {fileID: 1360046047002739398, guid: 844ae3cb49de00b4b9c31cbd5713b001, type: 3}
   _sfx: {fileID: 1219637217814124944}
   _collider: {fileID: 6856375214469142961}

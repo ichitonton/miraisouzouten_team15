@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEditor;
 using UnityEngine;
 
 namespace ExplosionSample
@@ -19,7 +20,7 @@ namespace ExplosionSample
         [SerializeField]
         private float _stopSeconds = 2f;
 
-        [SerializeField] private ParticleSystem _effect;
+        [SerializeField] private GameObject _effect;
 
         [SerializeField] private AudioSource _sfx;
 
@@ -27,7 +28,6 @@ namespace ExplosionSample
 
         private void Awake()
         {
-            _effect.Stop();
             _sfx.Stop();
             _collider.enabled = false;
         }
@@ -43,7 +43,7 @@ namespace ExplosionSample
             StartCoroutine(StopCoroutine());
 
             // エフェクトと効果音再生
-            _effect.Play();
+            Instantiate(_effect, this.transform.position, Quaternion.identity);
             _sfx.Play();
         }
 
@@ -59,6 +59,7 @@ namespace ExplosionSample
 
             // 時間経過したらコライダを有効化して爆発の当たり判定が出る
             _collider.enabled = true;
+            Instantiate(_effect, transform.position, Quaternion.identity);
 
             // 一定フレーム数有効化
             for (var i = 0; i < _durationFrameCount; i++)
@@ -74,12 +75,10 @@ namespace ExplosionSample
         {
             // 時間経過後に消す
             yield return new WaitForSeconds(_stopSeconds);
-            _effect.Stop();
             _sfx.Stop();
             _collider.enabled = false;
 
             Destroy(gameObject);
-
         }
 
         /// <summary>
