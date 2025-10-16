@@ -4,14 +4,15 @@ public class JapaneseSweets_Manager : MonoBehaviour
 {
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
 
+	[SerializeField] private SpawnManager SpawnManager;
 
-	[SerializeField] private float weight = 0.0f;               // オブジェクトの重さ
+    [SerializeField] private float weight = 0.0f;               // オブジェクトの重さ
 	[SerializeField] private Transform m_transform;               // オブジェクトの座標
-	//Vector3 SetTransform;
+	Vector3 SetTransform;
 
 	private void Start()
 	{
-		//SetTransform = m_transform.position;
+		SetTransform = m_transform.position;
 	}
 
 	public float GetWeight() {
@@ -20,6 +21,8 @@ public class JapaneseSweets_Manager : MonoBehaviour
 
 	public void SetReset()
 	{
-		//this.gameObject.transform.position = SetTransform;
+		Destroy(this.gameObject);
 	}
+
+
 }
