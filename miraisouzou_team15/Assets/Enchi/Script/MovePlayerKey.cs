@@ -3,15 +3,19 @@ using UnityEngine;
 public class MovePlayerKey : MonoBehaviour
 {
     [SerializeField] float _moveSpeed = 7.0f;
+    [SerializeField] float _jumpForce = 7.0f;
     [SerializeField] KeyCode _up;
     [SerializeField] KeyCode _down;
     [SerializeField] KeyCode _left;
     [SerializeField] KeyCode _right;
+    [SerializeField] KeyCode _jump;
 
     Rigidbody _rb;
 
     private Vector3 _moveDir;
     private Vector3 _lastMoveDir;
+
+    [SerializeField] CanJump _FootCollider;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -22,6 +26,18 @@ public class MovePlayerKey : MonoBehaviour
     void Update()
     {
         Move();
+        Jump();
+    }
+
+    void Jump()
+    {
+        if (_FootCollider.GetCanJump())
+        {
+            if (Input.GetKeyDown(_jump))
+            {
+                _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+            }
+        }
     }
 
     void Move()
@@ -79,4 +95,5 @@ public class MovePlayerKey : MonoBehaviour
 
         _rb.linearVelocity = _moveVector;
     }
+
 }
