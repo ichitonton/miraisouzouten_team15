@@ -97,12 +97,6 @@ namespace ExplosionSample
 
             // ‚Á”ò‚Î‚·
             // ForceMode‚ð•Ï‚¦‚é‚Æ‹““®‚ª•Ï‚í‚éi¡‰ñ‚ÍŽ¿—Ê–³Ž‹j
-
-            if (direction.y < 0)
-            {
-                direction.y *= -1;
-            }
-
             rigidBody.AddForce(direction * _futtobiPower, ForceMode.VelocityChange);
         }
     }
