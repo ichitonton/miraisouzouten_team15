@@ -42,7 +42,7 @@ public class CameraController : MonoBehaviour
         if (_players.Length == 1)
         {
             //Debug.LogError("プレイヤー二人いねーよ");
-            Debug.Log("プレイヤー二人いないから繋げれねーってばよ");
+            //Debug.Log("プレイヤー二人いないから繋げれねーってばよ");
             SinglePlayer();
         }
         else if (_players.Length == 2)
@@ -127,7 +127,7 @@ public class CameraController : MonoBehaviour
         // クランプ（角度制限、真上から真横までぐらい）
         _pitch = Mathf.Clamp(_pitch, -30f, 30f);
 
-        Debug.Log(_pitch);
+        //Debug.Log(_pitch);
 
         //プレイヤー間の真ん中を見る
         Vector3 center = _player1.transform.position;

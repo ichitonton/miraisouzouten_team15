@@ -11,9 +11,29 @@ public class GameManager : MonoBehaviour
     private GameObject _rope = null;
     private GameObject[] _players;
 
+    // シングルトンのグローバルなアクセスポイント (public static)
+    public static GameManager Instance { get; private set; }
+
+    public enum Mode
+    {
+        Keyboard,
+        Gamepad
+    }
+
+    [Header("操作モード設定")]
+    public Mode _controlMode = Mode.Keyboard;
 
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         Application.targetFrameRate = 60;
     }
     private void OnEnable()
@@ -29,7 +49,6 @@ public class GameManager : MonoBehaviour
     void LateUpdate()
     {
 
-        
     }
 
     private void OnClientDisconnected(ulong clientId)
