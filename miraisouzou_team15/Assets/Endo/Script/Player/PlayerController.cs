@@ -1,7 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 
-public class PlayerController : NetworkBehaviour
+public class PlayerController : MonoBehaviour
 {
 
     [SerializeField]private float moveSpeed = 5f;
@@ -18,14 +18,15 @@ public class PlayerController : NetworkBehaviour
     {
         Vector3 input = Vector3.zero;
         
-        if (!IsOwner) return;
+        //if (!IsOwner) return;
 
         if (Input.GetKey(KeyCode.W)) input += Vector3.forward;
         if (Input.GetKey(KeyCode.S)) input += Vector3.back;
         if (Input.GetKey(KeyCode.A)) input += Vector3.left;
         if (Input.GetKey(KeyCode.D)) input += Vector3.right;
 
-        
+        Debug.Log("ÇÕÇµÇÈÅ[");
+
         input = input.normalized * moveSpeed;
 
         
