@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class NetworkStartUI : MonoBehaviour
 {
-
+    [SerializeField] private GameObject _net;
     private UnityTransport _transport;
+    private string _ipAddress;
 
     private void Awake()
     {
-        _transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+        
+        _transport = _net.GetComponent<UnityTransport>();
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void OnGUI()
@@ -24,16 +26,18 @@ public class NetworkStartUI : MonoBehaviour
         if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
         {
             //ホストとして入る
-            if (GUILayout.Button("Host"))
+            if (GUILayout.Button("ホストとして接続"))
             {
-                _transport.SetConnectionData("0.0.0.0", 7777); // どのIPからの接続も受け入れる
-                NetworkManager.Singleton.StartHost();
+                _net.GetComponent<LanHost>().StartHostConnect();
+                //_net.GetComponent<LanHostDiscovery>().StartHostConnect();
+
             }
             //クライアントとして入る
-            if (GUILayout.Button("Client"))
+            if (GUILayout.Button("ローカルLAN内のIPを自動取得してClientとして接続"))
             {
-                _transport.SetConnectionData("192.168.0.1", 7777);
-                NetworkManager.Singleton.StartClient();
+                _net.GetComponent<LanClient>().StartClientConnect();
+                //_net.GetComponent<LanClientDiscovery>().StartClientConnect();
+
             }
         }
 
