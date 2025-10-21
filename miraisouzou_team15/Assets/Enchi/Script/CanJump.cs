@@ -11,9 +11,17 @@ public class CanJump : MonoBehaviour
             _canJump = true;
         }
     }
+    void OnTriggerExit(Collider collider)
+    {
+        if (collider.gameObject.tag == "Field")
+        {
+            _canJump = false;
+        }
+    }
 
     public bool GetCanJump()
     {
         return _canJump;
     }
+
 }
