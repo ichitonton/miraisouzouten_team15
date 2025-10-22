@@ -9,25 +9,81 @@ public class MovePlayerKey : MonoBehaviour
     [SerializeField] KeyCode _left;
     [SerializeField] KeyCode _right;
     [SerializeField] KeyCode _jump;
+    [SerializeField] KeyCode _punch;
+    [SerializeField] float _punchDuration = 0.5f;
+    [SerializeField] GameObject _punchObj;
+    [SerializeField] float _toGetPunchTime = 0.5f;
+    [SerializeField] int _MaxHp = 100;
+    [SerializeField] int _PunchDamage = 20;
+
 
     Rigidbody _rb;
 
     private Vector3 _moveDir;
     private Vector3 _lastMoveDir;
+    private bool _toGetPunch = false;
+    private int _currentHp;
 
     [SerializeField] CanJump _FootCollider;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
+        PunchActiveFalse();
+        _currentHp = _MaxHp;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Move();
-        Jump();
+        if (!_toGetPunch)
+        {
+            Move();
+            Jump();
+        }
+        Punch();
     }
+
+
+    void Punch()
+    {
+        if (Input.GetKeyDown(_punch))
+        {
+            _punchObj.SetActive(true);
+
+            Invoke(nameof(PunchActiveFalse), _punchDuration);
+
+        }
+    }
+
+    void PunchActiveFalse()
+    {
+        _punchObj.SetActive(false);
+    }
+
+    public void ToGetPunch(int damage)
+    {
+        _toGetPunch = true;
+        Invoke(nameof(ToGetPunchFalse), _toGetPunchTime);
+        AddDamage(damage);
+    }
+
+    void ToGetPunchFalse()
+    {
+        _toGetPunch = false;
+    }
+
+    void AddDamage(int damage)
+    {
+        _currentHp -= damage;
+        if (_currentHp <= 0)
+        {
+            Debug.Log(this.gameObject.name + " is dead.");
+            // You can add additional logic here for when the player dies.
+        }
+    }
+
+
 
     void Jump()
     {
@@ -49,8 +105,6 @@ public class MovePlayerKey : MonoBehaviour
         if (Input.GetKey(_up))
         {
             _moveVector.z = _moveSpeed;
-            // Time.deltaTime フレームレートに関わらず一定の速度でオブジェクトを移動させることができる
-            // 要はフレームレートに依存させない仕組み
         }
         if (Input.GetKey(_left))
         {
@@ -94,6 +148,11 @@ public class MovePlayerKey : MonoBehaviour
         //transform.LookAt(transform.position + new Vector3(_moveVector.x, 0, _moveVector.z));
 
         _rb.linearVelocity = _moveVector;
+    }
+
+    public int GetPunchDamage()
+    {
+        return _PunchDamage;
     }
 
 }
