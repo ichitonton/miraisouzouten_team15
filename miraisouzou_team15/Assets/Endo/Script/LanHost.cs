@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,7 +39,7 @@ public class LanHost : MonoBehaviour
         if (_isRunning) return;
         _isRunning = true;
 
-        _udpClient = new UdpClient(_listenPort);
+        _udpClient = new UdpClient(new IPEndPoint(IPAddress.Any, _listenPort));
         //クライアントから_litePortあてにHostいますかー？と問い合わせが来るよ
         Debug.Log("ホスト : 問い合わせを待ちます");
 
