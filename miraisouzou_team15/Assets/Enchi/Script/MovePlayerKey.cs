@@ -23,19 +23,10 @@ public class MovePlayerKey : MonoBehaviour
     private Vector3 _lastMoveDir;
     private bool _toGetPunch = false;
     private int _currentHp;
+    private float _moveSpeedInitial;
 
     [SerializeField] CanJump _FootCollider;
 
-    // 橋本がいじったよ
-	[Header("沼（遅くするエリア）")]
-	[Tooltip("沼の中での“上限速度”（一定値まで落とす）")]
-	[SerializeField, Min(0f)] float _swampSpeed = 2.5f;         // 沼中の最大速度
-	[Tooltip("速度切替のなめらかさ（大きいほど早く切替）")]
-	[SerializeField, Min(0f)] float _speedChangeRate = 8f;      // 補間スピード
-	[Tooltip("沼オブジェクトに付けたタグ名")]
-	[SerializeField] string _swampTag = "Swamp";                // タグで判定
-	bool _inSwamp = false;                                      // 沼フラグ（重なり無しなのでboolでOK）
-	float _currentMaxSpeed;                                     // 実際に使う上限速度（補間用）
 
 
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -44,9 +35,9 @@ public class MovePlayerKey : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         PunchActiveFalse();
         _currentHp = _MaxHp;
+        _moveSpeedInitial = _moveSpeed;
 
-		_currentMaxSpeed = _moveSpeed; // 開始時は通常速度
-	}
+    }
 
     // Update is called once per frame
     void Update()
@@ -57,6 +48,16 @@ public class MovePlayerKey : MonoBehaviour
             Jump();
         }
         Punch();
+    }
+
+    public void SetMoveSpeedDamp(float DampValue)
+    {
+        _moveSpeed = _moveSpeedInitial * DampValue;
+    }
+
+    public void SetMoveSpeedInitial()
+    {
+        _moveSpeed = _moveSpeedInitial;
     }
 
 
@@ -113,33 +114,30 @@ public class MovePlayerKey : MonoBehaviour
 
     void Move()
     {
-		// 追加: 状況に応じた“目標最大速度”を決定し、なめらかに切り替え
-		float targetMax = _inSwamp ? _swampSpeed : _moveSpeed;
-		_currentMaxSpeed = Mathf.Lerp(_currentMaxSpeed, targetMax, Time.deltaTime * _speedChangeRate);
 
 		Vector3 _moveVector = Vector3.zero;
-        _moveVector.x = 0.0f;
-        _moveVector.z = 0.0f;
 
         if (Input.GetKey(_up))
         {
-            _moveVector.z = _currentMaxSpeed;
+            _moveVector.z += 1;
         }
         if (Input.GetKey(_left))
         {
-            _moveVector.x = -_currentMaxSpeed;
+            _moveVector.x += -1;
         }
         if (Input.GetKey(_down))
         {
-            _moveVector.z = -_currentMaxSpeed;
+            _moveVector.z += -1;
         }
         if (Input.GetKey(_right))
         {
-            _moveVector.x = _currentMaxSpeed;
+            _moveVector.x += 1;
         }
         _moveVector.Normalize();
-		_moveVector *= _currentMaxSpeed;
+		_moveVector *= _moveSpeed;
 		_moveVector.y = _rb.linearVelocity.y;
+
+
         _moveDir = new Vector3(_moveVector.x, 0, _moveVector.z);
 
         if (_moveDir.sqrMagnitude > 0.01f)
@@ -168,25 +166,6 @@ public class MovePlayerKey : MonoBehaviour
 
         _rb.linearVelocity = _moveVector;
     }
-
-
-    //沼の出入り感知
-	void OnTriggerEnter(Collider other)
-	{
-		if (other.CompareTag(_swampTag))
-		{
-			_inSwamp = true; 
-		}
-	}
-
-	void OnTriggerExit(Collider other)
-	{
-		if (other.CompareTag(_swampTag))
-		{
-			_inSwamp = false; 
-		}
-	}
-
 
 	public int GetPunchDamage()
     {

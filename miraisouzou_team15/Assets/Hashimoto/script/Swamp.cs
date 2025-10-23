@@ -3,27 +3,25 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider))]
 public class SwampArea : MonoBehaviour
 {
-	[Header("初期化設定")]
-	[Tooltip("起動時にこのタグを設定します（Player側と合わせる）")]
-	public string swampTag = "Swamp";
+	[SerializeField] float dampingValue = 0.5f;
 
-	void Reset()
+	void OnTriggerEnter(Collider other)
 	{
-		var col = GetComponent<BoxCollider>();
-		col.isTrigger = true;              // 置いた瞬間からTriggerに
-		gameObject.tag = swampTag;         // タグも自動設定
+		if (other.GetComponent<MovePlayerKey>() != null)
+		{
+			other.GetComponent<MovePlayerKey>().SetMoveSpeedDamp(dampingValue);
+        }
 	}
-
-	void OnValidate()
+	void OnTriggerExit(Collider other)
 	{
-		var col = GetComponent<BoxCollider>();
-		if (col != null && !col.isTrigger) col.isTrigger = true; // Inspector変更時も保つ
-		if (string.IsNullOrEmpty(gameObject.tag) || gameObject.tag == "Untagged")
-			gameObject.tag = swampTag;     // タグ未設定なら補完
-	}
+		if (other.GetComponent<MovePlayerKey>() != null)
+		{
+			other.GetComponent<MovePlayerKey>().SetMoveSpeedInitial();
+		}
+    }
 
 #if UNITY_EDITOR
-	void OnDrawGizmos()
+    void OnDrawGizmos()
 	{
 		var col = GetComponent<BoxCollider>();
 		if (!col) return;
