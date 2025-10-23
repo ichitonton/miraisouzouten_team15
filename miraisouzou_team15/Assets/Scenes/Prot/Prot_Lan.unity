@@ -1968,6 +1968,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 1
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1 &427398157
 GameObject:
   m_ObjectHideFlags: 0
@@ -2519,6 +2536,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Moving_Floor
       objectReference: {fileID: 0}
+    - target: {fileID: 5792064104633150773, guid: 49894e6910357ba489d3303f32c3c48d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5936173954960887673, guid: 49894e6910357ba489d3303f32c3c48d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.37
@@ -2751,6 +2772,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c95a8225af3a7f2488f0a95c7b07ef35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JapaneseSweets_Manager
+  SpawnManager: {fileID: 0}
   weight: 1
   m_transform: {fileID: 0}
 --- !u!1 &703664309
@@ -3173,6 +3195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c95a8225af3a7f2488f0a95c7b07ef35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SpawnManager: {fileID: 0}
   weight: 10
   m_transform: {fileID: 868803070}
 --- !u!54 &868803072
@@ -5048,6 +5071,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c95a8225af3a7f2488f0a95c7b07ef35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SpawnManager: {fileID: 0}
   weight: 10
   m_transform: {fileID: 1588000772}
 --- !u!54 &1588000768
@@ -6580,6 +6604,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_Dorayaki
       objectReference: {fileID: 0}
+    - target: {fileID: 6054109441477451513, guid: f0d782b7533b9ad439e37fb7ec1db434, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6867801254595806275, guid: f0d782b7533b9ad439e37fb7ec1db434, type: 3}
       propertyPath: m_LocalPosition.x
       value: -7.49
@@ -6636,6 +6664,10 @@ PrefabInstance:
     - target: {fileID: 7446687917422203692, guid: 8a79292ea9a7ee14597bbc82661dcea6, type: 3}
       propertyPath: m_Name
       value: Model_ShikiWagashi02
+      objectReference: {fileID: 0}
+    - target: {fileID: 7446687917422203692, guid: 8a79292ea9a7ee14597bbc82661dcea6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7790140593293003158, guid: 8a79292ea9a7ee14597bbc82661dcea6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6780,6 +6812,10 @@ PrefabInstance:
       value: Model_Monaka
       objectReference: {fileID: 0}
     - target: {fileID: 7297014018367274378, guid: 9dc6bea7c64a280419a5df72111074b7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7297014018367274378, guid: 9dc6bea7c64a280419a5df72111074b7, type: 3}
       propertyPath: m_TagString
       value: Sweets
       objectReference: {fileID: 0}
@@ -6887,6 +6923,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_ShikiWagashi01
       objectReference: {fileID: 0}
+    - target: {fileID: 6902270036426204949, guid: a2429dd95e600804c8b82f4ad8ecf8f1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6903,6 +6943,10 @@ PrefabInstance:
     - target: {fileID: 3750357348882963447, guid: 66b8190669aa68c4e930525eeccc6664, type: 3}
       propertyPath: m_Name
       value: Model_Sakuramochi
+      objectReference: {fileID: 0}
+    - target: {fileID: 3750357348882963447, guid: 66b8190669aa68c4e930525eeccc6664, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4557680824270553421, guid: 66b8190669aa68c4e930525eeccc6664, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6961,6 +7005,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_KintarouAme
       objectReference: {fileID: 0}
+    - target: {fileID: 1563820235575275515, guid: e819aae241065774e80cbfe065aa97e3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2231567238928299329, guid: e819aae241065774e80cbfe065aa97e3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.5201516
@@ -7018,6 +7066,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_KuriManzyu
       objectReference: {fileID: 0}
+    - target: {fileID: 431793296319550402, guid: 4832327be0955c941a0ba492b95a81d5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1059991999470750072, guid: 4832327be0955c941a0ba492b95a81d5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.167386
@@ -7074,6 +7126,10 @@ PrefabInstance:
     - target: {fileID: 7070141868183249395, guid: 0130127cbde83f14da2bdde794824662, type: 3}
       propertyPath: m_Name
       value: Model_KantenJelly
+      objectReference: {fileID: 0}
+    - target: {fileID: 7070141868183249395, guid: 0130127cbde83f14da2bdde794824662, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7590219301716343625, guid: 0130127cbde83f14da2bdde794824662, type: 3}
       propertyPath: m_LocalPosition.x
@@ -7172,6 +7228,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_Mochi
       objectReference: {fileID: 0}
+    - target: {fileID: 7531763374606592239, guid: f5fe4a4665c32584288f1957fdec7c54, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7188,6 +7248,10 @@ PrefabInstance:
     - target: {fileID: 8551194386558996871, guid: 322e54299b7ead34eb2b7e4af86d614c, type: 3}
       propertyPath: m_Name
       value: Model_IchigoDaihuku
+      objectReference: {fileID: 0}
+    - target: {fileID: 8551194386558996871, guid: 322e54299b7ead34eb2b7e4af86d614c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9070286283759782717, guid: 322e54299b7ead34eb2b7e4af86d614c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -7503,68 +7567,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_ImoYoukan
       objectReference: {fileID: 0}
+    - target: {fileID: 6519904954276441205, guid: 7660abb9acbffa44ca73f8fccac9d064, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7660abb9acbffa44ca73f8fccac9d064, type: 3}
---- !u!1001 &7918403816447052888
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4675949561604151751, guid: 675b292acd7fcc34da3255ba3691bbf3, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 1.6599798
-      objectReference: {fileID: 0}
-    - target: {fileID: 4675949561604151751, guid: 675b292acd7fcc34da3255ba3691bbf3, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.9368869
-      objectReference: {fileID: 0}
-    - target: {fileID: 4675949561604151751, guid: 675b292acd7fcc34da3255ba3691bbf3, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -17.03096
-      objectReference: {fileID: 0}
-    - target: {fileID: 4675949561604151751, guid: 675b292acd7fcc34da3255ba3691bbf3, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4675949561604151751, guid: 675b292acd7fcc34da3255ba3691bbf3, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4675949561604151751, guid: 675b292acd7fcc34da3255ba3691bbf3, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4675949561604151751, guid: 675b292acd7fcc34da3255ba3691bbf3, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4675949561604151751, guid: 675b292acd7fcc34da3255ba3691bbf3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4675949561604151751, guid: 675b292acd7fcc34da3255ba3691bbf3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4675949561604151751, guid: 675b292acd7fcc34da3255ba3691bbf3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5453753554923635581, guid: 675b292acd7fcc34da3255ba3691bbf3, type: 3}
-      propertyPath: m_Name
-      value: Model_Daihuku
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 675b292acd7fcc34da3255ba3691bbf3, type: 3}
 --- !u!1001 &8855959614942302456
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7658,7 +7669,6 @@ SceneRoots:
   - {fileID: 4508488635031964357}
   - {fileID: 4235973599723847749}
   - {fileID: 3645245051745652004}
-  - {fileID: 7918403816447052888}
   - {fileID: 574515134}
   - {fileID: 879192664}
   - {fileID: 1278381623}

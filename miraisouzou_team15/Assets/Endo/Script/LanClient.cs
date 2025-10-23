@@ -58,9 +58,28 @@ public class LanClient : MonoBehaviour
     /// </summary>
     private async Task SendDiscoveryRequests()
     {
+        
+        // 自分のローカルIPを取得
+        string localIP = GetLocalIPAddress();
+        if (string.IsNullOrEmpty(localIP))
+        {
+            Debug.LogWarning("Failed to get local IP address.");
+            return;
+        }
+
+        // ブロードキャストアドレスを自動生成（例: 192.168.10.1 → 192.168.10.255）
+        string[] parts = localIP.Split('.');
+        if (parts.Length != 4)
+        {
+            Debug.LogWarning("Invalid local IP format.");
+            return;
+        }
         //_broadcastPortあてにHostいますかー？と送信するよ
-        IPEndPoint broadcastEndpoint = new IPEndPoint(IPAddress.Broadcast, _broadcastPort);
+        //クロスケーブルの場合ブロードキャストを送信するのは255じゃないとだめかも
         byte[] requestData = Encoding.UTF8.GetBytes(_discoveryRequest);
+        string broadcastIP = $"{parts[0]}.{parts[1]}.{parts[2]}.255";
+        IPEndPoint broadcastEndpoint = new IPEndPoint(IPAddress.Parse(broadcastIP), _broadcastPort);
+
 
         while (_isDiscovering)
         {
@@ -132,6 +151,17 @@ public class LanClient : MonoBehaviour
 
         // 最後に安全にクローズ
         StopDiscovery();
+    }
+
+    //自身のローカルIPを取る
+    private string GetLocalIPAddress()
+    {
+        foreach (var ip in Dns.GetHostAddresses(Dns.GetHostName()))
+        {
+            if (ip.AddressFamily == AddressFamily.InterNetwork)
+                return ip.ToString();
+        }
+        return null;
     }
 
     /// <summary>
