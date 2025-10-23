@@ -10,8 +10,10 @@ public class playerSpawner : MonoBehaviour
     [SerializeField] GameObject _player2;
     [SerializeField] GameObject _joint;
     [SerializeField] int _jointCount;
-    [SerializeField] float spring = 1000f;
-    [SerializeField] float damper = 100f;
+    [SerializeField] float _upperSpring = 1000f;
+    [SerializeField] float _upperDamper = 100f;
+    [SerializeField] float _lowerSpring = 1500f;
+    [SerializeField] float _lowerDamper = 150f;
     [SerializeField] float halfHeight = 0.5f; // オブジェクトの半分の高さ
 
     private List<GameObject> _joints;
@@ -64,10 +66,10 @@ public class playerSpawner : MonoBehaviour
             upper.linearLimit = limitStruct;
             // 修正: 構造体を取得して値を設定し、再代入する
 
-            SoftJointLimitSpring springStruct = upper.linearLimitSpring;
-            springStruct.spring = spring;
-            springStruct.damper = damper;
-            upper.linearLimitSpring = springStruct;
+            SoftJointLimitSpring upperSpringStruct = upper.linearLimitSpring;
+            upperSpringStruct.spring = _upperSpring;
+            upperSpringStruct.damper = _upperDamper;
+            upper.linearLimitSpring = upperSpringStruct;
 
             // 下側のジョイント設定
             ConfigurableJoint lower = _B.AddComponent<ConfigurableJoint>();
@@ -80,7 +82,11 @@ public class playerSpawner : MonoBehaviour
             lower.connectedAnchor = new Vector3(0, -halfHeight, 0);
 
             lower.linearLimit = limitStruct;
-            lower.linearLimitSpring = springStruct;
+
+            SoftJointLimitSpring lowerSpringStruct = lower.linearLimitSpring;
+            lowerSpringStruct.spring = _lowerSpring;
+            lowerSpringStruct.damper = _lowerDamper;
+            lower.linearLimitSpring = lowerSpringStruct;
 
             _A = _B;
         }

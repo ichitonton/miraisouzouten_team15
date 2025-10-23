@@ -2656,7 +2656,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3528134789990749945, guid: a4bc01172960488449c28b9dc1845e1b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.474
+      value: 4.39
       objectReference: {fileID: 0}
     - target: {fileID: 3528134789990749945, guid: a4bc01172960488449c28b9dc1845e1b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2693,6 +2693,22 @@ PrefabInstance:
     - target: {fileID: 5648916132656747323, guid: a4bc01172960488449c28b9dc1845e1b, type: 3}
       propertyPath: m_Name
       value: playerSpawn
+      objectReference: {fileID: 0}
+    - target: {fileID: 7264177223972990555, guid: a4bc01172960488449c28b9dc1845e1b, type: 3}
+      propertyPath: _jointCount
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7264177223972990555, guid: a4bc01172960488449c28b9dc1845e1b, type: 3}
+      propertyPath: _lowerDamper
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7264177223972990555, guid: a4bc01172960488449c28b9dc1845e1b, type: 3}
+      propertyPath: _lowerSpring
+      value: 1100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7264177223972990555, guid: a4bc01172960488449c28b9dc1845e1b, type: 3}
+      propertyPath: _upperSpring
+      value: 900
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6794,6 +6810,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4204692692464834372, guid: 322e54299b7ead34eb2b7e4af86d614c, type: 3}
+      propertyPath: m_Mass
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 8551194386558996871, guid: 322e54299b7ead34eb2b7e4af86d614c, type: 3}
       propertyPath: m_Name
       value: Model_IchigoDaihuku
