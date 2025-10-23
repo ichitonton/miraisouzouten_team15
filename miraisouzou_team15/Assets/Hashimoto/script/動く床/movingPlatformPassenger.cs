@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 // 動く床に乗ってる間だけ、乗った相手を一時的に子オブジェにする。
 // 床にアタッチして使う。
 
@@ -12,22 +11,20 @@ public class movingPlatformPassenger : MonoBehaviour
 	[Tooltip("true: この床のColliderがTriggerで、OnTriggerで検出する / false: 通常の衝突で検出する")]
 	[SerializeField] bool useTrigger = false;
 
-	[Header("対象フィルタ")]
-	[Tooltip("このレイヤーに属する相手だけを子化する（例：Player, Item 等）。何も指定しない場合は全て許可。")]
-	[SerializeField] LayerMask targetLayers = ~0;
+	[Header("対象フィルタ（タグ版）")]
+	[Tooltip("ここに列挙したタグの相手だけ子化する。空配列なら全て許可。")]
+	[SerializeField] string[] targetTags = new string[0];
+
+	[Tooltip("相手の root(最上位) のタグも見るなら true。子のColliderにタグが無い構成向け。")]
+	[SerializeField] bool alsoCheckRootTag = true;
 
 	[Tooltip("Rigidbody の Sleep/補間などを触らない場合は false のままでOK")]
 	[SerializeField] bool tryEnableInterpolationForRB = true;
 
-	// すでに子化した相手と、その相手の元の親を覚えておく
 	readonly Dictionary<Transform, Transform> originalParents = new Dictionary<Transform, Transform>();
-
-	// 退出検出漏れ対策（TriggerでたまにExit取りこぼすケースなど）
 	readonly HashSet<Transform> insideNow = new HashSet<Transform>();
 
 	Collider col;
-
-	Transform memo;
 
 	void Awake()
 	{
@@ -35,13 +32,8 @@ public class movingPlatformPassenger : MonoBehaviour
 		col.isTrigger = useTrigger;
 	}
 
-    //private void Update()
-    //{
-		
-    //}
-
-    // -------- 衝突検出（useTrigger=false のとき） --------
-    void OnCollisionEnter(Collision c)
+	// -------- 衝突検出（useTrigger=false のとき） --------
+	void OnCollisionEnter(Collision c)
 	{
 		if (useTrigger) return;
 		TryAttach(c.transform);
@@ -50,7 +42,6 @@ public class movingPlatformPassenger : MonoBehaviour
 	void OnCollisionStay(Collision c)
 	{
 		if (useTrigger) return;
-		// Stayで継続管理（万一Enter取りこぼしても拾う）
 		TryAttach(c.transform);
 	}
 
@@ -86,50 +77,37 @@ public class movingPlatformPassenger : MonoBehaviour
 	void TryAttach(Transform target)
 	{
 		if (!IsTarget(target)) return;
-
-		// すでにこの床の子になってるなら何もしない
 		if (target.parent == transform) return;
 
-		// すでに記録済み（他の床から移ってきた等）なら、いったん元に戻してから付け替え（安全策）
 		if (originalParents.TryGetValue(target, out var recordedParent) && target.parent != recordedParent)
 		{
 			target.SetParent(recordedParent, true);
 		}
 
-		// 元の親を記録（未記録のときだけ）
 		if (!originalParents.ContainsKey(target))
 			originalParents[target] = target.parent;
 
-		// 子化（ワールド位置維持）
 		target.SetParent(transform, true);
 
-		// 物理的にガタつく場合の微サポート
 		if (tryEnableInterpolationForRB && target.TryGetComponent<Rigidbody>(out var rb))
 		{
 			if (rb.interpolation == RigidbodyInterpolation.None)
 				rb.interpolation = RigidbodyInterpolation.Interpolate;
 		}
-
-		//スケール固定
-        //transform.c= target.lossyScale;
-		
-    }
+	}
 
 	// 解除処理
 	void TryDetach(Transform target)
 	{
 		if (!originalParents.ContainsKey(target)) return;
 
-		// まだ床の子じゃなければスキップ（別の親に付け替わった等）
 		if (target.parent != transform && target.parent != null)
 		{
-			// 他が親になっている場合は記録を消すだけ
 			originalParents.Remove(target);
 			insideNow.Remove(target);
 			return;
 		}
 
-		// 元の親に戻す（ワールド位置維持）
 		var original = originalParents[target];
 		target.SetParent(original, true);
 
@@ -137,14 +115,12 @@ public class movingPlatformPassenger : MonoBehaviour
 		insideNow.Remove(target);
 	}
 
-	// 何かの拍子でExit取りこぼした場合の救済（任意）
+	// Exit取りこぼし救済（Trigger運用時のみ）
 	void LateUpdate()
 	{
-		if (!useTrigger) return; // Trigger運用の時だけ保険をかける
-								 // 床のバウンディングに実際にいないやつを外す
-								 // （AABBで雑にチェック：厳密でなくてOK）
+		if (!useTrigger) return;
+
 		var bounds = col.bounds;
-		// コピーしてから回す（集合を途中でいじらない）
 		var snapshot = new List<Transform>(originalParents.Keys);
 		foreach (var t in snapshot)
 		{
@@ -157,15 +133,24 @@ public class movingPlatformPassenger : MonoBehaviour
 		insideNow.Clear();
 	}
 
-	// 対象フィルタ（レイヤー判定は子のrootでもOKにしたい場合は調整してね）
+	// 対象フィルタ（タグ判定）
 	bool IsTarget(Transform t)
 	{
 		if (!t) return false;
-		int layer = t.gameObject.layer;
-		return (targetLayers.value & (1 << layer)) != 0;
+		if (targetTags == null || targetTags.Length == 0) return true;
+
+		foreach (var tag in targetTags)
+		{
+			if (string.IsNullOrEmpty(tag)) continue;
+			// 子（このColliderが付いてるオブジェクト）を判定
+			if (t.CompareTag(tag)) return true;
+
+			// ルート（プレイヤー本体など）も見るオプション
+			if (alsoCheckRootTag && t.root && t.root.CompareTag(tag)) return true;
+		}
+		return false;
 	}
 
-	// 無効化・破棄時は全部元に戻す
 	void OnDisable() => DetachAll();
 	void OnDestroy() => DetachAll();
 
