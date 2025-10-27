@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39f343246fa08f145bf95d2fa2a18ab2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SwampArea
-  swampTag: Swamp
+  dampingValue: 0.6
 --- !u!65 &5195457882462826779
 BoxCollider:
   m_ObjectHideFlags: 0
