@@ -20,8 +20,6 @@ public class LanHost : MonoBehaviour
     private const string _discoveryRequest = "LAN_DISCOVERY"; //クライアントから送られてくるメッセージ
     private const string _discoveryResponse = "LAN_GAME_HOST"; //クライアントに送るメッセージ
 
-
-
     private void Start()
     {
         _transport = GetComponent<UnityTransport>();

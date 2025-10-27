@@ -34,7 +34,7 @@ Shader "Universal Render Pipeline/Toon/ThreeTone_Outline_JP"
 
         // ================= アウトライン =================
         _OutlineColor ("アウトラインの色", Color) = (0,0,0,1)
-        _OutlineWidth ("アウトラインの太さ（オブジェクト空間）", Range(0,0.02)) = 0.003
+        _OutlineWidth ("アウトラインの太さ（オブジェクト空間）", Range(0,0.1)) = 0.003
     }
 
     SubShader
