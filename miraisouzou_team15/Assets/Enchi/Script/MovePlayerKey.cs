@@ -11,6 +11,7 @@ public class MovePlayerKey : MonoBehaviour
     [SerializeField] KeyCode _jump;
     [SerializeField] KeyCode _punch;
     [SerializeField] float _punchDuration = 0.5f;
+    [SerializeField] float _punchDelay = 0.5f;
     [SerializeField] GameObject _punchObj;
     [SerializeField] float _toGetPunchTime = 0.5f;
     [SerializeField] int _MaxHp = 100;
@@ -24,6 +25,7 @@ public class MovePlayerKey : MonoBehaviour
     private bool _toGetPunch = false;
     private int _currentHp;
     private float _moveSpeedInitial;
+    private bool _canPunch = true;
 
     [SerializeField] CanJump _FootCollider;
 
@@ -63,11 +65,17 @@ public class MovePlayerKey : MonoBehaviour
 
     void Punch()
     {
-        if (Input.GetKeyDown(_punch))
+        if (Input.GetKeyDown(_punch) && _canPunch)
         {
+
             _punchObj.SetActive(true);
 
             Invoke(nameof(PunchActiveFalse), _punchDuration);
+
+            _canPunch = false;
+
+            Invoke(nameof(SetPunchReset), _punchDelay);
+
 
         }
     }
@@ -75,6 +83,11 @@ public class MovePlayerKey : MonoBehaviour
     void PunchActiveFalse()
     {
         _punchObj.SetActive(false);
+    }
+
+    void SetPunchReset()
+    {
+        _canPunch = true;
     }
 
     public void ToGetPunch(int damage)
@@ -95,7 +108,6 @@ public class MovePlayerKey : MonoBehaviour
         if (_currentHp <= 0)
         {
             Debug.Log(this.gameObject.name + " is dead.");
-            // You can add additional logic here for when the player dies.
         }
     }
 
