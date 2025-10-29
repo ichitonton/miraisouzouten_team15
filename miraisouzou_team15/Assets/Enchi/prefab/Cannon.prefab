@@ -103,6 +103,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a34de39b4bb3b44439094395c9b0a2be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  _bullet: {fileID: 8838097114850360759}
+  _bulletTransform: {fileID: 7762563885764872470}
+  _shotDelay: 2
 --- !u!1 &8838097114850360759
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,7 +118,7 @@ GameObject:
   - component: {fileID: 3349871090758914239}
   - component: {fileID: 170040457788076417}
   m_Layer: 0
-  m_Name: Bullet
+  m_Name: BulletSample
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
