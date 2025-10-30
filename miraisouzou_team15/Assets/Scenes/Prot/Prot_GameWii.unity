@@ -579,7 +579,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a84fd211630f904d967f7b17104ffd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
-  _GameManager: {fileID: 0}
   _offset: {x: 0, y: 15, z: -15}
   _smoothSpeed: 5
   _minZoom: 10
@@ -698,23 +697,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UsePipelineSettings: 1
-  m_AdditionalLightsShadowResolutionTier: 2
-  m_CustomShadowLayers: 0
-  m_LightCookieSize: {x: 1, y: 1}
-  m_LightCookieOffset: {x: 0, y: 0}
-  m_SoftShadowQuality: 1
-  m_RenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_ShadowRenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_Version: 4
-  m_LightLayerMask: 1
-  m_ShadowLayerMask: 1
-  m_RenderingLayers: 1
-  m_ShadowRenderingLayers: 1
 --- !u!1001 &433717018
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -965,6 +947,26 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 696341168}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &724838268 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 923264351873807225, guid: ff28e7c10ea6d9044bf680599f3a539c, type: 3}
+  m_PrefabInstance: {fileID: 1161289171}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &724838270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 724838268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e45cbb7a02bd9b4888220bb457fdde5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MovePlayer
+  _wiiInput: {fileID: 502326949}
+  _playerNum: 2
+  _moveSpeed: 3
 --- !u!1 &738699568
 GameObject:
   m_ObjectHideFlags: 0
@@ -1218,11 +1220,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IsGlobal: 1
-  priority: 0
-  blendDistance: 0
-  weight: 1
-  sharedProfile: {fileID: 0}
 --- !u!4 &832575519
 Transform:
   m_ObjectHideFlags: 0
@@ -1342,7 +1339,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c95a8225af3a7f2488f0a95c7b07ef35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpawnManager: {fileID: 0}
   weight: 10
   m_transform: {fileID: 868803070}
 --- !u!54 &868803072
@@ -1607,7 +1603,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 923264351873807225, guid: ff28e7c10ea6d9044bf680599f3a539c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 724838270}
+    - targetCorrespondingSourceObject: {fileID: 1542741720743930243, guid: ff28e7c10ea6d9044bf680599f3a539c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1670450433}
   m_SourcePrefab: {fileID: 100100000, guid: ff28e7c10ea6d9044bf680599f3a539c, type: 3}
 --- !u!4 &1233462740 stripped
 Transform:
@@ -1910,7 +1912,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2037,7 +2039,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c95a8225af3a7f2488f0a95c7b07ef35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpawnManager: {fileID: 0}
   weight: 10
   m_transform: {fileID: 1588000772}
 --- !u!54 &1588000768
@@ -2104,6 +2105,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1670450431 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1542741720743930243, guid: ff28e7c10ea6d9044bf680599f3a539c, type: 3}
+  m_PrefabInstance: {fileID: 1161289171}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1670450433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1670450431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e45cbb7a02bd9b4888220bb457fdde5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MovePlayer
+  _wiiInput: {fileID: 502326949}
+  _playerNum: 1
+  _moveSpeed: 3
 --- !u!1 &1755216086
 GameObject:
   m_ObjectHideFlags: 0
