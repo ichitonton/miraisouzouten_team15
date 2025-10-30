@@ -18,8 +18,6 @@ public class Cannon : MonoBehaviour
     {
         _isChild = false;
 
-
-        Debug.Log("うんちしょっと");
         for (int i = 0; i < transform.childCount; i++)
         {
             //非アクティブの子オブジェクト検索
