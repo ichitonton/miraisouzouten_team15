@@ -96,9 +96,9 @@ Transform:
   m_GameObject: {fileID: 8530197757099250379}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.0005777778, y: 0.030922223, z: 0.56}
-  m_LocalScale: {x: 2, y: 2, z: 2}
-  m_ConstrainProportionsScale: 1
+  m_LocalPosition: {x: 0.0005777778, y: 0.030922223, z: 0.76}
+  m_LocalScale: {x: 1.1111112, y: 1.1111112, z: 1.1111112}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3091532597476963404}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -339,7 +339,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.3
+  m_Radius: 0.1
   m_Height: 2.2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
@@ -363,14 +363,8 @@ MonoBehaviour:
   _right: 0
   _jump: 0
   _punch: 0
-  _useItem: 0
   _punchDuration: 0.5
-  _punchDelay: 0.4
   _punchObj: {fileID: 8530197757099250379}
-  _toGetPunchTime: 0.5
-  _MaxHp: 100
-  _PunchDamage: 20
-  _item: {fileID: 0}
   _FootCollider: {fileID: 7817851643849097461}
 --- !u!54 &4106582323108458632
 Rigidbody:
