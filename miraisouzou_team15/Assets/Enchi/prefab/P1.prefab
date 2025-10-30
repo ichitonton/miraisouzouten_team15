@@ -363,12 +363,14 @@ MonoBehaviour:
   _right: 0
   _jump: 0
   _punch: 0
+  _useItem: 0
   _punchDuration: 0.5
   _punchDelay: 0.4
   _punchObj: {fileID: 8530197757099250379}
   _toGetPunchTime: 0.5
   _MaxHp: 100
   _PunchDamage: 20
+  _item: {fileID: 0}
   _FootCollider: {fileID: 7817851643849097461}
 --- !u!54 &4106582323108458632
 Rigidbody:
