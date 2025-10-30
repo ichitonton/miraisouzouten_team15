@@ -30,7 +30,7 @@ public class Jibaku : MonoBehaviour
     void Update()
     {
         _players = _sensour.GetPlayers();
-        if (_players != null&&_players.Count > 0)
+        if (_players != null && _players.Count > 0)
         {
             _distance = Vector3.zero;
             _distanceSub = Vector3.zero;
@@ -86,44 +86,55 @@ public class Jibaku : MonoBehaviour
 
     void BlastGenerate()
     {
-
-        _isChild = false;
-
-        for (int i = 0; i < transform.childCount; i++)
+        if (gameObject.activeSelf)
         {
-            //非アクティブの子オブジェクト検索
-            _kari = transform.parent.GetChild(i);
-            if (_kari.gameObject.GetComponent<Blast>() != null &&
-                !_kari.gameObject.activeSelf)
+            _isChild = false;
+
+            for (int i = 0; i < transform.childCount; i++)
             {
-                _kari.gameObject.SetActive(true);
-                _kari.position = transform.position;
-                _kari.rotation = transform.rotation;
+                //非アクティブの子オブジェクト検索
+                _kari = transform.parent.GetChild(i);
+                if (_kari.gameObject.GetComponent<Blast>() != null &&
+                    !_kari.gameObject.activeSelf)
+                {
+                    _kari.gameObject.SetActive(true);
+                    _kari.position = transform.position;
+                    _kari.rotation = transform.rotation;
 
-                _isChild = true;
-                break;
+                    _isChild = true;
+                    break;
+                }
             }
-        }
 
-        //子オブジェクトが足りなければ新規作成
-        if (!_isChild)
-        {
-            Instantiate(_blast, transform.position, transform.rotation, transform.parent);
+            //子オブジェクトが足りなければ新規作成
+            if (!_isChild)
+            {
+                Instantiate(_blast, transform.position, transform.rotation, transform.parent);
+            }
+            ActiveFalse();
         }
-        ActiveFalse();
     }
 
 
     //ぶつかったときの処理
     void OnCollisionEnter(Collision other)
     {
-        if (other.transform != transform.parent && other.transform.GetComponent<Rigidbody>() != null)
+        if (other.transform.GetComponent<Rigidbody>() != null)
         {
             if (!_isTimerOn)
             {
                 Invoke("BlastGenerate", _blastTimer);
                 _isTimerOn = true;
             }
+        }
+
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.transform.GetComponent<Punch>() != null)
+        {
+            ActiveFalse();
         }
     }
 }

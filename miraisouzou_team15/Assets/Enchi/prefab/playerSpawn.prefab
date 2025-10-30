@@ -50,8 +50,10 @@ MonoBehaviour:
   _player2: {fileID: 5792189419999364903}
   _joint: {fileID: 6651513632882123144, guid: 5b42010e8a6b5014e8a4b3e7cb500cb8, type: 3}
   _jointCount: 10
-  spring: 1000
-  damper: 100
+  _upperSpring: 1000
+  _upperDamper: 100
+  _lowerSpring: 1500
+  _lowerDamper: 150
   halfHeight: 0.5
 --- !u!1001 &3390807489986983220
 PrefabInstance:
@@ -120,6 +122,10 @@ PrefabInstance:
     - target: {fileID: 8434709882339179574, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
       propertyPath: _left
       value: 97
+      objectReference: {fileID: 0}
+    - target: {fileID: 8434709882339179574, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
+      propertyPath: _punch
+      value: 102
       objectReference: {fileID: 0}
     - target: {fileID: 8434709882339179574, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
       propertyPath: _right
@@ -215,6 +221,10 @@ PrefabInstance:
     - target: {fileID: 8434709882339179574, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
       propertyPath: _left
       value: 106
+      objectReference: {fileID: 0}
+    - target: {fileID: 8434709882339179574, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
+      propertyPath: _punch
+      value: 111
       objectReference: {fileID: 0}
     - target: {fileID: 8434709882339179574, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
       propertyPath: _right
