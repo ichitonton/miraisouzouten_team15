@@ -7,11 +7,13 @@ TagManager:
   - Sweets
   - Obstacles
   - Retry_Board
+  - Field
+  - Swamp
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Map
   - Water
   - UI
   - 

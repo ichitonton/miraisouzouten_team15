@@ -1,56 +1,163 @@
+using NUnit.Framework.Constraints;
 using UnityEngine;
 
 public class MovePlayerKey : MonoBehaviour
 {
     [SerializeField] float _moveSpeed = 7.0f;
+    [SerializeField] float _jumpForce = 7.0f;
     [SerializeField] KeyCode _up;
     [SerializeField] KeyCode _down;
     [SerializeField] KeyCode _left;
     [SerializeField] KeyCode _right;
+    [SerializeField] KeyCode _jump;
+    [SerializeField] KeyCode _punch;
+    [SerializeField] float _punchDuration = 0.5f;
+    [SerializeField] float _punchDelay = 0.5f;
+    [SerializeField] GameObject _punchObj;
+    [SerializeField] float _toGetPunchTime = 0.5f;
+    [SerializeField] int _MaxHp = 100;
+    [SerializeField] int _PunchDamage = 20;
+
 
     Rigidbody _rb;
 
     private Vector3 _moveDir;
     private Vector3 _lastMoveDir;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private bool _canNotInputKey = false;
+    private int _currentHp;
+    private float _moveSpeedInitial;
+    private bool _canPunch = true;
+
+    [SerializeField] CanJump _FootCollider;
+
+
+
+	// Start is called once before the first execution of Update after the MonoBehaviour is created
+	void Start()
     {
         _rb = GetComponent<Rigidbody>();
+        PunchActiveFalse();
+        _currentHp = _MaxHp;
+        _moveSpeedInitial = _moveSpeed;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        Move();
+        if (!_canNotInputKey)
+        {
+            Move();
+            Jump();
+        }
+        Punch();
+    }
+
+    public void SetMoveSpeedDamp(float DampValue)
+    {
+        _moveSpeed = _moveSpeedInitial * DampValue;
+    }
+
+    public void SetMoveSpeedInitial()
+    {
+        _moveSpeed = _moveSpeedInitial;
+    }
+
+
+    void Punch()
+    {
+        if (Input.GetKeyDown(_punch) && _canPunch)
+        {
+
+            _punchObj.SetActive(true);
+
+            Invoke(nameof(PunchActiveFalse), _punchDuration);
+
+            _canPunch = false;
+
+            Invoke(nameof(SetPunchReset), _punchDelay);
+
+
+        }
+    }
+
+    void PunchActiveFalse()
+    {
+        _punchObj.SetActive(false);
+    }
+
+    void SetPunchReset()
+    {
+        _canPunch = true;
+    }
+
+    public void ToGetPunch(int damage)
+    {
+        _canNotInputKey = true;
+        Invoke(nameof(CanNotInputKeyFalse), _toGetPunchTime);
+        AddDamage(damage);
+    }
+
+    public void SetCanNotInputKey(float delay)
+    {
+        _canNotInputKey = true;
+
+        Invoke(nameof(CanNotInputKeyFalse), delay);
+    }
+
+    void CanNotInputKeyFalse()
+    {
+        _canNotInputKey = false;
+    }
+
+    void AddDamage(int damage)
+    {
+        _currentHp -= damage;
+        if (_currentHp <= 0)
+        {
+            Debug.Log(this.gameObject.name + " is dead.");
+        }
+    }
+
+
+
+    void Jump()
+    {
+        if (_FootCollider.GetCanJump())
+        {
+            if (Input.GetKeyDown(_jump))
+            {
+                _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+            }
+        }
     }
 
     void Move()
     {
-        Vector3 _moveVector = Vector3.zero;
-        _moveVector.x = 0.0f;
-        _moveVector.z = 0.0f;
+
+		Vector3 _moveVector = Vector3.zero;
 
         if (Input.GetKey(_up))
         {
-            _moveVector.z = _moveSpeed;
-            // Time.deltaTime フレームレートに関わらず一定の速度でオブジェクトを移動させることができる
-            // 要はフレームレートに依存させない仕組み
+            _moveVector.z += 1;
         }
         if (Input.GetKey(_left))
         {
-            _moveVector.x = -_moveSpeed;
+            _moveVector.x += -1;
         }
         if (Input.GetKey(_down))
         {
-            _moveVector.z = -_moveSpeed;
+            _moveVector.z += -1;
         }
         if (Input.GetKey(_right))
         {
-            _moveVector.x = _moveSpeed;
+            _moveVector.x += 1;
         }
         _moveVector.Normalize();
-        _moveVector *= _moveSpeed;
-        _moveVector.y = _rb.linearVelocity.y;
+		_moveVector *= _moveSpeed;
+		_moveVector.y = _rb.linearVelocity.y;
+
+
         _moveDir = new Vector3(_moveVector.x, 0, _moveVector.z);
 
         if (_moveDir.sqrMagnitude > 0.01f)
@@ -79,4 +186,10 @@ public class MovePlayerKey : MonoBehaviour
 
         _rb.linearVelocity = _moveVector;
     }
+
+	public int GetPunchDamage()
+    {
+        return _PunchDamage;
+    }
+
 }
