@@ -38,8 +38,9 @@ public class Blast : MonoBehaviour
     //Ç‘Ç¬Ç©Ç¡ÇΩÇ∆Ç´ÇÃèàóù
     void OnTriggerEnter(Collider other)
     {
-        if (other != this.transform.parent && other.GetComponent<Rigidbody>() != null)
+        if (other.GetComponent<Rigidbody>() != null)
         {
+            Debug.Log("Blast Hit : " + other.name);
             if (other.GetComponent<MovePlayerKey>() != null)
             {
                 other.GetComponent<MovePlayerKey>().SetCanNotInputKey(0.5f);
@@ -50,7 +51,8 @@ public class Blast : MonoBehaviour
             _distance.Normalize();
             _distance.y = 0.0f;
 
-            other.GetComponent<Rigidbody>().AddForce((_distance + Vector3.up * 0.5f) * _impactForce, ForceMode.Impulse);
+            other.GetComponent<Rigidbody>().AddForce((_distance + Vector3.up) * _impactForce, ForceMode.Impulse);
+
 
         }
     }
