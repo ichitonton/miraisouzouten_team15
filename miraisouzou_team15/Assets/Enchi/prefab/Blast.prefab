@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Blast
   _lifeTime: 0.5
-  _impactForce: 30
+  _impactForce: 2
 --- !u!135 &-5229641961098113913
 SphereCollider:
   m_ObjectHideFlags: 0

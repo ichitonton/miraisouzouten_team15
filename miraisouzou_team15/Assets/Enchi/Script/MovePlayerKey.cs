@@ -58,12 +58,12 @@ public class MovePlayerKey : MonoBehaviour
         {
             Move();
             Jump();
+            Punch();
         }
         if (_haveItem != Item.None)
         {
             UseItem();
         }
-        Punch();
     }
 
     public void SetMoveSpeedDamp(float DampValue)
@@ -105,6 +105,7 @@ public class MovePlayerKey : MonoBehaviour
     }
     public void SetCanNotInputKey(float delay)
     {
+        Debug.Log("Žó‚¯‚¤‚Â‚¯‚È‚¢‚¨");
         _canNotInputKey = true;
 
         Invoke(nameof(CanNotInputKeyFalse), delay);

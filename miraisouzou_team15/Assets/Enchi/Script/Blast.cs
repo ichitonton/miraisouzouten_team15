@@ -36,14 +36,14 @@ public class Blast : MonoBehaviour
     }
 
     //Ç‘Ç¬Ç©Ç¡ÇΩÇ∆Ç´ÇÃèàóù
-    void OnTriggerEnter(Collider other)
+    void OnCollisionEnter(Collision other)
     {
-        if (other.GetComponent<Rigidbody>() != null)
+                Debug.Log("Blast Hit : " + other.transform.name);
+        if (other.transform.GetComponent<Rigidbody>() != null)
         {
-            Debug.Log("Blast Hit : " + other.name);
-            if (other.GetComponent<MovePlayerKey>() != null)
+            if (other.transform.GetComponent<MovePlayerKey>() != null)
             {
-                other.GetComponent<MovePlayerKey>().SetCanNotInputKey(0.5f);
+                other.transform.GetComponent<MovePlayerKey>().SetCanNotInputKey(2.0f);
             }
 
             Vector3 _distance = other.transform.position - transform.position;
@@ -51,7 +51,7 @@ public class Blast : MonoBehaviour
             _distance.Normalize();
             _distance.y = 0.0f;
 
-            other.GetComponent<Rigidbody>().AddForce((_distance + Vector3.up) * _impactForce, ForceMode.Impulse);
+            other.transform.GetComponent<Rigidbody>().AddForce((_distance + Vector3.up) * _impactForce, ForceMode.Impulse);
 
 
         }

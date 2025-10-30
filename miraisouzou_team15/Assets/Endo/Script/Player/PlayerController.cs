@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.A)) input += Vector3.left;
         if (Input.GetKey(KeyCode.D)) input += Vector3.right;
 
-        Debug.Log("ÇÕÇµÇÈÅ[");
+        //Debug.Log("ÇÕÇµÇÈÅ[");
 
         input = input.normalized * moveSpeed;
 

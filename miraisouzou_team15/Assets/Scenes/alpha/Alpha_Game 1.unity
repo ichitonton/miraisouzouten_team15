@@ -1332,6 +1332,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: NetworkUI
       objectReference: {fileID: 0}
+    - target: {fileID: 6280504052251466273, guid: fded7fdc3d848e446b54781a8caec72b, type: 3}
+      propertyPath: _net
+      value: 
+      objectReference: {fileID: 1425013831}
     - target: {fileID: 7836367788181001228, guid: fded7fdc3d848e446b54781a8caec72b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -64.62663
@@ -1693,6 +1697,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6858f9a47b5ff3b4697ad7bce6c0f369, type: 3}
+--- !u!1 &1425013831 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8186086817822115411, guid: a17eb770de5cba846ad5aac15dbf7745, type: 3}
+  m_PrefabInstance: {fileID: 1462216608}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1444607363
 PrefabInstance:
   m_ObjectHideFlags: 0
