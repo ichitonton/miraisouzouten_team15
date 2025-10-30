@@ -1,3 +1,4 @@
+using NUnit.Framework.Constraints;
 using UnityEngine;
 
 public class MovePlayerKey : MonoBehaviour
@@ -22,7 +23,7 @@ public class MovePlayerKey : MonoBehaviour
 
     private Vector3 _moveDir;
     private Vector3 _lastMoveDir;
-    private bool _toGetPunch = false;
+    private bool _canNotInputKey = false;
     private int _currentHp;
     private float _moveSpeedInitial;
     private bool _canPunch = true;
@@ -44,7 +45,7 @@ public class MovePlayerKey : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!_toGetPunch)
+        if (!_canNotInputKey)
         {
             Move();
             Jump();
@@ -92,14 +93,21 @@ public class MovePlayerKey : MonoBehaviour
 
     public void ToGetPunch(int damage)
     {
-        _toGetPunch = true;
-        Invoke(nameof(ToGetPunchFalse), _toGetPunchTime);
+        _canNotInputKey = true;
+        Invoke(nameof(CanNotInputKeyFalse), _toGetPunchTime);
         AddDamage(damage);
     }
 
-    void ToGetPunchFalse()
+    public void SetCanNotInputKey(float delay)
     {
-        _toGetPunch = false;
+        _canNotInputKey = true;
+
+        Invoke(nameof(CanNotInputKeyFalse), delay);
+    }
+
+    void CanNotInputKeyFalse()
+    {
+        _canNotInputKey = false;
     }
 
     void AddDamage(int damage)
