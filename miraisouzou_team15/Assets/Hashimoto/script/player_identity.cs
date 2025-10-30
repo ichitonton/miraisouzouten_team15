@@ -21,7 +21,7 @@ public class player_identity : MonoBehaviour
 	}
 
 	// TeamRespawnCoordinator ���� SendMessage �ŌĂ΂��z��
-	void SetReset()
+	public void SetReset()
 	{
 		var pos = respawnPoint ? respawnPoint.position : startPos;
 		var rot = respawnPoint ? respawnPoint.rotation : startRot;
