@@ -66,28 +66,16 @@ public class MovePlayerKey : MonoBehaviour
         }
     }
 
-    public void SetMoveSpeedDamp(float DampValue)
+    //移動速度を減衰させる（減衰値）
+    public void MoveSpeedDamp(float DampValue)
     {
         _moveSpeed = _moveSpeedInitial * DampValue;
     }
 
+    //移動速度を初期値に戻す
     public void SetMoveSpeedInitial()
     {
         _moveSpeed = _moveSpeedInitial;
-    }
-    void Punch()
-    {
-        if (Input.GetKeyDown(_punch) && _canPunch)
-        {
-
-            _punchObj.SetActive(true);
-
-            Invoke(nameof(PunchActiveFalse), _punchDuration);
-
-            _canPunch = false;
-
-            Invoke(nameof(SetPunchReset), _punchDelay);
-        }
     }
     void PunchActiveFalse()
     {
@@ -97,20 +85,24 @@ public class MovePlayerKey : MonoBehaviour
     {
         _canPunch = true;
     }
+    //パンチを受ける(ダメージ, パンチをスタン時間)
     public void ToGetPunch(int damage)
     {
         _canNotInputKey = true;
-        Invoke(nameof(CanNotInputKeyFalse), _toGetPunchTime);
+        Invoke(nameof(UnlockStun), _toGetPunchTime);
         AddDamage(damage);
     }
-    public void SetCanNotInputKey(float delay)
+
+    //スタン（効果時間）
+    public void Stun(float delay)
     {
         Debug.Log("受けうつけないお");
         _canNotInputKey = true;
 
-        Invoke(nameof(CanNotInputKeyFalse), delay);
+        Invoke(nameof(UnlockStun), delay);
     }
-    void CanNotInputKeyFalse()
+    //スタン解除
+    void UnlockStun()
     {
         _canNotInputKey = false;
     }
@@ -185,9 +177,19 @@ public class MovePlayerKey : MonoBehaviour
         //transform.LookAt(transform.position + new Vector3(_moveVector.x, 0, _moveVector.z));
         _rb.linearVelocity = _moveVector;
     }
-    public int GetPunchDamage()
+    void Punch()
     {
-        return _PunchDamage;
+        if (Input.GetKeyDown(_punch) && _canPunch)
+        {
+
+            _punchObj.SetActive(true);
+
+            Invoke(nameof(PunchActiveFalse), _punchDuration);
+
+            _canPunch = false;
+
+            Invoke(nameof(SetPunchReset), _punchDelay);
+        }
     }
 
     void UseItem()
@@ -221,5 +223,9 @@ public class MovePlayerKey : MonoBehaviour
         }
     }
 
-
+    
+    public int GetPunchDamage()
+    {
+        return _PunchDamage;
+    }
 }

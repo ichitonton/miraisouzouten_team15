@@ -9,7 +9,7 @@ public class SwampArea : MonoBehaviour
 	{
 		if (other.GetComponent<MovePlayerKey>() != null)
 		{
-			other.GetComponent<MovePlayerKey>().SetMoveSpeedDamp(dampingValue);
+			other.GetComponent<MovePlayerKey>().MoveSpeedDamp(dampingValue);
         }
 	}
 	void OnTriggerExit(Collider other)
