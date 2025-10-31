@@ -2,33 +2,26 @@ using UnityEngine;
 
 public class JapaneseSweets_Manager : MonoBehaviour
 {
-	[SerializeField] private float weight = 0.0f; // オブジェクトの重さ
-	private SpawnManager spawnManager;            // 破棄通知先
+	// Start is called once before the first execution of Update after the MonoBehaviour is created
 
-	private void Awake()
+	[SerializeField] private SpawnManager SpawnManager;
+
+    [SerializeField] private float weight = 0.0f;               // オブジェクトの重さ
+
+
+	private void Start()
 	{
-		// シーン内から SpawnManager を自動で探す
-		spawnManager = FindFirstObjectByType<SpawnManager>();
+	
 	}
 
-	public float GetWeight()
+	public float GetWeight() {
+        return weight;
+    }
+
+	public void SetReset()
 	{
-		return weight;
+		Destroy(this.gameObject);
 	}
 
-	private void OnDestroy()
-	{
-		if (!Application.isPlaying) return;
-
-		// 既にシーン終了中なら何もしない
-		if (this == null) return;
-
-		// SpawnManager を探して存在する場合だけ呼ぶ
-		var spawnManager = FindFirstObjectByType<SpawnManager>();
-		if (spawnManager != null)
-		{
-			spawnManager.DestroySweets(gameObject);
-		}
-	}
 
 }

@@ -6,10 +6,10 @@ public class TeamRespawnCoordinator : MonoBehaviour
 {
 	public static TeamRespawnCoordinator Instance { get; private set; }
 
-	[Header("ï¿½ï¿½ï¿½Xï¿½|ï¿½[ï¿½ï¿½ï¿½Ü‚Å‚Ì‘Ò‹@(ï¿½b)")]
+	[Header("ƒŠƒXƒ|[ƒ“‚Ü‚Å‚Ì‘Ò‹@(•b)")]
 	[SerializeField, Min(0f)] float respawnDelay = 0f;
 
-	// teamId ï¿½ï¿½ ï¿½Gï¿½ê‚½ï¿½ï¿½ï¿½ï¿½ï¿½oï¿½[IDï¿½Wï¿½ï¿½ï¿½i1,2ï¿½j
+	// teamId ¨ G‚ê‚½ƒƒ“ƒo[IDW‡i1,2j
 	readonly Dictionary<int, HashSet<int>> touched = new();
 
 	void Awake()
@@ -18,7 +18,7 @@ public class TeamRespawnCoordinator : MonoBehaviour
 		Instance = this;
 	}
 
-	// ï¿½ï¿½ï¿½Xï¿½|ï¿½[ï¿½ï¿½ï¿½Gï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½Ä‚Î‚ï¿½ï¿½Fï¿½ï¿½ï¿½Ìƒvï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ True ï¿½É‚ï¿½ï¿½ï¿½
+	// ƒŠƒXƒ|[ƒ“ƒGƒŠƒA‚©‚çŒÄ‚Î‚ê‚éF‚±‚ÌƒvƒŒƒCƒ„[‚ğ True ‚É‚·‚é
 	public void MarkTouched(player_identity pid)
 	{
 		if (!touched.TryGetValue(pid.teamId, out var set))
@@ -28,7 +28,7 @@ public class TeamRespawnCoordinator : MonoBehaviour
 		}
 		set.Add(pid.memberId);
 
-		// ï¿½`ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1 ï¿½ï¿½ 2 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ç”­ï¿½ï¿½
+		// ƒ`[ƒ€“à‚Ì 1 ‚Æ 2 ‚ª‚»‚ë‚Á‚½‚ç”­‰Î
 		if (set.Contains(1) && set.Contains(2))
 		{
 			StartCoroutine(RespawnTeam(pid.teamId));
@@ -39,29 +39,19 @@ public class TeamRespawnCoordinator : MonoBehaviour
 	{
 		if (respawnDelay > 0f) yield return new WaitForSeconds(respawnDelay);
 
-		// ï¿½`ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1 ï¿½ï¿½ 2 ï¿½ï¿½Tï¿½ï¿½ï¿½iï¿½ï¿½Aï¿½Nï¿½eï¿½Bï¿½uï¿½ï¿½ï¿½Oï¿½j
-		var players = FindObjectsByType<player_identity>(
-			FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-
-		foreach (var p in players)
+		// “¯‚¶ƒ`[ƒ€‚Ì 1 ‚Æ 2 ‚ğ’T‚µ‚Ä SetReset() Às
+		var all = GameObject.FindObjectsOfType<player_identity>();
+		foreach (var p in all)
 		{
 			if (p.teamId != teamId) continue;
 			if (p.memberId != 1 && p.memberId != 2) continue;
 
-			// ï¿½ï¿½ï¿½xï¿½ï¿½ï¿½Zï¿½bï¿½g
-			var rb = p.GetComponent<Rigidbody>();
-			if (rb)
-			{
-				rb.linearVelocity = Vector3.zero;
-				rb.angularVelocity = Vector3.zero;
-			}
-
-			// ï¿½ï¿½ï¿½Ä‚ÑiSendMessageï¿½ï¿½ßj
-			// ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ public void SetReset() ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½
-			p.SetReset();
+			// ‘¬“x~‚ß‚½‚¢‚È‚ç‚±‚±‚Å Rigidbody ‚ğƒ[ƒ‚É‚µ‚ÄOK
+			p.gameObject.SendMessage("SetReset", SendMessageOptions.DontRequireReceiver);
+			p.gameObject.SendMessageUpwards("SetReset", SendMessageOptions.DontRequireReceiver);
 		}
 
-		// ï¿½ï¿½ÔƒNï¿½ï¿½ï¿½Aï¿½iï¿½ï¿½ï¿½ï¿½ï¿½Eï¿½ï¿½ï¿½hï¿½pï¿½j
+		// ó‘ÔƒNƒŠƒAiŸ‚Ìƒ‰ƒEƒ“ƒh—pj
 		touched.Remove(teamId);
 	}
 }
