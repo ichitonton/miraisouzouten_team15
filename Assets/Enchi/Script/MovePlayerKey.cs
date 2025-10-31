@@ -1,3 +1,4 @@
+using NUnit.Framework.Constraints;
 using UnityEngine;
 
 public class MovePlayerKey : MonoBehaviour
@@ -10,23 +11,34 @@ public class MovePlayerKey : MonoBehaviour
     [SerializeField] KeyCode _right;
     [SerializeField] KeyCode _jump;
     [SerializeField] KeyCode _punch;
+    [SerializeField] KeyCode _useItem;
+
     [SerializeField] float _punchDuration = 0.5f;
+    [SerializeField] float _punchDelay = 0.5f;
     [SerializeField] GameObject _punchObj;
     [SerializeField] float _toGetPunchTime = 0.5f;
     [SerializeField] int _MaxHp = 100;
     [SerializeField] int _PunchDamage = 20;
+    [SerializeField] GameObject _item;
 
 
     Rigidbody _rb;
 
     private Vector3 _moveDir;
     private Vector3 _lastMoveDir;
-    private bool _toGetPunch = false;
+    private bool _canNotInputKey = false;
     private int _currentHp;
     private float _moveSpeedInitial;
+    private bool _canPunch = true;
+    private Item _haveItem = Item.Bomb;
 
     [SerializeField] CanJump _FootCollider;
 
+    enum Item
+    {
+        None,
+        Bomb
+    }
 
 
 	// Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -42,12 +54,16 @@ public class MovePlayerKey : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!_toGetPunch)
+        if (!_canNotInputKey)
         {
             Move();
             Jump();
+            Punch();
         }
-        Punch();
+        if (_haveItem != Item.None)
+        {
+            UseItem();
+        }
     }
 
     public void SetMoveSpeedDamp(float DampValue)
@@ -59,34 +75,44 @@ public class MovePlayerKey : MonoBehaviour
     {
         _moveSpeed = _moveSpeedInitial;
     }
-
-
     void Punch()
     {
-        if (Input.GetKeyDown(_punch))
+        if (Input.GetKeyDown(_punch) && _canPunch)
         {
+
             _punchObj.SetActive(true);
 
             Invoke(nameof(PunchActiveFalse), _punchDuration);
 
+            _canPunch = false;
+
+            Invoke(nameof(SetPunchReset), _punchDelay);
         }
     }
-
     void PunchActiveFalse()
     {
         _punchObj.SetActive(false);
     }
-
+    void SetPunchReset()
+    {
+        _canPunch = true;
+    }
     public void ToGetPunch(int damage)
     {
-        _toGetPunch = true;
-        Invoke(nameof(ToGetPunchFalse), _toGetPunchTime);
+        _canNotInputKey = true;
+        Invoke(nameof(CanNotInputKeyFalse), _toGetPunchTime);
         AddDamage(damage);
     }
-
-    void ToGetPunchFalse()
+    public void SetCanNotInputKey(float delay)
     {
-        _toGetPunch = false;
+        Debug.Log("受けうつけないお");
+        _canNotInputKey = true;
+
+        Invoke(nameof(CanNotInputKeyFalse), delay);
+    }
+    void CanNotInputKeyFalse()
+    {
+        _canNotInputKey = false;
     }
 
     void AddDamage(int damage)
@@ -95,12 +121,8 @@ public class MovePlayerKey : MonoBehaviour
         if (_currentHp <= 0)
         {
             Debug.Log(this.gameObject.name + " is dead.");
-            // You can add additional logic here for when the player dies.
         }
     }
-
-
-
     void Jump()
     {
         if (_FootCollider.GetCanJump())
@@ -111,7 +133,6 @@ public class MovePlayerKey : MonoBehaviour
             }
         }
     }
-
     void Move()
     {
 
@@ -161,15 +182,44 @@ public class MovePlayerKey : MonoBehaviour
             );
 
         }
-
         //transform.LookAt(transform.position + new Vector3(_moveVector.x, 0, _moveVector.z));
-
         _rb.linearVelocity = _moveVector;
     }
-
-	public int GetPunchDamage()
+    public int GetPunchDamage()
     {
         return _PunchDamage;
     }
+
+    void UseItem()
+    {
+        if (Input.GetKeyDown(_useItem))
+        {
+            bool _isChild = false;
+
+            //for (int i = 0; i < transform.childCount; i++)
+            //{
+            //    //非アクティブの子オブジェクト検索
+            //    Transform _kari = transform.parent.GetChild(i);
+            //    if (_kari.gameObject.GetComponent<Item>() != null &&
+            //        !_kari.gameObject.activeSelf)
+            //    {
+            //        _kari.gameObject.SetActive(true);
+            //        _kari.position = transform.position;
+            //        _kari.rotation = transform.rotation;
+
+            //        _isChild = true;
+            //        break;
+            //    }
+            //}
+
+            //子オブジェクトが足りなければ新規作成
+            if (!_isChild)
+            {
+                Instantiate(_item, transform.position + transform.forward * 1.0f, transform.rotation, transform.parent).
+                    GetComponent<Rigidbody>().AddForce((transform.forward + Vector3.up) * 4.0f,ForceMode.Impulse);
+            }
+        }
+    }
+
 
 }

@@ -16,6 +16,8 @@ public class playerSpawner : MonoBehaviour
     [SerializeField] float _lowerDamper = 150f;
     [SerializeField] float halfHeight = 0.5f; // オブジェクトの半分の高さ
 
+    private GameObject _playerA;
+    private GameObject _playerB;
     private List<GameObject> _joints;
 
 
@@ -31,14 +33,11 @@ public class playerSpawner : MonoBehaviour
 
         GameObject _husi_up = new GameObject();
         GameObject _husi_down = new GameObject();
-
-        _player1.transform.position = this.transform.position + new Vector3(0, -1, 0);
-        _player2.transform.position = this.transform.position + new Vector3(0.01f * (_jointCount + 1), -1, 0);
-        _player1.transform.rotation = this.transform.rotation;
-        _player2.transform.rotation = this.transform.rotation;
+        _playerA = Instantiate(_player1, this.transform.position + new Vector3(0, -1, 0), transform.rotation);
+        _playerB = Instantiate(_player2, this.transform.position + new Vector3(0.01f * (_jointCount + 1), -1, 0), transform.rotation);
         
 
-        GameObject _A = _player1;
+        GameObject _A = _playerA;
         GameObject _B;
         Vector3 spawnRotation = new Vector3(0, 0, 0);
 
@@ -46,7 +45,7 @@ public class playerSpawner : MonoBehaviour
         {
             if(i == _jointCount)
                 {
-                _B = _player2;
+                _B = _playerB;
             }
             else
                 _B = Instantiate(_joint, this.transform.position + new Vector3(0.01f * i, 0, 0), this.transform.rotation, this.transform);
