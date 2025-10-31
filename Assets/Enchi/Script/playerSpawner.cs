@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.Profiling;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class playerSpawner : MonoBehaviour
 {
@@ -24,18 +25,33 @@ public class playerSpawner : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Spawn();
-
-
+        PlayerSpawn();
     }
-    void Spawn()
+
+    void PlayerSpawn()
+    {
+        _playerA = Instantiate(_player1, this.transform.position + new Vector3(0, -1, 0), transform.rotation);
+        _playerB = Instantiate(_player2, this.transform.position + new Vector3(0.01f * (_jointCount + 1), -1, 0), transform.rotation);
+    }
+
+    private void OnGUI()
+    {
+        //ƒzƒXƒg‚Æ‚µ‚Ä“ü‚é
+        if (GUI.Button(new Rect(100, Screen.height  - 30, 100, 30), "‚Â‚È‚®"))
+        {
+            Joint();
+        }
+    }
+
+    void Joint()
     {
 
         GameObject _husi_up = new GameObject();
         GameObject _husi_down = new GameObject();
-        _playerA = Instantiate(_player1, this.transform.position + new Vector3(0, -1, 0), transform.rotation);
-        _playerB = Instantiate(_player2, this.transform.position + new Vector3(0.01f * (_jointCount + 1), -1, 0), transform.rotation);
-        
+        _playerA.transform.position = this.transform.position + new Vector3(0, -1, 0);
+        _playerA.transform.rotation = transform.rotation;
+        _playerB.transform.position = this.transform.position + new Vector3(0.01f * (_jointCount + 1), -1, 0);
+        _playerB.transform.rotation = transform.rotation;
 
         GameObject _A = _playerA;
         GameObject _B;
@@ -43,8 +59,8 @@ public class playerSpawner : MonoBehaviour
 
         for (int i = 0; i < _jointCount + 1; i++)
         {
-            if(i == _jointCount)
-                {
+            if (i == _jointCount)
+            {
                 _B = _playerB;
             }
             else
