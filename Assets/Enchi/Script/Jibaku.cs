@@ -29,7 +29,10 @@ public class Jibaku : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //プレイヤー追尾
         _players = _sensour.GetPlayers();
+
+        //最も近いプレイヤーを探す
         if (_players != null && _players.Count > 0)
         {
             _distance = Vector3.zero;

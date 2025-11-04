@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class MovePlayerKey : MonoBehaviour
 {
-    [SerializeField] float _moveSpeed = 7.0f;
-    [SerializeField] float _jumpForce = 7.0f;
     [SerializeField] KeyCode _up;
     [SerializeField] KeyCode _down;
     [SerializeField] KeyCode _left;
@@ -13,12 +11,17 @@ public class MovePlayerKey : MonoBehaviour
     [SerializeField] KeyCode _punch;
     [SerializeField] KeyCode _useItem;
 
+    [SerializeField] float _moveSpeed = 7.0f;
+    [SerializeField] float _jumpForce = 7.0f;
+
     [SerializeField] float _punchDuration = 0.5f;
     [SerializeField] float _punchDelay = 0.5f;
     [SerializeField] GameObject _punchObj;
     [SerializeField] float _toGetPunchTime = 0.5f;
     [SerializeField] int _MaxHp = 100;
-    [SerializeField] int _PunchDamage = 20;
+    [SerializeField] int _punchDamage = 20;
+    [SerializeField] float _punchForce = 10.0f;
+    [SerializeField] float _stunTime = 1.0f;//パンチした時のスタン時間
     [SerializeField] GameObject _item;
 
 
@@ -66,30 +69,65 @@ public class MovePlayerKey : MonoBehaviour
         }
     }
 
-    //移動速度を減衰させる（減衰値）
-    public void MoveSpeedDamp(float DampValue)
+    //
+    //ゲッター
+    //
+    public int GetPunchDamage()
     {
-        _moveSpeed = _moveSpeedInitial * DampValue;
+        return _punchDamage;
+    }
+    public float GetPunchForce()
+    {
+        return _punchForce;
+    }
+    public float GetStunTime()
+    {
+        return _stunTime;
+    }
+
+
+    //
+    //ステータスいじる関係
+    //
+
+    //あべこべ移動速度を逆転させる（何秒後にリセットするか）
+    public void MoveSpeedAbekobe(float delay)
+    {
+        _moveSpeed  *= -1;
+        Invoke("ResetMoveSpeed", delay);
+    }
+
+    //移動速度に倍率をかける（かける倍率）
+    public void MoveSpeedChange(float dampValue)
+    {
+        _moveSpeed = _moveSpeedInitial * dampValue;
+    }
+    //移動速度に倍率をかける（かける倍率,  何秒後にリセットするか）
+    public void MoveSpeedChange(float dampValue, float delay)
+    {
+        _moveSpeed = _moveSpeedInitial * dampValue;
+        Invoke("ResetMoveSpeed", delay);
     }
 
     //移動速度を初期値に戻す
-    public void SetMoveSpeedInitial()
+    public void ResetMoveSpeed()
     {
         _moveSpeed = _moveSpeedInitial;
     }
+    //パンチオブジェクト非アクティブ化
     void PunchActiveFalse()
     {
         _punchObj.SetActive(false);
     }
+    //パンチクールダウンリセット
     void SetPunchReset()
     {
         _canPunch = true;
     }
     //パンチを受ける(ダメージ, パンチをスタン時間)
-    public void ToGetPunch(int damage)
+    public void ToGetPunch(int damage , float stunTime)
     {
-        _canNotInputKey = true;
-        Invoke(nameof(UnlockStun), _toGetPunchTime);
+        Stun(stunTime);
         AddDamage(damage);
     }
 
@@ -106,7 +144,7 @@ public class MovePlayerKey : MonoBehaviour
     {
         _canNotInputKey = false;
     }
-
+    //ダメージ（受けるダメージ）
     void AddDamage(int damage)
     {
         _currentHp -= damage;
@@ -115,6 +153,12 @@ public class MovePlayerKey : MonoBehaviour
             Debug.Log(this.gameObject.name + " is dead.");
         }
     }
+
+
+    //
+    //MOVE関係
+    //
+
     void Jump()
     {
         if (_FootCollider.GetCanJump())
@@ -221,11 +265,5 @@ public class MovePlayerKey : MonoBehaviour
                     GetComponent<Rigidbody>().AddForce((transform.forward + Vector3.up) * 4.0f,ForceMode.Impulse);
             }
         }
-    }
-
-    
-    public int GetPunchDamage()
-    {
-        return _PunchDamage;
     }
 }

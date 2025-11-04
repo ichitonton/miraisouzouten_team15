@@ -1926,6 +1926,10 @@ PrefabInstance:
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8434709882339179574, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
+      propertyPath: _useItem
+      value: 101
+      objectReference: {fileID: 0}
+    - target: {fileID: 8434709882339179574, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
       propertyPath: _PunchDamage
       value: 20
       objectReference: {fileID: 0}
@@ -3542,6 +3546,10 @@ PrefabInstance:
     - target: {fileID: 8434709882339179574, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
       propertyPath: _right
       value: 108
+      objectReference: {fileID: 0}
+    - target: {fileID: 8434709882339179574, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
+      propertyPath: _useItem
+      value: 112
       objectReference: {fileID: 0}
     - target: {fileID: 8434709882339179574, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
       propertyPath: _punchDuration
