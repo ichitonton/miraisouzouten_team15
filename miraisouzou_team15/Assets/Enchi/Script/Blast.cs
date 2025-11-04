@@ -43,7 +43,7 @@ public class Blast : MonoBehaviour
         {
             if (other.transform.GetComponent<MovePlayerKey>() != null)
             {
-                other.transform.GetComponent<MovePlayerKey>().SetCanNotInputKey(2.0f);
+                other.transform.GetComponent<MovePlayerKey>().Stun(2.0f);
             }
 
             Vector3 _distance = other.transform.position - transform.position;
