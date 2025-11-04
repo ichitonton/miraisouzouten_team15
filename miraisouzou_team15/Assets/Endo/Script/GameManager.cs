@@ -24,8 +24,17 @@ public class GameManager : MonoBehaviour
         Gamepad
     }
 
+    public enum OnlineMode
+    {
+        OnePC,
+        MoreTowPC
+    }
+
     [Header("操作モード設定")]
     public Mode _controlMode = Mode.Keyboard;
+
+    [Header("通信モード")]
+    public OnlineMode _onlineMode = OnlineMode.OnePC;
 
     private void Awake()
     {
@@ -42,22 +51,22 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        if (_ui != null)
-        {
-            //UIを出す
-            if (_ui.activeSelf == false)
-            {
-                _ui.SetActive(true);
-            }
-            Debug.Log("ボタンを押してはよ入れや");
-            _ui.GetComponentInChildren<TMP_Text>().text = "2 Player Not Join";
-        }
+        //if (_ui != null)
+        //{
+        //    //UIを出す
+        //    if (_ui.activeSelf == false)
+        //    {
+        //        _ui.SetActive(true);
+        //    }
+        //    Debug.Log("ボタンを押してはよ入れや");
+        //    _ui.GetComponentInChildren<TMP_Text>().text = "2 Player Not Join";
+        //}
     }
     private void OnEnable()
     {
 
 
-        SceneManager.sceneLoaded += RegisterNetworkConnectEvent;
+        //SceneManager.sceneLoaded += RegisterNetworkConnectEvent;
         
         
     }
@@ -65,10 +74,10 @@ public class GameManager : MonoBehaviour
     private void OnGUI()
     {
         //ホストとして入る
-        /*if (GUILayout.Button("ホストとして接続"))
+        if (GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height / 2, 100, 30), "ボタン"))
         {
-            Instantiate(_player, new Vector3(0f, 1.0f, 0f), Quaternion.identity);
-        }*/
+            Instantiate(_player, new Vector3(0f, 5.0f, 0f), Quaternion.identity);
+        }
     }
     // Update is called once per frame
     void LateUpdate()
@@ -89,21 +98,21 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("2人そろった！");
 
-            /*if (_ui != null)
+            if (_ui != null)
             {
                 //UIを出す
                 if (_ui.activeSelf == true)
                 {
-                    //_ui.SetActive(false);
+                    _ui.SetActive(false);
                 }
             }
             if (_ui != null)
             {
                 if(_networkUi.activeSelf == false)
                 {
-                    //_networkUi.SetActive(true);
+                    _networkUi.SetActive(true);
                 }
-            }*/
+            }
                 
 
             Connect();

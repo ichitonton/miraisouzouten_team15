@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,15 +13,21 @@ public class MapColor
 
 public class MapColorManager : MonoBehaviour
 {
-    
 
+    [Header("Camera Setting")]
     [SerializeField] private Camera mapCamera;
     [SerializeField] private RenderTexture mapTexture;
     [SerializeField] private Material replaceMaterial; // マップ用に色を統一するマテリアル
 
+
+    [Header("Shader Settings")]
+    [SerializeField] private Shader replacementShader; // Unlit系を指定（例：Unlit/Color）
+
     [Header("Map Color Settings")]
     [SerializeField]
     public List<MapColor> _colorSettings = new List<MapColor>();
+    [Header("Color Settings")]
+    public Color mapColor = Color.red;
 
     [Header("Target Layer")]
     [SerializeField] private string mapLayerName = "Map";
@@ -35,67 +42,41 @@ public class MapColorManager : MonoBehaviour
 
     // 登録されているマップオブジェクト
     private static readonly List<GameObject> registeredObjects = new();
-    // タグ→マテリアルキャッシュ
-    private Dictionary<string, Material> _tagToMaterial = new();
+
+
+    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // 各タグに対応するUnlitマテリアルを作成してキャッシュ
-        foreach (var entry in _colorSettings)
-        {
-            var mat = new Material(Shader.Find("Unlit/Color"))
-            {
-                color = entry._color
-            };
-            _tagToMaterial[entry._tagName] = mat;
-        }
+       
     }
 
     // Update is called once per frame
     private void LateUpdate()
     {
-        if (_player == null)
-        {
-            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj == null) return;
-            _player = GameObject.FindGameObjectWithTag("Player").transform;
-            
-        }
 
-        float playerY = _player.position.y;
+        if (mapCamera == null || mapTexture == null || replacementShader == null)
+            return;
 
-        Debug.Log(registeredObjects.Count);
+        // Replacement Shaderを適用
+        mapCamera.RenderWithShader(replacementShader, null);
 
-        foreach (var obj in registeredObjects)
-        {
-            if (obj == null) continue;
+        // マップ色をShaderに渡す（すべて同じ色で描画）
+        Shader.SetGlobalColor("_Color", mapColor);
 
-            if (_tagToMaterial.TryGetValue(obj.tag, out var baseMat))
-            {
-                var renderer = obj.GetComponent<Renderer>();
-                if (renderer != null)
-                {
-                    // 高低差による明暗補正
-                    float heightDiff = obj.transform.position.y - playerY;
-                    float brightness = Mathf.Clamp(1f + heightDiff * heightSensitivity, minBrightness, maxBrightness);
+        // 実際にRenderTextureへ描画
+        mapCamera.targetTexture = mapTexture;
+        //mapCamera.cullingMask = LayerMask.GetMask(mapLayerName);
 
-                    // 一時的なマテリアルを作らずに色だけ変更
-                    Color c = baseMat.color * brightness;
-                    renderer.material.color = c;
-                }
-            }
-        }
+        Debug.Log("ReplacementShader applied");
 
-        // 描画
-        if (mapCamera != null && mapTexture != null)
-        {
-            //マップUIに移す
-            mapCamera.targetTexture = mapTexture;
-            mapCamera.cullingMask = LayerMask.GetMask(mapLayerName);
-            mapCamera.Render();
-        }
+        mapCamera.Render();
+
+        // Shader設定を解除（ゲーム描画に影響しないように）
+        mapCamera.ResetReplacementShader();
     }
+
 
     public static void Register(GameObject obj)
     {

@@ -48,17 +48,50 @@ public class LanClient : MonoBehaviour
 
         _transport.ConnectionData.Port = 7778;// ← Hostの待受ポートと一致(同一PCだとだめかも)
 
-        // 問い合わせ送信と応答待ちを同時に実行
-        _ = SendDiscoveryRequests();
-        _ = ListenForResponses();
+        if(GameManager.Instance._onlineMode == GameManager.OnlineMode.OnePC)
+        {
+            _ = SendDiscoveryRequestsOnePC();
+            _ = ListenForResponses();
+
+        }
+        else if (GameManager.Instance._onlineMode == GameManager.OnlineMode.MoreTowPC)
+        {
+            // 問い合わせ送信と応答待ちを同時に実行
+            _ = SendDiscoveryRequestsMoreTowPC();
+            _ = ListenForResponses();
+        }
+
+        
     }
 
     /// <summary>
     /// LAN全体に「Hostいますか？」とブロードキャストを定期的に送信する
     /// </summary>
-    private async Task SendDiscoveryRequests()
+    private async Task SendDiscoveryRequestsOnePC()
     {
-        
+
+        IPEndPoint broadcastEndpoint = new IPEndPoint(IPAddress.Broadcast, _broadcastPort);
+        byte[] requestData = Encoding.UTF8.GetBytes(_discoveryRequest);
+
+        while (_isDiscovering)
+        {
+            try
+            {
+                await _udpClient.SendAsync(requestData, requestData.Length, broadcastEndpoint);
+                Debug.Log("Sent discovery broadcast.");
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning($"Broadcast send failed: {ex.Message}");
+            }
+
+            await Task.Delay((int)(_broadcastInterval * 1000));
+        }
+    }
+
+    private async Task SendDiscoveryRequestsMoreTowPC()
+    {
+
         // 自分のローカルIPを取得
         string localIP = GetLocalIPAddress();
         if (string.IsNullOrEmpty(localIP))

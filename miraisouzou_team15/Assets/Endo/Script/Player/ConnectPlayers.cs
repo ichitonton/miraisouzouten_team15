@@ -23,8 +23,8 @@ public class ConnectPlayers : MonoBehaviour
         _player1 = players[0];
         _player2 = players[1];
 
-        _player1.GetComponent<Transform>().position = new Vector3(0.0f, 2.0f, 0.0f);
-        _player2.GetComponent<Transform>().position = new Vector3(3.0f, 2.0f, 0.0f);
+        _player1.GetComponent<Transform>().position = new Vector3(0.0f, 5.0f, 0.0f);
+        _player2.GetComponent<Transform>().position = new Vector3(3.0f, 5.0f, 0.0f);
 
 
         Rigidbody rb1 = _player1.GetComponent<Rigidbody>();
