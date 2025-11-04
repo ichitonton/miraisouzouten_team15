@@ -21,6 +21,8 @@ public class playerSpawner : MonoBehaviour
     private GameObject _playerB;
     private List<GameObject> _joints;
 
+    private float _magicNumber = 0.5f;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -48,7 +50,7 @@ public class playerSpawner : MonoBehaviour
 
         GameObject _husi_up = new GameObject();
         GameObject _husi_down = new GameObject();
-        _playerA.transform.position = this.transform.position + new Vector3(0, -1, 0);
+        _playerA.transform.position = this.transform.position + new Vector3(0, -1.0f, 0);
         _playerA.transform.rotation = transform.rotation;
         _playerB.transform.position = this.transform.position + new Vector3(0.01f * (_jointCount + 1), -1, 0);
         _playerB.transform.rotation = transform.rotation;
@@ -74,9 +76,25 @@ public class playerSpawner : MonoBehaviour
             upper.connectedBody = _A.GetComponent<Rigidbody>();
             upper.autoConfigureConnectedAnchor = false;
             upper.anchor = new Vector3(0, +halfHeight, 0);
-            upper.connectedAnchor = new Vector3(0, +halfHeight, 0);
-            // 修正: SoftJointLimit構造体を使ってlinearLimitを設定
-            SoftJointLimit limitStruct = upper.linearLimit;
+
+            if (_B.tag == "Player")
+            {
+                upper.anchor = new Vector3(0, halfHeight * 2.0f + _magicNumber, 0);
+            }
+            else
+            {
+                upper.anchor = new Vector3(0, halfHeight, 0);
+            }
+            if (_A.tag == "Player")
+            {
+                upper.connectedAnchor = new Vector3(0, halfHeight * 2.0f +_magicNumber, 0);
+            }
+            else
+            {
+                upper.connectedAnchor = new Vector3(0, +halfHeight, 0);
+            }
+                // 修正: SoftJointLimit構造体を使ってlinearLimitを設定
+                SoftJointLimit limitStruct = upper.linearLimit;
             limitStruct.limit = 0.1f;
             upper.linearLimit = limitStruct;
             // 修正: 構造体を取得して値を設定し、再代入する
@@ -93,8 +111,22 @@ public class playerSpawner : MonoBehaviour
             lower.zMotion = ConfigurableJointMotion.Limited;
             lower.connectedBody = _A.GetComponent<Rigidbody>();
             lower.autoConfigureConnectedAnchor = false;
-            lower.anchor = new Vector3(0, -halfHeight, 0);
-            lower.connectedAnchor = new Vector3(0, -halfHeight, 0);
+            if (_B.tag == "Player")
+            {
+                lower.anchor = new Vector3(0, _magicNumber, 0);
+            }
+            else
+            {
+                lower.anchor = new Vector3(0, -halfHeight, 0);
+            }
+            if (_A.tag == "Player")
+            {
+                lower.connectedAnchor = new Vector3(0, _magicNumber, 0);
+            }
+            else
+            {
+                lower.connectedAnchor = new Vector3(0, -halfHeight, 0);
+            }
 
             lower.linearLimit = limitStruct;
 

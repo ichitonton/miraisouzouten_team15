@@ -314,6 +314,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: af9a069ff95c04e45a2470fd26971f85, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4106582323108458632}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: af9a069ff95c04e45a2470fd26971f85, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7064524850921955666}
   m_SourcePrefab: {fileID: 100100000, guid: af9a069ff95c04e45a2470fd26971f85, type: 3}
 --- !u!1 &2426459606958468854 stripped
 GameObject:
@@ -355,8 +358,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af3e5cda85ac41438309e8811a44a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovePlayerKey
-  _moveSpeed: 5
-  _jumpForce: 7
   _up: 119
   _down: 115
   _left: 97
@@ -364,12 +365,16 @@ MonoBehaviour:
   _jump: 32
   _punch: 101
   _useItem: 102
+  _moveSpeed: 5
+  _jumpForce: 7
   _punchDuration: 0.5
   _punchDelay: 0.4
   _punchObj: {fileID: 8530197757099250379}
   _toGetPunchTime: 0.5
   _MaxHp: 100
-  _PunchDamage: 20
+  _punchDamage: 20
+  _punchForce: 10
+  _stunTime: 1
   _item: {fileID: 5829897982676275080, guid: 8b04250a52ccfdb47b90f1726a8e4259, type: 3}
   _FootCollider: {fileID: 7817851643849097461}
 --- !u!54 &4106582323108458632
@@ -399,6 +404,28 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!95 &7064524850921955666
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2426459606958468854}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 36dd897a750c16f4eb7c88c05d2b0665, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &3091532597476963404 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: af9a069ff95c04e45a2470fd26971f85, type: 3}

@@ -355,8 +355,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af3e5cda85ac41438309e8811a44a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovePlayerKey
-  _moveSpeed: 5
-  _jumpForce: 7
   _up: 105
   _down: 107
   _left: 106
@@ -364,12 +362,16 @@ MonoBehaviour:
   _jump: 109
   _punch: 111
   _useItem: 112
+  _moveSpeed: 5
+  _jumpForce: 7
   _punchDuration: 0.5
   _punchDelay: 0.4
   _punchObj: {fileID: 8530197757099250379}
   _toGetPunchTime: 0.5
   _MaxHp: 100
-  _PunchDamage: 20
+  _punchDamage: 20
+  _punchForce: 10
+  _stunTime: 1
   _item: {fileID: 5829897982676275080, guid: 8b04250a52ccfdb47b90f1726a8e4259, type: 3}
   _FootCollider: {fileID: 7817851643849097461}
 --- !u!54 &4106582323108458632

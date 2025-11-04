@@ -126,7 +126,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   _blast: {fileID: 8000710731528051159, guid: c0ae90c3517c73c4591b28c1f9b53ff2, type: 3}
   _blastTimer: 1
-  _isTimerOn: 0
 --- !u!54 &3407824769710859187
 Rigidbody:
   m_ObjectHideFlags: 0

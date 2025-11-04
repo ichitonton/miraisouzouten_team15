@@ -46,8 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 298c1e1d4364fd345812153e84f9ea59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  _player1: {fileID: 2426459606958468854, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
-  _player2: {fileID: 2426459606958468854, guid: da95e75a4a838f24c963abb5cd1dc237, type: 3}
+  _player1: {fileID: 7459081349001929016, guid: 87568b16bea6c784a80ba45cf5dd6d07, type: 3}
+  _player2: {fileID: 7459081349001929016, guid: ef24cb88710bbb14ca9cd4e1e0a923e6, type: 3}
   _joint: {fileID: 6651513632882123144, guid: 5b42010e8a6b5014e8a4b3e7cb500cb8, type: 3}
   _jointCount: 10
   _upperSpring: 1000
