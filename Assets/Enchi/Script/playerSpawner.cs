@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.Profiling;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class playerSpawner : MonoBehaviour
 {
@@ -16,37 +17,51 @@ public class playerSpawner : MonoBehaviour
     [SerializeField] float _lowerDamper = 150f;
     [SerializeField] float halfHeight = 0.5f; // オブジェクトの半分の高さ
 
+    private GameObject _playerA;
+    private GameObject _playerB;
     private List<GameObject> _joints;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Spawn();
-
-
+        PlayerSpawn();
     }
-    void Spawn()
+
+    void PlayerSpawn()
+    {
+        _playerA = Instantiate(_player1, this.transform.position + new Vector3(0, -1, 0), transform.rotation);
+        _playerB = Instantiate(_player2, this.transform.position + new Vector3(0.01f * (_jointCount + 1), -1, 0), transform.rotation);
+    }
+
+    private void OnGUI()
+    {
+        //ホストとして入る
+        if (GUI.Button(new Rect(100, Screen.height  - 30, 100, 30), "つなぐ"))
+        {
+            Joint();
+        }
+    }
+
+    void Joint()
     {
 
         GameObject _husi_up = new GameObject();
         GameObject _husi_down = new GameObject();
+        _playerA.transform.position = this.transform.position + new Vector3(0, -1, 0);
+        _playerA.transform.rotation = transform.rotation;
+        _playerB.transform.position = this.transform.position + new Vector3(0.01f * (_jointCount + 1), -1, 0);
+        _playerB.transform.rotation = transform.rotation;
 
-        _player1.transform.position = this.transform.position + new Vector3(0, -1, 0);
-        _player2.transform.position = this.transform.position + new Vector3(0.01f * (_jointCount + 1), -1, 0);
-        _player1.transform.rotation = this.transform.rotation;
-        _player2.transform.rotation = this.transform.rotation;
-        
-
-        GameObject _A = _player1;
+        GameObject _A = _playerA;
         GameObject _B;
         Vector3 spawnRotation = new Vector3(0, 0, 0);
 
         for (int i = 0; i < _jointCount + 1; i++)
         {
-            if(i == _jointCount)
-                {
-                _B = _player2;
+            if (i == _jointCount)
+            {
+                _B = _playerB;
             }
             else
                 _B = Instantiate(_joint, this.transform.position + new Vector3(0.01f * i, 0, 0), this.transform.rotation, this.transform);
