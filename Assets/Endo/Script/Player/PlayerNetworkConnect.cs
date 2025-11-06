@@ -1,113 +1,164 @@
 using Unity.Netcode;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Collections;
+using System;
 
-public class PlayerNetworkConnect : MonoBehaviour
+
+
+public class PlayerNetworkConnect : NetworkBehaviour
 {
 
-    private bool _isBound = false;
+    [TextArea(2, 5)]
+    public string memo;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
 
-    private void Awake()
+    [Header("生成するPlayer")]
+    [SerializeField] private GameObject _playerObject; // Hostが生成する用
+    [Header("Hostが生成する紐Prefab")]
+    [SerializeField] private GameObject ropeObject;
+    [Header("接続してからプレイヤーを生成するときの遅延")]
+    public float _delayTime = 0.1f; 
+   
+
+    private void Start()
     {
+        var nm = NetworkManager.Singleton;
+
         
+
+        nm.OnServerStarted += OnHostStarted;
+        nm.OnClientConnectedCallback += OnClientConnected;
+
+        if (nm.IsServer && !GetComponent<NetworkObject>().IsSpawned)
+        {
+            GetComponent<NetworkObject>().Spawn(true);
+            Debug.Log("[Host] PlayerNetworkConnect Spawned on Network");
+        }
     }
 
-    void Start()
-    {
-        
-    }
-
-    void OnDestroy()
+    private void  OnDestroy()
     {
         if (NetworkManager.Singleton != null)
         {
-            NetworkManager.Singleton.OnServerStarted -= TryBindLocalPlayer;
+            NetworkManager.Singleton.OnServerStarted -= OnHostStarted;
+            //Hostは新しいClientが自分のところに接続したときに呼ばれ、ClientはHostに接続できたときに呼ばれる
             NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
         }
     }
 
-    public void InitPlayerNetwork()
+    /// <summary>
+    /// Hostとして接続したときに呼ばれる
+    /// /// </summary>
+    private void OnHostStarted()
+    {
+        // ローカルプレイヤーを削除し、同じ位置にNetworkプレイヤーを再生成して登録する
+        ReplaceLocalPlayersWithNetworkPlayers();
+    }
+
+    /// <summary>
+    /// Client接続時に呼ばれる（Hostで実行）Clientのプレイヤーを生成
+    /// /// </summary>
+    private void OnClientConnected(ulong clientId)
     {
 
         var nm = NetworkManager.Singleton;
-        if (nm == null)
+
+        // Host側：Clientが接続してきたときに実行される
+        if (nm.IsServer)
         {
-            Debug.LogError("NetworkManagerが見つかりません");
-            return;
-        }
-
-        nm.OnServerStarted += TryBindLocalPlayer;
-        nm.OnClientConnectedCallback += OnClientConnected;
-
-        Debug.Log($"[Binder Init] IsHost={NetworkManager.Singleton.IsHost}, IsServer={NetworkManager.Singleton.IsServer}, IsClient={NetworkManager.Singleton.IsClient}");
-    }
-    /// <summary>
-    /// Hostが起動したとき、自分のシーン内にあるすべてのPlayerをSpawn
-    /// </summary>
-    private void TryBindLocalPlayer()
-    {
-        if (_isBound) return;
-
-        // シーン上の全Playerを取得（タグ or コンポーネントベースで）
-        var allPlayers = GameObject.FindGameObjectsWithTag("Player");
-
-        if (allPlayers.Length == 0)
-        {
-            Debug.LogWarning("シーン内にPlayerが見つかりません。");
-            return;
-        }
-
-        foreach (var player in allPlayers)
-        {
-            var netObj = player.GetComponent<NetworkObject>();
-            if (netObj == null) continue;
-            if (netObj.IsSpawned) continue;
-
-            // HostのPlayerを登録
-            netObj.SpawnAsPlayerObject(NetworkManager.Singleton.LocalClientId);
-            Debug.Log($"[Host] 自分のPlayerをSpawn: {player.name}");
-        }
-
-        _isBound = true;
-
-    }
-
-    /// <summary>
-    /// Client接続時に呼ばれる（Hostで実行）
-    /// </summary>
-    private void OnClientConnected(ulong clientId)
-    {
-        // Host側でClientのPlayerを探して紐づける処理
-        if (NetworkManager.Singleton.IsHost)
-        {
-            Debug.Log("クライアント接続");
-
-            // シーン内のPlayerから、まだSpawnされていないものを探す
-            var allPlayers = GameObject.FindGameObjectsWithTag("Player");
-
-            foreach (var player in allPlayers)
+            // Host自身のClientIdも通るが、Hostが自分で自分を処理する必要はない
+            if (clientId == nm.LocalClientId)
             {
-                var netObj = player.GetComponent<NetworkObject>();
-                if (netObj == null || netObj.IsSpawned) continue;
-
-                // ClientのPlayerを登録
-                netObj.SpawnAsPlayerObject(clientId);
-                Debug.Log($"[Host] Client {clientId} のPlayerをSpawn: {player.name}");
-                return; // 一人分でOK
+                Debug.Log("[Host] 自分（Host）が接続したのでスキップ");
+                return;
             }
 
-            Debug.LogWarning($"[Host] Client {clientId} に対応するPlayerが見つかりません。");
+            Debug.Log($"[Host] Client {clientId} が接続しました（Host側）");
+            
+            return;
         }
-        // Client側のとき
-        else if (NetworkManager.Singleton.IsClient)
+
+        // Client側：Hostへの接続完了
+        if (nm.IsClient && !nm.IsServer)
         {
-            Debug.Log($"[Client] Hostへの接続が完了しました。ClientId: {clientId}");
-
+            Debug.Log($"[Client] Hostに接続完了: {clientId}");
+            StartCoroutine(DelayedPlayerReplace());
         }
 
+    }
+
+    private IEnumerator DelayedPlayerReplace()
+    {
+        yield return new WaitForSeconds(_delayTime); // ← 接続安定化のため少し待つ
+        ReplaceLocalPlayersWithNetworkPlayers();
+    }
+
+    // ======== Host側で実行される ==========
+    [ServerRpc(RequireOwnership = false)]//このRpcを使えばClientから要求ができるからあとからClient側から追加することも可能
+    private void RequestPlayerSpawnServerRpc(ulong clientId, Vector3 pos, Quaternion rot)
+    {
+
+        Debug.Log($"[RPC Called] IsServer={NetworkManager.Singleton.IsServer}, IsClient={NetworkManager.Singleton.IsClient}, Mode={NetworkManager.Singleton.IsListening}");
+
+        //Hostでしか実行されないようにする
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            Debug.Log("[RPC] Clientで誤実行されたためスキップ");
+            return;
+        }
+        
+        Debug.Log($"[Host] Client {clientId} からPlayer生成リクエストを受信");
+
+        GameObject newPlayer = Instantiate(_playerObject, pos, rot);
+        GameManager.Instance._objectList.Add(newPlayer);
+        
+        var netObj = newPlayer.GetComponent<NetworkObject>();
+        //Network上に登録するときにそのプレイヤーの所有権を決めれる(ClientID)
+        //Netcode では 「所有権（ownership）」＝ そのオブジェクトの処理をどこで実行するかの主導権を決める仕組み
+        //「このオブジェクトの動作や入力をどのクライアントが担当するか」が明確に決まります。
+        //またDefaltPlayerを上書きするからプレイヤーのオブジェクトにのみ有効
+        netObj.SpawnAsPlayerObject(clientId);
+
+        //ネットワークへの登録が終わったらネットワーク上で共有されるNetworkListに登録
+        //これでどのClientから見ても同じものを参照できるよ
+        GameManager.Instance._networkObjectList.Add(new NetworkObjectReference(netObj));
+        
         
     }
+
+
+    /// <summary>
+    /// ローカルプレイヤーを削除し、同じ位置にNetworkプレイヤーを再生成して登録する
+    /// </summary>
+    private void ReplaceLocalPlayersWithNetworkPlayers()
+    {
+        var localPlayers = GameObject.FindGameObjectsWithTag("Player");
+
+
+        foreach (var lp in localPlayers)
+        {
+            // NetworkObjectがすでにあるならスキップ
+            if (lp.TryGetComponent<NetworkObject>(out var netObj))
+            {
+                Debug.Log($"[Network] 既にNetwork化されている: {lp.name}");
+                continue;
+            }
+
+            // Transform情報を保持
+            Vector3 pos = lp.transform.position;
+            Quaternion rot = lp.transform.rotation;
+
+            Debug.Log($"[Network] Local PlayerをNetwork上に再生成: {lp.name} at {pos}");
+            //Hostに自分の生成を依頼（ServerRpc）
+            
+            RequestPlayerSpawnServerRpc(NetworkManager.Singleton.LocalClientId, pos, rot);
+            
+            // 元のローカルオブジェクトを削除
+            Destroy(lp);
+            //リストからも消す
+            GameManager.Instance._objectList.Remove(lp);
+        }
+    }
+
 }

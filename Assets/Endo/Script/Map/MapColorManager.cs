@@ -69,7 +69,7 @@ public class MapColorManager : MonoBehaviour
         mapCamera.targetTexture = mapTexture;
         //mapCamera.cullingMask = LayerMask.GetMask(mapLayerName);
 
-        Debug.Log("ReplacementShader applied");
+        //Debug.Log("ReplacementShader applied");
 
         mapCamera.Render();
 

@@ -28,7 +28,7 @@ public class NetworkStartUI : MonoBehaviour
             if (GUILayout.Button("ホストとして接続"))
             {
                 _net.GetComponent<LanHost>().StartHostConnect();
-                _net.GetComponent<PlayerNetworkConnect>().InitPlayerNetwork();
+                //_net.GetComponent<PlayerNetworkConnect>().InitPlayerNetwork();
                 
                 //_net.GetComponent<LanHostDiscovery>().StartHostConnect();
 
@@ -37,7 +37,7 @@ public class NetworkStartUI : MonoBehaviour
             if (GUILayout.Button("ローカルLAN内のIPを自動取得してClientとして接続"))
             {
                 _net.GetComponent<LanClient>().StartClientConnect();
-                _net.GetComponent<PlayerNetworkConnect>().InitPlayerNetwork();
+                //_net.GetComponent<PlayerNetworkConnect>().InitPlayerNetwork();
 
                 //_net.GetComponent<LanClientDiscovery>().StartClientConnect();
 

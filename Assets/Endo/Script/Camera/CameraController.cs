@@ -1,4 +1,8 @@
+using NUnit.Framework;
+using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class CameraController : MonoBehaviour
 {
@@ -7,8 +11,8 @@ public class CameraController : MonoBehaviour
     private GameObject _player1;
     private GameObject _player2;
 
-    private GameObject[] _players;
-    
+    private List<GameObject> _players = new List<GameObject>();
+    [SerializeField] private PlayerNetworkConnect _playerNetworkConnect = default;    
 
     [Header("カメラ設定")]
     [SerializeField] private Vector3 _offset = new Vector3(0, 15, -15);
@@ -31,21 +35,53 @@ public class CameraController : MonoBehaviour
     private void Start()
     {
         _cam = GetComponent<Camera>();
+        var nm = NetworkManager.Singleton;
+
+        //ローカルネットワークに接続したとき
+        nm.OnClientConnectedCallback += OnClientConnected;
+        
     }
     // Update is called once per frame
     private void LateUpdate()
     {
-        //プレイヤーを登録
-        _players = GameObject.FindGameObjectsWithTag("Player");
+        
+
+        if(GameManager.Instance._IsLanModeActive == true)
+        {
+            //Debug.Log("カメラの処理をオンライン用に切り替えます");
+            /*Debug.Log(GameManager.Instance._objectList.Count);
+            foreach (var obj in GameManager.Instance._objectList)
+            {
+                Debug.Log(obj.name);
+            }*/
+            var players = GameManager.Instance._networkObjectList;
+
+            Debug.Log("ネットワークオブジェクトの数 = " + players.Count);
+            //Debug.Log(_players.Count);
+        }
+        else
+        {
+            _players.Clear();
+            //プレイヤーを登録
+            foreach(var ob in GameObject.FindGameObjectsWithTag("Player"))
+            {
+                _players.Add(ob);
+            }
+           
+        }
+
+        //プレイヤーがいないなら処理中止
+        if (_players.Count == 0)
+            return;
 
         //二人いないなら
-        if (_players.Length == 1)
+        if (_players.Count == 1)
         {
             //Debug.LogError("プレイヤー二人いねーよ");
             //Debug.Log("プレイヤー二人いないから繋げれねーってばよ");
             SinglePlayer();
         }
-        else if (_players.Length == 2)
+        else if (_players.Count == 2)
         {
             PairPlayer();
         }
@@ -57,6 +93,8 @@ public class CameraController : MonoBehaviour
 
         _player1 = _players[0];
         _player2 = _players[1];
+
+        if (_player1 == null||_player2 == null) return;
 
         //キー入力でピッチ角を変更
         if (Input.GetKey(KeyCode.UpArrow))
@@ -99,12 +137,6 @@ public class CameraController : MonoBehaviour
         bool outsideP2 = (viewPos2.x < outerBorder || viewPos2.x > 1f - outerBorder ||
                           viewPos2.y < outerBorder || viewPos2.y > 1f - outerBorder);
 
-        //Debug.Log(_cam.fieldOfView);
-        //Debug.Log(targetZoom);
-        //Debug.Log("プレイヤー1 " + viewPos1);
-        //Debug.Log("プレイヤー2 " + viewPos2);
-
-
         // スムーズに補間
         _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, targetZoom, Time.deltaTime * _zoomSpeed);
 
@@ -117,6 +149,8 @@ public class CameraController : MonoBehaviour
     private void SinglePlayer()
     {
         _player1 = _players[0];
+
+        if (_player1 == null) return;
 
         //キー入力でピッチ角を変更
         if (Input.GetKey(KeyCode.UpArrow))
@@ -146,6 +180,45 @@ public class CameraController : MonoBehaviour
         //見る位置
         center.y -= 1f;
         transform.LookAt(center);
+    }
+
+
+    private void OnClientConnected(ulong clientId)
+    {
+        //ローカル内に接続したときに再登録
+        StartCoroutine(DelayRegisterPlayer());
+    }
+
+    private IEnumerator DelayRegisterPlayer()
+    {
+
+        yield return new WaitForSeconds(_playerNetworkConnect._delayTime + 0.3f);
+        //Debug.Log("カメラが追うプレイヤーを再登録します");
+        RegisterPlayer();
+
+    }
+
+    private void RegisterPlayer()
+    {
+        _players.Clear();//一回リセット
+
+
+        foreach (var playerRef in GameManager.Instance._networkObjectList)
+        {
+            //これで「実際に存在するネットワークオブジェクトを取り出す」処理。
+            //成功した場合 playerObj に GameObject が入る。
+            if (playerRef.TryGet(out var playerObj))
+            {
+                //プレイヤーのタグを持っているかつ所有権があるなら
+                if(playerObj.gameObject.CompareTag("Player") && playerObj.IsOwner)
+                {
+                    //Debug.Log("所有権を持ったプレイヤーです");
+                    _players.Add(playerObj.gameObject);
+                }
+            }
+
+
+        }
     }
 
 }

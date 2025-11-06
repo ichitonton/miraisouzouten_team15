@@ -1,4 +1,10 @@
+using NUnit.Framework;
+using System;
+using System.Security.Cryptography;
+using Unity.Mathematics;
+using Unity.Netcode;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class ConnectPlayers : MonoBehaviour
 {
@@ -9,33 +15,55 @@ public class ConnectPlayers : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        //プレイヤーを登録
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        
+    }
 
-        //二人いないなら
-        if (players.Length < 2)
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+
+    public void Connect()
+    {
+
+        List<GameObject> players = new List<GameObject>();
+
+        foreach (var playerRef in GameManager.Instance._networkObjectList)
         {
-            Debug.Log("プレイヤー二人いねーよ");
-            Debug.Log("プレイヤー二人いないから繋げれねーってばよ");
-            return;
+            //これで「実際に存在するネットワークオブジェクトを取り出す」処理。
+            //成功した場合 playerObj に GameObject が入る。
+            if (playerRef.TryGet(out var playerObj))
+            {
+                //プレイヤーのタグを持っているかつ所有権があるなら
+                if (playerObj.gameObject.CompareTag("Player") && playerObj.IsOwner)
+                {
+                    Debug.Log("所有権を持ったプレイヤーです");
+                    players.Add(playerObj.gameObject);
+                }
+            }
+
+
         }
 
         _player1 = players[0];
         _player2 = players[1];
 
-        _player1.GetComponent<Transform>().position = new Vector3(0.0f, 5.0f, 0.0f);
-        _player2.GetComponent<Transform>().position = new Vector3(3.0f, 5.0f, 0.0f);
-
-
+       
         Rigidbody rb1 = _player1.GetComponent<Rigidbody>();
         Rigidbody rb2 = _player2.GetComponent<Rigidbody>();
 
         if (rb1 == null) rb1 = _player1.AddComponent<Rigidbody>();
         if (rb2 == null) rb2 = _player2.AddComponent<Rigidbody>();
 
+        if (rb1 == rb2)
+        {
+            Debug.LogError("同じRigidbodyにJointを接続しようとしています！");
+        }
 
-        _player1.transform.position = new Vector3(0.0f,1.0f,0.0f);
-        _player2.transform.position = new Vector3(3.0f, 1.0f, 0.0f);
+        _player1.transform.position = new Vector3(0.0f, 3.0f, 0.0f);
+        _player2.transform.position = new Vector3(3.0f, 3.0f, 0.0f);
 
 
         //紐の物理挙動を追加
@@ -66,14 +94,11 @@ public class ConnectPlayers : MonoBehaviour
         drive.maximumForce = Mathf.Infinity;
         joint.xDrive = joint.yDrive = joint.zDrive = drive;
 
+
+        GetComponent<RopeRenderer>().RegisterPlayers(_player1.transform, _player2.transform);
+
         //一応出す
         Debug.Log("プレイヤーコネクト完了");
-
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

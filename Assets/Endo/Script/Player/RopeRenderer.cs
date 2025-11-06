@@ -1,7 +1,8 @@
+using Unity.Netcode;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
-public class RopeRenderer : MonoBehaviour
+public class RopeRenderer : NetworkBehaviour
 {
     private Transform _player1;
     private Transform _player2;
@@ -11,29 +12,6 @@ public class RopeRenderer : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
-        //プレイヤーのポジションを登録
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-
-        //
-        if (players.Length < 2)
-        {
-            Debug.Log("プレイヤー二人いねーよ");
-            Debug.Log("プレイヤー二人いないから繋げれねーってばよ");
-            return;
-        }
-
-        _player1 = players[0].transform;
-        _player2 = players[1].transform;
-
-        _line = GetComponent<LineRenderer>();
-
-        //線をつなぐ頂点数を2にする
-        _line.positionCount = 2;
-
-        //線の太さ
-        _line.startWidth = 0.1f;
-        _line.endWidth = 0.1f;
 
     }
 
@@ -49,4 +27,21 @@ public class RopeRenderer : MonoBehaviour
         }
 
     }
+
+    public void RegisterPlayers(Transform player1, Transform player2)
+    {
+        
+        _player1 = player1.transform;
+        _player2 = player2.transform;
+
+        _line = GetComponent<LineRenderer>();
+
+        //線をつなぐ頂点数を2にする
+        _line.positionCount = 2;
+
+        //線の太さ
+        _line.startWidth = 0.1f;
+        _line.endWidth = 0.1f;
+    }
+
 }

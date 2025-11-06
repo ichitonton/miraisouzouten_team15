@@ -46,16 +46,20 @@ public class LanClient : MonoBehaviour
 
         Debug.Log("LAN Client Discovery: Starting discovery...");
 
-        _transport.ConnectionData.Port = 7778;// ← Hostの待受ポートと一致(同一PCだとだめかも)
+        //_transport.ConnectionData.Port = 7778;// ← Hostの待受ポートと一致(同一PCだとだめかも)
 
         if(GameManager.Instance._onlineMode == GameManager.OnlineMode.OnePC)
         {
+            Debug.Log("1つのPC");
+            _transport.ConnectionData.Port = 7778;// ← Hostの待受ポートと一致(同一PCだとだめかも)
             _ = SendDiscoveryRequestsOnePC();
             _ = ListenForResponses();
 
         }
         else if (GameManager.Instance._onlineMode == GameManager.OnlineMode.MoreTowPC)
         {
+            Debug.Log("2つのPC");
+            _transport.ConnectionData.Port = 7777;// ← Hostの待受ポートと一致(同一PCだとだめかも)
             // 問い合わせ送信と応答待ちを同時に実行
             _ = SendDiscoveryRequestsMoreTowPC();
             _ = ListenForResponses();
