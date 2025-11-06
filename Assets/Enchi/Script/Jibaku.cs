@@ -55,7 +55,6 @@ public class Jibaku : MonoBehaviour
 
             _moveDir = new Vector3(_distance.x, 0, _distance.z);
             _moveDir.Normalize();
-            _moveDir *= _moveSpeed;
 
             if (_moveDir.sqrMagnitude > 0.01f)
             {
@@ -78,7 +77,15 @@ public class Jibaku : MonoBehaviour
                 );
 
             }
-            _rigidbody.linearVelocity = _moveDir;
+            if (_rigidbody.linearVelocity.y > 0)
+            {
+                _moveDir.y = 0.0f;
+            }
+            else
+            {
+                _moveDir.y = _rigidbody.linearVelocity.y;
+            }
+                _rigidbody.linearVelocity = _moveDir * _moveSpeed;
         }
     }
 
