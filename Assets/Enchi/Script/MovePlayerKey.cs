@@ -1,5 +1,6 @@
 using NUnit.Framework.Constraints;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class MovePlayerKey : MonoBehaviour
 {
@@ -22,7 +23,9 @@ public class MovePlayerKey : MonoBehaviour
     [SerializeField] int _punchDamage = 20;
     [SerializeField] float _punchForce = 10.0f;
     [SerializeField] float _stunTime = 1.0f;//パンチした時のスタン時間
-    [SerializeField] GameObject _item;
+    [SerializeField] GameObject _itemObj; // 投げるオブジェクト
+    [SerializeField] Transform _target;
+    [SerializeField] float _itemFlightTime = 2.0f; // 投げるオブジェクトがターゲットに到達するまでの時間
 
 
     Rigidbody _rb;
@@ -33,11 +36,11 @@ public class MovePlayerKey : MonoBehaviour
     private int _currentHp;
     private float _moveSpeedInitial;
     private bool _canPunch = true;
-    private Item _haveItem = Item.Bomb;
+    private ItemType _haveItem = ItemType.Bomb;
 
     [SerializeField] CanJump _FootCollider;
 
-    enum Item
+    enum ItemType
     {
         None,
         Bomb
@@ -63,7 +66,7 @@ public class MovePlayerKey : MonoBehaviour
             Jump();
             Punch();
         }
-        if (_haveItem != Item.None)
+        if (_haveItem != ItemType.None)
         {
             UseItem();
         }
@@ -241,17 +244,20 @@ public class MovePlayerKey : MonoBehaviour
         if (Input.GetKeyDown(_useItem))
         {
             bool _isChild = false;
+            GameObject _item = null;
 
             //for (int i = 0; i < transform.childCount; i++)
             //{
             //    //非アクティブの子オブジェクト検索
-            //    Transform _kari = transform.parent.GetChild(i);
-            //    if (_kari.gameObject.GetComponent<Item>() != null &&
-            //        !_kari.gameObject.activeSelf)
+            //    GameObject _kari = transform.GetChild(i).gameObject;
+            //    if (_kari.GetComponent<Item>() != null &&
+            //        !_kari.activeSelf)
             //    {
             //        _kari.gameObject.SetActive(true);
-            //        _kari.position = transform.position;
-            //        _kari.rotation = transform.rotation;
+            //        _kari.transform.position = transform.position;
+            //        _kari.transform.rotation = transform.rotation;
+
+            //        _item = _kari.gameObject;
 
             //        _isChild = true;
             //        break;
@@ -261,9 +267,32 @@ public class MovePlayerKey : MonoBehaviour
             //子オブジェクトが足りなければ新規作成
             if (!_isChild)
             {
-                Instantiate(_item, transform.position + transform.forward * 1.0f, transform.rotation, transform.parent).
-                    GetComponent<Rigidbody>().AddForce((transform.forward + Vector3.up) * 4.0f,ForceMode.Impulse);
+                _item = Instantiate(_itemObj, transform.position + transform.up * 1.5f, transform.rotation);
             }
+
+
+            if (!_target || !_item) return;
+            Rigidbody rb = _item.GetComponent<Rigidbody>();
+
+            // 初速度を計算して付与
+            Vector3 velocity = CalculateVelocity(_target.position, _item.transform.position, _itemFlightTime);
+            rb.linearVelocity = velocity;
         }
+
+        /// target に time 秒で到達するための初速度を計算
+        Vector3 CalculateVelocity(Vector3 target, Vector3 origin, float time)
+        {
+            Vector3 distance = target - origin;
+            Vector3 distanceXZ = new Vector3(distance.x, 0, distance.z);
+
+            float sy = distance.y;
+            float sxz = distanceXZ.magnitude;
+
+            Vector3 result = distanceXZ / time; // XZ方向の速度
+            result.y = sy / time - 0.5f * Physics.gravity.y * time;
+
+            return result;
+        }
+
     }
 }
