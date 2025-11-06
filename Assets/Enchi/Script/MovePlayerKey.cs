@@ -40,10 +40,11 @@ public class MovePlayerKey : MonoBehaviour
 
     [SerializeField] CanJump _FootCollider;
 
-    enum ItemType
+    public enum ItemType
     {
         None,
-        Bomb
+        Bomb,
+        Max
     }
 
 
@@ -88,10 +89,27 @@ public class MovePlayerKey : MonoBehaviour
         return _stunTime;
     }
 
+    public ItemType GetHaveItem()
+    {
+        return _haveItem;
+    }
+
 
     //
     //ステータスいじる関係
     //
+
+    //アイテム入手（アイテム抽選時間）
+    public void LotteryHaveItem(float itemLotteryTime)
+    {
+        _haveItem = ItemType.Max;
+        Invoke("SetHaveItem", itemLotteryTime);
+    }
+
+    void SetHaveItem()
+    {
+        _haveItem = (ItemType)Random.Range((int)ItemType.Bomb, (int)ItemType.Max);
+    }
 
     //あべこべ移動速度を逆転させる（何秒後にリセットするか）
     public void MoveSpeedAbekobe(float delay)
