@@ -83,7 +83,7 @@ public class Jibaku : MonoBehaviour
             }
             else
             {
-                _moveDir.y = _rigidbody.linearVelocity.y;
+                _moveDir.y = _rigidbody.linearVelocity.y * 0.5f;
             }
                 _rigidbody.linearVelocity = _moveDir * _moveSpeed;
         }
