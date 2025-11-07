@@ -3,8 +3,13 @@ using UnityEngine.SceneManagement;
 
 public class SceneChangerWithSoundInvoke : MonoBehaviour
 {
+<<<<<<< HEAD
     public AudioClip soundEffect;
     public string nextSceneName;
+=======
+    [SerializeField] private AudioClip soundEffect;
+    [SerializeField] private string nextSceneName;
+>>>>>>> feature/sekiyan2
     private AudioSource audioSource;
 
     void Start()
@@ -22,7 +27,11 @@ public class SceneChangerWithSoundInvoke : MonoBehaviour
         Invoke("LoadNextScene", soundEffect.length);
     }
 
+<<<<<<< HEAD
     private void LoadNextScene()
+=======
+    public void LoadNextScene()
+>>>>>>> feature/sekiyan2
     {
         SceneManager.LoadScene(nextSceneName);
     }
