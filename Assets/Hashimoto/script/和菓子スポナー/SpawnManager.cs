@@ -1,40 +1,65 @@
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class SpawnManager : MonoBehaviour
 {
-    public int maxSweets = 18;
+	[Header("数の制限")]
+	[SerializeField] int maxSweets = 18;
+	[SerializeField] int minSweets = 10;
 
+	[Header("スポーン設定")]
+	[SerializeField] float respawnDelay = 1.0f; // 消滅から再生成までの遅延（秒）
+	[SerializeField] Sponer_Wagashi[] spawners;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    [SerializeField] List<GameObject> objList;
-    [SerializeField] Sponer_Wagashi[] spawners;
-    void Start()
-    {
-        GameObject[] objs = GameObject.FindGameObjectsWithTag("Sweets");
-        objList = new List<GameObject>(objs);
-    }
+	private List<GameObject> objList;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if(objList.Count<maxSweets)
-        {
-            //�ǂ̃X�|�[�i���炾����
-            int val=Random.Range(0, spawners.Length);
+	void Start()
+	{
+		GameObject[] objs = GameObject.FindGameObjectsWithTag("Sweets");
+		objList = new List<GameObject>(objs);
+		Debug.LogWarning($"[SpawnMgr] Init: alive={objs.Length} / list={objList.Count}");
+	}
 
-           
-            GameObject work=spawners[val].Spawn();
-            objList.Add(work);
-        }
-    }
+	public void DestroySweets(GameObject sweets)
+	{
+		if (!objList.Contains(sweets)) return;
+		objList.Remove(sweets);
 
-    public void DestroySweets(GameObject sweets)
-    {//���X�g����Q�Ə���
+		StartCoroutine(RespawnAfterDelay(respawnDelay));
+	}
 
-        if (objList.Contains(sweets))
-        {
-            objList.Remove(sweets);
-        }
-    }
+	private IEnumerator RespawnAfterDelay(float delay)
+	{
+		yield return new WaitForSeconds(delay);
+
+		int nowCount = objList.Count;
+		float probability = GetSpawnProbability(nowCount);
+		float randomValue = Random.value;
+
+		if (randomValue < probability && nowCount < maxSweets)
+		{
+			int val = Random.Range(0, spawners.Length);
+			GameObject work = spawners[val].Spawn();
+			objList.Add(work);
+
+			Debug.LogWarning($"[Respawn ✅] Count={nowCount + 1}, Delay={delay:F1}s, Prob={probability:P0}, Spawner={val}");
+		}
+		else
+		{
+			Debug.LogWarning($"[No Respawn ❌] Count={nowCount}, Delay={delay:F1}s, Prob={probability:P0}");
+		}
+	}
+
+	// 現在数に応じたスポーン確率（0〜1）
+	float GetSpawnProbability(int currentCount)
+	{
+		if (currentCount <= minSweets)
+			return 1f;
+		if (currentCount >= maxSweets)
+			return 0f;
+
+		float t = Mathf.InverseLerp(maxSweets, minSweets, currentCount);
+		return Mathf.Clamp01(t);
+	}
 }
