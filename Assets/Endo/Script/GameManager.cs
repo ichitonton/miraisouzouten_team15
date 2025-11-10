@@ -1,0 +1,149 @@
+using NUnit.Framework;
+using TMPro;
+using Unity.Netcode;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Collections.Generic;
+using NUnit.Framework.Interfaces;
+
+
+public class GameManager : NetworkBehaviour
+{
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    [SerializeField] private GameObject _ropeObject;
+    [SerializeField] private GameObject _ui;
+    [Header("ローカル内で動くやつだからNetworkObjectついてないプレイヤー入れてね")]
+    [SerializeField] private GameObject _player;
+    private GameObject[] _players;
+    private GameObject _networkUi;
+
+    public bool _IsLanModeActive => NetworkManager.Singleton.IsListening;
+
+    // シングルトンのグローバルなアクセスポイント (public static)
+    public static GameManager Instance { get; private set; }
+
+    public enum Mode
+    {
+        Keyboard,
+        Gamepad
+    }
+
+    public enum OnlineMode
+    {
+        OnePC,
+        MoreTowPC
+    }
+
+    [Header("操作モード設定")]
+    public Mode _controlMode = Mode.Keyboard;
+
+    [Header("通信モード")]
+    public OnlineMode _onlineMode = OnlineMode.OnePC;
+
+    public List<GameObject> _objectList = new List<GameObject>();
+    public NetworkList<NetworkObjectReference> _networkObjectList = new NetworkList<NetworkObjectReference>();
+
+    private void Awake()
+    {
+        //シングルトンのインスタンス生成
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+        Application.targetFrameRate = 60;
+    }
+    
+
+    private void OnGUI()
+    {
+        //ホストとして入る
+        if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 50, 100, 30), "プレイヤー生成"))
+        {
+            List<GameObject> players = _objectList.FindAll(obj => obj.CompareTag("Player"));
+
+            if (players.Count >= 2)
+            {
+                Debug.Log("プレイヤー二人もういますけど");
+                return;
+            }
+
+            GameObject player = Instantiate(_player, new Vector3(0f, 5.0f, 0f), Quaternion.identity);
+            _objectList.Add(player);
+        }
+        //繋げる
+        if (GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height / 2, 100, 30), "ロープで繋げる"))
+        {
+            if (!_IsLanModeActive) return;
+
+            ulong myId = NetworkManager.Singleton.LocalClientId;
+
+            foreach (var ropeRef in _networkObjectList)
+            {
+                if (ropeRef.TryGet(out var ropeObj))
+                {
+                    var netObj = ropeObj.GetComponent<NetworkObject>();
+                    if(netObj.gameObject.CompareTag("Rope") && netObj.OwnerClientId == myId)
+                    {
+
+                    }
+                }
+            }
+
+        }
+    }
+    // Update is called once per frame
+    void LateUpdate()
+    {
+
+    }
+
+    private void OnClientDisconnected(ulong clientId)
+    {
+        Debug.Log($"Client Connected: {clientId}");
+    }
+    private void OnClientConnected(ulong clientId)
+    {
+        Debug.Log($"Client Connected: {clientId}");
+        
+        // ここで「プレイヤーが二人になった瞬間」に処理を入れられる
+        if (NetworkManager.Singleton.ConnectedClients.Count == 2)
+        {
+            Debug.Log("2人そろった！");
+
+            if (_ui != null)
+            {
+                //UIを出す
+                if (_ui.activeSelf == true)
+                {
+                    _ui.SetActive(false);
+                }
+            }
+            if (_ui != null)
+            {
+                if(_networkUi.activeSelf == false)
+                {
+                    _networkUi.SetActive(true);
+                }
+            }
+               
+        }
+    }
+
+    private void RegisterNetworkConnectEvent(Scene scene, LoadSceneMode mode)
+    {
+
+        if(NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+            NetworkManager.Singleton.OnClientConnectedCallback += OnClientDisconnected;
+        }
+        
+    }
+
+}
