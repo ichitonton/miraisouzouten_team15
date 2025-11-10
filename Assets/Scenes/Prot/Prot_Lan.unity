@@ -6557,7 +6557,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5874703381638314871, guid: aec5b00b8bff49e459f493970a308894, type: 3}
   m_PrefabInstance: {fileID: 3615421271661547756}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 3615421271661547757}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63f1e7770b536b742b89cb5daeeb14f8, type: 3}
@@ -7144,10 +7144,6 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 4096117968
       objectReference: {fileID: 0}
-    - target: {fileID: 5622000459914517194, guid: aec5b00b8bff49e459f493970a308894, type: 3}
-      propertyPath: InScenePlacedSourceGlobalObjectIdHash
-      value: 464179852
-      objectReference: {fileID: 0}
     - target: {fileID: 8136259294011377221, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: m_Name
       value: NetworkConnectManager
@@ -7155,8 +7151,31 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8136259294011377221, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3615421271661547758}
   m_SourcePrefab: {fileID: 100100000, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+--- !u!1 &3615421271661547757 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8136259294011377221, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+  m_PrefabInstance: {fileID: 3615421271661547756}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3615421271661547758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3615421271661547757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61f8abd1e8cb1d847b56963b2998ab08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RopeSpawner
+  ShowTopMostFoldoutHeaderGroup: 1
+  _ropeObject: {fileID: 4539873046796818136, guid: 09ed5bd1a98c2bb4ea758e22e0c7513a, type: 3}
+  _delayTime: 0.1
 --- !u!1001 &4082449777548392957
 PrefabInstance:
   m_ObjectHideFlags: 0
