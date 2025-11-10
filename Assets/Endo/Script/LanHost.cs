@@ -50,21 +50,25 @@ public class LanHost : MonoBehaviour
 
         if(GameManager.Instance._onlineMode == GameManager.OnlineMode.OnePC)
         {
-           
+            Debug.Log("PC1台 : Host");
             //ホストとして入室
             _transport.ConnectionData.Address = "0.0.0.0";// ← どこからでも接続を受ける
-            _transport.ConnectionData.Port = 7777;// ← Netcodeの待ち受けポート(同一PCからだとClientのportが被ってソケットエラーになるよ)
+            _transport.ConnectionData.Port = 7778;// ← Netcodeの待ち受けポート(同一PCからだとClientのportが被ってソケットエラーになるよ)
             _transport.SetConnectionData("0.0.0.0", 7777);//あなたはホストとしてどのIPアドレスでも受け取れるようにポート7777で待機しなさい。
             NetworkManager.Singleton.StartHost();
 
             // 非同期でリッスン開始
             _ = ListenForDiscoveryRequestsOnePC();
         }
-        if (GameManager.Instance._onlineMode == GameManager.OnlineMode.MoreTowPC)
+        else if (GameManager.Instance._onlineMode == GameManager.OnlineMode.MoreTowPC)
         {
+
+            Debug.Log("PC2台 : Host");
+            //2台のPCでのブロードキャストパケットの送信に必要
+            _udpClient.EnableBroadcast = true;
             //ホストとして入室
             _transport.ConnectionData.Address = "0.0.0.0";// ← どこからでも接続を受ける
-            _transport.ConnectionData.Port = 7777;// ← Netcodeの待ち受けポート(同一PCからだとClientのportが被ってソケットエラーになるよ)
+            _transport.ConnectionData.Port = 7777;// PC2台の場合は同じにして
             _transport.SetConnectionData("0.0.0.0", 7777);//あなたはホストとしてどのIPアドレスでも受け取れるようにポート7777で待機しなさい。
             NetworkManager.Singleton.StartHost();
 
