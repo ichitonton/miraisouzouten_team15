@@ -37,10 +37,13 @@ public class playerSpawner : MonoBehaviour
 
     private void OnGUI()
     {
-        //ホストとして入る
-        if (GUI.Button(new Rect(100, Screen.height  - 30, 100, 30), "つなぐ"))
+        if (GUI.Button(new Rect(100, Screen.height - 30, 100, 30), "つなぐ"))
         {
             Joint();
+        }
+        if (GUI.Button(new Rect(200, Screen.height - 30, 100, 30), "リスポーン"))
+        {
+            Respawn();
         }
     }
 
@@ -65,8 +68,9 @@ public class playerSpawner : MonoBehaviour
                 _B = _playerB;
             }
             else
+            {
                 _B = Instantiate(_joint, this.transform.position + new Vector3(0.01f * i, 0, 0), this.transform.rotation, this.transform);
-
+            }
             // 上側のジョイント設定
             ConfigurableJoint upper = _B.AddComponent<ConfigurableJoint>();
             upper.xMotion = ConfigurableJointMotion.Limited;
@@ -139,4 +143,17 @@ public class playerSpawner : MonoBehaviour
 
     }
 
+    public void Respawn()
+    {
+        _playerA.transform.position = this.transform.position + new Vector3(0, -1.0f, 0);
+        _playerA.transform.rotation = transform.rotation;
+        _playerB.transform.position = this.transform.position + new Vector3(0.01f * (_jointCount + 1), -1, 0);
+        _playerB.transform.rotation = transform.rotation;
+
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).transform.position = this.transform.position + new Vector3(0.01f * i, 0, 0);
+            transform.GetChild(i).transform.rotation = this.transform.rotation;
+        }
+    }
 }
