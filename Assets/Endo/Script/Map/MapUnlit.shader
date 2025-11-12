@@ -1,40 +1,55 @@
-Shader "Custom/MapUnlit"
+Shader "Custom/MapUnlit_URP"
 {
-    Properties { _Color("Color", Color) = (1,0,0,1) }
+    Properties
+    {
+        _Color("Color", Color) = (1,0,1,1)
+    }
+
     SubShader
     {
-        Tags {
-            "RenderType"="Opaque"
-            "RenderPipeline"="UniversalPipeline" 
-            "Queue"="Geometry"
+        Tags
+        {
+            "RenderPipeline" = "UniversalPipeline"
+            "RenderType" = "Opaque"
+            "Queue" = "Geometry"
         }
+
         Pass
         {
-            Name "UniversalForward"
-            Tags { "LightMode"="UniversalForward" }
+            Name "MapUnlit"
+            Tags { "LightMode" = "UniversalForward" } // ← これが必須！
 
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-            struct Attributes { float4 positionOS : POSITION; };
-            struct Varyings { float4 positionHCS : SV_POSITION; };
+            struct Attributes
+            {
+                float4 positionOS : POSITION;
+            };
+
+            struct Varyings
+            {
+                float4 positionHCS : SV_POSITION;
+            };
 
             float4 _Color;
 
-            Varyings vert (Attributes input)
+            Varyings vert(Attributes input)
             {
                 Varyings o;
                 o.positionHCS = TransformObjectToHClip(input.positionOS.xyz);
                 return o;
             }
 
-            half4 frag (Varyings input) : SV_Target
+            half4 frag(Varyings input) : SV_Target
             {
-                return _Color;
+                // テスト用に強制マゼンタ
+                return half4(1,0,1,1);
             }
             ENDHLSL
         }
     }
+    FallBack Off
 }
