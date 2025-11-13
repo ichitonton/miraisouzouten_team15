@@ -17,7 +17,7 @@ public class playerSpawner : MonoBehaviour
     [SerializeField] float _lowerDamper = 150f;
     [SerializeField] float halfHeight = 0.5f; // オブジェクトの半分の高さ
     [SerializeField] GameObject _jointPool;
-    [SerializeField] NetworkObjectSpawner _objectSpawner;
+    //[SerializeField] NetworkObjectSpawner _objectSpawner;
 
     private GameObject _playerA;
     private GameObject _playerB;
@@ -35,8 +35,9 @@ public class playerSpawner : MonoBehaviour
 
     void PlayerSpawn()
     {
-        _playerA = _objectSpawner.ObjectInstantiate(_player1, NetworkManager.Singleton.LocalClientId);
-        _playerB = _objectSpawner.ObjectInstantiate(_player2, NetworkManager.Singleton.LocalClientId);
+        //_objectSpawner.ObjectInstantiate(_player1, NetworkManager.Singleton.LocalClientId);
+        //_objectSpawner.ObjectInstantiate(_player2, NetworkManager.Singleton.LocalClientId);
+
         _playerA.transform.position = this.transform.position + new Vector3(0, -1, 0);
         _playerA.transform.rotation = transform.rotation;
         _playerB.transform.position = this.transform.position + new Vector3(0.01f * (_jointCount + 1), -1, 0);
@@ -57,7 +58,7 @@ public class playerSpawner : MonoBehaviour
 
     void SpawnJoint()
     {
-        _jointPoolkari = _objectSpawner.ObjectInstantiate(_jointPool, NetworkManager.Singleton.LocalClientId);
+        //_jointPoolkari = _objectSpawner.ObjectInstantiate(_jointPool, NetworkManager.Singleton.LocalClientId);
 
         _jointPoolkari.transform.position = this.transform.position;
         _jointPoolkari.transform.rotation = this.transform.rotation;
