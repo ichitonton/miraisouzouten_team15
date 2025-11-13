@@ -31,6 +31,9 @@ public class playerSpawner : MonoBehaviour
     void Start()
     {
         PlayerSpawn();
+
+        //プレイヤー検索
+        
     }
 
     void PlayerSpawn()
@@ -58,6 +61,8 @@ public class playerSpawner : MonoBehaviour
 
     void SpawnJoint()
     {
+
+        //ジョイントプール生成
         //_jointPoolkari = _objectSpawner.ObjectInstantiate(_jointPool, NetworkManager.Singleton.LocalClientId);
 
         _jointPoolkari.transform.position = this.transform.position;

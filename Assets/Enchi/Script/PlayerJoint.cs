@@ -49,18 +49,6 @@ public class PlayerJoint : MonoBehaviour
         GameObject _B;
         Vector3 spawnRotation = new Vector3(0, 0, 0);
 
-        //非アクティブの子オブジェクト検索
-        //GameObject _kari = transform.GetChild(i);
-        //if (_kari.gameObject.GetComponent<CannonBullet>() != null &&
-        //    !_kari.gameObject.activeSelf)
-        //{
-        //    _kari.gameObject.SetActive(true);
-        //    _kari.transform.position = ;
-        //    _kari.transform.rotation = ;
-
-        //    _isChild = true;
-        //    break;
-        //}
         for (int i = 0; i <= transform.childCount; i++)
         {
             if (i == transform.childCount)
