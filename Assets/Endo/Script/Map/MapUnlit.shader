@@ -1,52 +1,36 @@
-Shader "Custom/MapUnlit_URP"
+Shader "Custom/MapUnlit"
 {
-    Properties
-    {
-        _Color("Color", Color) = (1,0,1,1)
-    }
+    Properties { _Color("Color", Color) = (1,1,1,1) }
 
     SubShader
     {
-        Tags
-        {
-            "RenderPipeline" = "UniversalPipeline"
-            "RenderType" = "Opaque"
-            "Queue" = "Geometry"
-        }
+        Tags{ "RenderPipeline"="UniversalPipeline" "RenderType"="Opaque" "Queue"="Geometry" }
 
         Pass
         {
-            Name "MapUnlit"
-            Tags { "LightMode" = "UniversalForward" } // ← これが必須！
+            Name "SRPDefaultUnlit"
+            Tags { "LightMode"="SRPDefaultUnlit" }
 
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-            struct Attributes
-            {
-                float4 positionOS : POSITION;
-            };
-
-            struct Varyings
-            {
-                float4 positionHCS : SV_POSITION;
-            };
+            struct Attributes { float4 positionOS : POSITION; };
+            struct Varyings   { float4 positionHCS : SV_POSITION; };
 
             float4 _Color;
 
-            Varyings vert(Attributes input)
+            Varyings vert (Attributes IN)
             {
                 Varyings o;
-                o.positionHCS = TransformObjectToHClip(input.positionOS.xyz);
+                o.positionHCS = TransformObjectToHClip(IN.positionOS.xyz);
                 return o;
             }
 
-            half4 frag(Varyings input) : SV_Target
+            half4 frag (Varyings i) : SV_Target
             {
-                // テスト用に強制マゼンタ
-                return half4(1,0,1,1);
+                return float4(_Color.rgb, 1); // 透明を避けたいなら return float4(_Color.rgb, 1);
             }
             ENDHLSL
         }

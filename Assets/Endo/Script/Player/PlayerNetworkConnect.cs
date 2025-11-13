@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using System;
+using System.Runtime.InteropServices;
 
 
 
@@ -13,13 +14,15 @@ public class PlayerNetworkConnect : NetworkBehaviour
     public string memo;
 
 
-    [Header("生成するPlayer")]
-    [SerializeField] private GameObject _playerObject; // Hostが生成する用
-    [Header("Hostが生成する紐Prefab")]
-    [SerializeField] private GameObject ropeObject;
+    [Header("NetworkObject付きの生成するPlayer1")]
+    [SerializeField] private GameObject _playerObject1; // Hostが生成する用
+    [Header("NetworkObject付きの生成するPlayer2")]
+    [SerializeField] private GameObject _playerObject2;
+
     [Header("接続してからプレイヤーを生成するときの遅延")]
-    public float _delayTime = 0.1f; 
-   
+    public float _delayTime = 0.1f;
+
+    private int playerCount = 0;
 
     private void Start()
     {
@@ -110,7 +113,13 @@ public class PlayerNetworkConnect : NetworkBehaviour
         
         Debug.Log($"[Host] Client {clientId} からPlayer生成リクエストを受信");
 
-        GameObject newPlayer = Instantiate(_playerObject, pos, rot);
+        GameObject newPlayer = default;
+        if (playerCount == 1)
+            newPlayer = Instantiate(_playerObject1, pos, rot);
+        else if (playerCount == 2)
+            newPlayer = Instantiate(_playerObject2, pos, rot);
+
+
         GameManager.Instance._objectList.Add(newPlayer);
         
         var netObj = newPlayer.GetComponent<NetworkObject>();
@@ -135,9 +144,10 @@ public class PlayerNetworkConnect : NetworkBehaviour
     {
         var localPlayers = GameObject.FindGameObjectsWithTag("Player");
 
-
+        
         foreach (var lp in localPlayers)
         {
+            playerCount++;
             // NetworkObjectがすでにあるならスキップ
             if (lp.TryGetComponent<NetworkObject>(out var netObj))
             {
@@ -151,14 +161,17 @@ public class PlayerNetworkConnect : NetworkBehaviour
 
             Debug.Log($"[Network] Local PlayerをNetwork上に再生成: {lp.name} at {pos}");
             //Hostに自分の生成を依頼（ServerRpc）
-            
+           
             RequestPlayerSpawnServerRpc(NetworkManager.Singleton.LocalClientId, pos, rot);
-            
+
             // 元のローカルオブジェクトを削除
             Destroy(lp);
             //リストからも消す
             GameManager.Instance._objectList.Remove(lp);
         }
+
+        playerCount = 0;
+
     }
 
 }

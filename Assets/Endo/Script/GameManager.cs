@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using NUnit.Framework.Interfaces;
+using UnityEditor.Networking.PlayerConnection;
 
 
 public class GameManager : NetworkBehaviour
@@ -14,7 +15,8 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private GameObject _ropeObject;
     [SerializeField] private GameObject _ui;
     [Header("ローカル内で動くやつだからNetworkObjectついてないプレイヤー入れてね")]
-    [SerializeField] private GameObject _player;
+    [SerializeField] private GameObject _player1;
+    [SerializeField] private GameObject _player2;
     private GameObject[] _players;
     private GameObject _networkUi;
 
@@ -42,6 +44,9 @@ public class GameManager : NetworkBehaviour
     public OnlineMode _onlineMode = OnlineMode.OnePC;
 
     public List<GameObject> _objectList = new List<GameObject>();
+
+
+    //ネットワークオブジェクトのリスト
     public NetworkList<NetworkObjectReference> _networkObjectList = new NetworkList<NetworkObjectReference>();
 
     private void Awake()
@@ -50,6 +55,7 @@ public class GameManager : NetworkBehaviour
         if (Instance == null)
         {
             Instance = this;
+            //シーンの切り替えで消えない
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -62,8 +68,8 @@ public class GameManager : NetworkBehaviour
 
     private void OnGUI()
     {
-        //ホストとして入る
-        if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 50, 100, 30), "プレイヤー生成"))
+        
+        if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 100, 120, 30), "プレイヤー1生成"))
         {
             List<GameObject> players = _objectList.FindAll(obj => obj.CompareTag("Player"));
 
@@ -73,9 +79,25 @@ public class GameManager : NetworkBehaviour
                 return;
             }
 
-            GameObject player = Instantiate(_player, new Vector3(0f, 5.0f, 0f), Quaternion.identity);
+            GameObject player = Instantiate(_player1, new Vector3(0f, 5.0f, 0f), Quaternion.identity);
             _objectList.Add(player);
         }
+
+        //ホストとして入る
+        if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 50, 120, 30), "プレイヤー2生成"))
+        {
+            List<GameObject> players = _objectList.FindAll(obj => obj.CompareTag("Player"));
+
+            if (players.Count >= 2)
+            {
+                Debug.Log("プレイヤー二人もういますけど");
+                return;
+            }
+
+            GameObject player = Instantiate(_player2, new Vector3(0f, 5.0f, 0f), Quaternion.identity);
+            _objectList.Add(player);
+        }
+
         //繋げる
         if (GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height / 2, 100, 30), "ロープで繋げる"))
         {
@@ -90,7 +112,7 @@ public class GameManager : NetworkBehaviour
                     var netObj = ropeObj.GetComponent<NetworkObject>();
                     if(netObj.gameObject.CompareTag("Rope") && netObj.OwnerClientId == myId)
                     {
-
+                        netObj.gameObject.GetComponent<ConnectPlayers>().Connect();
                     }
                 }
             }

@@ -35,12 +35,15 @@ public class MapColorManager : MonoBehaviour
     private readonly Dictionary<string, Color> _nameToColor = new();
     private MaterialPropertyBlock _mpb;
 
+    private Material drawMat;
+
     private void Awake()
     {
 
         _mpb = new();
+        drawMat = new Material(replacementShader); // ← ここで1回だけ生成！
 
-        // 色テーブルを辞書化（小文字化して簡易一致）
+        // 色テーブル初期化
         _nameToColor.Clear();
         foreach (var e in _colorSettings)
         {
@@ -56,29 +59,43 @@ public class MapColorManager : MonoBehaviour
     {
 
 
-        if (mapCamera == null || mapTexture == null || replacementShader == null) return;
+        if (mapCamera == null || mapTexture == null || drawMat == null) return;
 
-        var rt = RenderTexture.active;
+        
+
+        var prevRT = RenderTexture.active;
         RenderTexture.active = mapTexture;
+
+        //ここ重要：全クリア
         GL.Clear(true, true, Color.black);
 
-        Material drawMat = new Material(replacementShader);
+        // MapCamera の行列を使って描画
+        GL.PushMatrix();
+        GL.LoadProjectionMatrix(mapCamera.projectionMatrix);
+        GL.modelview = mapCamera.worldToCameraMatrix;
+
+        Debug.Log("登録されてるMapオブジェクト" + registeredObjects.Count);
 
         foreach (var go in registeredObjects)
         {
             if (go == null) continue;
-            var rends = go.GetComponentsInChildren<MeshRenderer>();
-            foreach (var r in rends)
-            {
-                var mesh = r.GetComponent<MeshFilter>()?.sharedMesh;
-                if (mesh == null) continue;
 
-                drawMat.SetColor("_Color", Color.red); // 仮で赤
-                Graphics.DrawMeshNow(mesh, r.localToWorldMatrix);
-            }
+            var rend = go.GetComponent<MeshRenderer>();
+            var mf = go.GetComponent<MeshFilter>();
+            //レンダラーとフィルターがないなら
+            if (rend == null || mf == null) continue;
+
+            // タグ色取得
+            Color baseColor;
+            if (!_nameToColor.TryGetValue(go.tag.ToLower(), out baseColor))
+                baseColor = Color.white;
+
         }
 
-        RenderTexture.active = rt;
+
+        //MapTextureをマゼンタに統一描画
+        GL.PopMatrix();
+        RenderTexture.active = prevRT;
 
         /*
         if (mapCamera == null || mapTexture == null || replacementShader == null) return;
@@ -152,6 +169,30 @@ public class MapColorManager : MonoBehaviour
         // 3) PropertyBlockは残っていてもOK（Game側Toonは_CoIorを読まない）※念のため消したいなら下を有効化
         // ResetPropertyBlocks();
     }
+
+    //タグを取得
+    private bool TryGetBaseColor(GameObject go, out Color baseColor)
+    {
+        baseColor = Color.white;
+
+        string key = go.tag.ToLower();
+
+        if (_nameToColor.TryGetValue(key, out var c))
+        {
+            baseColor = c;
+            return true;
+        }
+        return false;
+    }
+
+    //高さによる明暗補正
+    private Color ApplyHeightBrightness(Color baseColor, Transform obj)
+    {
+        float heightDiff = obj.position.y - _player.position.y;
+        float brightness = Mathf.Clamp01(1f + heightDiff * heightSensitivity);
+        return baseColor * brightness;
+    }
+
 
     private void ResetPropertyBlocks()
     {
