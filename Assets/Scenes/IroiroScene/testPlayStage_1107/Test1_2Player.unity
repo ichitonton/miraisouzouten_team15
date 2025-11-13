@@ -3982,6 +3982,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f7cf2276ea7fa046923939241b96618, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TileGridSpawnerXY
+  xCount: 8
+  yCount: 8
+  tileSize: 1
+  centerToOrigin: 1
+  tilePrefab: {fileID: 0}
+  tileMaterial: {fileID: 0}
+  container: {fileID: 0}
 --- !u!4 &240672334
 Transform:
   m_ObjectHideFlags: 0
@@ -13565,7 +13572,7 @@ PrefabInstance:
     - target: {fileID: 7550963095654367113, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: _ropeObject
       value: 
-      objectReference: {fileID: 4539873046796818136, guid: 09ed5bd1a98c2bb4ea758e22e0c7513a, type: 3}
+      objectReference: {fileID: 8760411629864592299, guid: 764c8895dafe2e14692afc5e3025bafd, type: 3}
     - target: {fileID: 8136259294011377221, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: m_Name
       value: NetworkConnectManager
@@ -30228,6 +30235,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3253c8a1522e8cf4085227b5c0162276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TileGridSpawner
+  xCount: 8
+  zCount: 8
+  tileSize: 1
+  centerToOrigin: 1
+  tilePrefab: {fileID: 0}
+  tileMaterial: {fileID: 0}
+  container: {fileID: 0}
 --- !u!4 &1602897215
 Transform:
   m_ObjectHideFlags: 0
@@ -32470,6 +32484,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3253c8a1522e8cf4085227b5c0162276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TileGridSpawner
+  xCount: 8
+  zCount: 8
+  tileSize: 1
+  centerToOrigin: 1
+  tilePrefab: {fileID: 0}
+  tileMaterial: {fileID: 0}
+  container: {fileID: 0}
 --- !u!4 &1727229516
 Transform:
   m_ObjectHideFlags: 0
@@ -32958,6 +32979,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f7cf2276ea7fa046923939241b96618, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TileGridSpawnerXY
+  xCount: 8
+  yCount: 8
+  tileSize: 1
+  centerToOrigin: 1
+  tilePrefab: {fileID: 0}
+  tileMaterial: {fileID: 0}
+  container: {fileID: 0}
 --- !u!4 &1746523122
 Transform:
   m_ObjectHideFlags: 0

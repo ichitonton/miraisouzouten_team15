@@ -30,7 +30,7 @@ public class playerSpawner : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        PlayerSpawn();
+        //PlayerSpawn();
 
         //プレイヤー検索
         
@@ -65,16 +65,16 @@ public class playerSpawner : MonoBehaviour
         //ジョイントプール生成
         //_jointPoolkari = _objectSpawner.ObjectInstantiate(_jointPool, NetworkManager.Singleton.LocalClientId);
 
-        _jointPoolkari.transform.position = this.transform.position;
-        _jointPoolkari.transform.rotation = this.transform.rotation;
-        _jointPoolkari.SetActive(true);
-        _jointPoolkari.GetComponent<PlayerJoint>()._playerA = _playerA;
-        _jointPoolkari.GetComponent<PlayerJoint>()._playerB = _playerB;
+        //_jointPoolkari.transform.position = this.transform.position;
+        //_jointPoolkari.transform.rotation = this.transform.rotation;
+        //_jointPoolkari.SetActive(true);
+        //_jointPoolkari.GetComponent<PlayerJoint>()._playerA = _playerA;
+        //_jointPoolkari.GetComponent<PlayerJoint>()._playerB = _playerB;
 
-        for (int i = 0; i < _jointCount; i++)
-        {
-            Instantiate(_joint, this.transform.position + new Vector3(0.01f * i, 0, 0), this.transform.rotation, _jointPoolkari.transform).SetActive(false);
-        }
+        //for (int i = 0; i < _jointCount; i++)
+        //{
+        //    Instantiate(_joint, this.transform.position + new Vector3(0.01f * i, 0, 0), this.transform.rotation, _jointPoolkari.transform).SetActive(false);
+        //}
     }
 
     public void Respawn()

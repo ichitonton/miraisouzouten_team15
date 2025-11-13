@@ -137,7 +137,7 @@ public class RopeSpawner : NetworkBehaviour
         {
             Debug.Log($"[ClientRpc] Rope({ropeNetworkId}) の Connect.OnConnect() を実行");
             //プレイヤーをつなぐ処理
-            ropeObj.gameObject.GetComponent<ConnectPlayers>().Connect();
+            //ropeObj.gameObject.GetComponent<ConnectPlayers>().Connect();
             
         }
     }

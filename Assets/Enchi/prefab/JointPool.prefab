@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5336146898262021896}
   - component: {fileID: 1254333164094683626}
+  - component: {fileID: 4272240628196000379}
   m_Layer: 0
   m_Name: JointPool
   m_TagString: Untagged
@@ -44,8 +45,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b5cdece3c7cc4342825d7fbf8510252, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerJoint
+  _joint: {fileID: 6651513632882123144, guid: 5b42010e8a6b5014e8a4b3e7cb500cb8, type: 3}
+  _jointCount: 30
   _upperSpring: 1000
   _upperDamper: 100
   _lowerSpring: 1500
   _lowerDamper: 150
   halfHeight: 0.5
+--- !u!114 &4272240628196000379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8760411629864592299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 446740798
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0

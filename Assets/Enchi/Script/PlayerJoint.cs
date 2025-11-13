@@ -4,14 +4,17 @@ using UnityEngine;
 
 public class PlayerJoint : MonoBehaviour
 {
+
+    [SerializeField] GameObject _joint;
+    [SerializeField] int _jointCount = 30;
     [SerializeField] float _upperSpring = 1000f;
     [SerializeField] float _upperDamper = 100f;
     [SerializeField] float _lowerSpring = 1500f;
     [SerializeField] float _lowerDamper = 150f;
     [SerializeField] float halfHeight = 0.5f; // オブジェクトの半分の高さ
 
-    public GameObject _playerA;
-    public GameObject _playerB;
+    private GameObject _playerA;
+    private GameObject _playerB;
     private List<GameObject> _joints;
 
     private float _magicNumber = 0.5f;
@@ -20,28 +23,52 @@ public class PlayerJoint : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        List<GameObject> players = new List<GameObject>();
 
+        foreach (var playerRef in GameManager.Instance._networkObjectList)
+        {
+            //これで「実際に存在するネットワークオブジェクトを取り出す」処理。
+            //成功した場合 playerObj に GameObject が入る。
+            if (playerRef.TryGet(out var playerObj))
+            {
+                //プレイヤーのタグを持っているかつ所有権があるなら
+                if (playerObj.gameObject.CompareTag("Player") && playerObj.IsOwner)
+                {
+                    Debug.Log("所有権を持ったプレイヤーです");
+                    players.Add(playerObj.gameObject);
+                }
+            }
+
+
+        }
+        _playerA = players[0];
+        _playerB = players[1];
+
+        for (int i = 0; i < _jointCount; i++)
+        {
+            Instantiate(_joint, this.transform.position + new Vector3(0.01f * i, 0, 0), this.transform.rotation, this.transform).SetActive(false);
+        }
+
+            Joint();
     }
 
     private void OnGUI()
     {
         if (GUI.Button(new Rect(300, Screen.height - 30, 100, 30), "つなぐ"))
         {
-            Joint();
         }
     }
 
     void Joint()
     {
 
-        List<GameObject> players = new List<GameObject>();
 
         GameObject _husi_up = new GameObject();
         GameObject _husi_down = new GameObject();
         Debug.Log(_playerA);
-        _playerA.transform.position = this.transform.position + new Vector3(0, -1.0f, 0);
+        _playerA.transform.position = this.transform.position + new Vector3(0, -1.0f + _magicNumber, 0);
         _playerA.transform.rotation = transform.rotation;
-        _playerB.transform.position = this.transform.position + new Vector3(0.01f * (transform.childCount + 1), -1.0f, 0);
+        _playerB.transform.position = this.transform.position + new Vector3(0.01f * (transform.childCount + 1), -1.0f + _magicNumber, 0);
         _playerB.transform.rotation = transform.rotation;
 
 
@@ -59,7 +86,7 @@ public class PlayerJoint : MonoBehaviour
             {
                 _B = transform.GetChild(i).gameObject;
                 _B.SetActive(true);
-                _B.transform.position = this.transform.position + new Vector3(0.01f * i, 0, 0);
+                _B.transform.position = this.transform.position + new Vector3(0.01f * i, 0 + _magicNumber, 0);
                 _B.transform.rotation = this.transform.rotation;
             }
             // 上側のジョイント設定
