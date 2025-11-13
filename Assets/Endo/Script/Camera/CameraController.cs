@@ -37,6 +37,8 @@ public class CameraController : MonoBehaviour
         _cam = GetComponent<Camera>();
         var nm = NetworkManager.Singleton;
 
+        Debug.Log(NetworkManager.Singleton);
+
         //ローカルネットワークに接続したとき
         nm.OnClientConnectedCallback += OnClientConnected;
         

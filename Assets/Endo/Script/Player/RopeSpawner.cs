@@ -25,13 +25,38 @@ public class RopeSpawner : NetworkBehaviour
 
     private void OnHostStarted()
     {
-        
+        Debug.Log("Host : Ropeを作る");
+        //ホストは自分自身にリクエストを送る
+        StartCoroutine(DelayRequestRope(NetworkManager.Singleton.LocalClientId));
     }
 
     private void OnClientConnected(ulong clientId)
     {
+        var nm = NetworkManager.Singleton;
 
-       
+        // Host側：Clientが接続してきたときに実行される
+        if (nm.IsServer)
+        {
+            // Host自身のClientIdも通るが、Hostが自分で自分を処理する必要はない
+            if (clientId == nm.LocalClientId)
+            {
+                Debug.Log("[Host] Rope自分（Host）が接続したのでスキップ");
+                return;
+            }
+
+            Debug.Log($"[Host] Rope Client {clientId} が接続しました（Host側）");
+
+            return;
+        }
+
+        // Client側：Hostへの接続完了
+        if (nm.IsClient && !nm.IsServer)
+        {
+            Debug.Log($"[Client] Hostに接続完了: {clientId}");
+            //このclientIdからリクエストを送ったよ
+            StartCoroutine(DelayRequestRope(clientId));
+        }
+
 
     }
 
@@ -78,6 +103,7 @@ public class RopeSpawner : NetworkBehaviour
         // Ropeを生成
         GameObject rope = Instantiate(_ropeObject, Vector3.zero, Quaternion.identity);
         var netObj = rope.GetComponent<NetworkObject>();
+        //オブジェクトのオーナーを決める
         netObj.SpawnWithOwnership(clientId);
 
         // ClientRpcの送信先を1クライアントに限定
