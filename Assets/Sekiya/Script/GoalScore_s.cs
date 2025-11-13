@@ -23,9 +23,8 @@ public class GoalScore_s : MonoBehaviour
     private float score_now = 0f;
     private float score_total = 0f; // これが累計スコア
 
-    // ★★★ ランキングシステムから参照するためのゲッター ★★★
-    // RankingManager がこの TotalScore (score_total) を読み取れるように public にする
-    public float Score { get { return score_total; } }
+    // ランキングシステムから参照するためのゲッター
+    public  float Score { get { return score_total; } }
 
     // ====== タイマー ======
     private float countTime_up = 0.0f;
@@ -187,27 +186,13 @@ public class GoalScore_s : MonoBehaviour
 
     public void UpdateActiveObject()
     {
-        // 1. まず、配列に入っているGameObjectを「全部非表示」にする
-        // ※このやり方だと、配列の数が増えてもコードの変更がいらない
         for (int i = 0; i < countObjects.Length; i++)
         {
             if (countObjects[i] != null)
             {
-                // 2. 「i」が「count」と一致した時だけtrue (Active) にする
-                //    (例) countが「1」の時
-                //    i=0 の時 -> (0 == 1) は false -> SetActive(false)
-                //    i=1 の時 -> (1 == 1) は true  -> SetActive(true)
-                //    i=2 の時 -> (2 == 1) は false -> SetActive(false)
                 bool shouldBeActive = (i < count);
                 countObjects[i].SetActive(shouldBeActive);
             }
-        }
-
-        // 3. もしカウントが配列の範囲外だった場合の警告（任意）
-        if (count < 0 || count >= countObjects.Length)
-        {
-            Debug.LogWarning("カウント " + count + " に対応するGameObjectがありません。");
-            // このロジックだと、範囲外の時は自動的に全部非表示になる
         }
     }
 }
