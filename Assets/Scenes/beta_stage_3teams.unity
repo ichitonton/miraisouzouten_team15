@@ -1387,7 +1387,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_Hishimochi
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8745033324290287874, guid: dd9a5f8b428036b479daed04844aac44, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2705635764
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5694545309706789793, guid: dd9a5f8b428036b479daed04844aac44, type: 3}
+    - {fileID: 8745033324290287874, guid: dd9a5f8b428036b479daed04844aac44, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -3035,7 +3041,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 9163115985271332752, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3079654408
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 9163115985271332752, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
+    - {fileID: 7381112262745276538, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -3590,6 +3602,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1716311426}
     m_Modifications:
+    - target: {fileID: -2804731807352194797, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 327243291
+      objectReference: {fileID: 0}
     - target: {fileID: 3786234121961396847, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
       propertyPath: m_Name
       value: Model_IchigoDaihuku
@@ -3646,7 +3662,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5612469355770986460, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
+    - {fileID: -2804731807352194797, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -3839,7 +3857,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_Monaka
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 6033103434618220749, guid: d8773a82c121c6d44aae709673fd0f2e, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2197909172
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 577621446108074405, guid: d8773a82c121c6d44aae709673fd0f2e, type: 3}
+    - {fileID: 6033103434618220749, guid: d8773a82c121c6d44aae709673fd0f2e, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -4002,7 +4026,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   _GameManager: {fileID: 706702264}
-  _playerNetworkConnect: {fileID: 0}
+  _playerNetworkConnect: {fileID: 839674799}
   _offset: {x: 0, y: 15, z: -15}
   _smoothSpeed: 5
   _minZoom: 30
@@ -5595,7 +5619,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 9163115985271332752, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1609729692
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4107157524840924019, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
+    - {fileID: 9163115985271332752, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -6113,7 +6143,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_Hishimochi
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8745033324290287874, guid: dd9a5f8b428036b479daed04844aac44, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2903740245
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5694545309706789793, guid: dd9a5f8b428036b479daed04844aac44, type: 3}
+    - {fileID: 8745033324290287874, guid: dd9a5f8b428036b479daed04844aac44, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -6312,6 +6348,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1002651215}
     m_Modifications:
+    - target: {fileID: -3269816377888760926, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1973896798
+      objectReference: {fileID: 0}
     - target: {fileID: 8160404072800314456, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
       propertyPath: m_Name
       value: Model_KuriManzyu
@@ -6356,7 +6396,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -4666557566695390136, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
+    - {fileID: -3269816377888760926, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -6793,6 +6835,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1002651215}
     m_Modifications:
+    - target: {fileID: -2804731807352194797, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 89480000
+      objectReference: {fileID: 0}
     - target: {fileID: 3786234121961396847, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
       propertyPath: m_Name
       value: Model_IchigoDaihuku
@@ -6849,7 +6895,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5612469355770986460, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
+    - {fileID: -2804731807352194797, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -6924,6 +6972,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1002651215}
     m_Modifications:
+    - target: {fileID: -6635202830622940268, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2006141732
+      objectReference: {fileID: 0}
     - target: {fileID: 3600953943339591927, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -6980,7 +7032,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_KintarouAme
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -5168331792821485150, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
+    - {fileID: -6635202830622940268, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -8790,7 +8844,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_Monaka
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 6033103434618220749, guid: d8773a82c121c6d44aae709673fd0f2e, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3125391586
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 6033103434618220749, guid: d8773a82c121c6d44aae709673fd0f2e, type: 3}
+    - {fileID: 2853679185357932447, guid: d8773a82c121c6d44aae709673fd0f2e, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -8976,6 +9036,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1716311426}
     m_Modifications:
+    - target: {fileID: -6635202830622940268, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 548063549
+      objectReference: {fileID: 0}
     - target: {fileID: 3600953943339591927, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -9032,7 +9096,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_KintarouAme
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -5168331792821485150, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
+    - {fileID: -6635202830622940268, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -10118,6 +10184,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 724504353435010307, guid: aec5b00b8bff49e459f493970a308894, type: 3}
   m_PrefabInstance: {fileID: 1639328560}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &839674799 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5874703381638314871, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+  m_PrefabInstance: {fileID: 1639328560}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63f1e7770b536b742b89cb5daeeb14f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerNetworkConnect
 --- !u!1001 &858335255
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10683,6 +10760,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1716311426}
     m_Modifications:
+    - target: {fileID: 1950288592549660786, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1288670612
+      objectReference: {fileID: 0}
     - target: {fileID: 3552094123650941078, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 17.76
@@ -10727,7 +10808,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_Imoyoukan (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -3435484360423029924, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
+    - {fileID: 1950288592549660786, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -11373,7 +11456,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_Monaka
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 6033103434618220749, guid: d8773a82c121c6d44aae709673fd0f2e, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 168688050
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 577621446108074405, guid: d8773a82c121c6d44aae709673fd0f2e, type: 3}
+    - {fileID: 6033103434618220749, guid: d8773a82c121c6d44aae709673fd0f2e, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -12005,6 +12094,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1002651215}
+  - component: {fileID: 1002651216}
+  - component: {fileID: 1002651217}
   m_Layer: 0
   m_Name: GameObject (3)
   m_TagString: Untagged
@@ -12034,6 +12125,77 @@ Transform:
   - {fileID: 2104439519}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -131.603, z: 0}
+--- !u!114 &1002651216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1002651214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 2703340098
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &1002651217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1002651214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkTransform
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1 &1015064373
 GameObject:
   m_ObjectHideFlags: 0
@@ -14374,6 +14536,11 @@ CapsuleCollider:
   m_Height: 4.87279
   m_Direction: 1
   m_Center: {x: 0, y: -1.0003233, z: 0}
+--- !u!1 &1241192394 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3786234121961396847, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
+  m_PrefabInstance: {fileID: 1940306329}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1242821827
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15681,6 +15848,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1716311426}
     m_Modifications:
+    - target: {fileID: -3269816377888760926, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3772242371
+      objectReference: {fileID: 0}
     - target: {fileID: 8160404072800314456, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
       propertyPath: m_Name
       value: Model_KuriManzyu
@@ -15725,7 +15896,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -4666557566695390136, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
+    - {fileID: -3269816377888760926, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -16022,6 +16195,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1466954540}
     m_Modifications:
+    - target: {fileID: 1950288592549660786, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 4094072141
+      objectReference: {fileID: 0}
     - target: {fileID: 3552094123650941078, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 17.76
@@ -16066,7 +16243,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_Imoyoukan (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1950288592549660786, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
+    - {fileID: 8294118787305465651, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -17066,6 +17245,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1466954540}
+  - component: {fileID: 1466954541}
+  - component: {fileID: 1466954542}
   m_Layer: 0
   m_Name: GameObject (1)
   m_TagString: Untagged
@@ -17095,6 +17276,77 @@ Transform:
   - {fileID: 1823920960}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -11.603, z: 0}
+--- !u!114 &1466954541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466954539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 4246045391
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &1466954542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466954539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkTransform
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1001 &1481631030
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18681,7 +18933,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 724504353435010307, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.37258
+      value: 4.78
       objectReference: {fileID: 0}
     - target: {fileID: 724504353435010307, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: m_LocalPosition.z
@@ -18740,6 +18992,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1002651215}
     m_Modifications:
+    - target: {fileID: 1950288592549660786, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1315574162
+      objectReference: {fileID: 0}
     - target: {fileID: 3552094123650941078, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 17.76
@@ -18784,7 +19040,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_Imoyoukan (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -3435484360423029924, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
+    - {fileID: 1950288592549660786, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -19659,6 +19917,31 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4593873325428080853, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
   m_PrefabInstance: {fileID: 1940306329}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1710461720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1241192394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 3617690357
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1 &1714470910
 GameObject:
   m_ObjectHideFlags: 0
@@ -19721,6 +20004,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1716311426}
+  - component: {fileID: 1716311427}
+  - component: {fileID: 1716311428}
   m_Layer: 0
   m_Name: GameObject (2)
   m_TagString: Untagged
@@ -19750,6 +20035,77 @@ Transform:
   - {fileID: 2046230822}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 108.397, z: 0}
+--- !u!114 &1716311427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716311425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 3118861005
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &1716311428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716311425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkTransform
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1001 &1720471035
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21773,7 +22129,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_Hishimochi
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8745033324290287874, guid: dd9a5f8b428036b479daed04844aac44, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3457919054
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 8745033324290287874, guid: dd9a5f8b428036b479daed04844aac44, type: 3}
+    - {fileID: 5557194498003825472, guid: dd9a5f8b428036b479daed04844aac44, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -22027,6 +22389,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1466954540}
     m_Modifications:
+    - target: {fileID: -2804731807352194797, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3315690528
+      objectReference: {fileID: 0}
     - target: {fileID: 3786234121961396847, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
       propertyPath: m_Name
       value: Model_IchigoDaihuku
@@ -22083,10 +22449,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -2804731807352194797, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
+    - {fileID: 1116937337171333041, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3786234121961396847, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
+      insertIndex: 5
+      addedObject: {fileID: 1710461720}
   m_SourcePrefab: {fileID: 100100000, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
 --- !u!1001 &1941501939
 PrefabInstance:
@@ -22214,7 +22585,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 9163115985271332752, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1030106370
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4107157524840924019, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
+    - {fileID: 9163115985271332752, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -23237,6 +23614,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1466954540}
     m_Modifications:
+    - target: {fileID: -3269816377888760926, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2384416178
+      objectReference: {fileID: 0}
     - target: {fileID: 8160404072800314456, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
       propertyPath: m_Name
       value: Model_KuriManzyu
@@ -23281,7 +23662,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -3269816377888760926, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
+    - {fileID: 6507601863001847592, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -23373,6 +23756,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1466954540}
     m_Modifications:
+    - target: {fileID: -6635202830622940268, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3532690426
+      objectReference: {fileID: 0}
     - target: {fileID: 3600953943339591927, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -23429,7 +23816,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_KintarouAme
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -6635202830622940268, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
+    - {fileID: 543178012682532583, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
