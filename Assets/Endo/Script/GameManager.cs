@@ -17,6 +17,9 @@ public class GameManager : NetworkBehaviour
     [Header("ローカル内で動くやつだからNetworkObjectついてないプレイヤー入れてね")]
     [SerializeField] private GameObject _player1;
     [SerializeField] private GameObject _player2;
+
+    [SerializeField] private GameObject _testObject;
+
     private GameObject[] _players;
     private GameObject _networkUi;
 
@@ -98,26 +101,17 @@ public class GameManager : NetworkBehaviour
             _objectList.Add(player);
         }
 
-        //繋げる
-        if (GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height / 2, 100, 30), "ロープで繋げる"))
+
+        if(_IsLanModeActive)
         {
-            if (!_IsLanModeActive) return;
-
-            ulong myId = NetworkManager.Singleton.LocalClientId;
-
-            foreach (var ropeRef in _networkObjectList)
+            //繋げる
+            if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) - 100f , 100, 30), "生成をリクエスト"))
             {
-                if (ropeRef.TryGet(out var ropeObj))
-                {
-                    var netObj = ropeObj.GetComponent<NetworkObject>();
-                    if(netObj.gameObject.CompareTag("Rope") && netObj.OwnerClientId == myId)
-                    {
-                        //netObj.gameObject.GetComponent<ConnectPlayers>().Connect();
-                    }
-                }
-            }
 
+                NetworkObjectSpawner.Instance.RequestSpawnObject(_testObject, new Vector3(0f, 20f, 0f), Quaternion.identity);
+            }
         }
+
     }
     // Update is called once per frame
     void LateUpdate()

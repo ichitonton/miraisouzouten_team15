@@ -6,7 +6,6 @@ using UnityEngine;
 public class NetworkObjectSpawner : NetworkBehaviour
 {
     //オブジェクト生成専用のやつ
-
     public static NetworkObjectSpawner Instance; // ★ 唯一のインスタンス
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -28,9 +27,10 @@ public class NetworkObjectSpawner : NetworkBehaviour
 
     private GameObject GetPrefabFromHash(uint prefabHash)
     {
-        var prefabs = NetworkManager.Singleton.NetworkConfig.Prefabs.Prefabs;
+        //ネットワークオブジェクトのPrefabの一覧から探すよ
+        var list = NetworkManager.Singleton.NetworkConfig.Prefabs.Prefabs;
 
-        foreach (var entry in prefabs)
+        foreach (var entry in list)
         {
             if (entry.SourcePrefabGlobalObjectIdHash == prefabHash)
             {
@@ -38,33 +38,36 @@ public class NetworkObjectSpawner : NetworkBehaviour
             }
         }
 
-        Debug.LogError($"[Netcode] Prefab with hash {prefabHash} not found in NetworkConfig.Prefabs");
         return null;
     }
 
 
-    public void ObjectSpawn(GameObject instance)
+    public void RequestSpawnObject(GameObject instance,Vector3 transform,Quaternion rotation)
     {
 
-        // インスタンスがどのPrefabから作られたか取得
+        // prefabInstance → 対応する元Prefabを取得
         var prefab = PrefabUtility.GetCorrespondingObjectFromSource(instance);
 
         if (prefab == null)
         {
-            Debug.LogWarning("このオブジェクトはPrefabインスタンスではありません。");
+            Debug.LogError("このオブジェクトはPrefabインスタンスではありません。");
             return;
         }
 
-        // Prefab の GlobalObjectId を取得 → ハッシュ化
+        // Prefab の GlobalObjectId → Hash に変換
         var gid = GlobalObjectId.GetGlobalObjectIdSlow(prefab);
-        
-        RequestObjectSpawn(gid.GetHashCode(),NetworkManager.Singleton.LocalClientId);
+        uint hash = (uint)gid.GetHashCode();
+
+        Debug.Log($"[Client] Prefab Spawn リクエスト送信 Hash={hash}");
+
+        // Host にリクエスト送信
+        RequestSpawnObjectServerRpc(hash, NetworkManager.Singleton.LocalClientId, transform,rotation);
 
     }
     
     // ======== Host側で実行される ==========
     [ServerRpc(RequireOwnership = false)]
-    private void RequestObjectSpawn(int prefabHash, ulong clientId)
+    private void RequestSpawnObjectServerRpc(uint prefabHash, ulong clientId,Vector3 transform,Quaternion rotation)
     {
         if (!NetworkManager.Singleton.IsServer)
         {
@@ -72,10 +75,23 @@ public class NetworkObjectSpawner : NetworkBehaviour
             return;
         }
 
-        GameObject instance = GetPrefabFromHash((uint)prefabHash);
-        
-        GameObject obj = Instantiate(instance);
-        obj.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
+        Debug.Log($"[Host] Client {clientId} から Spawn 要求を受信 (hash={prefabHash})");
+
+        // Prefab を取得
+        var prefab = GetPrefabFromHash(prefabHash);
+
+        if (prefab == null)
+        {
+            Debug.LogError($"[Host] hash={prefabHash} に一致するPrefabが見つかりません");
+            return;
+        }
+
+        // 生成する
+        GameObject obj = Instantiate(prefab, transform, rotation);
+
+        // ネットワーク登録
+        var netObj = obj.GetComponent<NetworkObject>();
+        netObj.SpawnWithOwnership(clientId);
 
         return;
     }
