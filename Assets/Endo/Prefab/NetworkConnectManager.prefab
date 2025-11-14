@@ -73,8 +73,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerNetworkConnect
   ShowTopMostFoldoutHeaderGroup: 1
   memo: 
-  _playerObject1: {fileID: 0}
-  _playerObject2: {fileID: 0}
+  _playerObject1: {fileID: 7459081349001929016, guid: 87568b16bea6c784a80ba45cf5dd6d07, type: 3}
+  _playerObject2: {fileID: 7459081349001929016, guid: ef24cb88710bbb14ca9cd4e1e0a923e6, type: 3}
   _delayTime: 0.1
 --- !u!114 &7550963095654367113
 MonoBehaviour:
@@ -91,3 +91,4 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _ropeObject: {fileID: 8760411629864592299, guid: 764c8895dafe2e14692afc5e3025bafd, type: 3}
   _delayTime: 0.1
+  _pivot: {fileID: 0}

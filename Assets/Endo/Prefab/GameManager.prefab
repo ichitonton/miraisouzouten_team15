@@ -146,9 +146,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   ShowTopMostFoldoutHeaderGroup: 1
-  _ropeObject: {fileID: 0}
+  _ropeObject: {fileID: 8760411629864592299, guid: 764c8895dafe2e14692afc5e3025bafd, type: 3}
   _ui: {fileID: 0}
-  _player: {fileID: 0}
+  _player1: {fileID: 7459081349001929016, guid: 419aae24f019f2246ba04f5665a3af8e, type: 3}
+  _player2: {fileID: 7459081349001929016, guid: 6e351d8ac67a9a54ebfee508966ad6b4, type: 3}
+  _pivot: {fileID: 0}
   _controlMode: 0
   _onlineMode: 0
   _objectList: []
