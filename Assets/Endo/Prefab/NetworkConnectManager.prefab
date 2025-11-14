@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5622000459914517194}
   - component: {fileID: 5874703381638314871}
   - component: {fileID: 7550963095654367113}
+  - component: {fileID: 1664561535548617506}
   m_Layer: 0
   m_Name: NetworkConnectManager
   m_TagString: Untagged
@@ -91,3 +92,16 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _ropeObject: {fileID: 8760411629864592299, guid: 764c8895dafe2e14692afc5e3025bafd, type: 3}
   _delayTime: 0.1
+--- !u!114 &1664561535548617506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3a1b771874fc5441995037df2158e1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkObjectSpawner
+  ShowTopMostFoldoutHeaderGroup: 1
