@@ -62,8 +62,8 @@ public class ConnectPlayers : MonoBehaviour
             Debug.LogError("“¯‚¶Rigidbody‚ÉJoint‚ğÚ‘±‚µ‚æ‚¤‚Æ‚µ‚Ä‚¢‚Ü‚·I");
         }
 
-        _player1.transform.position = new Vector3(0.0f, 3.0f, 0.0f);
-        _player2.transform.position = new Vector3(3.0f, 3.0f, 0.0f);
+        _player1.transform.position = new Vector3(10.0f, 10.0f, 10.0f);
+        _player2.transform.position = new Vector3(15.0f, 10.0f, 15.0f);
 
 
         //•R‚Ì•¨—‹““®‚ğ’Ç‰Á
