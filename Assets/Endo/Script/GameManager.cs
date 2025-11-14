@@ -79,7 +79,7 @@ public class GameManager : NetworkBehaviour
                 return;
             }
 
-            GameObject player = Instantiate(_player1, new Vector3(0f, 5.0f, 0f), Quaternion.identity);
+            GameObject player = Instantiate(_player1, new Vector3(8f, 10.0f, 8f), Quaternion.identity);
             _objectList.Add(player);
         }
 
@@ -94,7 +94,7 @@ public class GameManager : NetworkBehaviour
                 return;
             }
 
-            GameObject player = Instantiate(_player2, new Vector3(0f, 5.0f, 0f), Quaternion.identity);
+            GameObject player = Instantiate(_player2, new Vector3(5f, 5.0f, 5f), Quaternion.identity);
             _objectList.Add(player);
         }
 
@@ -112,7 +112,7 @@ public class GameManager : NetworkBehaviour
                     var netObj = ropeObj.GetComponent<NetworkObject>();
                     if(netObj.gameObject.CompareTag("Rope") && netObj.OwnerClientId == myId)
                     {
-                        netObj.gameObject.GetComponent<ConnectPlayers>().Connect();
+                        //netObj.gameObject.GetComponent<ConnectPlayers>().Connect();
                     }
                 }
             }

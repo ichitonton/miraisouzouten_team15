@@ -6,8 +6,6 @@ using System.Collections.Generic;
 
 public class CameraController : MonoBehaviour
 {
-
-    [SerializeField] private GameObject _GameManager;
     private GameObject _player1;
     private GameObject _player2;
 
