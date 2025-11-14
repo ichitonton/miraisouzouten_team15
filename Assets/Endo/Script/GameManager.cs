@@ -17,6 +17,8 @@ public class GameManager : NetworkBehaviour
     [Header("ローカル内で動くやつだからNetworkObjectついてないプレイヤー入れてね")]
     [SerializeField] private GameObject _player1;
     [SerializeField] private GameObject _player2;
+    [SerializeField] private Transform _pivot;
+       
     private GameObject[] _players;
     private GameObject _networkUi;
 
@@ -79,7 +81,7 @@ public class GameManager : NetworkBehaviour
                 return;
             }
 
-            GameObject player = Instantiate(_player1, new Vector3(0f, 5.0f, 0f), Quaternion.identity);
+            GameObject player = Instantiate(_player1, _pivot.position, Quaternion.identity);
             _objectList.Add(player);
         }
 
@@ -94,7 +96,7 @@ public class GameManager : NetworkBehaviour
                 return;
             }
 
-            GameObject player = Instantiate(_player2, new Vector3(0f, 5.0f, 0f), Quaternion.identity);
+            GameObject player = Instantiate(_player2, _pivot.position, Quaternion.identity);
             _objectList.Add(player);
         }
 
