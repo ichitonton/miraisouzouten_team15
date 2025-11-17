@@ -38,7 +38,11 @@ public class MovePlayerKey : MonoBehaviour
     private bool _canPunch = true;
     private ItemType _haveItem = ItemType.Bomb;
 
+    float _animBlend = 0.0f;
+
     [SerializeField] CanJump _FootCollider;
+
+    Animator _anim;
 
     public enum ItemType
     {
@@ -55,12 +59,16 @@ public class MovePlayerKey : MonoBehaviour
         PunchActiveFalse();
         _currentHp = _MaxHp;
         _moveSpeedInitial = _moveSpeed;
-
+        _anim = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (_animBlend > 0)
+        {
+            _animBlend -= 0.1f;
+        }
         if (!_canNotInputKey)
         {
             Move();
@@ -71,6 +79,8 @@ public class MovePlayerKey : MonoBehaviour
         {
             UseItem();
         }
+        //_anim.linearVelocityBlending = true;
+        _anim.SetFloat("Blend", _animBlend);
     }
 
     //
@@ -228,6 +238,10 @@ public class MovePlayerKey : MonoBehaviour
                 targetRotation,
                 Time.deltaTime * 10.0f
             );
+            if (_animBlend < 1)
+            {
+                _animBlend += 0.2f;
+            }
         }
         else if (_lastMoveDir.sqrMagnitude > 0.01f)
         {
@@ -239,8 +253,11 @@ public class MovePlayerKey : MonoBehaviour
             );
 
         }
-        //transform.LookAt(transform.position + new Vector3(_moveVector.x, 0, _moveVector.z));
-        _rb.linearVelocity = _moveVector;
+        else
+        {
+        }
+            //transform.LookAt(transform.position + new Vector3(_moveVector.x, 0, _moveVector.z));
+            _rb.linearVelocity = _moveVector;
     }
     void Punch()
     {
