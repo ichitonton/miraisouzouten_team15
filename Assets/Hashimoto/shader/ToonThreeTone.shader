@@ -51,7 +51,8 @@ Shader "Universal Render Pipeline/Toon/ThreeTone_Outline_Fog_JP"
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX
             #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
             // ★ Fog keywords （URP 6000 ではこれがないとバリアントが生成されない）
-            #pragma multi_compile _ _FOG_LINEAR _FOG_EXP _FOG_EXP2
+            #pragma multi_compile _ FOG_LINEAR FOG_EXP FOG_EXP2
+
 
             #pragma shader_feature_local _ALPHATEST_ON
 
@@ -197,7 +198,7 @@ Shader "Universal Render Pipeline/Toon/ThreeTone_Outline_Fog_JP"
             HLSLPROGRAM
             #pragma vertex   ShadowPassVertex
             #pragma fragment ShadowPassFragment
-            #pragma multi_compile_vertex _ LOD_FADE_CROSSFADE
+            #pragma multi_compile _ FOG_LINEAR FOG_EXP FOG_EXP2
             #pragma shader_feature_local _ALPHATEST_ON
 
             #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
@@ -216,7 +217,9 @@ Shader "Universal Render Pipeline/Toon/ThreeTone_Outline_Fog_JP"
         Pass
         {
             Name "Outline"
-            Tags { "LightMode"="SRPDefaultUnlit" }
+            Tags { "LightMode"="UniversalForwardOnly" }
+
+
             Cull Front
             ZWrite On
             ZTest LEqual
@@ -225,9 +228,9 @@ Shader "Universal Render Pipeline/Toon/ThreeTone_Outline_Fog_JP"
             #pragma vertex   vertOL
             #pragma fragment fragOL
             // ★ Fog keywords（アウトラインにも必要）
-            #pragma multi_compile _ _FOG_LINEAR _FOG_EXP _FOG_EXP2
+            #pragma multi_compile _ FOG_LINEAR FOG_EXP FOG_EXP2
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl" // ★ Fog用
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl" // Fog用
 
             CBUFFER_START(UnityPerMaterial)
                 half4 _OutlineColor;
