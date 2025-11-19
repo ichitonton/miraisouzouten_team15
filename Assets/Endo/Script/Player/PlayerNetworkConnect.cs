@@ -99,7 +99,7 @@ public class PlayerNetworkConnect : NetworkBehaviour
 
     // ======== Host側で実行される ==========
     [ServerRpc(RequireOwnership = false)]//このRpcを使えばClientから要求ができるからあとからClient側から追加することも可能
-    private void RequestPlayerSpawnServerRpc(ulong clientId, Vector3 pos, Quaternion rot)
+    private void RequestPlayerSpawnServerRpc(ulong clientId, Vector3 pos, Quaternion rot,int count)
     {
 
         Debug.Log($"[RPC Called] IsServer={NetworkManager.Singleton.IsServer}, IsClient={NetworkManager.Singleton.IsClient}, Mode={NetworkManager.Singleton.IsListening}");
@@ -114,11 +114,16 @@ public class PlayerNetworkConnect : NetworkBehaviour
         Debug.Log($"[Host] Client {clientId} からPlayer生成リクエストを受信");
 
         GameObject newPlayer = default;
-        if (playerCount == 1)
+
+        pos.y += 1f;
+
+        //カウントの数字を見て生成するプレイヤーを分ける
+        if (count == 1)
             newPlayer = Instantiate(_playerObject1, pos, rot);
-        else if (playerCount == 2)
+        else if (count == 2)
             newPlayer = Instantiate(_playerObject2, pos, rot);
 
+        Debug.Log("プレイヤー" + count + "を生成");
 
         GameManager.Instance._objectList.Add(newPlayer);
         
@@ -144,16 +149,20 @@ public class PlayerNetworkConnect : NetworkBehaviour
     {
         var localPlayers = GameObject.FindGameObjectsWithTag("Player");
 
-        
+        int count = 0;
+
         foreach (var lp in localPlayers)
         {
-            playerCount++;
+            
             // NetworkObjectがすでにあるならスキップ
             if (lp.TryGetComponent<NetworkObject>(out var netObj))
             {
                 Debug.Log($"[Network] 既にNetwork化されている: {lp.name}");
                 continue;
             }
+
+            //プレイヤーの数を加算
+            count++;
 
             // Transform情報を保持
             Vector3 pos = lp.transform.position;
@@ -162,15 +171,13 @@ public class PlayerNetworkConnect : NetworkBehaviour
             Debug.Log($"[Network] Local PlayerをNetwork上に再生成: {lp.name} at {pos}");
             //Hostに自分の生成を依頼（ServerRpc）
            
-            RequestPlayerSpawnServerRpc(NetworkManager.Singleton.LocalClientId, pos, rot);
+            RequestPlayerSpawnServerRpc(NetworkManager.Singleton.LocalClientId, pos, rot,count);
 
             // 元のローカルオブジェクトを削除
             Destroy(lp);
             //リストからも消す
             GameManager.Instance._objectList.Remove(lp);
         }
-
-        playerCount = 0;
 
     }
 

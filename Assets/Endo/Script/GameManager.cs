@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using NUnit.Framework.Interfaces;
-using UnityEditor.Networking.PlayerConnection;
 
 
 public class GameManager : NetworkBehaviour
@@ -100,24 +99,12 @@ public class GameManager : NetworkBehaviour
             _objectList.Add(player);
         }
 
-        //åqÇ∞ÇÈ
-        if (GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height / 2, 100, 30), "ÉçÅ[ÉvÇ≈åqÇ∞ÇÈ"))
+        //ê∂ê¨
+        if (GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height / 2, 100, 30), "Testê∂ê¨"))
         {
             if (!_IsLanModeActive) return;
 
-            ulong myId = NetworkManager.Singleton.LocalClientId;
-
-            foreach (var ropeRef in _networkObjectList)
-            {
-                if (ropeRef.TryGet(out var ropeObj))
-                {
-                    var netObj = ropeObj.GetComponent<NetworkObject>();
-                    if(netObj.gameObject.CompareTag("Rope") && netObj.OwnerClientId == myId)
-                    {
-                        netObj.gameObject.GetComponent<ConnectPlayers>().Connect();
-                    }
-                }
-            }
+            NetworkObjectSpawner.Instance.RequestSpawnObject("Daifuku", new Vector3(0f,10f,0f),Quaternion.identity, NetworkObjectSpawner.OwnerMode.Host);
 
         }
     }

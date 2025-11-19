@@ -3,7 +3,7 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using System.Net;
 using System.Net.Sockets;
-
+using UnityEngine.SceneManagement;
 
 
 public class NetworkDebug : MonoBehaviour
@@ -49,6 +49,9 @@ public class NetworkDebug : MonoBehaviour
         GUILayout.Label($"Clients Connected: {NetworkManager.Singleton.ConnectedClients.Count}");
         GUILayout.Label($"Status: {_status}");
 
+        var scene = SceneManager.GetActiveScene();
+
+        GUILayout.Label($"ScenaName: {scene.name}");
 
         GUILayout.EndArea();
     }
