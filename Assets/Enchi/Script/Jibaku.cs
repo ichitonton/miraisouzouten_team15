@@ -23,11 +23,14 @@ public class Jibaku : MonoBehaviour
     bool _isChild = false;
     Transform _kari;
 
+    bool _canBomber = false;
+
 
     float _animBlend = 0.0f;
     Animator _anim;
     AnimatorStateInfo _animInfo;
     AnimatorStateInfo _animInfoOld;
+    bool _hakken;
 
     NavMeshAgent _agent;
 
@@ -37,9 +40,10 @@ public class Jibaku : MonoBehaviour
     enum State
     {
         Idol,
-        Hakken,
+        Hakken1,
         Oikake,
         Death,
+        Hakken2,
         Modoru
     }
 
@@ -52,6 +56,7 @@ public class Jibaku : MonoBehaviour
         _animInfo = _anim.GetCurrentAnimatorStateInfo(0);
         _agent = GetComponent<NavMeshAgent>();
         _agent.updateRotation = false;
+        _hakken = false;
     }
 
     // Update is called once per frame
@@ -60,12 +65,11 @@ public class Jibaku : MonoBehaviour
         _players = _sensour.GetPlayers();
         _animInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
-
         if (_state == State.Idol)
         {
             Idol();
         }
-        else if (_state == State.Hakken)
+        else if (_state == State.Hakken1)
         {
             Hakken();
         }
@@ -73,15 +77,9 @@ public class Jibaku : MonoBehaviour
         {
             Oikake();
         }
-        else if (_state == State.Modoru)
-        {
-            //元の位置に戻る
-            //_animBlend = (float)State.Idol;
-            //_state = State.Idol;
-        }
         else if (_state == State.Death)
         {
-
+            Death();
         }
 
 
@@ -150,7 +148,7 @@ public class Jibaku : MonoBehaviour
         //センサー内に入ったプレイヤーを検知
         if (_players != null && _players.Count > 0)
         {
-            _state = State.Hakken;
+            _state = State.Hakken1;
         }
     }
     void Hakken()
@@ -159,21 +157,33 @@ public class Jibaku : MonoBehaviour
         //アニメーションが一周したら追いかけ状態へ
         if (_animInfo.normalizedTime - _animInfoOld.normalizedTime < 0.0f)
         {
-            if (_animBlend == (float)State.Hakken)
+            if (_animBlend == (float)State.Hakken1 || _animBlend == (float)State.Hakken2)
             {
                 Debug.Log("追いかけるよ！");
                 _state = State.Oikake;
                 _animBlend = (float)_state;
+                _hakken = false;
             }
             else if (_animBlend == (float)State.Idol)
             {
                 Debug.Log("発見した！");
                 _agent.SetDestination(PlayerPosition());
                 _agent.speed = 0.1f;
-                RotateToMoveDirection();
-                _animBlend = (float)_state;
+                _hakken = true;
+
+                if (Random.Range(0, 2) == 0)
+                {
+                    Debug.Log("発見した！その1");
+                    _animBlend = (float)State.Hakken1;
+                }
+                else
+                {
+                    Debug.Log("発見した！その2");
+                    _animBlend = (float)State.Hakken2;
+                }
             }
         }
+                RotateToMoveDirection();
     }
 
     void Oikake()
@@ -200,6 +210,15 @@ public class Jibaku : MonoBehaviour
         }
     }
 
+    void Death()
+    {
+        if (_animInfo.normalizedTime > 0.8f)
+        {
+            _isTimerOn = true;
+            BlastGenerate();
+        }
+    }
+
     void ActiveFalse()
     {
         this.gameObject.SetActive(false);
@@ -207,7 +226,7 @@ public class Jibaku : MonoBehaviour
 
     void BlastGenerate()
     {
-        if (gameObject.activeSelf)
+        if (gameObject.activeSelf && _isTimerOn)
         {
             _isChild = false;
 
@@ -246,6 +265,7 @@ public class Jibaku : MonoBehaviour
             {
                 Invoke("BlastGenerate", _blastTimer);
                 _isTimerOn = true;
+                
             }
         }
 
@@ -255,7 +275,12 @@ public class Jibaku : MonoBehaviour
     {
         if (other.transform.GetComponent<Punch>() != null)
         {
-            ActiveFalse();
+            //ActiveFalse();
+            _state = State.Death;
+            _animBlend = (float)_state; 
+            _anim.Play(_anim.GetCurrentAnimatorStateInfo(0).fullPathHash, 0, 0f);
+            _isTimerOn = false;
+            _agent.speed = 0.0f;
         }
     }
 }
