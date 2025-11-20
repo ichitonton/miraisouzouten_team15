@@ -3,7 +3,6 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-// ... (クラスの概要コメントは省略) ...
 
 public class GoalScore_s : MonoBehaviour
 {
@@ -20,7 +19,7 @@ public class GoalScore_s : MonoBehaviour
     // ====== 状態 ======
     private int count = 0;
     private float score_now = 0f;
-    private float score_total = 0f; // これが累計スコア
+    private float score_total = 0f;
 
     // ランキングシステムから参照するためのゲッター
     public  float Score { get { return score_total; } }
