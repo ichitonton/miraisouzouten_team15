@@ -3139,6 +3139,7 @@ MonoBehaviour:
   _itemObj: {fileID: 0}
   _target: {fileID: 0}
   _itemFlightTime: 2
+  _effDash_2: {fileID: 773825968017154068, guid: 28c381c7693f60c43bd845de5f9783e4, type: 3}
   _FootCollider: {fileID: 7817851643849097461, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
 --- !u!54 &4346886339305241986
 Rigidbody:

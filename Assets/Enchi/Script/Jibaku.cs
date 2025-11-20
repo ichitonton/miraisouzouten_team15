@@ -51,6 +51,7 @@ public class Jibaku : MonoBehaviour
         _anim = GetComponent<Animator>();
         _animInfo = _anim.GetCurrentAnimatorStateInfo(0);
         _agent = GetComponent<NavMeshAgent>();
+        _agent.updateRotation = false;
     }
 
     // Update is called once per frame
@@ -117,6 +118,21 @@ public class Jibaku : MonoBehaviour
             return transform.parent.position;
         }
     }
+    void RotateToMoveDirection()
+    {
+        Vector3 dir = _agent.velocity;  // Å© êiÇÒÇ≈ÇÈï˚å¸ÇªÇÃÇ‡ÇÃ
+        dir.y = 0;                      // è„â∫ÇÕñ≥éã
+
+        if (dir.sqrMagnitude < 0.0001f)
+            return; // é~Ç‹Ç¡ÇƒÇÈéûÇÕâÒì]ÇµÇ»Ç¢
+
+        Quaternion targetRot = Quaternion.LookRotation(dir);
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            targetRot,
+            Time.deltaTime * 10.0f  // Å© âÒì]ë¨ìxÅiêîéöÇè„Ç∞ÇÍÇŒë¨Ç≠êUÇËå¸Ç≠Åj
+        );
+    }
 
     void Idol()
     {
@@ -154,7 +170,7 @@ public class Jibaku : MonoBehaviour
                 Debug.Log("î≠å©ÇµÇΩÅI");
                 _agent.SetDestination(PlayerPosition());
                 _agent.speed = 0.1f;
-                _agent.angularSpeed = 360.0f;
+                RotateToMoveDirection();
                 _animBlend = (float)_state;
             }
         }
@@ -165,6 +181,8 @@ public class Jibaku : MonoBehaviour
         _agent.SetDestination(PlayerPosition());
         _agent.speed = _moveSpeed;
 
+        RotateToMoveDirection();
+        
         if (PlayerPosition() == transform.parent.position)
         {
             Debug.Log("ñﬂÇÈÅI");
@@ -177,7 +195,7 @@ public class Jibaku : MonoBehaviour
                 _state = State.Idol;
                 _animBlend = (float)_state;
                 _agent.speed = 0.0f;
-                _agent.angularSpeed = 0.0f;
+                _rigidbody.angularVelocity = Vector3.zero;
             }
         }
     }
