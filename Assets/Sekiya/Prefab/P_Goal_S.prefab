@@ -122,7 +122,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7426244877165061418}
   - component: {fileID: 9070252491119208078}
-  - component: {fileID: 90928487549889101}
   m_Layer: 0
   m_Name: Goal_coll
   m_TagString: Untagged
@@ -166,21 +165,3 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &90928487549889101
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8747491641000462686}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa096c304bb63ab42a4300586e3c6404, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  countText: {fileID: 0}
-  score_nowText: {fileID: 0}
-  score_totalText: {fileID: 0}
-  count_slider: {fileID: 0}
-  countMax: 3
-  TimeupMAX: 3

@@ -9,7 +9,6 @@ public class GoalScore_s : MonoBehaviour
 {
     // ====== UI ======
     [Header("UI")]
-    [SerializeField] private TextMeshProUGUI countText;
     [SerializeField] private TextMeshProUGUI score_nowText;
     [SerializeField] private TextMeshProUGUI score_totalText;
     [SerializeField] private Slider count_slider;
@@ -33,11 +32,6 @@ public class GoalScore_s : MonoBehaviour
     // ====== 和菓子カウント用Sprite ======
     [SerializeField]
     private GameObject[] countObjects;
-
-    /// <summary>
-    /// カウントを受け取って、対応するGameObjectだけを表示する関数
-    /// </summary>
-    /// <param name="count">現在のカウント数</param>
 
     // 検索用：タグ名
     private const string TagSweets = "Sweets";
@@ -179,7 +173,6 @@ public class GoalScore_s : MonoBehaviour
     // --- UI一括更新 ---
     private void UpdateUI()
     {
-        if (countText) countText.text = $"Count: {count}";
         if (score_nowText) score_nowText.text = $"Now: {score_now:0.##}";
         if (score_totalText) score_totalText.text = $"Done: {score_total:0.##}";
     }

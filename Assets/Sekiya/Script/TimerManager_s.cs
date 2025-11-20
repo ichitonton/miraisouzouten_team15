@@ -1,42 +1,47 @@
-using System.Collections;
 using System;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-using JetBrains.Annotations;
-using System.Security.Cryptography.X509Certificates;
+using UnityEngine;
+using Unity.Netcode;
 
-public class TimeManager_s : MonoBehaviour
+public class TimeManager_s : NetworkBehaviour
 {
-    [SerializeField] SceneChangerWithSoundInvoke scenechange;
+    [SerializeField]
+    private NetworkVariable<float> _count = new NetworkVariable<float>(
+    0,
+    NetworkVariableReadPermission.Everyone,
+    NetworkVariableWritePermission.Server
+    );
 
-    [Header("カウントダウン初期値")]
-	[SerializeField] private float countdownMinutes = 3;
-	[SerializeField] private int countdownSecondsExtra = 0;
-
-    private float countdownSeconds;
-	[SerializeField] private TMP_Text timeText;
+    [SerializeField] private TMP_Text timeText;
 
 	private void Start()
 	{
 		timeText = GetComponent<TMP_Text>();
-		countdownSeconds = (countdownMinutes * 60) + countdownSecondsExtra;
 	}
 
-	void Update()
-	{
-		countdownSeconds -= Time.deltaTime;
-		if (countdownSeconds < 0) countdownSeconds = 0; // マイナス防止
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
 
-		// 分:秒 表記
-		var span = TimeSpan.FromSeconds(countdownSeconds);
-		timeText.text = span.ToString(@"mm\:ss");
-
-		if (countdownSeconds <= 0)
-		{
-			// 0秒になったときの処理
-			scenechange.LoadNextScene();
+        // 例: サーバーで初期値セット
+        if (IsServer)
+        {
+            Debug.Log("スポーンされたよ");
+            //_count.Value = 180f; // 3分とか
         }
-	}
+    }
+
+    void Update()
+	{
+        if (NetworkManager.Singleton.IsServer)
+        {
+            _count.Value -= Time.deltaTime;
+            if (_count.Value < 0) _count.Value = 0; // マイナス防止
+        }
+
+
+        // 分:秒 表記
+        var span = TimeSpan.FromSeconds(_count.Value);
+        timeText.text = span.ToString(@"mm\:ss");
+    }
 }
