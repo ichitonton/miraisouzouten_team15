@@ -7,7 +7,6 @@ public class RankingSlot : MonoBehaviour
     // インスペクタで、このスロットが管理するUIコンポーネントを設定
     [SerializeField] private Image iconImage;
     [SerializeField] private TextMeshProUGUI scoreText;
-    // public Text teamNameText; // 標準のTextの場合
 
     // TeamDataを受け取って、自分のUIを更新するメソッド
     public void SetData(TeamData data)
