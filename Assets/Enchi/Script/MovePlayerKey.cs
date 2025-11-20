@@ -204,14 +204,27 @@ public class MovePlayerKey : MonoBehaviour
         }
     }
 
-	
+    void RotateToMoveDirection(Vector3 dir)
+    {
+        dir.y = 0.0f;
+        if (dir.sqrMagnitude < 0.0001f)
+            return; // Ž~‚Ü‚Á‚Ä‚éŽž‚Í‰ñ“]‚µ‚È‚¢
+
+        Quaternion targetRot = Quaternion.LookRotation(dir);
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            targetRot,
+            Time.deltaTime * 10.0f  // © ‰ñ“]‘¬“xi”Žš‚ðã‚°‚ê‚Î‘¬‚­U‚èŒü‚­j
+        );
+    }
 
 
-	//
-	//MOVEŠÖŒW
-	//
 
-	void Jump()
+    //
+    //MOVEŠÖŒW
+    //
+
+    void Jump()
     {
         if (_FootCollider.GetCanJump())
         {
@@ -270,17 +283,18 @@ public class MovePlayerKey : MonoBehaviour
 			em.enabled = hasInput;
 		}
 
+        RotateToMoveDirection(_moveVector);
 
-		if (_moveDir.sqrMagnitude > 0.01f)
+        if (_moveDir.sqrMagnitude > 0.01f)
         {
             _lastMoveDir = _moveDir;
 
-            Quaternion targetRotation = Quaternion.LookRotation(_moveDir);
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                targetRotation,
-                Time.deltaTime * 10.0f
-            );
+            //Quaternion targetRotation = Quaternion.LookRotation(_moveDir);
+            //transform.rotation = Quaternion.Slerp(
+            //    transform.rotation,
+            //    targetRotation,
+            //    Time.deltaTime * 10.0f
+            //);
             if (_animBlend < 1)
             {
                 _animBlend += 0.2f;
@@ -288,12 +302,12 @@ public class MovePlayerKey : MonoBehaviour
         }
         else if (_lastMoveDir.sqrMagnitude > 0.01f)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(_lastMoveDir);
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                targetRotation,
-                Time.deltaTime * 10.0f
-            );
+            //Quaternion targetRotation = Quaternion.LookRotation(_lastMoveDir);
+            //transform.rotation = Quaternion.Slerp(
+            //    transform.rotation,
+            //    targetRotation,
+            //    Time.deltaTime * 10.0f
+            //);
 
         }
         else
