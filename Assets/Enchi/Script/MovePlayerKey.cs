@@ -28,6 +28,7 @@ public class MovePlayerKey : MonoBehaviour
     [SerializeField] float _itemFlightTime = 2.0f; // 投げるオブジェクトがターゲットに到達するまでの時間
 
 	[SerializeField] GameObject _effDash_2; // 移動中エフェクト2
+    [SerializeField] PlayerNumber _playerNumber = PlayerNumber.None;
 
 	GameObject _effDash2Instance;
 	ParticleSystem _effDash2Ps;
@@ -55,9 +56,18 @@ public class MovePlayerKey : MonoBehaviour
         Max
     }
 
+    public enum PlayerNumber
+    {
+        None = 0,
+        Player1,
+        Player2,
+        Player3,
+        Player4
+    }
 
-	// Start is called once before the first execution of Update after the MonoBehaviour is created
-	void Start()
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
     {
         _rb = GetComponent<Rigidbody>();
         PunchActiveFalse();
@@ -75,6 +85,7 @@ public class MovePlayerKey : MonoBehaviour
 			em.enabled = false;
 			ps.Play();
 		}
+
 	}
 
     // Update is called once per frame
@@ -335,7 +346,7 @@ public class MovePlayerKey : MonoBehaviour
     {
         if (Input.GetKeyDown(_useItem))
         {
-            bool _isChild = false;
+            //bool _isChild = false;
             GameObject _item = null;
 
             //for (int i = 0; i < transform.childCount; i++)
@@ -357,10 +368,7 @@ public class MovePlayerKey : MonoBehaviour
             //}
 
             //子オブジェクトが足りなければ新規作成
-            if (!_isChild)
-            {
-                _item = Instantiate(_itemObj, transform.position + transform.up * 1.5f, transform.rotation);
-            }
+            _item = Instantiate(_itemObj, transform.position + transform.up * 2.5f, transform.rotation);
 
 
             if (!_target || !_item) return;

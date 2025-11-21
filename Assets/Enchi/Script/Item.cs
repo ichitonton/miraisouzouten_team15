@@ -5,11 +5,16 @@ public class Item : MonoBehaviour
 {
     [SerializeField] GameObject _blast;
     [SerializeField] float _blastTimer = 1.0f;
-    bool _isTimerOn = false;
+    bool _isTimerOn = true;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Invoke("IsTmerOn", 0.5f);
+    }
 
+    void IsTmerOn()
+    {
+        _isTimerOn = false;
     }
 
     void BlastGenerate()
@@ -47,8 +52,11 @@ public class Item : MonoBehaviour
     {
         if (!_isTimerOn)
         {
-            Invoke("BlastGenerate", _blastTimer);
-            _isTimerOn = true;
+            if (other.gameObject.tag == "Field" || other.gameObject.GetComponent<MovePlayerKey>())
+            {
+                Invoke("BlastGenerate", _blastTimer);
+                _isTimerOn = true;
+            }
         }
 
     }
