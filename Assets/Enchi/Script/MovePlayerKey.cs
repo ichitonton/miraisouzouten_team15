@@ -27,8 +27,12 @@ public class MovePlayerKey : MonoBehaviour
     [SerializeField] Transform _target;
     [SerializeField] float _itemFlightTime = 2.0f; // 投げるオブジェクトがターゲットに到達するまでの時間
 
+	[SerializeField] GameObject _effDash_2; // 移動中エフェクト2
 
-    Rigidbody _rb;
+	GameObject _effDash2Instance;
+	ParticleSystem _effDash2Ps;
+
+	Rigidbody _rb;
 
     private Vector3 _moveDir;
     private Vector3 _lastMoveDir;
@@ -60,7 +64,18 @@ public class MovePlayerKey : MonoBehaviour
         _currentHp = _MaxHp;
         _moveSpeedInitial = _moveSpeed;
         _anim = GetComponent<Animator>();
-    }
+
+		// エフェクト関連
+		var inst = Instantiate(_effDash_2, transform);
+
+		// すべてのPSを一時的に取得してOFFにする
+		foreach (var ps in inst.GetComponentsInChildren<ParticleSystem>())
+		{
+			var em = ps.emission;
+			em.enabled = false;
+			ps.Play();
+		}
+	}
 
     // Update is called once per frame
     void Update()
@@ -81,7 +96,11 @@ public class MovePlayerKey : MonoBehaviour
         }
         //_anim.linearVelocityBlending = true;
         _anim.SetFloat("Blend", _animBlend);
-    }
+
+        //エフェクト関連
+		//HandleMoveEffects();
+
+	}
 
     //
     //ゲッター
@@ -185,6 +204,21 @@ public class MovePlayerKey : MonoBehaviour
         }
     }
 
+    void RotateToMoveDirection(Vector3 dir)
+    {
+        dir.y = 0.0f;
+        if (dir.sqrMagnitude < 0.0001f)
+            return; // 止まってる時は回転しない
+
+        Quaternion targetRot = Quaternion.LookRotation(dir);
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            targetRot,
+            Time.deltaTime * 10.0f  // ← 回転速度（数字を上げれば速く振り向く）
+        );
+    }
+
+
 
     //
     //MOVE関係
@@ -202,42 +236,65 @@ public class MovePlayerKey : MonoBehaviour
     }
     void Move()
     {
-
 		Vector3 _moveVector = Vector3.zero;
+		bool hasInput = false;
 
-        if (Input.GetKey(_up))
+		if (Input.GetKey(_up))
         {
             _moveVector.z += 1;
-        }
+			hasInput = true;
+		}
         if (Input.GetKey(_left))
         {
             _moveVector.x += -1;
-        }
+			hasInput = true;
+		}
         if (Input.GetKey(_down))
         {
             _moveVector.z += -1;
-        }
+			hasInput = true;
+		}
         if (Input.GetKey(_right))
         {
             _moveVector.x += 1;
-        }
-        _moveVector.Normalize();
+			hasInput = true;
+		}
+
+		if (_effDash2Instance)
+		{
+			Vector3 backPos = transform.position
+							  - transform.forward * 0.5f;       
+
+			_effDash2Instance.transform.position = backPos;
+		}
+
+		_moveVector.Normalize();
 		_moveVector *= _moveSpeed;
 		_moveVector.y = _rb.linearVelocity.y;
 
 
         _moveDir = new Vector3(_moveVector.x, 0, _moveVector.z);
 
+		//エフェクト関連
+		// 1フレームで一度だけ、子のPSのEmissionを切り替える
+		foreach (var ps in GetComponentsInChildren<ParticleSystem>())
+		{
+			var em = ps.emission;
+			em.enabled = hasInput;
+		}
+
+        RotateToMoveDirection(_moveVector);
+
         if (_moveDir.sqrMagnitude > 0.01f)
         {
             _lastMoveDir = _moveDir;
 
-            Quaternion targetRotation = Quaternion.LookRotation(_moveDir);
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                targetRotation,
-                Time.deltaTime * 10.0f
-            );
+            //Quaternion targetRotation = Quaternion.LookRotation(_moveDir);
+            //transform.rotation = Quaternion.Slerp(
+            //    transform.rotation,
+            //    targetRotation,
+            //    Time.deltaTime * 10.0f
+            //);
             if (_animBlend < 1)
             {
                 _animBlend += 0.2f;
@@ -245,12 +302,12 @@ public class MovePlayerKey : MonoBehaviour
         }
         else if (_lastMoveDir.sqrMagnitude > 0.01f)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(_lastMoveDir);
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                targetRotation,
-                Time.deltaTime * 10.0f
-            );
+            //Quaternion targetRotation = Quaternion.LookRotation(_lastMoveDir);
+            //transform.rotation = Quaternion.Slerp(
+            //    transform.rotation,
+            //    targetRotation,
+            //    Time.deltaTime * 10.0f
+            //);
 
         }
         else
