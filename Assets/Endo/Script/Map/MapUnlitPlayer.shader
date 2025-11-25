@@ -1,10 +1,10 @@
-
-Shader "Hidden/MapUnlit"
+Shader "Custom/MapUnlitPlayer"
 {
     Properties
     {
-        _Color ("Color", Color) = (1,1,1,1)
-        _PlayerHeight("Player Height", Float) = 0
+        _Color (
+            "Color", Color) = (1,1,1,1)
+        _PlayerHeight("Player Position", Vector) = (0,0,0,0)
         _HeightSensitivity("Sensitivity", Float) = 0.4
         _MinBrightness("Min", Float) = 0.3
         _MaxBrightness("Max", Float) = 1.0
@@ -29,8 +29,8 @@ Shader "Hidden/MapUnlit"
 
             //C#側から渡される変数
             float4 _Color;
-            float _PlayerHeight;
-            float _HeightSensitivity;
+            float3 _PlayerPosition;
+            float _DistSensitivity;
             float _MinBrightness;
             float _MaxBrightness;
 
@@ -53,6 +53,7 @@ Shader "Hidden/MapUnlit"
                 Varyings o;
 
                 // URPの便利関数：オブジェクト→HClip
+                //オブジェクトで頂点を参照して色を変えるため（オブジェクト内でグラデーションができるよ）
                 o.pos = TransformObjectToHClip(v.vertex);
                 o.worldPos = TransformObjectToWorld(v.vertex).xyz;
 
@@ -63,11 +64,21 @@ Shader "Hidden/MapUnlit"
             float4 frag (Varyings i) : SV_Target
             {
                 
-                float heightDiff = abs(i.worldPos.y - _PlayerHeight);
+                float3 wp = float3(i.worldPos.x, i.worldPos.y, i.worldPos.z);
+                float3 pp = float3(_PlayerPosition.x, _PlayerPosition.y, _PlayerPosition.z);
 
-                float brightness = 1 - heightDiff * _HeightSensitivity;
+                float dist = distance(wp,pp);
 
-                brightness = clamp(brightness, _MinBrightness, _MaxBrightness);
+                 // 1m以内は明るい
+                float radius = 3.0;
+
+                 // dist が radius を超えた量に応じてフェード
+                float t = saturate((dist - radius) * _DistSensitivity);
+
+                //float brightness = 1 - dist * _DistSensitivity;
+
+                //brightness = clamp(brightness, _MinBrightness, _MaxBrightness);
+                float brightness = lerp(_MaxBrightness, _MinBrightness, t);
 
                 return float4(_Color.rgb * brightness, 1);
             }

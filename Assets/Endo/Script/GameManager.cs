@@ -107,6 +107,16 @@ public class GameManager : NetworkBehaviour
             NetworkObjectSpawner.Instance.RequestSpawnObject("Daifuku", new Vector3(0f,10f,0f),Quaternion.identity, NetworkObjectSpawner.OwnerMode.Host);
 
         }
+
+        //生成
+        if (GUI.Button(new Rect(1000f, 100f, 100, 30), "マップ表示"))
+        {
+
+            bool active = !_ui.gameObject.activeSelf;
+           _ui.gameObject.SetActive(active);
+
+        }
+
     }
     // Update is called once per frame
     void LateUpdate()
