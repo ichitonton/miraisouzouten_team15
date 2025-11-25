@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using System.Data.Common;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
+using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks.CompilerServices;
+using System;
 
 [System.Serializable]
 public class MapColor
@@ -29,25 +33,37 @@ public class MapColorManager : MonoBehaviour
     [SerializeField] private string mapLayerName = "Map";
 
     [Header("Player Settings")]
-    [SerializeField] private Transform _player;
+    [SerializeField] private Transform[] _players;
+
+    //配列はキャッシュして毎回メモリを確保しない
+    private Vector4[] _playerPosCache;
 
     [Header("Surface Settings")]
       // 高低差の基準
     [SerializeField, Range(0.0001f, 2f)] private float heightSensitivity = 0.4f;
-    [SerializeField] private float _PointMinBrightness = 0.2f;
-    [SerializeField] private float _PointMaxBrightness = 1.0f;
-
-    [Header("Point Settings")]            
-    [SerializeField, Range(0.0001f, 2f)] private float _pointensitivity = 0.4f;
     [SerializeField] private float _SurfaceMinBrightness = 0.2f;
     [SerializeField] private float _SurfaceMaxBrightness = 1.0f;
+    
+
+    [Header("Point Settings")]            
+    [SerializeField, Range(0.0001f, 2f)] private float _pointSensitivity = 0.4f;
+    [SerializeField] private float _PointMinBrightness = 0.2f;
+    [SerializeField] private float _PointMaxBrightness = 1.0f;
     [SerializeField] private float _pointRadius = 1.0f;
 
     private static readonly List<GameObject> registeredObjects = new();
     private readonly Dictionary<string, Color> _nameToColor = new();
     private MaterialPropertyBlock _mpb;
 
+    //タグ名 → index に変換
+    //その index を Renderer の materialPropertyBlock にセット
+    private static Dictionary<string, int> _tagToId = new Dictionary<string, int>();
+    private Color[] _colorArray = new Color[32];
+
+    //マテリアルのキャッシュ
     private Material drawMat;
+    //MapTextureに描くオブジェクトがあるなら一つもメッシュにする
+    private Mesh _combinedMesh;
 
     public enum ViewMode
     {
@@ -63,19 +79,12 @@ public class MapColorManager : MonoBehaviour
 
         _mpb = new();
 
-        if (_viewMode == ViewMode.Point)
-        {
-            drawMat = new Material(PointReplacementShader); // ← ここで1回だけ生成！
-        }
-        else if (_viewMode == ViewMode.Surface)
-        {
-            drawMat = new Material(SurfaceReplacementShader); // ← ここで1回だけ生成！
-        }
-        else if (_viewMode == ViewMode.Hybrid)
-        {
-            drawMat = new Material(HybridReplacementShader); // ← ここで1回だけ生成！
-        }
-        
+        // Shader 選択
+        drawMat =
+            _viewMode == ViewMode.Point ? new Material(PointReplacementShader) :
+            _viewMode == ViewMode.Surface ? new Material(SurfaceReplacementShader) :
+            new Material(HybridReplacementShader);
+
 
         // 色テーブル初期化
         _nameToColor.Clear();
@@ -88,16 +97,69 @@ public class MapColorManager : MonoBehaviour
             }
         }
 
+        //名前からIndex番号に変換
+        int idx = 0;
+        foreach (var e in _colorSettings)
+        {
+            if (!string.IsNullOrEmpty(e._tagName))
+            {
+                var key = e._tagName.ToLower();
+                _nameToColor[key] = e._color;
+
+                _tagToId[key] = idx;
+                _colorArray[idx] = e._color;
+
+                idx++;
+            }
+        }
+
         mapCamera.enabled = true;
     }
 
-    private void LateUpdate()
+    private async UniTaskVoid Start()
     {
+        //シェーダーに前職をセット
+        drawMat.SetInt("_ColorCount", _colorSettings.Count);
+        drawMat.SetColorArray("_Colors", _colorArray);
 
+        CombineMeshes();
+        //自動停止
+        var token = this.GetCancellationTokenOnDestroy();
+
+        while (!token.IsCancellationRequested)
+        {
+            RenderMap();
+            await UniTask.Delay(TimeSpan.FromSeconds(0.05f), cancellationToken: token); // 20FPS
+        }
+    }
+
+    //オブジェクトのメッシュを結合して一つにする
+    private void CombineMeshes()
+    {
+        List<CombineInstance> combineList = new();
+
+        foreach (var go in registeredObjects)
+        {
+            var mf = go.GetComponent<MeshFilter>();
+            if (!mf) continue;
+
+            CombineInstance ci = new();
+            ci.mesh = mf.sharedMesh;
+            ci.transform = go.transform.localToWorldMatrix;
+
+            combineList.Add(ci);
+        }
+
+        _combinedMesh = new Mesh();
+        _combinedMesh.CombineMeshes(combineList.ToArray(), true, true);
+    }
+
+    private void RenderMap()
+    {
         var prevRT = RenderTexture.active;
         RenderTexture.active = mapTexture;
 
-        GL.Clear(true, true, new Color(0,0,0,0));
+        GL.Clear(true, true, new Color(0, 0, 0, 0));
 
         GL.invertCulling = true;
 
@@ -110,35 +172,8 @@ public class MapColorManager : MonoBehaviour
         GL.LoadProjectionMatrix(proj);
         GL.modelview = view;
 
-        if (_viewMode == ViewMode.Point)
-        {
-            drawMat.SetVector("_PlayerPosition", new Vector4(_player.position.x, _player.position.y, _player.position.z, 0));
-            drawMat.SetFloat("_DistSensitivity", heightSensitivity);
-            drawMat.SetFloat("_MinBrightness", _PointMinBrightness);
-            drawMat.SetFloat("_MaxBrightness", _PointMaxBrightness);
-        }
-        else if (_viewMode == ViewMode.Surface)
-        {
-            drawMat.SetFloat("_PlayerHeight", _player.position.y);
-            drawMat.SetFloat("_HeightSensitivity", heightSensitivity);
-            drawMat.SetFloat("_MinBrightness", _SurfaceMinBrightness);
-            drawMat.SetFloat("_MaxBrightness", _SurfaceMaxBrightness);
-        }
-        else if(_viewMode == ViewMode.Hybrid)
-        {
-
-            drawMat.SetFloat("_PlayerHeight", _player.position.y);
-            drawMat.SetFloat("_HeightSensitivity", heightSensitivity);
-            drawMat.SetFloat("_SurfaceMinBrightness", _SurfaceMinBrightness);
-            drawMat.SetFloat("_SurfaceMaxBrightness", _SurfaceMaxBrightness);
-
-            drawMat.SetVector("_PlayerPos", new Vector4(_player.position.x, _player.position.y, _player.position.z, 0));
-            drawMat.SetFloat("_DistSensitivity", heightSensitivity);
-            drawMat.SetFloat("_PointMinBrightness", _PointMinBrightness);
-            drawMat.SetFloat("_PointMaxBrightness", _PointMaxBrightness);
-            drawMat.SetFloat("_PointRadius", _pointRadius); // 1m 推奨
-
-        }
+        //シェーダー側の更新
+        UpdateShaderParams();
 
         // ========= Mesh描画 =========
         foreach (var go in registeredObjects)
@@ -162,13 +197,14 @@ public class MapColorManager : MonoBehaviour
             if (_nameToColor.TryGetValue(tag, out var colorFromTag))
                 baseColor = colorFromTag;
 
-            if (_player == null) return; 
-            
+            if (_players == null) return;
+
             drawMat.SetColor("_Color", baseColor);
             drawMat.SetPass(0);
-
             Graphics.DrawMeshNow(mf.sharedMesh, go.transform.localToWorldMatrix);
         }
+
+        
 
         GL.PopMatrix();
         RenderTexture.active = prevRT;
@@ -177,42 +213,32 @@ public class MapColorManager : MonoBehaviour
 
     }
 
-    //タグを取得
-    private bool TryGetBaseColor(GameObject go, out Color baseColor)
+    void UpdateShaderParams()
     {
-        baseColor = Color.white;
+        int count = _players.Length;
 
-        string key = go.tag.ToLower();
+        if (_playerPosCache == null || _playerPosCache.Length != count)
+            _playerPosCache = new Vector4[count];
 
-        if (_nameToColor.TryGetValue(key, out var c))
+        for (int i = 0; i < count; i++)
         {
-            baseColor = c;
-            return true;
+            var p = _players[i].position;
+            _playerPosCache[i] = new Vector4(p.x, p.y, p.z, 0);
         }
-        return false;
+
+        drawMat.SetInt("_PlayerCount", count);
+        drawMat.SetVectorArray("_PlayerPos", _playerPosCache);
+
+        drawMat.SetFloat("_HeightSensitivity", heightSensitivity);
+        drawMat.SetFloat("_SurfaceMinBrightness", _SurfaceMinBrightness);
+        drawMat.SetFloat("_SurfaceMaxBrightness", _SurfaceMaxBrightness);
+
+        drawMat.SetFloat("_DistSensitivity", _pointSensitivity);
+        drawMat.SetFloat("_PointMinBrightness", _PointMinBrightness);
+        drawMat.SetFloat("_PointMaxBrightness", _PointMaxBrightness);
+        drawMat.SetFloat("_PointRadius", _pointRadius);
     }
 
-    //高さによる明暗補正
-    private Color ApplyHeightBrightness(Color baseColor, Transform obj)
-    {
-        float heightDiff = obj.position.y - _player.position.y;
-        float brightness = Mathf.Clamp01(1f + heightDiff * heightSensitivity);
-        return baseColor * brightness;
-    }
-
-
-    private void ResetPropertyBlocks()
-    {
-        // ゲーム表示側に絶対影響させたくないなら呼ぶ
-        for (int i = 0; i < registeredObjects.Count; i++)
-        {
-            var go = registeredObjects[i];
-            if (go == null) continue;
-            var rends = go.GetComponentsInChildren<Renderer>(true);
-            foreach (var r in rends)
-                r.SetPropertyBlock(null);
-        }
-    }
 
     // ───────── 登録制（バグ修正済み）─────────
     public static void Register(GameObject obj)
@@ -220,9 +246,19 @@ public class MapColorManager : MonoBehaviour
         if (obj == null) return;
         foreach (var r in obj.GetComponentsInChildren<Renderer>(true))
         {
-            var target = r.gameObject;          // ← ここが重要：r.gameObject基準で重複判定
+            var target = r.gameObject;
             if (!registeredObjects.Contains(target))
                 registeredObjects.Add(target);
+
+            var tag = target.tag.ToLower();
+
+            if (_tagToId.TryGetValue(tag, out int id))
+            {
+                var mpb = new MaterialPropertyBlock();
+                r.GetPropertyBlock(mpb);
+                mpb.SetInt("_TagId", id);
+                r.SetPropertyBlock(mpb);
+            }
         }
     }
 
