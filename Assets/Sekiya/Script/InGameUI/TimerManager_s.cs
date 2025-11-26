@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using TMPro;
 using UnityEngine;
 using Unity.Netcode;
@@ -14,34 +14,34 @@ public class TimeManager_s : NetworkBehaviour
 
     [SerializeField] private TMP_Text timeText;
 
-	private void Start()
-	{
-		timeText = GetComponent<TMP_Text>();
-	}
+    private void Start()
+    {
+        timeText = GetComponent<TMP_Text>();
+    }
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
 
-        // —á: ƒT[ƒo[‚Å‰Šú’lƒZƒbƒg
-        if (IsServer)
+Â  Â  Â  Â  // ä¾‹: ã‚µãƒ¼ãƒãƒ¼ã§åˆæœŸå€¤ã‚»ãƒƒãƒˆ
+Â  Â  Â  Â  if (IsServer)
         {
-            Debug.Log("ƒXƒ|[ƒ“‚³‚ê‚½‚æ");
-            //_count.Value = 180f; // 3•ª‚Æ‚©
-        }
+            Debug.Log("ã‚¹ãƒãƒ¼ãƒ³ã•ã‚ŒãŸã‚ˆ");
+Â  Â  Â  Â  Â  Â  //_count.Value = 180f; // 3åˆ†ã¨ã‹
+Â  Â  Â  Â  }
     }
 
     void Update()
-	{
+    {
         if (NetworkManager.Singleton.IsServer)
         {
             _count.Value -= Time.deltaTime;
-            if (_count.Value < 0) _count.Value = 0; // ƒ}ƒCƒiƒX–h~
-        }
+            if (_count.Value < 0) _count.Value = 0; // ãƒã‚¤ãƒŠã‚¹é˜²æ­¢
+Â  Â  Â  Â  }
 
 
-        // •ª:•b •\‹L
-        var span = TimeSpan.FromSeconds(_count.Value);
+Â  Â  Â  Â  // åˆ†:ç§’ è¡¨è¨˜
+Â  Â  Â  Â  var span = TimeSpan.FromSeconds(_count.Value);
         timeText.text = span.ToString(@"mm\:ss");
     }
 }
