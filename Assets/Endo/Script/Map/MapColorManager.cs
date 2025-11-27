@@ -1,6 +1,11 @@
 using System.Collections.Generic;
 using System.Data.Common;
+using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
+using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks.CompilerServices;
+using System;
 
 [System.Serializable]
 public class MapColor
@@ -16,7 +21,9 @@ public class MapColorManager : MonoBehaviour
     [SerializeField] private RenderTexture mapTexture;
 
     [Header("Shader Settings")]
-    [SerializeField] private Shader replacementShader; // MapUnlit（URP Unlit）を指定
+    [SerializeField] private Shader PointReplacementShader; // MapUnlit（URP Unlit）を指定
+    [SerializeField] private Shader SurfaceReplacementShader; // MapUnlit（URP Unlit）を指定
+    [SerializeField] private Shader HybridReplacementShader; // MapUnlit（URP Unlit）を指定
 
     [Header("Map Color Settings")]
     [SerializeField] public List<MapColor> _colorSettings = new List<MapColor>();
@@ -25,23 +32,59 @@ public class MapColorManager : MonoBehaviour
     [Header("Target Layer")]
     [SerializeField] private string mapLayerName = "Map";
 
-    [Header("Height Settings")]
-    [SerializeField] private Transform _player;                 // 高低差の基準
-    [SerializeField, Range(0.0f, 2f)] private float heightSensitivity = 0.4f;
-    [SerializeField] private float minBrightness = 0.6f;
-    [SerializeField] private float maxBrightness = 1.4f;
+    [Header("Player Settings")]
+    [SerializeField] private Transform[] _players;
+
+    //配列はキャッシュして毎回メモリを確保しない
+    private Vector4[] _playerPosCache;
+
+    [Header("Surface Settings")]
+      // 高低差の基準
+    [SerializeField, Range(0.0001f, 2f)] private float heightSensitivity = 0.4f;
+    [SerializeField] private float _SurfaceMinBrightness = 0.2f;
+    [SerializeField] private float _SurfaceMaxBrightness = 1.0f;
+    
+
+    [Header("Point Settings")]            
+    [SerializeField, Range(0.0001f, 2f)] private float _pointSensitivity = 0.4f;
+    [SerializeField] private float _PointMinBrightness = 0.2f;
+    [SerializeField] private float _PointMaxBrightness = 1.0f;
+    [SerializeField] private float _pointRadius = 1.0f;
 
     private static readonly List<GameObject> registeredObjects = new();
     private readonly Dictionary<string, Color> _nameToColor = new();
     private MaterialPropertyBlock _mpb;
 
+    //タグ名 → index に変換
+    //その index を Renderer の materialPropertyBlock にセット
+    private static Dictionary<string, int> _tagToId = new Dictionary<string, int>();
+    private Color[] _colorArray = new Color[32];
+
+    //マテリアルのキャッシュ
     private Material drawMat;
+    //MapTextureに描くオブジェクトがあるなら一つもメッシュにする
+    private Mesh _combinedMesh;
+
+    public enum ViewMode
+    {
+        Point,
+        Surface,
+        Hybrid
+    }
+
+    [SerializeField] private ViewMode _viewMode = ViewMode.Point;
 
     private void Awake()
     {
 
         _mpb = new();
-        drawMat = new Material(replacementShader); // ← ここで1回だけ生成！
+
+        // Shader 選択
+        drawMat =
+            _viewMode == ViewMode.Point ? new Material(PointReplacementShader) :
+            _viewMode == ViewMode.Surface ? new Material(SurfaceReplacementShader) :
+            new Material(HybridReplacementShader);
+
 
         // 色テーブル初期化
         _nameToColor.Clear();
@@ -53,159 +96,149 @@ public class MapColorManager : MonoBehaviour
                 _nameToColor[key] = e._color;
             }
         }
+
+        //名前からIndex番号に変換
+        int idx = 0;
+        foreach (var e in _colorSettings)
+        {
+            if (!string.IsNullOrEmpty(e._tagName))
+            {
+                var key = e._tagName.ToLower();
+                _nameToColor[key] = e._color;
+
+                _tagToId[key] = idx;
+                _colorArray[idx] = e._color;
+
+                idx++;
+            }
+        }
+
+        mapCamera.enabled = true;
     }
 
-    private void LateUpdate()
+    private async UniTaskVoid Start()
     {
+        //シェーダーに前職をセット
+        drawMat.SetInt("_ColorCount", _colorSettings.Count);
+        drawMat.SetColorArray("_Colors", _colorArray);
 
+        CombineMeshes();
+        //自動停止
+        var token = this.GetCancellationTokenOnDestroy();
 
-        if (mapCamera == null || mapTexture == null || drawMat == null) return;
+        while (!token.IsCancellationRequested)
+        {
+            RenderMap();
+            await UniTask.Delay(TimeSpan.FromSeconds(0.05f), cancellationToken: token); // 20FPS
+        }
+    }
 
-        
-
-        var prevRT = RenderTexture.active;
-        RenderTexture.active = mapTexture;
-
-        //ここ重要：全クリア
-        GL.Clear(true, true, Color.black);
-
-        // MapCamera の行列を使って描画
-        GL.PushMatrix();
-        GL.LoadProjectionMatrix(mapCamera.projectionMatrix);
-        GL.modelview = mapCamera.worldToCameraMatrix;
-
-        Debug.Log("登録されてるMapオブジェクト" + registeredObjects.Count);
+    //オブジェクトのメッシュを結合して一つにする
+    private void CombineMeshes()
+    {
+        List<CombineInstance> combineList = new();
 
         foreach (var go in registeredObjects)
         {
-            if (go == null) continue;
-
-            var rend = go.GetComponent<MeshRenderer>();
             var mf = go.GetComponent<MeshFilter>();
-            //レンダラーとフィルターがないなら
-            if (rend == null || mf == null) continue;
+            if (!mf) continue;
 
-            // タグ色取得
-            Color baseColor;
-            if (!_nameToColor.TryGetValue(go.tag.ToLower(), out baseColor))
-                baseColor = Color.white;
+            CombineInstance ci = new();
+            ci.mesh = mf.sharedMesh;
+            ci.transform = go.transform.localToWorldMatrix;
 
+            combineList.Add(ci);
         }
 
+        _combinedMesh = new Mesh();
+        _combinedMesh.CombineMeshes(combineList.ToArray(), true, true);
+    }
 
-        //MapTextureをマゼンタに統一描画
-        GL.PopMatrix();
-        RenderTexture.active = prevRT;
+    private void RenderMap()
+    {
+        var prevRT = RenderTexture.active;
+        RenderTexture.active = mapTexture;
 
-        /*
-        if (mapCamera == null || mapTexture == null || replacementShader == null) return;
+        GL.Clear(true, true, new Color(0, 0, 0, 0));
 
-        Debug.Log("カラー変更されるオブジェクトの数" + registeredObjects.Count);
-        Debug.Log("色の数"+_nameToColor.Count);
-        // 1) 各オブジェクトの色（名前ベース）＋ 高低差の明暗 を PropertyBlock で設定
-        float playerY = _player != null ? _player.position.y : 0f;
+        GL.invertCulling = true;
 
-        for (int i = 0; i < registeredObjects.Count; i++)
+        // ========= 行列設定 =========
+        GL.PushMatrix();
+
+        Matrix4x4 proj = mapCamera.projectionMatrix;
+        Matrix4x4 view = mapCamera.worldToCameraMatrix;
+
+        GL.LoadProjectionMatrix(proj);
+        GL.modelview = view;
+
+        //シェーダー側の更新
+        UpdateShaderParams();
+
+        // ========= Mesh描画 =========
+        foreach (var go in registeredObjects)
         {
-            
-            var go = registeredObjects[i];
-            if (go == null) continue;
+            var mf = go.GetComponent<MeshFilter>();
+            if (!mf) continue;
 
-            // 名前で色決定（前方一致・部分一致どちらでもOKなように小文字でContainsチェック）
-            var lowerName = go.name.ToLower();
-            Color baseColor = _defaultColor;
-            //デバッグ用
-            string matchedKey = "(none)";
+            // ベースカラーをタグから取得
+            Color baseColor = Color.red; // デフォルト赤
+            string tag = go.tag.ToLower();
 
-            foreach (var kv in _nameToColor)
+            // 子のタグが "Untagged" の場合は親のタグを使う
+            if (tag == "untagged")
             {
-                //Debug.Log($"Compare: name={lowerName}, key={kv.Key}");
-
-                var lowerTag = go.tag.ToLower().Trim();
-                if (_nameToColor.TryGetValue(lowerTag, out var tagColor))
+                if (go.transform.parent != null)
                 {
-                    baseColor = tagColor;
-                    matchedKey = lowerTag;
+                    tag = go.transform.parent.tag.ToLower();
                 }
             }
 
-            Debug.Log($"[MapColorManager] Object:{go.name}, Key:{matchedKey}, BaseColor:{baseColor}");
+            if (_nameToColor.TryGetValue(tag, out var colorFromTag))
+                baseColor = colorFromTag;
 
-            // 高低差で明暗
-            float heightDiff = go.transform.position.y - playerY;
-            float brightness = Mathf.Clamp(1f + heightDiff * heightSensitivity, minBrightness, maxBrightness);
-            Color finalColor = baseColor * brightness;
+            if (_players == null) return;
 
-            // ここでグローバル変数として送る
-            Shader.SetGlobalColor("_GlobalColor", finalColor);
-
-            // その1体だけをMapCameraに描かせる
-            var rends = go.GetComponentsInChildren<Renderer>();
-            foreach (var r in rends)
-            {
-                if (r == null) continue;
-                mapCamera.cullingMask = 1 << r.gameObject.layer;
-                mapCamera.RenderWithShader(replacementShader, null);
-            }
-
-            // 子も含めて全Rendererに _Color をセット（Unlit側で読む）
-            /*var rends = go.GetComponentsInChildren<Renderer>(true);
-            foreach (var r in rends)
-            {
-                if (r == null) continue;
-                r.GetPropertyBlock(_mpb);
-                _mpb.SetColor("_Color", finalColor);
-                r.SetPropertyBlock(_mpb);
-            }
+            drawMat.SetColor("_Color", baseColor);
+            drawMat.SetPass(0);
+            Graphics.DrawMeshNow(mf.sharedMesh, go.transform.localToWorldMatrix);
         }
 
-        // 2) 置換シェーダで強制描画（全ての描画をMapUnlitに）
-        mapCamera.cullingMask = LayerMask.GetMask(mapLayerName);
-        mapCamera.targetTexture = mapTexture;
-        mapCamera.RenderWithShader(replacementShader, null);
+        
 
-        */
+        GL.PopMatrix();
+        RenderTexture.active = prevRT;
 
-        // 3) PropertyBlockは残っていてもOK（Game側Toonは_CoIorを読まない）※念のため消したいなら下を有効化
-        // ResetPropertyBlocks();
+        GL.invertCulling = false;
+
     }
 
-    //タグを取得
-    private bool TryGetBaseColor(GameObject go, out Color baseColor)
+    void UpdateShaderParams()
     {
-        baseColor = Color.white;
+        int count = _players.Length;
 
-        string key = go.tag.ToLower();
+        if (_playerPosCache == null || _playerPosCache.Length != count)
+            _playerPosCache = new Vector4[count];
 
-        if (_nameToColor.TryGetValue(key, out var c))
+        for (int i = 0; i < count; i++)
         {
-            baseColor = c;
-            return true;
+            var p = _players[i].position;
+            _playerPosCache[i] = new Vector4(p.x, p.y, p.z, 0);
         }
-        return false;
+
+        drawMat.SetInt("_PlayerCount", count);
+        drawMat.SetVectorArray("_PlayerPos", _playerPosCache);
+
+        drawMat.SetFloat("_HeightSensitivity", heightSensitivity);
+        drawMat.SetFloat("_SurfaceMinBrightness", _SurfaceMinBrightness);
+        drawMat.SetFloat("_SurfaceMaxBrightness", _SurfaceMaxBrightness);
+
+        drawMat.SetFloat("_DistSensitivity", _pointSensitivity);
+        drawMat.SetFloat("_PointMinBrightness", _PointMinBrightness);
+        drawMat.SetFloat("_PointMaxBrightness", _PointMaxBrightness);
+        drawMat.SetFloat("_PointRadius", _pointRadius);
     }
 
-    //高さによる明暗補正
-    private Color ApplyHeightBrightness(Color baseColor, Transform obj)
-    {
-        float heightDiff = obj.position.y - _player.position.y;
-        float brightness = Mathf.Clamp01(1f + heightDiff * heightSensitivity);
-        return baseColor * brightness;
-    }
-
-
-    private void ResetPropertyBlocks()
-    {
-        // ゲーム表示側に絶対影響させたくないなら呼ぶ
-        for (int i = 0; i < registeredObjects.Count; i++)
-        {
-            var go = registeredObjects[i];
-            if (go == null) continue;
-            var rends = go.GetComponentsInChildren<Renderer>(true);
-            foreach (var r in rends)
-                r.SetPropertyBlock(null);
-        }
-    }
 
     // ───────── 登録制（バグ修正済み）─────────
     public static void Register(GameObject obj)
@@ -213,9 +246,19 @@ public class MapColorManager : MonoBehaviour
         if (obj == null) return;
         foreach (var r in obj.GetComponentsInChildren<Renderer>(true))
         {
-            var target = r.gameObject;          // ← ここが重要：r.gameObject基準で重複判定
+            var target = r.gameObject;
             if (!registeredObjects.Contains(target))
                 registeredObjects.Add(target);
+
+            var tag = target.tag.ToLower();
+
+            if (_tagToId.TryGetValue(tag, out int id))
+            {
+                var mpb = new MaterialPropertyBlock();
+                r.GetPropertyBlock(mpb);
+                mpb.SetInt("_TagId", id);
+                r.SetPropertyBlock(mpb);
+            }
         }
     }
 
