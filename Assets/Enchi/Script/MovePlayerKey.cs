@@ -1,5 +1,6 @@
 using NUnit.Framework.Constraints;
 using UnityEngine;
+using static UnityEditor.Progress;
 using static UnityEngine.GraphicsBuffer;
 
 public class MovePlayerKey : MonoBehaviour
@@ -24,6 +25,7 @@ public class MovePlayerKey : MonoBehaviour
     [SerializeField] float _punchForce = 10.0f;
     [SerializeField] float _stunTime = 1.0f;//パンチした時のスタン時間
     [SerializeField] GameObject _itemObj; // 投げるオブジェクト
+    [SerializeField] Transform _haveTrans;//持ってるアイテム
     Transform _target;
     [SerializeField] float _itemFlightTime = 2.0f; // 投げるオブジェクトがターゲットに到達するまでの時間
 
@@ -42,8 +44,13 @@ public class MovePlayerKey : MonoBehaviour
     private float _moveSpeedInitial;
     private bool _canPunch = true;
     private ItemType _haveItem = ItemType.None;
+    private GameObject _item;
+    GameObject _pool = null;
 
     float _animBlend = 0.0f;
+
+
+    Vector3 _lookVector = Vector3.zero;//向いている方向
 
     [SerializeField] CanJump _FootCollider;
 
@@ -88,11 +95,18 @@ public class MovePlayerKey : MonoBehaviour
 
         _target = gameObject.GetComponent<UICursorToWorld>().GetItemTargetTransform();
 
-	}
+        _pool = GameObject.Find("ItemObjectPool");
+    }
 
     // Update is called once per frame
     void Update()
     {
+        if (_item != null)
+        {
+        _item.transform.position = _haveTrans.position;
+        _item.transform.eulerAngles = _haveTrans.eulerAngles;
+            
+        }
         Debug.Log(_haveItem);
         if (_animBlend > 0)
         {
@@ -112,9 +126,9 @@ public class MovePlayerKey : MonoBehaviour
         _anim.SetFloat("Blend", _animBlend);
 
         //エフェクト関連
-		//HandleMoveEffects();
+        //HandleMoveEffects();
 
-	}
+    }
 
     //
     //ゲッター
@@ -145,14 +159,46 @@ public class MovePlayerKey : MonoBehaviour
     //アイテム入手（アイテム抽選時間）
     public void LotteryHaveItem(float itemLotteryTime)
     {
-        _haveItem = ItemType.Max;
-        Invoke("SetHaveItem", itemLotteryTime);
+        if (_haveItem == ItemType.None)
+        {
+            _haveItem = ItemType.Max;
+            Invoke("SetHaveItem", itemLotteryTime);
+        }
     }
 
     void SetHaveItem()
     {
         _haveItem = (ItemType)Random.Range((int)ItemType.Bomb, (int)ItemType.Max);
         _anim.SetBool("Item", true);
+
+        //プレイヤーにアイテムを持たせる
+        bool _isChild = false;
+
+        for (int i = 0; i < _pool.transform.childCount; i++)
+        {
+            //非アクティブの子オブジェクト検索
+            GameObject _kari = _pool.transform.GetChild(i).gameObject;
+            if (_kari.GetComponent<Item>() != null &&
+                !_kari.activeSelf)
+            {
+                _kari.gameObject.SetActive(true);
+                _kari.transform.position = _haveTrans.transform.position;
+                _kari.transform.rotation = transform.rotation;
+
+                _item = _kari.gameObject;
+
+                _isChild = true;
+                _item.transform.SetParent(transform);
+                break;
+            }
+        }
+
+        //子オブジェクトが足りなければ新規作成
+        if (!_isChild)
+            _item = Instantiate(_itemObj, _haveTrans.transform.position, transform.rotation, transform);
+
+        _item.GetComponent<Collider>().enabled = false;
+        _item.GetComponent<Rigidbody>().isKinematic = true;
     }
 
     //あべこべ移動速度を逆転させる（何秒後にリセットするか）
@@ -189,6 +235,7 @@ public class MovePlayerKey : MonoBehaviour
     {
         _canPunch = true;
     }
+
     //パンチを受ける(ダメージ, パンチをスタン時間)
     public void ToGetPunch(int damage , float stunTime)
     {
@@ -233,8 +280,6 @@ public class MovePlayerKey : MonoBehaviour
         );
     }
 
-
-
     //
     //MOVE関係
     //
@@ -252,7 +297,8 @@ public class MovePlayerKey : MonoBehaviour
     void Move()
     {
 		Vector3 _moveVector = Vector3.zero;
-		bool hasInput = false;
+        //Vector3 _lookVector = Vector3.zero;
+        bool hasInput = false;
 
 		if (Input.GetKey(_up))
         {
@@ -298,7 +344,12 @@ public class MovePlayerKey : MonoBehaviour
 			em.enabled = hasInput;
 		}
 
-        RotateToMoveDirection(_moveVector);
+        if (_moveVector != Vector3.zero)
+        {
+            _lookVector = _moveVector;
+        }
+
+        RotateToMoveDirection(_lookVector);
 
         if (_moveDir.sqrMagnitude > 0.01f)
         {
@@ -330,13 +381,13 @@ public class MovePlayerKey : MonoBehaviour
         }
             //transform.LookAt(transform.position + new Vector3(_moveVector.x, 0, _moveVector.z));
             _rb.linearVelocity = _moveVector;
+
     }
     void Punch()
     {
         if (Input.GetKeyDown(_punch) && _canPunch)
         {
             _anim.SetTrigger("Punch");
-            Debug.Log("パンチしたお");
 
             _punchObj.SetActive(true);
 
@@ -352,33 +403,13 @@ public class MovePlayerKey : MonoBehaviour
     {
         if (Input.GetKeyDown(_useItem))
         {
-            GameObject _item = null;
-            GameObject _pool = null;
-            bool _isChild = false;
 
-            _pool = GameObject.Find("ItemObjectPool");
-            for (int i = 0; i < _pool.transform.childCount; i++)
-            {
-                //非アクティブの子オブジェクト検索
-                GameObject _kari = _pool.transform.GetChild(i).gameObject;
-                if (_kari.GetComponent<Item>() != null &&
-                    !_kari.activeSelf)
-                {
-                    _kari.gameObject.SetActive(true);
-                    _kari.transform.position = transform.position + transform.up * 2.5f;
-                    _kari.transform.rotation = transform.rotation;
+            _item.GetComponent<Collider>().enabled = true;
+            _item.GetComponent<Rigidbody>().isKinematic = false;
 
-                    _item = _kari.gameObject;
+            _item.transform.SetParent(_pool.transform);
 
-                    _isChild = true;
-                    break;
-                }
-            }
-
-            //子オブジェクトが足りなければ新規作成
-            if(!_isChild)
-            _item = Instantiate(_itemObj, transform.position + transform.up * 2.5f, transform.rotation, _pool.transform);
-
+            _item.transform.position = transform.position + transform.up * 2.5f;
 
             if (!_target || !_item) return;
             Rigidbody rb = _item.GetComponent<Rigidbody>();
@@ -389,6 +420,7 @@ public class MovePlayerKey : MonoBehaviour
 
             _haveItem = ItemType.None;
             _anim.SetBool("Item", false);
+            _item = null;
         }
 
         /// target に time 秒で到達するための初速度を計算
