@@ -107,7 +107,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   _bullet: {fileID: 1175553167635930660, guid: 1dd7b23365f94c84ab07e576c73d9383, type: 3}
   _bulletTransform: {fileID: 7762563885764872470}
-  _shotDelay: 2
+  _shotDelay: 7
 --- !u!114 &6012352138678728008
 MonoBehaviour:
   m_ObjectHideFlags: 0
