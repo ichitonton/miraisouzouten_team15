@@ -8,7 +8,7 @@ public class GoalScore_Network : NetworkBehaviour
 {
     // ====== 設定：このゴールは誰のもの？ ======
     [Header("Network Settings")]
-    [SerializeField] private ulong targetPlayerId = 0; // 0=Host, 1=2P, 2=3P...
+    [SerializeField] public ulong targetPlayerId = 0; // 0=Host, 1=2P, 2=3P...
 
     // ====== ルール設定 ======
     [Header("カウント個数")]
