@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-3999240337856890075
+--- !u!114 &-8798891001957153473
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_Atlas_06
-  m_Shader: {fileID: 4800000, guid: 988bc59f3c61c6641a43435847b23e69, type: 3}
+  m_Name: M_Atlas05_Ichigodaihuku
+  m_Shader: {fileID: 4800000, guid: 0d1e04285f4d5b748b91a4375a1f2e42, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -38,7 +38,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: ac99e9989acb16442a64dd556333ff0b, type: 3}
+        m_Texture: {fileID: 2800000, guid: d6400855f5213e6419b6f3a98250457a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -62,6 +62,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -104,39 +108,48 @@ Material:
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
-    - _Cutoff: 0.5
+    - _Cutoff: 0.522
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _Fade1: 0.03
-    - _Fade2: 0.03
+    - _Fade1: 0.111
+    - _Fade2: 0.156
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _LightContrast: 1
+    - _HighlightSmooth: 0.093
+    - _HighlightStrength: 0.36
+    - _HighlightThreshold: 0.224
+    - _LightContrast: 2.33
     - _Metallic: 0
+    - _MochiSSSStrength: 0.4
     - _OcclusionStrength: 1
     - _OutlineWidth: 0.02
     - _Parallax: 0.005
+    - _PowderHighlightReduce: 0.8
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _ShadowOffset: 0
+    - _ShadowOffset: -0.078
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
+    - _SpecPower: 64
+    - _SpecStrength: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
     - _Threshold1: 0.45
-    - _Threshold2: 0.2
+    - _Threshold2: 0.148
+    - _WetHighlightBoost: 1
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _HighlightColor: {r: 0.5943396, g: 0.5943396, b: 0.5943396, a: 0.015686275}
     - _MidColor: {r: 0.85, g: 0.85, b: 0.85, a: 0.6}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _ShadowColor: {r: 0.54999995, g: 0.54999995, b: 0.54999995, a: 1}
