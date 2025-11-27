@@ -41,7 +41,7 @@ public class MovePlayerKey : MonoBehaviour
     private int _currentHp;
     private float _moveSpeedInitial;
     private bool _canPunch = true;
-    private ItemType _haveItem = ItemType.Bomb;
+    private ItemType _haveItem = ItemType.None;
 
     float _animBlend = 0.0f;
 
@@ -93,6 +93,7 @@ public class MovePlayerKey : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(_haveItem);
         if (_animBlend > 0)
         {
             _animBlend -= 0.1f;
@@ -103,7 +104,7 @@ public class MovePlayerKey : MonoBehaviour
             Jump();
             Punch();
         }
-        if (_haveItem != ItemType.None)
+        if (_haveItem != ItemType.None && _haveItem != ItemType.Max)
         {
             UseItem();
         }
@@ -383,6 +384,8 @@ public class MovePlayerKey : MonoBehaviour
             // 初速度を計算して付与
             Vector3 velocity = CalculateVelocity(_target.position, _item.transform.position, _itemFlightTime);
             rb.linearVelocity = velocity;
+
+            _haveItem = ItemType.None;
         }
 
         /// target に time 秒で到達するための初速度を計算

@@ -41,8 +41,7 @@ public class ItemBox : MonoBehaviour
 	private void OnTriggerEnter(Collider other)
 	{
 		if (_used) return;
-		if (other.GetComponent<MovePlayerKey>()!=null);
-
+		if (other.GetComponent<MovePlayerKey>()!=null)
 		other.GetComponent<MovePlayerKey>().LotteryHaveItem(itemChoose);
 
 		_used = true;
