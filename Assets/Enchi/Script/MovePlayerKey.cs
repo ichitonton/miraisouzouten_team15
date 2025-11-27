@@ -152,6 +152,7 @@ public class MovePlayerKey : MonoBehaviour
     void SetHaveItem()
     {
         _haveItem = (ItemType)Random.Range((int)ItemType.Bomb, (int)ItemType.Max);
+        _anim.SetBool("Item", true);
     }
 
     //あべこべ移動速度を逆転させる（何秒後にリセットするか）
@@ -334,6 +335,8 @@ public class MovePlayerKey : MonoBehaviour
     {
         if (Input.GetKeyDown(_punch) && _canPunch)
         {
+            _anim.SetTrigger("Punch");
+            Debug.Log("パンチしたお");
 
             _punchObj.SetActive(true);
 
@@ -349,7 +352,6 @@ public class MovePlayerKey : MonoBehaviour
     {
         if (Input.GetKeyDown(_useItem))
         {
-            //bool _isChild = false;
             GameObject _item = null;
             GameObject _pool = null;
             bool _isChild = false;
@@ -386,6 +388,7 @@ public class MovePlayerKey : MonoBehaviour
             rb.linearVelocity = velocity;
 
             _haveItem = ItemType.None;
+            _anim.SetBool("Item", false);
         }
 
         /// target に time 秒で到達するための初速度を計算
