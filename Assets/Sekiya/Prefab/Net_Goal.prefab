@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 275963050840588408}
   - component: {fileID: 8452763065828215809}
   - component: {fileID: 7320633433418575577}
-  - component: {fileID: 5003611541760815364}
-  m_Layer: 0
-  m_Name: P_Goal_Network
+  - component: {fileID: 2181350323889996973}
+  m_Layer: 6
+  m_Name: Net_Goal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -5.987, y: 0, z: 11.01}
-  m_LocalScale: {x: 5, y: 0.4308633, z: 5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7426244877165061418}
@@ -42,7 +42,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1658538996252717161}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 1451496372542888449, guid: 23282fd4fa0c1574b8e6d8d6182f0b9b, type: 3}
 --- !u!23 &7320633433418575577
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -68,7 +68,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: fe0dfebe9e5f3e9479adbdfb989a2701, type: 2}
+  - {fileID: 2100000, guid: 3348d903161874045b5859b2371c58cd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -91,8 +91,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &5003611541760815364
-BoxCollider:
+--- !u!64 &2181350323889996973
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -109,9 +109,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 1451496372542888449, guid: 23282fd4fa0c1574b8e6d8d6182f0b9b, type: 3}
 --- !u!1 &8747491641000462686
 GameObject:
   m_ObjectHideFlags: 0
@@ -122,9 +123,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7426244877165061418}
   - component: {fileID: 9070252491119208078}
-  - component: {fileID: 625071590100579020}
-  - component: {fileID: 1931327159375403299}
-  m_Layer: 0
+  - component: {fileID: 8564661852305280008}
+  - component: {fileID: 22627513327917762}
+  m_Layer: 6
   m_Name: Goal_coll
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -140,8 +141,8 @@ Transform:
   m_GameObject: {fileID: 8747491641000462686}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
-  m_LocalScale: {x: 0.9211133, y: 3.5155282, z: 0.9211133}
+  m_LocalPosition: {x: 0, y: 1.4, z: 0}
+  m_LocalScale: {x: 10.422, y: 2.0844, z: 10.422}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 275963050840588408}
@@ -167,7 +168,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &625071590100579020
+--- !u!114 &8564661852305280008
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -192,7 +193,7 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &1931327159375403299
+--- !u!114 &22627513327917762
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -203,13 +204,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 65efe20189f9f1041b37a108aeab98e3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GoalScore_Network
+  m_EditorClassIdentifier: Assembly-CSharp::GoalToUI
   ShowTopMostFoldoutHeaderGroup: 1
   targetPlayerId: 0
-  uiRoot: {fileID: 0}
-  score_nowText: {fileID: 0}
-  score_totalText: {fileID: 0}
-  count_slider: {fileID: 0}
   countMax: 8
   TimeupMAX: 7
   countObjects: []
