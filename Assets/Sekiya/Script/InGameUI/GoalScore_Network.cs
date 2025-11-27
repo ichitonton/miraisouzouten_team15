@@ -58,11 +58,10 @@ public class GoalScore_Network : NetworkBehaviour
 
             // 初回表示
             PushToUI();
-        }
 
-        // オブジェクトの表示更新（これは全員やる）
-        netCount.OnValueChanged += (prev, current) => UpdateActiveObject();
-        UpdateActiveObject();
+            netCount.OnValueChanged += (prev, current) => UpdateActiveObject();
+            UpdateActiveObject();
+        }
     }
 
     // ★UIに情報を送る専用の関数
