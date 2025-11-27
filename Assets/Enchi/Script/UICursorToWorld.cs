@@ -5,13 +5,15 @@ public class UICursorToWorld : MonoBehaviour
     private RectTransform uiIcon;   // UIアイコン
     private Canvas canvas;          // Canvas
     private Camera uiCamera;        // Canvas用カメラ
-    [SerializeField] private Transform worldTarget;  // 反映先3Dオブジェクト
+    private Transform worldTarget;  // 反映先3Dオブジェクト
     [SerializeField] private LayerMask groundLayer;  // 地面レイヤー
+    [SerializeField] private GameObject itemTarget;
 
     void Start()
     {
         canvas = Object.FindFirstObjectByType<Canvas>();
         uiCamera =  Object.FindFirstObjectByType<Camera>();
+        worldTarget =Instantiate(itemTarget, transform.position, Quaternion.identity).transform;
 
         for (int i = 0; i < canvas.transform.childCount; i++)
         {
@@ -51,5 +53,10 @@ public class UICursorToWorld : MonoBehaviour
 
             worldTarget.position = hit.point;
         }
+    }
+
+    public Transform GetItemTargetTransform()
+    {
+        return worldTarget;
     }
 }

@@ -24,7 +24,7 @@ public class MovePlayerKey : MonoBehaviour
     [SerializeField] float _punchForce = 10.0f;
     [SerializeField] float _stunTime = 1.0f;//パンチした時のスタン時間
     [SerializeField] GameObject _itemObj; // 投げるオブジェクト
-    [SerializeField] Transform _target;
+    Transform _target;
     [SerializeField] float _itemFlightTime = 2.0f; // 投げるオブジェクトがターゲットに到達するまでの時間
 
 	[SerializeField] GameObject _effDash_2; // 移動中エフェクト2
@@ -85,6 +85,8 @@ public class MovePlayerKey : MonoBehaviour
 			em.enabled = false;
 			ps.Play();
 		}
+
+        _target = gameObject.GetComponent<UICursorToWorld>().GetItemTargetTransform();
 
 	}
 
@@ -348,27 +350,31 @@ public class MovePlayerKey : MonoBehaviour
         {
             //bool _isChild = false;
             GameObject _item = null;
+            GameObject _pool = null;
+            bool _isChild = false;
 
-            //for (int i = 0; i < transform.childCount; i++)
-            //{
-            //    //非アクティブの子オブジェクト検索
-            //    GameObject _kari = transform.GetChild(i).gameObject;
-            //    if (_kari.GetComponent<Item>() != null &&
-            //        !_kari.activeSelf)
-            //    {
-            //        _kari.gameObject.SetActive(true);
-            //        _kari.transform.position = transform.position;
-            //        _kari.transform.rotation = transform.rotation;
+            _pool = GameObject.Find("ItemObjectPool");
+            for (int i = 0; i < _pool.transform.childCount; i++)
+            {
+                //非アクティブの子オブジェクト検索
+                GameObject _kari = _pool.transform.GetChild(i).gameObject;
+                if (_kari.GetComponent<Item>() != null &&
+                    !_kari.activeSelf)
+                {
+                    _kari.gameObject.SetActive(true);
+                    _kari.transform.position = transform.position + transform.up * 2.5f;
+                    _kari.transform.rotation = transform.rotation;
 
-            //        _item = _kari.gameObject;
+                    _item = _kari.gameObject;
 
-            //        _isChild = true;
-            //        break;
-            //    }
-            //}
+                    _isChild = true;
+                    break;
+                }
+            }
 
             //子オブジェクトが足りなければ新規作成
-            _item = Instantiate(_itemObj, transform.position + transform.up * 2.5f, transform.rotation);
+            if(!_isChild)
+            _item = Instantiate(_itemObj, transform.position + transform.up * 2.5f, transform.rotation, _pool.transform);
 
 
             if (!_target || !_item) return;
