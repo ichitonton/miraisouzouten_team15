@@ -20,8 +20,8 @@ public class MyTeamScore_UI : MonoBehaviour
     // ƒS[ƒ‹‘¤‚©‚ç”’l‚ğ‘—‚Á‚Ä‚à‚ç‚¤ŠÖ”
     public void UpdateDisplay(float now, float total, float time)
     {
-        if (scoreText) scoreText.text = $"Now: {now:0.##}";
-        if (totalText) totalText.text = $"Done: {total:0.##}";
+        if (scoreText) scoreText.text = $" {now:0.##}";
+        if (totalText) totalText.text = $" {total:0.##}";
         if (timerSlider) timerSlider.value = time;
     }
 
