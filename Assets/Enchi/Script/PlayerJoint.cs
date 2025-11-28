@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Drawing;
+using Unity.Burst.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerJoint : MonoBehaviour
@@ -12,6 +14,7 @@ public class PlayerJoint : MonoBehaviour
     [SerializeField] float _lowerSpring = 1500f;
     [SerializeField] float _lowerDamper = 150f;
     [SerializeField] float halfHeight = 0.5f; // オブジェクトの半分の高さ
+    [SerializeField] Material _material; // オブジェクトの半分の高さ
 
     private GameObject _playerA;
     private GameObject _playerB;
@@ -19,6 +22,7 @@ public class PlayerJoint : MonoBehaviour
 
     private float _magicNumber = 0.5f;
 
+    private LineRenderer line;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -49,9 +53,46 @@ public class PlayerJoint : MonoBehaviour
             Instantiate(_joint, this.transform.position + new Vector3(0.01f * i, 0, 0), this.transform.rotation, this.transform).SetActive(false);
         }
 
-            Joint();
+        Joint();
+        line = gameObject.AddComponent<LineRenderer>();
+        line.positionCount = (_jointCount) * 4 ;
+        line.startWidth = 0.05f;
+        line.endWidth = 0.05f; 
+        line.material = _material;  // マテリアルの色を白にする
+        //line.startColor = UnityEngine.Color.yellow;
+        //line.endColor = UnityEngine.Color.yellow;
     }
 
+
+    private ConfigurableJoint joint;
+    Vector3[] ancors = new Vector3[4];
+
+    void Update()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            for (int j = 0; j < 2; j++)
+            {
+                joint = transform.GetChild(i).GetComponents<ConfigurableJoint>()[j];
+                ancors[j * 2] = joint.transform.TransformPoint(joint.anchor);
+                ancors[j * 2 + 1] = joint.connectedBody.transform.TransformPoint(joint.connectedAnchor);
+                if (joint == null || joint.connectedBody == null)
+                {
+                    line.enabled = false;
+                    return;
+                }
+                line.enabled = true;
+            }
+                // 線を描画
+                //[1]  [0]
+                //   ×
+                //[3]－[2]
+            line.SetPosition(i * 4, ancors[0]);
+            line.SetPosition(i * 4 + 1, ancors[3]);
+            line.SetPosition(i * 4 + 2, ancors[2]);
+            line.SetPosition(i * 4 + 3, ancors[1]);
+        }
+    }
     private void OnGUI()
     {
         if (GUI.Button(new Rect(300, Screen.height - 30, 100, 30), "つなぐ"))
@@ -125,6 +166,10 @@ public class PlayerJoint : MonoBehaviour
             upperSpringStruct.damper = _upperDamper;
             upper.linearLimitSpring = upperSpringStruct;
 
+            joint = _B.GetComponent<ConfigurableJoint>();
+
+            //OnDrawGizmos();
+
             // 下側のジョイント設定
             ConfigurableJoint lower = _B.AddComponent<ConfigurableJoint>();
             lower.xMotion = ConfigurableJointMotion.Limited;
@@ -156,10 +201,23 @@ public class PlayerJoint : MonoBehaviour
             lowerSpringStruct.damper = _lowerDamper;
             lower.linearLimitSpring = lowerSpringStruct;
 
+
             _A = _B;
         }
 
     }
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.color = UnityEngine.Color.yellow;
+
+    //    // 接続されているポイント
+    //    Vector3 a = transform.TransformPoint(joint.anchor);
+    //    Vector3 b = joint.connectedBody.transform.TransformPoint(joint.connectedAnchor);
+
+    //    Gizmos.DrawSphere(a, 0.05f);
+    //    Gizmos.DrawSphere(b, 0.05f);
+    //    Gizmos.DrawLine(a, b);
+    //}
 
 
 }

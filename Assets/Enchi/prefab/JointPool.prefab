@@ -54,6 +54,7 @@ MonoBehaviour:
   _lowerSpring: 1500
   _lowerDamper: 150
   halfHeight: 0.5
+  _material: {fileID: 2100000, guid: ca6129ef87519e74a98cd4829e208a3f, type: 2}
 --- !u!114 &4272240628196000379
 MonoBehaviour:
   m_ObjectHideFlags: 0

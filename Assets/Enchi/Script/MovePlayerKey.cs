@@ -112,15 +112,15 @@ public class MovePlayerKey : MonoBehaviour
         {
             _animBlend -= 0.1f;
         }
-        if (!_canNotInputKey)
-        {
-            Move();
-            Jump();
-            Punch();
-        }
         if (_haveItem != ItemType.None && _haveItem != ItemType.Max)
         {
             UseItem();
+        }
+        if (!_canNotInputKey)
+        {
+            Jump();
+            Punch();
+            Move();
         }
         //_anim.linearVelocityBlending = true;
         _anim.SetFloat("Blend", _animBlend);
@@ -349,7 +349,6 @@ public class MovePlayerKey : MonoBehaviour
             _lookVector = _moveVector;
         }
 
-        RotateToMoveDirection(_lookVector);
 
         if (_moveDir.sqrMagnitude > 0.01f)
         {
@@ -379,8 +378,10 @@ public class MovePlayerKey : MonoBehaviour
         else
         {
         }
-            //transform.LookAt(transform.position + new Vector3(_moveVector.x, 0, _moveVector.z));
-            _rb.linearVelocity = _moveVector;
+        //transform.LookAt(transform.position + new Vector3(_moveVector.x, 0, _moveVector.z));
+        _rb.linearVelocity = _moveVector;
+
+        RotateToMoveDirection(_lookVector);
 
     }
     void Punch()
