@@ -269,7 +269,7 @@ public class MovePlayerKey : MonoBehaviour
     void RotateToMoveDirection(Vector3 dir)
     {
         dir.y = 0.0f;
-        if (dir.sqrMagnitude < 0.0001f)
+        if (dir.sqrMagnitude < 0.1f)
             return; // Ž~‚Ü‚Á‚Ä‚éŽž‚Í‰ñ“]‚µ‚È‚¢
 
         Quaternion targetRot = Quaternion.LookRotation(dir);
@@ -344,7 +344,7 @@ public class MovePlayerKey : MonoBehaviour
 			em.enabled = hasInput;
 		}
 
-        if (_moveVector != Vector3.zero)
+       // if (_moveVector != Vector3.zero)
         {
             _lookVector = _moveVector;
         }
