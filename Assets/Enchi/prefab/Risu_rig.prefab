@@ -3048,6 +3048,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7838561722115832706}
   - component: {fileID: 707195799076303210}
+  - component: {fileID: 7224511444096479622}
   - component: {fileID: 607975850266814620}
   - component: {fileID: 4346886339305241986}
   - component: {fileID: 8427100980178498739}
@@ -3109,6 +3110,22 @@ CapsuleCollider:
   m_Height: 2.2
   m_Direction: 1
   m_Center: {x: 0, y: 1.15, z: 0}
+--- !u!114 &7224511444096479622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7459081349001929016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e447f84a8c748640946bf0c48212e11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UICursorToWorld
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  itemTarget: {fileID: 3966227638361369922, guid: 2f78ca4fa4ae40b43a36dab265e8dcf3, type: 3}
 --- !u!114 &607975850266814620
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3139,9 +3156,10 @@ MonoBehaviour:
   _punchForce: 10
   _stunTime: 4
   _itemObj: {fileID: 0}
-  _target: {fileID: 0}
+  _haveTrans: {fileID: 0}
   _itemFlightTime: 2
   _effDash_2: {fileID: 773825968017154068, guid: 28c381c7693f60c43bd845de5f9783e4, type: 3}
+  _playerNumber: 0
   _FootCollider: {fileID: 7817851643849097461, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
 --- !u!54 &4346886339305241986
 Rigidbody:
