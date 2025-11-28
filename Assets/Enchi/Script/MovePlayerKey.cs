@@ -248,6 +248,7 @@ public class MovePlayerKey : MonoBehaviour
     {
         Debug.Log("受けうつけないお");
         _canNotInputKey = true;
+        _anim.SetBool("Dying", true);
 
         Invoke(nameof(UnlockStun), delay);
     }
@@ -255,6 +256,8 @@ public class MovePlayerKey : MonoBehaviour
     void UnlockStun()
     {
         _canNotInputKey = false;
+
+        _anim.SetBool("Dying", false);
     }
     //ダメージ（受けるダメージ）
     void AddDamage(int damage)
