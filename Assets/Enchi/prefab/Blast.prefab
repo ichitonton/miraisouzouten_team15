@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3e553e6de0c2ba44a6b3d309e422121, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Blast
-  _lifeTime: 0.5
+  _lifeTime: 1
   _impactForce: 2
 --- !u!135 &-5229641961098113913
 SphereCollider:
