@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class SceneChangerNetwork : NetworkBehaviour
 {
     [Header("遷移先シーン名")]
-    [SerializeField] private string nextSceneName = "ResultScene"; // リザルトシーンの名前
+    [SerializeField] private string nextSceneName = "Beta_Result"; // リザルトシーンの名前
 
     [Header("スコア集計用（3つのゴールをセットしてね）")]
     private GoalToUI goalRed;

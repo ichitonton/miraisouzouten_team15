@@ -10,6 +10,7 @@ public class TimerManager  : NetworkBehaviour
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private string nextSceneName = "ResultScene";
 
+    [SerializeField] private SceneChangerNetwork scenechange;
     private bool isTimeUp = false;
 
     // ... StartとかOnNetworkSpawnとかはそのまま ...
@@ -53,7 +54,7 @@ public class TimerManager  : NetworkBehaviour
 
         // 3. ちょっとだけ待つか、そのままシーン遷移
         // （RPCは届くのが速いので、基本はこの順序でOK）
-        NetworkManager.Singleton.SceneManager.LoadScene(nextSceneName, LoadSceneMode.Single);
+        scenechange.ChangeScene();
     }
 
     // ★重要！ 全員のPCで実行される関数
