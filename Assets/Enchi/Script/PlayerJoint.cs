@@ -76,6 +76,13 @@ public class PlayerJoint : MonoBehaviour
                 joint = transform.GetChild(i).GetComponents<ConfigurableJoint>()[j];
                 ancors[j * 2] = joint.transform.TransformPoint(joint.anchor);
                 ancors[j * 2 + 1] = joint.connectedBody.transform.TransformPoint(joint.connectedAnchor);
+                
+                //–Ô‚Ìã‚ğ­‚µ‰º‚°‚éi“–‚½‚è”»’è‚É‚Í‰e‹¿‚È‚µj
+                if (j < 1)
+                {
+                    ancors[j * 2] -= Vector3.up * 0.2f;
+                    ancors[j * 2 + 1] -= Vector3.up * 0.2f;
+                }
                 if (joint == null || joint.connectedBody == null)
                 {
                     line.enabled = false;

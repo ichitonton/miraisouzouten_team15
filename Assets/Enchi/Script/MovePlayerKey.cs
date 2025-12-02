@@ -24,7 +24,7 @@ public class MovePlayerKey : MonoBehaviour
     [SerializeField] int _punchDamage = 20;
     [SerializeField] float _punchForce = 10.0f;
     [SerializeField] float _stunTime = 1.0f;//パンチした時のスタン時間
-    [SerializeField] GameObject _itemObj; // 投げるオブジェクト
+    //[SerializeField] GameObject _itemObj; // 投げるオブジェクト
     [SerializeField] Transform _haveTrans;//持ってるアイテム
     Transform _target;
     [SerializeField] float _itemFlightTime = 2.0f; // 投げるオブジェクトがターゲットに到達するまでの時間
@@ -103,9 +103,8 @@ public class MovePlayerKey : MonoBehaviour
     {
         if (_item != null)
         {
-        _item.transform.position = _haveTrans.position;
-        _item.transform.eulerAngles = _haveTrans.eulerAngles;
-            
+            _item.transform.position = _haveTrans.position;
+            _item.transform.eulerAngles = _haveTrans.eulerAngles;            
         }
         Debug.Log(_haveItem);
         if (_animBlend > 0)
@@ -133,6 +132,10 @@ public class MovePlayerKey : MonoBehaviour
     //
     //ゲッター
     //
+    public PlayerNumber GetPlayerNumber()
+    {
+        return _playerNumber;
+    }
     public int GetPunchDamage()
     {
         return _punchDamage;
@@ -169,16 +172,16 @@ public class MovePlayerKey : MonoBehaviour
     void SetHaveItem()
     {
         _haveItem = (ItemType)Random.Range((int)ItemType.Bomb, (int)ItemType.Max);
-        _anim.SetBool("Item", true);
+        _anim.SetBool("ItemBomb", true);
+
+        //bool _isChild = false;
 
         //プレイヤーにアイテムを持たせる
-        bool _isChild = false;
-
         for (int i = 0; i < _pool.transform.childCount; i++)
         {
             //非アクティブの子オブジェクト検索
             GameObject _kari = _pool.transform.GetChild(i).gameObject;
-            if (_kari.GetComponent<Item>() != null &&
+            if (_kari.GetComponent<ItemBomb>() != null &&
                 !_kari.activeSelf)
             {
                 _kari.gameObject.SetActive(true);
@@ -187,18 +190,21 @@ public class MovePlayerKey : MonoBehaviour
 
                 _item = _kari.gameObject;
 
-                _isChild = true;
+                //_isChild = true;
                 _item.transform.SetParent(transform);
                 break;
             }
         }
 
         //子オブジェクトが足りなければ新規作成
-        if (!_isChild)
-            _item = Instantiate(_itemObj, _haveTrans.transform.position, transform.rotation, transform);
+        //if (!_isChild)
+            //_item = Instantiate(_itemObj, _haveTrans.transform.position, transform.rotation, transform);
 
         _item.GetComponent<Collider>().enabled = false;
         _item.GetComponent<Rigidbody>().isKinematic = true;
+
+        //アイテムプール内で更新をかけて、非アクティブオブジェクトが不足しているときに新規作成
+       
     }
 
     //あべこべ移動速度を逆転させる（何秒後にリセットするか）
@@ -423,7 +429,7 @@ public class MovePlayerKey : MonoBehaviour
             rb.linearVelocity = velocity;
 
             _haveItem = ItemType.None;
-            _anim.SetBool("Item", false);
+            _anim.SetBool("ItemBomb", false);
             _item = null;
         }
 
