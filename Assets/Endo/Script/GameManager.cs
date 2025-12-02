@@ -104,7 +104,7 @@ public class GameManager : NetworkBehaviour
         {
             if (!_IsLanModeActive) return;
 
-            NetworkObjectSpawner.Instance.RequestSpawnObject("Daifuku", new Vector3(0f,10f,0f),Quaternion.identity, NetworkObjectSpawner.OwnerMode.Host);
+            NetworkObjectSpawner.Instance.RequestSpawnObject("KintaroAme", new Vector3(0f,10f,0f),Quaternion.identity, NetworkObjectSpawner.OwnerMode.Host);
 
         }
 
