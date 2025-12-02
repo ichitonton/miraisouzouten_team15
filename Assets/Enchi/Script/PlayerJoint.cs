@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using Unity.Burst.CompilerServices;
+using Unity.Netcode;
 using Unity.VisualScripting;
+using UnityEditor.PackageManager;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerJoint : MonoBehaviour
 {
@@ -36,7 +39,7 @@ public class PlayerJoint : MonoBehaviour
             if (playerRef.TryGet(out var playerObj))
             {
                 //プレイヤーのタグを持っているかつ所有権があるなら
-                if (playerObj.gameObject.CompareTag("Player") && playerObj.IsOwner)
+                if (playerObj.gameObject.CompareTag("Player") && playerObj.IsOwnedByServer)
                 {
                     Debug.Log("所有権を持ったプレイヤーです");
                     players.Add(playerObj.gameObject);
@@ -50,7 +53,35 @@ public class PlayerJoint : MonoBehaviour
 
         for (int i = 0; i < _jointCount; i++)
         {
-            Instantiate(_joint, this.transform.position + new Vector3(0.01f * i, 0, 0), this.transform.rotation, this.transform).SetActive(false);
+            //生成して非アクティブにしておく
+            //Instantiate(_joint, this.transform.position + new Vector3(0.01f * i, 0, 0), this.transform.rotation, this.transform).SetActive(false);
+
+
+            if (!NetworkManager.Singleton.IsServer)
+            {
+                Debug.Log("[RPC] ClientでRope誤実行されたためスキップ");
+                return;
+            }
+            ulong clientId = NetworkManager.Singleton.LocalClientId;
+
+            Debug.Log($"[Host] Client {clientId} からRope生成リクエストを受信");
+
+            // Ropeを生成
+            GameObject rope = Instantiate(_joint, transform.position, Quaternion.identity, transform);
+            rope.SetActive(false);
+
+            //var netObj = GetComponent<NetworkObject>();
+            //オブジェクトのオーナーを決める
+            //netObj.SpawnWithOwnership(clientId);
+
+            // ClientRpcの送信先を1クライアントに限定
+            ClientRpcParams rpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { clientId } // ← ここで送信先を指定！
+                }
+            };
         }
 
         Joint();
@@ -76,6 +107,13 @@ public class PlayerJoint : MonoBehaviour
                 joint = transform.GetChild(i).GetComponents<ConfigurableJoint>()[j];
                 ancors[j * 2] = joint.transform.TransformPoint(joint.anchor);
                 ancors[j * 2 + 1] = joint.connectedBody.transform.TransformPoint(joint.connectedAnchor);
+                
+                //網の上を少し下げる（当たり判定には影響なし）
+                if (j < 1)
+                {
+                    ancors[j * 2] -= Vector3.up * 0.2f;
+                    ancors[j * 2 + 1] -= Vector3.up * 0.2f;
+                }
                 if (joint == null || joint.connectedBody == null)
                 {
                     line.enabled = false;
