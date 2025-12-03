@@ -3915,6 +3915,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MapColorManager
       objectReference: {fileID: 0}
+    - target: {fileID: 4436157478839491397, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6062687166195725737, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
       propertyPath: _player
       value: 
@@ -19760,11 +19764,22 @@ MonoBehaviour:
   _offset: {x: 0, y: 15, z: -15}
   _smoothSpeed: 5
   _minZoom: 30
-  _maxZoom: 35
-  _zoomLimiter: 10
+  _maxZoom: 60
+  _zoomLimiter: 15.1
   _zoomSpeed: 10
   _zoomView: 10
   _rotateSpeed: 10
+  _minPitch: -30
+  _maxPitch: 30
+  _lookAtBaseHeight: 0
+  _lookAtHeightSideView: 4
+  _lookAtHeightTopView: -1
+  _minHeightScale: 1
+  _maxHeightScale: 1
+  _zoomInKey: 98
+  _zoomOutKey: 118
+  _manualZoomSpeed: 10
+  _maxManualOffset: 50
 --- !u!114 &927675403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23810,6 +23825,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MapCamera
       objectReference: {fileID: 0}
+    - target: {fileID: 2209226509701005121, guid: 64ab4107ef62cf14888c4ecb0e353308, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2858491064971693939, guid: 64ab4107ef62cf14888c4ecb0e353308, type: 3}
       propertyPath: m_LocalPosition.x
       value: 6.94
@@ -24241,7 +24260,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1121606984
 RectTransform:
   m_ObjectHideFlags: 0
@@ -25710,6 +25729,10 @@ PrefabInstance:
       propertyPath: _player2
       value: 
       objectReference: {fileID: 7459081349001929016, guid: 6e351d8ac67a9a54ebfee508966ad6b4, type: 3}
+    - target: {fileID: 2617391042355764094, guid: 8d44d5ef5c7f909459a4803066c4d9fb, type: 3}
+      propertyPath: _onlineMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2617391042355764094, guid: 8d44d5ef5c7f909459a4803066c4d9fb, type: 3}
       propertyPath: _ropeObject
       value: 
@@ -264156,6 +264179,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Local_Risu_rig
       objectReference: {fileID: 0}
+    - target: {fileID: 7459081349001929016, guid: 419aae24f019f2246ba04f5665a3af8e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7838561722115832706, guid: 419aae24f019f2246ba04f5665a3af8e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.24
@@ -265489,6 +265516,10 @@ PrefabInstance:
     - target: {fileID: 7459081349001929016, guid: 6e351d8ac67a9a54ebfee508966ad6b4, type: 3}
       propertyPath: m_Name
       value: Local_Risu_rig 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7459081349001929016, guid: 6e351d8ac67a9a54ebfee508966ad6b4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7838561722115832706, guid: 6e351d8ac67a9a54ebfee508966ad6b4, type: 3}
       propertyPath: m_LocalPosition.x
