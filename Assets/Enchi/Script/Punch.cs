@@ -1,35 +1,96 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Punch : MonoBehaviour
 {
-    float _punchForce = 10.0f;
-    float _stunTime = 1.0f;
-    int _punchDamage = 10;
-    MovePlayerKey _player;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        _player = transform.parent.GetComponent<MovePlayerKey>();
-        if (_player != null)
-        {
-            _punchForce = _player.GetPunchForce();
-            _stunTime = _player.GetStunTime();
-            _punchDamage = _player.GetPunchDamage();
-        }
-    }
+	float _punchForce = 10.0f;
+	float _stunTime = 1.0f;
+	int _punchDamage = 10;
 
-    void OnTriggerEnter(Collider other)
-    {
-        if (other != this.transform.parent && other.GetComponent<Rigidbody>() != null)
-        {
-            Debug.Log("punch : " + other.name);
+	MovePlayerKey _owner;
 
-            if (other.GetComponent<MovePlayerKey>() != null)
-            {
-                other.GetComponent<MovePlayerKey>().ToGetPunch(_punchDamage, _stunTime);
-            }
+	private int _hitEffectId = 4; // Hitエフェクト
+	private int _hitDmgEffectId = 7; // HitDmgエフェクト
 
-            other.GetComponent<Rigidbody>().AddForce((this.transform.forward + Vector3.up * 0.1f) * _punchForce, ForceMode.Impulse);
-        }
-    }
+	void Start()
+	{
+		_owner = GetComponentInParent<MovePlayerKey>();
+
+		if (_owner == null)
+		{
+			Debug.LogWarning($"[Punch WARNING] _owner が null。Punch がプレイヤーの子についていない可能性あり。（{gameObject.name}）");
+		}
+		else
+		{
+			Debug.LogWarning($"[Punch INFO] _owner 設定完了 → {_owner.name}");
+		}
+
+		// パラメータ同期
+		if (_owner != null)
+		{
+			_punchForce = _owner.GetPunchForce();
+			_stunTime = _owner.GetStunTime();
+			_punchDamage = _owner.GetPunchDamage();
+		}
+	}
+
+	void OnTriggerEnter(Collider other)
+	{
+		MovePlayerKey otherPlayer = other.GetComponentInParent<MovePlayerKey>();
+
+		// ログ
+		Debug.LogWarning($"[Punch HIT] other = {other.name}, owner = {_owner?.name}, otherPlayer = {otherPlayer?.name}");
+
+		// 自分自身なら無視
+		if (otherPlayer == _owner)
+		{
+			Debug.LogWarning($"[Punch IGNORE] 自分自身ヒット → 無視 ({other.name})");
+			return;
+		}
+		if (other.CompareTag("Joint"))
+		{
+			Debug.LogWarning($"[Punch IGNORE] Joint 除外 → {other.name}");
+			return;
+		}
+
+		// Rigidbody探索（階層OK）
+		Rigidbody rb = other.GetComponentInParent<Rigidbody>();
+		if (rb == null)
+		{
+			Debug.LogWarning($"[Punch IGNORE] Rigidbodyなし → 無視 ({other.name})");
+			return;
+		}
+
+		// ★プレイヤー判定
+		if (otherPlayer != null)
+		{
+			Debug.LogWarning($"[Punch EFFECT] Player HIT → {otherPlayer.name}");
+			otherPlayer.ToGetPunch(_punchDamage, _stunTime);
+
+			NetworkEffectSpawner.Instance.PlayEffect(_hitDmgEffectId, transform.position, Quaternion.identity);
+			NetworkEffectSpawner.Instance.PlayEffect(_hitEffectId, transform.position, Quaternion.identity);
+		}
+
+		// ★Sweet判定（階層検索）
+		if (IsSweets(other))
+		{
+			Debug.LogWarning($"[Punch EFFECT] Sweet HIT → {other.name}");
+			NetworkEffectSpawner.Instance.PlayEffect(_hitEffectId, transform.position, Quaternion.identity);
+		}
+
+		// ノックバック
+		rb.AddForce((transform.forward + Vector3.up * 0.1f) * _punchForce, ForceMode.Impulse);
+	}
+
+	bool IsSweets(Collider other)
+	{
+		Transform t = other.transform;
+		while (t != null)
+		{
+			if (t.CompareTag("Sweets"))
+				return true;
+
+			t = t.parent;
+		}
+		return false;
+	}
 }
