@@ -154,12 +154,12 @@ public class PlayerNetworkConnect : NetworkBehaviour
         foreach (var lp in localPlayers)
         {
             
-            // NetworkObjectがすでにあるならスキップ
-            if (lp.TryGetComponent<NetworkObject>(out var netObj))
-            {
-                Debug.Log($"[Network] 既にNetwork化されている: {lp.name}");
-                continue;
-            }
+            //// NetworkObjectがすでにあるならスキップ
+            //if (lp.TryGetComponent<NetworkObject>(out var netObj))
+            //{
+            //    Debug.Log($"[Network] 既にNetwork化されている: {lp.name}");
+            //    continue;
+            //}
 
             //プレイヤーの数を加算
             count++;

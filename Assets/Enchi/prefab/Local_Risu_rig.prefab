@@ -3081,6 +3081,7 @@ GameObject:
   - component: {fileID: 7838561722115832706}
   - component: {fileID: 707195799076303210}
   - component: {fileID: 1319185286642553480}
+  - component: {fileID: 5082120363529289142}
   - component: {fileID: 607975850266814620}
   - component: {fileID: 4346886339305241986}
   - component: {fileID: 8427100980178498739}
@@ -3156,6 +3157,31 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   itemTarget: {fileID: 3966227638361369922, guid: 2f78ca4fa4ae40b43a36dab265e8dcf3, type: 3}
+--- !u!114 &5082120363529289142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7459081349001929016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 1268266951
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &607975850266814620
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3168,6 +3194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af3e5cda85ac41438309e8811a44a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovePlayerKey
+  ShowTopMostFoldoutHeaderGroup: 1
   _up: 119
   _down: 115
   _left: 97
@@ -3185,11 +3212,13 @@ MonoBehaviour:
   _punchDamage: 20
   _punchForce: 10
   _stunTime: 1
-  _itemObj: {fileID: 5829897982676275080, guid: 8b04250a52ccfdb47b90f1726a8e4259, type: 3}
   _haveTrans: {fileID: 1831080694025742889}
   _itemFlightTime: 2
   _effDash_2: {fileID: 773825968017154068, guid: 28c381c7693f60c43bd845de5f9783e4, type: 3}
+  _eff_HitPunch: {fileID: 0}
+  _headPoint: {fileID: 0}
   _playerNumber: 1
+  _cameraShake: {fileID: 0}
   _FootCollider: {fileID: 7817851643849097461, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
 --- !u!54 &4346886339305241986
 Rigidbody:
