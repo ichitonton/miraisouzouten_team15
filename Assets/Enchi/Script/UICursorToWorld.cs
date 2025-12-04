@@ -57,7 +57,7 @@ public class UICursorToWorld : MonoBehaviour
         {
             Debug.Log("hit: " + hit.point);
 
-            worldTarget.position = hit.point;
+            worldTarget.position = hit.point + Vector3.up * 0.01f;
         }
     }
 
