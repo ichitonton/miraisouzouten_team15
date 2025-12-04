@@ -2,7 +2,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using Unity.Netcode; 
+using Unity.Netcode;
+using System.Collections;
 
 public class GoalToUI : NetworkBehaviour 
 {
@@ -15,9 +16,24 @@ public class GoalToUI : NetworkBehaviour
     [SerializeField] private int countMax = 8;
     [SerializeField] private float TimeupMAX = 7.0f;
 
-    // ====== 同期する変数 (NetworkVariable) ======
-    // サーバーが計算して、全員に自動で通知される変数たち
-    private NetworkVariable<int> netCount = new NetworkVariable<int>(0);
+	// 転送エフェクト関連（ネットワークエフェクト）
+	[Header("Teleport Effect")]
+	[SerializeField] private int _TeleportId = 9;
+	private GameObject currentTeleportEffect;
+
+	[SerializeField] private int _wagashiTeleportId = 8;
+	private bool _isProcessingShipment = false;
+	[SerializeField] private float shrinkDelay = 0.6f; // 和菓子が縮む演出の時間
+
+
+	private bool _hasTeleportEffectPlayed = false;
+
+
+	bool _isTeleportCounting = false;
+
+	// ====== 同期する変数 (NetworkVariable) ======
+	// サーバーが計算して、全員に自動で通知される変数たち
+	private NetworkVariable<int> netCount = new NetworkVariable<int>(0);
     private NetworkVariable<float> netScoreNow = new NetworkVariable<float>(0f);
     private NetworkVariable<float> netScoreTotal = new NetworkVariable<float>(0f);
     private NetworkVariable<float> netTimeUp = new NetworkVariable<float>(0f);
@@ -37,7 +53,8 @@ public class GoalToUI : NetworkBehaviour
 
     [SerializeField] private SpawnManager spawnManager;
 
-    public override void OnNetworkSpawn()
+
+	public override void OnNetworkSpawn()
     {
         // 1. 自分がこのゴールの担当者かチェック
         bool isMyGoal = (NetworkManager.Singleton.LocalClientId == targetPlayerId);
@@ -87,28 +104,33 @@ public class GoalToUI : NetworkBehaviour
         // 必要個数そろっている → カウント進行
         if (netCount.Value >= countMax)
         {
-            netTimeUp.Value += Time.deltaTime;
+            //エフェクト関連
+			if (!_hasTeleportEffectPlayed)
+			{
+				_hasTeleportEffectPlayed = true;
 
-            // MAX 到達で出荷
-            if (netTimeUp.Value >= TimeupMAX)
-            {
-                netScoreTotal.Value += netScoreNow.Value; // スコア確定
+				NetworkEffectSpawner.Instance.PlayEffect(
+					_TeleportId,
+					transform.position,
+					transform.rotation
+				);
+			}
+			netTimeUp.Value += Time.deltaTime;
 
-                // リセット処理
-                netCount.Value = 0;
-                netScoreNow.Value = 0f;
-                netTimeUp.Value = 0.0f;
-
-                // 出荷処理（リストにあるものを消す）
-                ShipmentObjects();
-            }
-        }
+			// MAX 到達で出荷
+			if (netTimeUp.Value >= TimeupMAX && !_isProcessingShipment)
+			{
+				_isProcessingShipment = true;
+				StartCoroutine(HandleShipment());
+			}
+		}
         else
         {
             // そろっていない → 巻き戻し
             if (netTimeUp.Value > 0f)
             {
-                netTimeUp.Value -= Time.deltaTime;
+				_hasTeleportEffectPlayed = false;
+				netTimeUp.Value -= Time.deltaTime;
                 if (netTimeUp.Value < 0f) netTimeUp.Value = 0f;
             }
         }
@@ -192,4 +214,40 @@ public class GoalToUI : NetworkBehaviour
             }
         }
     }
+
+	private IEnumerator HandleShipment()
+	{
+		// 出荷エフェクト再生
+		NetworkEffectSpawner.Instance.PlayEffect(
+			_wagashiTeleportId,
+			transform.position,
+			transform.rotation
+		);
+
+		// 和菓子縮小（即座に消さない）
+		foreach (var go in list)
+		{
+			if (go != null)
+				go.transform.localScale = Vector3.zero;
+		}
+
+		// 演出時間待つ
+		yield return new WaitForSeconds(shrinkDelay);
+
+		// スコア確定
+		netScoreTotal.Value += netScoreNow.Value;
+
+		// リセット処理
+		netCount.Value = 0;
+		netScoreNow.Value = 0f;
+		netTimeUp.Value = 0.0f;
+
+		// 本当に削除
+		ShipmentObjects();
+
+		// フラグ戻す（次の出荷に備える）
+		_hasTeleportEffectPlayed = false;
+		_isProcessingShipment = false;
+	}
+
 }

@@ -29,11 +29,19 @@ public class MovePlayerKey : MonoBehaviour
     Transform _target;
     [SerializeField] float _itemFlightTime = 2.0f; // 投げるオブジェクトがターゲットに到達するまでの時間
 
-	[SerializeField] GameObject _effDash_2; // 移動中エフェクト2
-    [SerializeField] PlayerNumber _playerNumber = PlayerNumber.None;
+	//エフェクト関連
+	[SerializeField] GameObject _effDash_2; // 移動中エフェクト
+	[SerializeField] GameObject _eff_HitPunch; // パンチダメージエフェクト
+	[SerializeField] Transform _headPoint; //頭の位置
+    private int _punchStartEffectId = 3;   //頭のエフェクト
+
+	[SerializeField] PlayerNumber _playerNumber = PlayerNumber.None;
 
 	GameObject _effDash2Instance;
 	ParticleSystem _effDash2Ps;
+
+	//カメラシェイク
+	[SerializeField] ShakeByPerlinNoise _cameraShake;
 
 	Rigidbody _rb;
 
@@ -73,8 +81,9 @@ public class MovePlayerKey : MonoBehaviour
     }
 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+	// Start is called once before the first execution of Update after the MonoBehaviour is created
+	void Start()
     {
         _rb = GetComponent<Rigidbody>();
         PunchActiveFalse();
@@ -82,15 +91,14 @@ public class MovePlayerKey : MonoBehaviour
         _moveSpeedInitial = _moveSpeed;
         _anim = GetComponent<Animator>();
 
-		// エフェクト関連
-		var inst = Instantiate(_effDash_2, transform);
-
-		// すべてのPSを一時的に取得してOFFにする
-		foreach (var ps in inst.GetComponentsInChildren<ParticleSystem>())
+		//シェイク用カメラ自動取得
+		if (_cameraShake == null)
 		{
-			var em = ps.emission;
-			em.enabled = false;
-			ps.Play();
+			var cam = Camera.main;
+			if (cam != null)
+			{
+				_cameraShake = cam.GetComponent<ShakeByPerlinNoise>();
+			}
 		}
 
         _target = gameObject.GetComponent<UICursorToWorld>().GetItemTargetTransform();
@@ -121,18 +129,38 @@ public class MovePlayerKey : MonoBehaviour
             Punch();
             Move();
         }
-        //_anim.linearVelocityBlending = true;
-        _anim.SetFloat("Blend", _animBlend);
+		//_anim.linearVelocityBlending = true;
+		_anim.SetFloat("Blend", _animBlend);
 
-        //エフェクト関連
-        //HandleMoveEffects();
+		UpdateDustEffect();
+	}
 
-    }
+	void UpdateDustEffect()
+	{
+		float speed = new Vector3(_rb.linearVelocity.x, 0, _rb.linearVelocity.z).magnitude;
+		bool isMoving = speed > 1.0f;
 
-    //
-    //ゲッター
-    //
-    public PlayerNumber GetPlayerNumber()
+		foreach (var ps in GetComponentsInChildren<ParticleSystem>())
+		{
+			var em = ps.emission;
+			em.enabled = isMoving;
+
+			if (isMoving && !ps.isPlaying)
+			{
+				ps.Play();
+			}
+			else if (!isMoving && ps.isPlaying)
+			{
+				ps.Stop();
+			}
+		}
+	}
+
+
+	//
+	//ゲッター
+	//
+	public PlayerNumber GetPlayerNumber()
     {
         return _playerNumber;
     }
@@ -289,11 +317,12 @@ public class MovePlayerKey : MonoBehaviour
         );
     }
 
-    //
-    //MOVE関係
-    //
 
-    void Jump()
+	//
+	//MOVE関係
+	//
+
+	void Jump()
     {
         if (_FootCollider.GetCanJump())
         {
@@ -393,23 +422,34 @@ public class MovePlayerKey : MonoBehaviour
         RotateToMoveDirection(_lookVector);
 
     }
-    void Punch()
-    {
-        if (Input.GetKeyDown(_punch) && _canPunch)
-        {
-            _anim.SetTrigger("Punch");
+	void Punch()
+	{
+		if (Input.GetKeyDown(_punch) && _canPunch)
+		{
+			_anim.SetTrigger("Punch");
 
-            _punchObj.SetActive(true);
+			// 頭の位置からエフェクトを出す
+			if (_headPoint != null)
+			{
+				Vector3 effectPos = transform.position + new Vector3(0f, 0.5f, 0f);
 
-            Invoke(nameof(PunchActiveFalse), _punchDuration);
+				NetworkEffectSpawner.Instance.PlayEffect(
+					_punchStartEffectId,
+					effectPos,
+					_headPoint.rotation
+				);
+			}
 
-            _canPunch = false;
+			_punchObj.SetActive(true);
 
-            Invoke(nameof(SetPunchReset), _punchDelay);
-        }
-    }
+			Invoke(nameof(PunchActiveFalse), _punchDuration);
 
-    void UseItem()
+			_canPunch = false;
+			Invoke(nameof(SetPunchReset), _punchDelay);
+		}
+	}
+
+	void UseItem()
     {
         if (Input.GetKeyDown(_useItem))
         {
@@ -449,4 +489,15 @@ public class MovePlayerKey : MonoBehaviour
         }
 
     }
+
+	//カメラシェイク用
+	public void PlayCameraShake()
+	{
+		var shaker = ShakeByPerlinNoise.Instance;
+		Debug.Log($"{name}: PlayCameraShake (_cameraShake={shaker?.name})");
+
+		if (shaker == null) return;
+		shaker.StartShake();
+	}
+
 }

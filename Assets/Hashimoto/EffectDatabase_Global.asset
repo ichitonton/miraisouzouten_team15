@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7348fe70c62ee2b4cbe0060fc9462a66, type: 3}
+  m_Name: EffectDatabase_Global
+  m_EditorClassIdentifier: Assembly-CSharp::EffectDatabase
+  _effects:
+  - effectId: 0
+    label: cannon_Smoke
+    prefab: {fileID: 160423822499424338, guid: 8a653ede50c58714991365c458ab278d, type: 3}
+  - effectId: 1
+    label: player_Dash
+    prefab: {fileID: 773825968017154068, guid: 28c381c7693f60c43bd845de5f9783e4, type: 3}
+  - effectId: 2
+    label: cannon_Explosion
+    prefab: {fileID: 8428949574918892556, guid: ce20844a984c4a5448ec7076ef629a5a, type: 3}
+  - effectId: 3
+    label: player_HeadAttack
+    prefab: {fileID: 8741139991234547435, guid: 1739f1cb68667f24d9c3f07cd8e8beb4, type: 3}
+  - effectId: 4
+    label: player_HeadAttack_Hit
+    prefab: {fileID: 3765247001742513998, guid: 20249ebbb70e5af4080f85021f6c5424, type: 3}
+  - effectId: 5
+    label: item_Box
+    prefab: {fileID: 4595868095221753556, guid: 1bbe3aa9ad357454caab83b88a6ccfe2, type: 3}
+  - effectId: 6
+    label: item_Debris
+    prefab: {fileID: 8581695615063258488, guid: 7827b258beefb5a4fba1526f27b86d46, type: 3}
+  - effectId: 7
+    label: item_Dmg
+    prefab: {fileID: 7155706149333254684, guid: a786b69b36d65074288da092aa9f581b, type: 3}
+  - effectId: 8
+    label: wagashi_Teleport
+    prefab: {fileID: 4462311699167313663, guid: fcd9bf1c8e2a96e49a033cd742696b0b, type: 3}
+  - effectId: 9
+    label: wagashi_TeleportArea
+    prefab: {fileID: 4363443134215985865, guid: 11d7cf9ee77c17e48821ff603a998b23, type: 3}
