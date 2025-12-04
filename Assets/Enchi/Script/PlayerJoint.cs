@@ -1,13 +1,16 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using Unity.Burst.CompilerServices;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using Unity.VisualScripting;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEngine.GraphicsBuffer;
 
-public class PlayerJoint : MonoBehaviour
+public class PlayerJoint : NetworkBehaviour
 {
 
     [SerializeField] GameObject _joint;
@@ -17,20 +20,17 @@ public class PlayerJoint : MonoBehaviour
     [SerializeField] float _lowerSpring = 1500f;
     [SerializeField] float _lowerDamper = 150f;
     [SerializeField] float halfHeight = 0.5f; // オブジェクトの半分の高さ
-    [SerializeField] Material _material; // オブジェクトの半分の高さ
 
     private GameObject _playerA;
     private GameObject _playerB;
-    private List<GameObject> _joints;
-
     private float _magicNumber = 0.5f;
 
-    private LineRenderer line;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         List<GameObject> players = new List<GameObject>();
+        ulong clientId = NetworkManager.Singleton.LocalClientId;
 
         foreach (var playerRef in GameManager.Instance._networkObjectList)
         {
@@ -39,134 +39,136 @@ public class PlayerJoint : MonoBehaviour
             if (playerRef.TryGet(out var playerObj))
             {
                 //プレイヤーのタグを持っているかつ所有権があるなら
-                if (playerObj.gameObject.CompareTag("Player") && playerObj.IsOwnedByServer)
+                if (playerObj.gameObject.CompareTag("Player") && playerObj.OwnerClientId == OwnerClientId)
                 {
                     Debug.Log("所有権を持ったプレイヤーです");
                     players.Add(playerObj.gameObject);
+                    Debug.Log($"Added player: {playerObj.gameObject.name}");
                 }
             }
-
-
         }
+        if (players.Count < 2)
+        {
+            Debug.LogError($"プレイヤー数が足りません！検出数: {players.Count}");
+            return;
+        }
+
         _playerA = players[0];
         _playerB = players[1];
 
-        for (int i = 0; i < _jointCount; i++)
+        if (IsServer)
         {
-            //生成して非アクティブにしておく
-            //Instantiate(_joint, this.transform.position + new Vector3(0.01f * i, 0, 0), this.transform.rotation, this.transform).SetActive(false);
-
-
-            if (!NetworkManager.Singleton.IsServer)
+            for (int i = 0; i < _jointCount; i++)
             {
-                Debug.Log("[RPC] ClientでRope誤実行されたためスキップ");
-                return;
+                // Ropeを生成
+                GameObject rope = Instantiate(_joint, transform.position, Quaternion.identity, transform);
+
             }
-            ulong clientId = NetworkManager.Singleton.LocalClientId;
+            Vector3 posA = this.transform.position + new Vector3(0, -1.0f + _magicNumber, 0);
+            Vector3 posB = this.transform.position + new Vector3(0.01f * (transform.childCount + 1), -1.0f + _magicNumber, 0);
 
-            Debug.Log($"[Host] Client {clientId} からRope生成リクエストを受信");
+            ulong clientA = _playerA.GetComponent<NetworkObject>().OwnerClientId;
+            ulong clientB = _playerB.GetComponent<NetworkObject>().OwnerClientId;
 
-            // Ropeを生成
-            GameObject rope = Instantiate(_joint, transform.position, Quaternion.identity, transform);
-            rope.SetActive(false);
+            //Debug.Log($"LocalClientId = {clientId}");
+            //Debug.Log($"clientA = {clientA}");
+            //Debug.Log($"clientB = {clientB}");
+            //Debug.Log($"OwnerClientId = {OwnerClientId}");
 
-            //var netObj = GetComponent<NetworkObject>();
-            //オブジェクトのオーナーを決める
-            //netObj.SpawnWithOwnership(clientId);
-
-            // ClientRpcの送信先を1クライアントに限定
-            ClientRpcParams rpcParams = new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = new ulong[] { clientId } // ← ここで送信先を指定！
-                }
-            };
+            // 2人にテレポート命令
+            TeleportClientRpc(posA, posB, clientA, clientB);
+            Joint();
+            Invoke("SetOwner", 0.1f);
         }
-
-        Joint();
-        line = gameObject.AddComponent<LineRenderer>();
-        line.positionCount = (_jointCount) * 4 ;
-        line.startWidth = 0.05f;
-        line.endWidth = 0.05f; 
-        line.material = _material;  // マテリアルの色を白にする
-        //line.startColor = UnityEngine.Color.yellow;
-        //line.endColor = UnityEngine.Color.yellow;
     }
 
-
-    private ConfigurableJoint joint;
-    Vector3[] ancors = new Vector3[4];
-
-    void Update()
+    // ========================
+    // クライアント側でのみ実行される Teleport RPC
+    // ========================
+    [ClientRpc]
+    private void TeleportClientRpc(Vector3 posA, Vector3 posB, ulong clientA, ulong clientB)
     {
-        for (int i = 0; i < transform.childCount; i++)
+        ulong local = OwnerClientId;
+
+        // --- ローカルクライアントが A 担当なら ---
+        if (local == clientA)
         {
-            for (int j = 0; j < 2; j++)
-            {
-                joint = transform.GetChild(i).GetComponents<ConfigurableJoint>()[j];
-                ancors[j * 2] = joint.transform.TransformPoint(joint.anchor);
-                ancors[j * 2 + 1] = joint.connectedBody.transform.TransformPoint(joint.connectedAnchor);
-                
-                //網の上を少し下げる（当たり判定には影響なし）
-                if (j < 1)
-                {
-                    ancors[j * 2] -= Vector3.up * 0.2f;
-                    ancors[j * 2 + 1] -= Vector3.up * 0.2f;
-                }
-                if (joint == null || joint.connectedBody == null)
-                {
-                    line.enabled = false;
-                    return;
-                }
-                line.enabled = true;
-            }
-                // 線を描画
-                //[1]  [0]
-                //   ×
-                //[3]－[2]
-            line.SetPosition(i * 4, ancors[0]);
-            line.SetPosition(i * 4 + 1, ancors[3]);
-            line.SetPosition(i * 4 + 2, ancors[2]);
-            line.SetPosition(i * 4 + 3, ancors[1]);
+            _playerA.GetComponent<NetworkObject>()
+                .ChangeOwnership(0);
+            var nt = _playerA.GetComponent<NetworkTransform>();
+            nt.Teleport(posA, _playerA.transform.rotation, _playerA.transform.localScale);
+            Debug.Log("[Teleport] Player A テレポート");
+            //_playerA.GetComponent<NetworkObject>().ChangeOwnership(local);
+        }
+
+        // --- ローカルクライアントが B 担当なら ---
+        if (local == clientB)
+        {
+            _playerB.GetComponent<NetworkObject>().ChangeOwnership(0);
+            var nt = _playerB.GetComponent<NetworkTransform>();
+            nt.Teleport(posB, _playerB.transform.rotation, _playerB.transform.localScale);
+            Debug.Log("[Teleport] Player B テレポート");
+            //_playerB.GetComponent<NetworkObject>().ChangeOwnership(local);
         }
     }
-    private void OnGUI()
+
+    void SetOwner()
     {
-        if (GUI.Button(new Rect(300, Screen.height - 30, 100, 30), "つなぐ"))
-        {
-        }
+        _playerA.GetComponent<NetworkObject>().ChangeOwnership(OwnerClientId);
+        _playerB.GetComponent<NetworkObject>().ChangeOwnership(OwnerClientId);
     }
+
+    //[ServerRpc(RequireOwnership = false)]
+    //void ReturnOwnerServerRpc(ulong objectId, ulong newOwnerId)
+    //{
+    //    if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(objectId, out var obj))
+    //    {
+    //        obj.ChangeOwnership(newOwnerId);
+    //        //Debug.LogError($" newOwnerId: {newOwnerId} ");
+    //    }
+    //    else
+    //    {
+    //        Debug.LogError($"ReturnOwnerServerRpc: objectId {objectId} が存在しません");
+    //    }
+    //}
+
 
     void Joint()
     {
-
-
         GameObject _husi_up = new GameObject();
         GameObject _husi_down = new GameObject();
         Debug.Log(_playerA);
-        _playerA.transform.position = this.transform.position + new Vector3(0, -1.0f + _magicNumber, 0);
-        _playerA.transform.rotation = transform.rotation;
-        _playerB.transform.position = this.transform.position + new Vector3(0.01f * (transform.childCount + 1), -1.0f + _magicNumber, 0);
-        _playerB.transform.rotation = transform.rotation;
+        //_playerA.transform.position = this.transform.position + new Vector3(0, -1.0f + _magicNumber, 0);
+        //_playerA.transform.rotation = transform.rotation;
+        //_playerB.transform.position = this.transform.position + new Vector3(0.01f * (transform.childCount + 1), -1.0f + _magicNumber, 0);
+        //_playerB.transform.rotation = transform.rotation;
 
 
         GameObject _A = _playerA;
         GameObject _B;
         Vector3 spawnRotation = new Vector3(0, 0, 0);
 
-        for (int i = 0; i <= transform.childCount; i++)
+        for (int i = 0; i <= _jointCount; i++)
         {
-            if (i == transform.childCount)
+            if (i == _jointCount)
             {
                 _B = _playerB;
             }
             else
             {
-                _B = transform.GetChild(i).gameObject;
+                _B = transform.GetChild(0).gameObject;
                 _B.SetActive(true);
                 _B.transform.position = this.transform.position + new Vector3(0.01f * i, 0 + _magicNumber, 0);
                 _B.transform.rotation = this.transform.rotation;
+
+                var netObj = _B.GetComponent<NetworkObject>();
+
+                _B.GetComponent<Rigidbody>().isKinematic = true;
+
+                netObj.Spawn();
+
+                //ReturnOwnerServerRpc(netObj.NetworkObjectId, OwnerClientId);
+
             }
             // 上側のジョイント設定
             ConfigurableJoint upper = _B.AddComponent<ConfigurableJoint>();
@@ -204,10 +206,6 @@ public class PlayerJoint : MonoBehaviour
             upperSpringStruct.damper = _upperDamper;
             upper.linearLimitSpring = upperSpringStruct;
 
-            joint = _B.GetComponent<ConfigurableJoint>();
-
-            //OnDrawGizmos();
-
             // 下側のジョイント設定
             ConfigurableJoint lower = _B.AddComponent<ConfigurableJoint>();
             lower.xMotion = ConfigurableJointMotion.Limited;
@@ -239,23 +237,22 @@ public class PlayerJoint : MonoBehaviour
             lowerSpringStruct.damper = _lowerDamper;
             lower.linearLimitSpring = lowerSpringStruct;
 
+            if (_B.GetComponent<JointLiner>() != null)
+            {
+                _B.GetComponent<JointLiner>().SetHaveJoint(true);
+
+                //var netObj = _B.GetComponent<NetworkObject>();
+
+                //ReturnOwnerServerRpc(netObj.NetworkObjectId, OwnerClientId);
+
+                //_B.GetComponent<Rigidbody>().isKinematic = false;
+                //var netRb = _B.GetComponent<NetworkRigidbody>();
+                //netRb.enabled = true;
+            }
 
             _A = _B;
+
         }
 
     }
-    //private void OnDrawGizmos()
-    //{
-    //    Gizmos.color = UnityEngine.Color.yellow;
-
-    //    // 接続されているポイント
-    //    Vector3 a = transform.TransformPoint(joint.anchor);
-    //    Vector3 b = joint.connectedBody.transform.TransformPoint(joint.connectedAnchor);
-
-    //    Gizmos.DrawSphere(a, 0.05f);
-    //    Gizmos.DrawSphere(b, 0.05f);
-    //    Gizmos.DrawLine(a, b);
-    //}
-
-
 }

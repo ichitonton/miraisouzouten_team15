@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5336146898262021896}
-  - component: {fileID: 1254333164094683626}
   - component: {fileID: 4272240628196000379}
+  - component: {fileID: 1254333164094683626}
   - component: {fileID: -6506176431917602089}
   - component: {fileID: -4470996083230862440}
   m_Layer: 0
@@ -35,26 +35,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1254333164094683626
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8760411629864592299}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b5cdece3c7cc4342825d7fbf8510252, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerJoint
-  _joint: {fileID: 6651513632882123144, guid: 5b42010e8a6b5014e8a4b3e7cb500cb8, type: 3}
-  _jointCount: 30
-  _upperSpring: 1000
-  _upperDamper: 100
-  _lowerSpring: 1500
-  _lowerDamper: 150
-  halfHeight: 0.5
-  _material: {fileID: 2100000, guid: ca6129ef87519e74a98cd4829e208a3f, type: 2}
 --- !u!114 &4272240628196000379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,7 +42,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8760411629864592299}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
@@ -80,6 +60,26 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &1254333164094683626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8760411629864592299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b5cdece3c7cc4342825d7fbf8510252, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerJoint
+  ShowTopMostFoldoutHeaderGroup: 1
+  _joint: {fileID: 6651513632882123144, guid: 5b42010e8a6b5014e8a4b3e7cb500cb8, type: 3}
+  _jointCount: 30
+  _upperSpring: 1000
+  _upperDamper: 100
+  _lowerSpring: 1500
+  _lowerDamper: 150
+  halfHeight: 0.5
 --- !u!114 &-6506176431917602089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,7 +104,7 @@ MonoBehaviour:
   RotationMaxInterpolationTime: 0.1
   ScaleLerpSmoothing: 1
   ScaleMaxInterpolationTime: 0.1
-  AuthorityMode: 0
+  AuthorityMode: 1
   TickSyncChildren: 0
   UseUnreliableDeltas: 0
   SyncPositionX: 1
