@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpawnManager: {fileID: 0}
-  weight: 1
+  weight: 200
 --- !u!54 &8254700706893771496
 Rigidbody:
   m_ObjectHideFlags: 0
