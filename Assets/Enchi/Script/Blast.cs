@@ -5,7 +5,9 @@ public class Blast : MonoBehaviour
     [SerializeField] float _lifeTime = 0.1f;
     [SerializeField] float _impactForce = 10.0f;
 
-    Rigidbody _rigidbody;
+	[SerializeField] int _explosionEffectId = 2;
+
+	Rigidbody _rigidbody;
     float _boneTime = 0.0f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -17,7 +19,12 @@ public class Blast : MonoBehaviour
     void OnEnable()
     {
         _boneTime = 0.0f;
-    }
+		NetworkEffectSpawner.Instance.PlayEffect(
+		   _explosionEffectId,
+		   transform.position,
+		   Quaternion.identity
+	   );
+	}
     // Update is called once per frame
     void Update()
     {
@@ -44,9 +51,10 @@ public class Blast : MonoBehaviour
             if (other.transform.GetComponent<MovePlayerKey>() != null)
             {
                 other.transform.GetComponent<MovePlayerKey>().Stun(2.0f);
-            }
+				other.transform.GetComponent<MovePlayerKey>().PlayCameraShake();
+			}
 
-            Vector3 _distance = other.transform.position - transform.position;
+			Vector3 _distance = other.transform.position - transform.position;
 
             _distance.Normalize();
             _distance.y = 0.0f;

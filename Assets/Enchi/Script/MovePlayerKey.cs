@@ -1,14 +1,9 @@
 using NUnit.Framework.Constraints;
-using System.Globalization;
-using System.Numerics;
-using Unity.Netcode;
 using UnityEngine;
+using static UnityEditor.Progress;
 using static UnityEngine.GraphicsBuffer;
-using Quaternion = UnityEngine.Quaternion;
-using Vector3 = UnityEngine.Vector3;
 
-//public class MovePlayerKey : NetworkBehaviour
-public class MovePlayerKey : NetworkBehaviour
+public class MovePlayerKey : MonoBehaviour
 {
     [SerializeField] KeyCode _up;
     [SerializeField] KeyCode _down;
@@ -34,13 +29,21 @@ public class MovePlayerKey : NetworkBehaviour
     Transform _target;
     [SerializeField] float _itemFlightTime = 2.0f; // 投げるオブジェクトがターゲットに到達するまでの時間
 
-    [SerializeField] GameObject _effDash_2; // 移動中エフェクト2
-    [SerializeField] PlayerNumber _playerNumber = PlayerNumber.None;
+	//エフェクト関連
+	[SerializeField] GameObject _effDash_2; // 移動中エフェクト
+	[SerializeField] GameObject _eff_HitPunch; // パンチダメージエフェクト
+	[SerializeField] Transform _headPoint; //頭の位置
+    private int _punchStartEffectId = 3;   //頭のエフェクト
 
-    GameObject _effDash2Instance;
-    ParticleSystem _effDash2Ps;
+	[SerializeField] PlayerNumber _playerNumber = PlayerNumber.None;
 
-    Rigidbody _rb;
+	GameObject _effDash2Instance;
+	ParticleSystem _effDash2Ps;
+
+	//カメラシェイク
+	[SerializeField] ShakeByPerlinNoise _cameraShake;
+
+	Rigidbody _rb;
 
     private Vector3 _moveDir;
     private Vector3 _lastMoveDir;
@@ -78,8 +81,9 @@ public class MovePlayerKey : NetworkBehaviour
     }
 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+	// Start is called once before the first execution of Update after the MonoBehaviour is created
+	void Start()
     {
         _rb = GetComponent<Rigidbody>();
         PunchActiveFalse();
@@ -87,83 +91,76 @@ public class MovePlayerKey : NetworkBehaviour
         _moveSpeedInitial = _moveSpeed;
         _anim = GetComponent<Animator>();
 
-        // エフェクト関連
-        var inst = Instantiate(_effDash_2, transform);
-
-        // すべてのPSを一時的に取得してOFFにする
-        foreach (var ps in inst.GetComponentsInChildren<ParticleSystem>())
-        {
-            var em = ps.emission;
-            em.enabled = false;
-            ps.Play();
-        }
+		//シェイク用カメラ自動取得
+		if (_cameraShake == null)
+		{
+			var cam = Camera.main;
+			if (cam != null)
+			{
+				_cameraShake = cam.GetComponent<ShakeByPerlinNoise>();
+			}
+		}
 
         _target = gameObject.GetComponent<UICursorToWorld>().GetItemTargetTransform();
 
         _pool = GameObject.Find("ItemObjectPool");
-
-        if (IsServer)
-        {
-            Invoke("SetRigidFalse", 0.1f);
-        }
-        else
-        {
-
-            Rigidbody rb = GetComponent<Rigidbody>();
-            rb.isKinematic = true; // クライアントでは物理演算しない
-        }
-
-
     }
 
-    void SetRigidFalse()
-    {
-        Rigidbody rb = GetComponent<Rigidbody>();
-        rb.isKinematic = false; // クライアントでは物理演算しない
-    }
     // Update is called once per frame
     void Update()
     {
-
-
         if (_item != null)
         {
             _item.transform.position = _haveTrans.position;
-            _item.transform.eulerAngles = _haveTrans.eulerAngles;
+            _item.transform.eulerAngles = _haveTrans.eulerAngles;            
         }
-        //Debug.Log(_haveItem);
+        Debug.Log(_haveItem);
         if (_animBlend > 0)
         {
             _animBlend -= 0.1f;
         }
-        if (IsOwner)
+        if (_haveItem != ItemType.None && _haveItem != ItemType.Max)
         {
-            if (_haveItem != ItemType.None && _haveItem != ItemType.Max)
-            {
-                UseItem();
-            }
-            if (!_canNotInputKey)
-            {
-                Jump();
-                Punch();
-                Move();
-            }
+            UseItem();
         }
-        //_anim.linearVelocityBlending = true;
-        if (IsOwner)
+        if (!_canNotInputKey)
         {
-            _anim.SetFloat("Blend", _animBlend);
-
-            //エフェクト関連
-            //HandleMoveEffects();
+            Jump();
+            Punch();
+            Move();
         }
+		//_anim.linearVelocityBlending = true;
+		_anim.SetFloat("Blend", _animBlend);
 
-    }
+		UpdateDustEffect();
+	}
 
-    //
-    //ゲッター
-    //
-    public PlayerNumber GetPlayerNumber()
+	void UpdateDustEffect()
+	{
+		float speed = new Vector3(_rb.linearVelocity.x, 0, _rb.linearVelocity.z).magnitude;
+		bool isMoving = speed > 1.0f;
+
+		foreach (var ps in GetComponentsInChildren<ParticleSystem>())
+		{
+			var em = ps.emission;
+			em.enabled = isMoving;
+
+			if (isMoving && !ps.isPlaying)
+			{
+				ps.Play();
+			}
+			else if (!isMoving && ps.isPlaying)
+			{
+				ps.Stop();
+			}
+		}
+	}
+
+
+	//
+	//ゲッター
+	//
+	public PlayerNumber GetPlayerNumber()
     {
         return _playerNumber;
     }
@@ -203,8 +200,7 @@ public class MovePlayerKey : NetworkBehaviour
     void SetHaveItem()
     {
         _haveItem = (ItemType)Random.Range((int)ItemType.Bomb, (int)ItemType.Max);
-
-        if (!IsOwner) _anim.SetBool("ItemBomb", true);
+        _anim.SetBool("ItemBomb", true);
 
         //bool _isChild = false;
 
@@ -230,19 +226,19 @@ public class MovePlayerKey : NetworkBehaviour
 
         //子オブジェクトが足りなければ新規作成
         //if (!_isChild)
-        //_item = Instantiate(_itemObj, _haveTrans.transform.position, transform.rotation, transform);
+            //_item = Instantiate(_itemObj, _haveTrans.transform.position, transform.rotation, transform);
 
         _item.GetComponent<Collider>().enabled = false;
         _item.GetComponent<Rigidbody>().isKinematic = true;
 
         //アイテムプール内で更新をかけて、非アクティブオブジェクトが不足しているときに新規作成
-
+       
     }
 
     //あべこべ移動速度を逆転させる（何秒後にリセットするか）
     public void MoveSpeedAbekobe(float delay)
     {
-        _moveSpeed *= -1;
+        _moveSpeed  *= -1;
         Invoke("ResetMoveSpeed", delay);
     }
 
@@ -275,7 +271,7 @@ public class MovePlayerKey : NetworkBehaviour
     }
 
     //パンチを受ける(ダメージ, パンチをスタン時間)
-    public void ToGetPunch(int damage, float stunTime)
+    public void ToGetPunch(int damage , float stunTime)
     {
         Stun(stunTime);
         AddDamage(damage);
@@ -286,7 +282,7 @@ public class MovePlayerKey : NetworkBehaviour
     {
         Debug.Log("受けうつけないお");
         _canNotInputKey = true;
-        if (!IsOwner) _anim.SetBool("Dying", true);
+        _anim.SetBool("Dying", true);
 
         Invoke(nameof(UnlockStun), delay);
     }
@@ -295,7 +291,7 @@ public class MovePlayerKey : NetworkBehaviour
     {
         _canNotInputKey = false;
 
-        if (!IsOwner) _anim.SetBool("Dying", false);
+        _anim.SetBool("Dying", false);
     }
     //ダメージ（受けるダメージ）
     void AddDamage(int damage)
@@ -307,8 +303,7 @@ public class MovePlayerKey : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
-    void RotateToMoveDirectionServerRpc(Vector3 dir)
+    void RotateToMoveDirection(Vector3 dir)
     {
         dir.y = 0.0f;
         if (dir.sqrMagnitude < 0.1f)
@@ -322,23 +317,12 @@ public class MovePlayerKey : NetworkBehaviour
         );
     }
 
-    [ServerRpc]
-    void LinerVelocityServerRpc(Vector3 moveVector)
-    {
-        _rb.linearVelocity = moveVector;
-    }
 
-    public void SetPosition(Vector3 pos, Quaternion quaternion)
-    {
-        transform.position = pos;
-        transform.rotation = quaternion;
-    }
+	//
+	//MOVE関係
+	//
 
-    //
-    //MOVE関係
-    //
-
-    void Jump()
+	void Jump()
     {
         if (_FootCollider.GetCanJump())
         {
@@ -350,55 +334,55 @@ public class MovePlayerKey : NetworkBehaviour
     }
     void Move()
     {
-        Vector3 _moveVector = Vector3.zero;
+		Vector3 _moveVector = Vector3.zero;
         //Vector3 _lookVector = Vector3.zero;
         bool hasInput = false;
 
-        if (Input.GetKey(_up))
+		if (Input.GetKey(_up))
         {
             _moveVector.z += 1;
-            hasInput = true;
-        }
+			hasInput = true;
+		}
         if (Input.GetKey(_left))
         {
             _moveVector.x += -1;
-            hasInput = true;
-        }
+			hasInput = true;
+		}
         if (Input.GetKey(_down))
         {
             _moveVector.z += -1;
-            hasInput = true;
-        }
+			hasInput = true;
+		}
         if (Input.GetKey(_right))
         {
             _moveVector.x += 1;
-            hasInput = true;
-        }
+			hasInput = true;
+		}
 
-        if (_effDash2Instance)
-        {
-            Vector3 backPos = transform.position
-                              - transform.forward * 0.5f;
+		if (_effDash2Instance)
+		{
+			Vector3 backPos = transform.position
+							  - transform.forward * 0.5f;       
 
-            _effDash2Instance.transform.position = backPos;
-        }
+			_effDash2Instance.transform.position = backPos;
+		}
 
-        _moveVector.Normalize();
-        _moveVector *= _moveSpeed;
-        _moveVector.y = _rb.linearVelocity.y;
+		_moveVector.Normalize();
+		_moveVector *= _moveSpeed;
+		_moveVector.y = _rb.linearVelocity.y;
 
 
         _moveDir = new Vector3(_moveVector.x, 0, _moveVector.z);
 
-        //エフェクト関連
-        // 1フレームで一度だけ、子のPSのEmissionを切り替える
-        foreach (var ps in GetComponentsInChildren<ParticleSystem>())
-        {
-            var em = ps.emission;
-            em.enabled = hasInput;
-        }
+		//エフェクト関連
+		// 1フレームで一度だけ、子のPSのEmissionを切り替える
+		foreach (var ps in GetComponentsInChildren<ParticleSystem>())
+		{
+			var em = ps.emission;
+			em.enabled = hasInput;
+		}
 
-        // if (_moveVector != Vector3.zero)
+       // if (_moveVector != Vector3.zero)
         {
             _lookVector = _moveVector;
         }
@@ -433,28 +417,39 @@ public class MovePlayerKey : NetworkBehaviour
         {
         }
         //transform.LookAt(transform.position + new Vector3(_moveVector.x, 0, _moveVector.z));
-        LinerVelocityServerRpc(_moveVector);
+        _rb.linearVelocity = _moveVector;
 
-        RotateToMoveDirectionServerRpc(_lookVector);
+        RotateToMoveDirection(_lookVector);
 
     }
-    void Punch()
-    {
-        if (Input.GetKeyDown(_punch) && _canPunch)
-        {
-            if (!IsOwner) _anim.SetTrigger("Punch");
+	void Punch()
+	{
+		if (Input.GetKeyDown(_punch) && _canPunch)
+		{
+			_anim.SetTrigger("Punch");
 
-            _punchObj.SetActive(true);
+			// 頭の位置からエフェクトを出す
+			if (_headPoint != null)
+			{
+				Vector3 effectPos = transform.position + new Vector3(0f, 0.5f, 0f);
 
-            Invoke(nameof(PunchActiveFalse), _punchDuration);
+				NetworkEffectSpawner.Instance.PlayEffect(
+					_punchStartEffectId,
+					effectPos,
+					_headPoint.rotation
+				);
+			}
 
-            _canPunch = false;
+			_punchObj.SetActive(true);
 
-            Invoke(nameof(SetPunchReset), _punchDelay);
-        }
-    }
+			Invoke(nameof(PunchActiveFalse), _punchDuration);
 
-    void UseItem()
+			_canPunch = false;
+			Invoke(nameof(SetPunchReset), _punchDelay);
+		}
+	}
+
+	void UseItem()
     {
         if (Input.GetKeyDown(_useItem))
         {
@@ -474,7 +469,7 @@ public class MovePlayerKey : NetworkBehaviour
             rb.linearVelocity = velocity;
 
             _haveItem = ItemType.None;
-            if (!IsOwner) _anim.SetBool("ItemBomb", false);
+            _anim.SetBool("ItemBomb", false);
             _item = null;
         }
 
@@ -494,4 +489,15 @@ public class MovePlayerKey : NetworkBehaviour
         }
 
     }
+
+	//カメラシェイク用
+	public void PlayCameraShake()
+	{
+		var shaker = ShakeByPerlinNoise.Instance;
+		Debug.Log($"{name}: PlayCameraShake (_cameraShake={shaker?.name})");
+
+		if (shaker == null) return;
+		shaker.StartShake();
+	}
+
 }

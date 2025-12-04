@@ -11,6 +11,7 @@ TagManager:
   - Swamp
   - Rope
   - UI_Cursor
+  - Joint
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - UI
   - Field
   - Ground
-  - 
+  - CameraObstacle
   - 
   - 
   - 

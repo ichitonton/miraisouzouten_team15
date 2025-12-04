@@ -31,7 +31,31 @@ public class CameraController : MonoBehaviour
 
     [Header("角度制御")]
     [SerializeField] private float _rotateSpeed = 10.0f;
+    [SerializeField] private float _minPitch = -30f;
+    [SerializeField] private float _maxPitch = 30f;
     private float _pitch = 0f;//縦方向の回転(z軸)
+
+    // ピッチに応じて LookAt の高さを変える
+    [Header("注視点( LookAt ) 高さ制御")]
+    [SerializeField] private float _lookAtBaseHeight = 0.0f;     // 常に足す基準の高さ
+    [SerializeField] private float _lookAtHeightSideView = 2.0f; // 横から見てる時にどれだけ上を見るか
+    [SerializeField] private float _lookAtHeightTopView = -1.0f;// 俯瞰に近い時にどれだけ下を見るか
+
+
+    // ピッチに応じてカメラ高さを変えるパラメータ
+    [Header("高さ制御")]
+    [SerializeField] private float _minHeightScale = 0.8f; // ピッチが高いとき
+    [SerializeField] private float _maxHeightScale = 1.5f; // ピッチが低いとき
+
+
+
+    [Header("ズーム入力")]
+    [SerializeField] private KeyCode _zoomInKey = KeyCode.B;   // ズームイン
+    [SerializeField] private KeyCode _zoomOutKey = KeyCode.V;  // ズームアウト
+    [SerializeField] private float _manualZoomSpeed = 20f;     // 手動ズームの速さ
+    [SerializeField] private float _maxManualOffset = 10f;     // 自動ズームからどれだけズラせるか
+    private float _manualZoomOffset = 0f;                      // 手動オフセット
+
     private void Start()
     {
         _cam = GetComponent<Camera>();
@@ -46,9 +70,11 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     private void LateUpdate()
     {
-        
 
-        if(GameManager.Instance._IsLanModeActive == true)
+        // まずズーム入力を読む
+        HandleZoomInput();
+
+        if (GameManager.Instance._IsLanModeActive == true)
         {
             //Debug.Log("カメラの処理をオンライン用に切り替えます");
             /*Debug.Log(GameManager.Instance._objectList.Count);
@@ -105,7 +131,7 @@ public class CameraController : MonoBehaviour
             _pitch -= _rotateSpeed * Time.deltaTime;
 
         // クランプ（角度制限、真上から真横までぐらい）
-        _pitch = Mathf.Clamp(_pitch, -30f, 30f);
+        _pitch = Mathf.Clamp(_pitch, _minPitch, _maxPitch);
 
         //Debug.Log(_pitch);
 
@@ -113,8 +139,8 @@ public class CameraController : MonoBehaviour
         Vector3 center = (_player1.transform.position + _player2.transform.position) / 2f;
 
         //ピッチ角を offset に反映
-        Quaternion rotation = Quaternion.Euler(_pitch, 0f, 0f);
-        Vector3 rotatedOffset = rotation * _offset;
+        //Quaternion rotation = Quaternion.Euler(_pitch, 0f, 0f);
+        Vector3 rotatedOffset = GetRotatedOffset(1.0f);
 
 
         //カメラの位置
@@ -123,9 +149,12 @@ public class CameraController : MonoBehaviour
         //追従を線形補完で滑らかに
         transform.position = Vector3.Lerp(transform.position, targetPosition, _smoothSpeed * Time.deltaTime);
 
-        // プレイヤー間の距離からターゲットズームを算出
+        // プレイヤー間の距離から「自動ズーム値」を算出
         float distance = Vector3.Distance(_player1.transform.position, _player2.transform.position);
-        float targetZoom = Mathf.Lerp(_minZoom, _maxZoom, distance / _zoomLimiter);
+        float baseZoom = Mathf.Lerp(_minZoom, _maxZoom, distance / _zoomLimiter);
+
+        // 手動オフセットを足して最終ターゲットズームに
+        float targetZoom = Mathf.Clamp(baseZoom + _manualZoomOffset, _minZoom, _maxZoom);
 
         // 見切れチェック
         Vector3 viewPos1 = _cam.WorldToViewportPoint(_player1.transform.position);
@@ -144,7 +173,10 @@ public class CameraController : MonoBehaviour
 
         //見る位置
         center.y -= 1f;
-        transform.LookAt(center);
+        // 見る位置（ピッチに応じて高さを調整）
+        Vector3 lookAtPos = GetLookAtPosition(center);
+        Debug.Log("今見ている位置は" + lookAtPos);
+        transform.LookAt(lookAtPos);
 
     }
 
@@ -161,7 +193,7 @@ public class CameraController : MonoBehaviour
             _pitch -= _rotateSpeed * Time.deltaTime;
 
         // クランプ（角度制限、真上から真横までぐらい）
-        _pitch = Mathf.Clamp(_pitch, -30f, 30f);
+        _pitch = Mathf.Clamp(_pitch, _minPitch, _maxPitch);
 
         //Debug.Log(_pitch);
 
@@ -171,6 +203,7 @@ public class CameraController : MonoBehaviour
         //ピッチ角を offset に反映
         Quaternion rotation = Quaternion.Euler(_pitch, 0f, 0f);
         Vector3 rotatedOffset = rotation * (_offset / 2f);
+        //Vector3 rotatedOffset = GetRotatedOffset(0.5f);
 
 
         //カメラの位置
@@ -179,9 +212,21 @@ public class CameraController : MonoBehaviour
         //追従を線形補完で滑らかに
         transform.position = Vector3.Lerp(transform.position, targetPosition, _smoothSpeed * Time.deltaTime);
 
+        // スムーズに補間
+        float baseZoom = 35f; // 1人のときの基準ズーム（好みで変えてOK）
+        float targetZoom = Mathf.Clamp(baseZoom + _manualZoomOffset, _minZoom, _maxZoom);
+        _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, targetZoom, Time.deltaTime * _zoomSpeed);
+
+        Debug.Log("カメラのビュー" +  _cam.fieldOfView);
+        Debug.Log("マニュアル" + _manualZoomOffset);
+
         //見る位置
-        center.y -= 1f;
-        transform.LookAt(center);
+        //center.y -= 1f;
+
+        // 見る位置（ピッチに応じて高さを調整）
+        Vector3 lookAtPos = GetLookAtPosition(center);
+        Debug.Log("今見ている位置は" + lookAtPos);
+        transform.LookAt(lookAtPos);
     }
 
 
@@ -198,6 +243,67 @@ public class CameraController : MonoBehaviour
         //Debug.Log("カメラが追うプレイヤーを再登録します");
         RegisterPlayer();
 
+    }
+
+
+    private void HandleZoomInput()
+    {
+        float dir = 0f;
+
+        if (Input.GetKey(_zoomInKey)) dir -= 1f;  // FOVを小さく = ズームイン
+        if (Input.GetKey(_zoomOutKey)) dir += 1f;  // FOVを大きく = ズームアウト
+
+        if (Mathf.Abs(dir) > 0.01f)
+        {
+            _manualZoomOffset += dir * _manualZoomSpeed * Time.deltaTime;
+            _manualZoomOffset = Mathf.Clamp(_manualZoomOffset, -_maxManualOffset, _maxManualOffset);
+        }
+    }
+
+    /// <summary>
+    /// ピッチに応じて高さを変えつつ、オフセットを回転させた値を返す
+    /// distanceFactor : 1.0f = 通常、0.5f = シングル用みたいな調整用
+    /// </summary>
+    private Vector3 GetRotatedOffset(float distanceFactor = 1f)
+    {
+        // ピッチを 0～1 に正規化
+        float pitch01 = Mathf.InverseLerp(_minPitch, _maxPitch, _pitch);
+        // ピッチが低いほど heightScale が大きくなるように（反比例イメージ）
+        float heightScale = Mathf.Lerp(_maxHeightScale, _minHeightScale, pitch01);
+
+        // 元のオフセットに距離係数を掛ける
+        Vector3 baseOffset = _offset * distanceFactor;
+
+        // 高さだけスケール
+        baseOffset.y *= heightScale;
+
+        // ピッチで回転
+        Quaternion rotation = Quaternion.Euler(_pitch, 0f, 0f);
+        return rotation * baseOffset;
+    }
+
+    /// <summary>
+    /// 現在のピッチ角に応じて、LookAt する位置の高さを調整した center を返す
+    /// 「横から見るほどプレイヤーの上あたりを見る」イメージ
+    /// </summary>
+    private Vector3 GetLookAtPosition(Vector3 center)
+    {
+        // forward.y の絶対値が小さいほど「横から見ている」状態
+        // forward.y の絶対値が大きいほど「俯瞰・真上」状態
+        float vertical = Mathf.Abs(_cam.transform.forward.y);
+        // vertical = 0 → 完全に横から
+        // vertical = 1 → 真上/真下（※今回は真下には行かないはずだけど）
+
+        // 横 view: vertical ≒ 0 → t = 1
+        // 上 view : vertical ≒ 1 → t = 0
+        float t = Mathf.InverseLerp(1f, 0f, vertical);
+
+        // t=0 → _lookAtOffsetTopView
+        // t=1 → _lookAtOffsetSideView
+        float offsetY = Mathf.Lerp(_lookAtHeightTopView, _lookAtHeightSideView, t);
+
+        center.y += offsetY;
+        return center;
     }
 
     private void RegisterPlayer()
