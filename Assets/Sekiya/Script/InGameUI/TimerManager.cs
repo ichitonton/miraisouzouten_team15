@@ -19,7 +19,7 @@ public class TimerManager  : NetworkBehaviour
     {
         // UI更新などはそのまま
         var span = TimeSpan.FromSeconds(_count.Value);
-        if (timeText) timeText.text = span.ToString(@"mm\:ss");
+        if (timeText) timeText.text = span.ToString(@"m\:ss");
 
         if (!IsServer) return;
         if (isTimeUp) return;

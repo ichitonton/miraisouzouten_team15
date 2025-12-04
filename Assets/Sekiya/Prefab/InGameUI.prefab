@@ -1368,7 +1368,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2752076993
+  GlobalObjectIdHash: 2321285320
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -2002,7 +2002,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fd84a6f42dc2153439fa2012c44982e1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c8bfb50b99256504d870e2b7eb698906, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
