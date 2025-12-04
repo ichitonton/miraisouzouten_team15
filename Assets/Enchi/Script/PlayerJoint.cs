@@ -135,8 +135,8 @@ public class PlayerJoint : NetworkBehaviour
 
     void Joint()
     {
-        GameObject _husi_up = new GameObject();
-        GameObject _husi_down = new GameObject();
+        GameObject _husi_up = null;
+        GameObject _husi_down = null;
         Debug.Log(_playerA);
         //_playerA.transform.position = this.transform.position + new Vector3(0, -1.0f + _magicNumber, 0);
         //_playerA.transform.rotation = transform.rotation;

@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class UICursorToWorld : MonoBehaviour
@@ -10,6 +11,11 @@ public class UICursorToWorld : MonoBehaviour
     [SerializeField] private GameObject itemTarget;
 
     void Start()
+    {
+        //SpawnTarget();
+    }
+
+    public void SpawnTarget()
     {
         canvas = Object.FindFirstObjectByType<Canvas>();
         uiCamera =  Object.FindFirstObjectByType<Camera>();
@@ -49,7 +55,7 @@ public class UICursorToWorld : MonoBehaviour
         // 3. レイキャスト（地面レイヤーのみ）
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundLayer))
         {
-            //Debug.Log("hit: " + hit.point);
+            Debug.Log("hit: " + hit.point);
 
             worldTarget.position = hit.point;
         }

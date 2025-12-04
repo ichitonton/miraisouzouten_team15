@@ -1,9 +1,9 @@
 using NUnit.Framework.Constraints;
+using Unity.Netcode;
 using UnityEngine;
-using static UnityEditor.Progress;
 using static UnityEngine.GraphicsBuffer;
 
-public class MovePlayerKey : MonoBehaviour
+public class MovePlayerKey : NetworkBehaviour
 {
     [SerializeField] KeyCode _up;
     [SerializeField] KeyCode _down;
@@ -104,6 +104,27 @@ public class MovePlayerKey : MonoBehaviour
         _target = gameObject.GetComponent<UICursorToWorld>().GetItemTargetTransform();
 
         _pool = GameObject.Find("ItemObjectPool");
+
+        if (IsServer)
+        {
+            Invoke("SetRigidFalse", 0.1f);
+        }
+        else
+        {
+
+            Rigidbody rb = GetComponent<Rigidbody>();
+            rb.isKinematic = true; // ÉNÉâÉCÉAÉìÉgÇ≈ÇÕï®óùââéZÇµÇ»Ç¢
+        }
+        if (IsClient)
+        {
+            GetComponent<UICursorToWorld>().SpawnTarget();
+        }
+    }
+
+    void SetRigidFalse()
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+        rb.isKinematic = false; // ÉNÉâÉCÉAÉìÉgÇ≈ÇÕï®óùââéZÇµÇ»Ç¢
     }
 
     // Update is called once per frame
@@ -114,23 +135,26 @@ public class MovePlayerKey : MonoBehaviour
             _item.transform.position = _haveTrans.position;
             _item.transform.eulerAngles = _haveTrans.eulerAngles;            
         }
-        Debug.Log(_haveItem);
+        //Debug.Log(_haveItem);
         if (_animBlend > 0)
         {
             _animBlend -= 0.1f;
         }
-        if (_haveItem != ItemType.None && _haveItem != ItemType.Max)
+        if (IsOwner)
         {
-            UseItem();
-        }
-        if (!_canNotInputKey)
-        {
-            Jump();
-            Punch();
-            Move();
-        }
+            if (_haveItem != ItemType.None && _haveItem != ItemType.Max)
+            {
+                UseItem();
+            }
+            if (!_canNotInputKey)
+            {
+                Jump();
+                Punch();
+                Move();
+            }
 		//_anim.linearVelocityBlending = true;
 		_anim.SetFloat("Blend", _animBlend);
+        }
 
 		UpdateDustEffect();
 	}
@@ -303,7 +327,8 @@ public class MovePlayerKey : MonoBehaviour
         }
     }
 
-    void RotateToMoveDirection(Vector3 dir)
+    [ServerRpc]
+    void RotateToMoveDirectionServerRpc(Vector3 dir)
     {
         dir.y = 0.0f;
         if (dir.sqrMagnitude < 0.1f)
@@ -316,13 +341,18 @@ public class MovePlayerKey : MonoBehaviour
             Time.deltaTime * 10.0f  // Å© âÒì]ë¨ìxÅiêîéöÇè„Ç∞ÇÍÇŒë¨Ç≠êUÇËå¸Ç≠Åj
         );
     }
+    [ServerRpc]
+    void LinerVelocityServerRpc(Vector3 dir)
+    {
+        _rb.linearVelocity = dir;
+    }
 
 
-	//
-	//MOVEä÷åW
-	//
+    //
+    //MOVEä÷åW
+    //
 
-	void Jump()
+    void Jump()
     {
         if (_FootCollider.GetCanJump())
         {
@@ -417,9 +447,9 @@ public class MovePlayerKey : MonoBehaviour
         {
         }
         //transform.LookAt(transform.position + new Vector3(_moveVector.x, 0, _moveVector.z));
-        _rb.linearVelocity = _moveVector;
+        LinerVelocityServerRpc(_moveVector);
 
-        RotateToMoveDirection(_lookVector);
+        RotateToMoveDirectionServerRpc(_lookVector);
 
     }
 	void Punch()
