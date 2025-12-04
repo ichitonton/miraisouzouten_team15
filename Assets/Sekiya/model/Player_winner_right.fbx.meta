@@ -1,0 +1,649 @@
+fileFormatVersion: 2
+guid: 3995f5780e39d804a9235a6437aee8f9
+ModelImporter:
+  serializedVersion: 24200
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Risu_rig_RIS
+    second: {fileID: 2100000, guid: 9eb2257c546303b49825ded2fec2abbb, type: 2}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Winmotion
+      takeName: Take 001
+      internalID: 1827226128182048838
+      firstFrame: 1
+      lastFrame: 150
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton:
+    - name: Player_winner_right(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: group
+      parentName: Player_winner_right(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:mesh
+      parentName: group
+      position: {x: -0, y: 0.11241407, z: -0.056845997}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:Head
+      parentName: Risu_rig:mesh
+      position: {x: -0, y: -0.11241407, z: 0.056845997}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:Arm
+      parentName: Risu_rig:mesh
+      position: {x: -0, y: -0.11241407, z: 0.056845997}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:ikHandle1
+      parentName: group
+      position: {x: -0.022665385, y: 0.02011652, z: -0.00953127}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:ikHandle2
+      parentName: group
+      position: {x: 0.02101103, y: 0.019846078, z: -0.009522604}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:all_cont
+      parentName: group
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 7.4749246, y: 7.4749246, z: 7.4749246}
+    - name: Risu_rig:hip
+      parentName: Risu_rig:all_cont
+      position: {x: -0.000010395996, y: 0.010221432, z: -0.0017294842}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 0.13378061, y: 0.13378061, z: 0.13378061}
+    - name: Risu_rig:spine
+      parentName: Risu_rig:hip
+      position: {x: -0.000024934685, y: 0.036079668, z: 0.0039241486}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:L_Shoulder
+      parentName: Risu_rig:spine
+      position: {x: -0.030078992, y: 0.0028806883, z: -0.0039968407}
+      rotation: {x: -0.16472943, y: 0.16474156, z: 0.44827303, w: 0.8630039}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:L_arm
+      parentName: Risu_rig:L_Shoulder
+      position: {x: -0.024772612, y: -0.0036882113, z: 0.001980139}
+      rotation: {x: -0.031148605, y: 0.5196353, z: 0.06345022, w: 0.8514593}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:L_Hand
+      parentName: Risu_rig:L_arm
+      position: {x: -0.029533515, y: -0.0015691471, z: 0.0024650872}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:L_Hand1
+      parentName: Risu_rig:L_Hand
+      position: {x: -0.0093070315, y: -0.0005655384, z: 0.00067032815}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:L_Finger1
+      parentName: Risu_rig:L_Hand1
+      position: {x: -0.011107998, y: -0.0020144747, z: -0.00801502}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:L_Finger2
+      parentName: Risu_rig:L_Hand1
+      position: {x: -0.013199606, y: -0.0012310218, z: -0.0031637931}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:L_Finger3
+      parentName: Risu_rig:L_Hand1
+      position: {x: -0.012764873, y: -0.0014774418, z: 0.0020563733}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:L_Finger4
+      parentName: Risu_rig:L_Hand1
+      position: {x: -0.010017633, y: -0.0019480133, z: 0.0072069066}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:R_Shoulder
+      parentName: Risu_rig:spine
+      position: {x: 0.029178642, y: 0.0022963046, z: -0.0039999834}
+      rotation: {x: -0.1722387, y: -0.1562368, z: -0.4963706, w: 0.83638513}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:R_arm
+      parentName: Risu_rig:R_Shoulder
+      position: {x: 0.024772612, y: -0.0036882113, z: 0.001980139}
+      rotation: {x: 0, y: -0.52249855, z: -0, w: 0.85264015}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:R_Hand
+      parentName: Risu_rig:R_arm
+      position: {x: 0.029533515, y: -0.0015691471, z: 0.0024650872}
+      rotation: {x: -0.12532152, y: 0.008981769, z: -0.070919946, w: 0.98953736}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:R_Hand1
+      parentName: Risu_rig:R_Hand
+      position: {x: 0.0093070315, y: -0.0005655384, z: 0.00067032815}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:R_Finger1
+      parentName: Risu_rig:R_Hand1
+      position: {x: 0.011107998, y: -0.0020144747, z: -0.00801502}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:R_Finger2
+      parentName: Risu_rig:R_Hand1
+      position: {x: 0.013252633, y: -0.001230812, z: -0.0031638}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:R_Finger3
+      parentName: Risu_rig:R_Hand1
+      position: {x: 0.012764437, y: -0.0014770507, z: 0.0020564122}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:R_Finger4
+      parentName: Risu_rig:R_Hand1
+      position: {x: 0.010017445, y: -0.0019480227, z: 0.00720692}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:neck
+      parentName: Risu_rig:spine
+      position: {x: -0.000008421382, y: 0.015697088, z: -0.0012521332}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:head
+      parentName: Risu_rig:neck
+      position: {x: -1.7347234e-20, y: 0.023518933, z: -2.220446e-18}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:L_ear1
+      parentName: Risu_rig:head
+      position: {x: -0.021469466, y: 0.055176217, z: -0.0032830548}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:L_ear2
+      parentName: Risu_rig:L_ear1
+      position: {x: -0.0016850495, y: 0.009037857, z: 0.0037960315}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:R_ear1
+      parentName: Risu_rig:head
+      position: {x: 0.021469465, y: 0.055141315, z: -0.003283051}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:R_ear2
+      parentName: Risu_rig:R_ear1
+      position: {x: 0.0016849994, y: 0.0090731615, z: 0.0037960303}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:nose
+      parentName: Risu_rig:head
+      position: {x: 0.00011106535, y: 0.0006034851, z: 0.046404094}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:nose1
+      parentName: Risu_rig:nose
+      position: {x: 6.20765e-18, y: 0.0057156086, z: 0.0120491125}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:L_ceeck
+      parentName: Risu_rig:head
+      position: {x: -0.04863552, y: 0.002713194, z: 0.03661004}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:R_ceeck
+      parentName: Risu_rig:head
+      position: {x: 0.04685087, y: 0.0027133273, z: 0.037066806}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:Low_hip
+      parentName: Risu_rig:hip
+      position: {x: -0.000083524705, y: -0.039302733, z: 0.0011286426}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:tell1
+      parentName: Risu_rig:hip
+      position: {x: 0.000071599854, y: -0.03634145, z: -0.022432238}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:tell2
+      parentName: Risu_rig:tell1
+      position: {x: 0.00008165685, y: -0.0060540484, z: -0.02817184}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:tell3
+      parentName: Risu_rig:tell2
+      position: {x: -0.00011192771, y: -0.0006472349, z: -0.03360028}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:tell4
+      parentName: Risu_rig:tell3
+      position: {x: 0.000077336495, y: 0.005249071, z: -0.02897336}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:L_UPLeg
+      parentName: Risu_rig:all_cont
+      position: {x: -0.0030321893, y: 0.002691199, z: -0.001275099}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 0.13378061, y: 0.13378061, z: 0.13378061}
+    - name: Risu_rig:L_joint1
+      parentName: Risu_rig:L_UPLeg
+      position: {x: 0.00047922865, y: -0.02011651, z: 0.00953127}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:L_joint2
+      parentName: Risu_rig:L_joint1
+      position: {x: -0.00069451105, y: 0.00431345, z: 0.010816705}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:L_joint3
+      parentName: Risu_rig:L_joint2
+      position: {x: -0.00022544622, y: -0.000968641, z: 0.0167452}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:R_UPLeg
+      parentName: Risu_rig:all_cont
+      position: {x: 0.0028100982, y: 0.002691199, z: -0.001275099}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 0.13378061, y: 0.13378061, z: 0.13378061}
+    - name: Risu_rig:R_joint1
+      parentName: Risu_rig:R_UPLeg
+      position: {x: 0.00047922865, y: -0.02011651, z: 0.00953127}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:R_joint2
+      parentName: Risu_rig:R_joint1
+      position: {x: -0.0008121437, y: 0.003942324, z: 0.0107371565}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:R_joint3
+      parentName: Risu_rig:R_joint2
+      position: {x: 0.00012463807, y: -0.0008854508, z: 0.016723022}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:L_roke
+      parentName: Risu_rig:all_cont
+      position: {x: -0.0030321893, y: 0.0060679084, z: 0.0050941072}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:R_roke
+      parentName: Risu_rig:all_cont
+      position: {x: 0.0028108687, y: 0.0060679084, z: 0.0050941072}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:locator1
+      parentName: group
+      position: {x: -0.022665385, y: 0.04535716, z: 0.03807805}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:locator2
+      parentName: group
+      position: {x: 0.02101103, y: 0.04542194, z: 0.04009961}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:aiSkyDomeLight1
+      parentName: group
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:_HIps
+      parentName: group
+      position: {x: -0.00007770928, y: 0.0851478, z: -0.012927764}
+      rotation: {x: -0, y: -0, z: -0.70606, w: 0.708152}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:Spine2
+      parentName: Risu_rig:_HIps
+      position: {x: -0.036079586, y: 0.00008180954, z: 0.003924149}
+      rotation: {x: -0, y: -0, z: 0.70606, w: 0.708152}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:_R_Shoulder1
+      parentName: Risu_rig:Spine2
+      position: {x: -0.030078992, y: 0.002880688, z: -0.003996841}
+      rotation: {x: 0.000000017405084, y: 0.0000000014124925, z: 0.0808881, w: 0.99672323}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:_R_Arm
+      parentName: Risu_rig:_R_Shoulder1
+      position: {x: -0.025043152, y: 0.00035454027, z: 0.0019801413}
+      rotation: {x: 0.001533737, y: 0.04433011, z: -0.06750386, w: 0.99673253}
+      scale: {x: 1, y: 1, z: 0.9999999}
+    - name: Risu_rig:_R_Hand
+      parentName: Risu_rig:_R_Arm
+      position: {x: -0.029666923, y: -0.00078323827, z: -0.00016568242}
+      rotation: {x: 0.0007663041, y: 0.046372853, z: -0.016504489, w: 0.9987876}
+      scale: {x: 1.0000002, y: 1.0000001, z: 1.0000004}
+    - name: Risu_rig:_R_Hand1
+      parentName: Risu_rig:_R_Hand
+      position: {x: -0.009271101, y: -0.000626, z: -0.0010221186}
+      rotation: {x: -0.000000017287674, y: 0.020371964, z: 0.00000007054768, w: 0.99979246}
+      scale: {x: 1.0000001, y: 1, z: 1}
+    - name: Risu_rig:_R_Finger1
+      parentName: Risu_rig:_R_Hand1
+      position: {x: -0.010875021, y: -0.002051, z: 0.0069454783}
+      rotation: {x: 0.000000040832816, y: 0.18387663, z: -0.00000000446442, w: 0.9829494}
+      scale: {x: 1, y: 1.0000001, z: 1.0000002}
+    - name: Risu_rig:_R_Finger2
+      parentName: Risu_rig:_R_Hand1
+      position: {x: -0.013003343, y: -0.0015669999, z: 0.0015110777}
+      rotation: {x: 0.0053366553, y: -0.025339805, z: 0.00072499964, w: 0.99966437}
+      scale: {x: 1.0000004, y: 1, z: 1.0000001}
+    - name: Risu_rig:_R_Finger3
+      parentName: Risu_rig:_R_Hand1
+      position: {x: -0.012878071, y: -0.001293, z: -0.0037289548}
+      rotation: {x: -0.00000003013962, y: -0.08363087, z: -0.00000007061329, w: 0.99649686}
+      scale: {x: 1.0000002, y: 1.0000001, z: 1}
+    - name: Risu_rig:_R_Finger4
+      parentName: Risu_rig:_R_Hand1
+      position: {x: -0.010174964, y: -0.002035, z: -0.00829952}
+      rotation: {x: -0.00000002085254, y: -0.2735285, z: -0.00000003049638, w: 0.9618639}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+    - name: Risu_rig:_Neck
+      parentName: Risu_rig:Spine2
+      position: {x: -0.000008421382, y: 0.01569709, z: -0.0012521335}
+      rotation: {x: -0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:_Head
+      parentName: Risu_rig:_Neck
+      position: {x: -1.335737e-18, y: 0.023518937, z: -1.11022296e-17}
+      rotation: {x: -0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:_L_Ear1
+      parentName: Risu_rig:_Head
+      position: {x: -0.021469466, y: 0.055141658, z: -0.0032830548}
+      rotation: {x: -0, y: -0, z: -0.66167176, w: 0.74979365}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1}
+    - name: Risu_rig:_L_Ear2
+      parentName: Risu_rig:_L_Ear1
+      position: {x: -0.009211548, y: -0.0005435261, z: 0.003796032}
+      rotation: {x: -0, y: -0, z: 0.715518, w: 0.69859433}
+      scale: {x: 0.99999976, y: 0.99999976, z: 1}
+    - name: Risu_rig:_Nose
+      parentName: Risu_rig:_Head
+      position: {x: 0.00011106535, y: 0.0006034841, z: 0.046404094}
+      rotation: {x: 0.555421, y: -0, z: -0.000000029802322, w: 0.8315693}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Risu_rig:_Nose
+      parentName: Risu_rig:_Nose
+      position: {x: 6.2133395e-18, y: 0.013319437, z: -0.0006647537}
+      rotation: {x: -0.10217161, y: -0.000000015010063, z: 0.000000009837955, w: 0.99476683}
+      scale: {x: 1, y: 1, z: 0.9999999}
+    - name: Risu_rig:_L_Cheeks
+      parentName: Risu_rig:_Head
+      position: {x: -0.038943272, y: 0.0027131923, z: 0.029628392}
+      rotation: {x: -0, y: -0.43162376, z: 0.000000029802322, w: 0.9020537}
+      scale: {x: 1.0000001, y: 1, z: 0.99999994}
+    - name: Risu_rig:_R_Cheeks
+      parentName: Risu_rig:_Head
+      position: {x: 0.038943265, y: 0.0027133257, z: 0.02962835}
+      rotation: {x: 0.9020538, y: 0.000000029802326, z: -0.43162376, w: 0.000000014901163}
+      scale: {x: 1.0000004, y: 1, z: 1.0000001}
+    - name: Risu_rig:_R_Ear1
+      parentName: Risu_rig:_Head
+      position: {x: 0.021469465, y: 0.05514131, z: -0.0032830504}
+      rotation: {x: 0.74979365, y: 0.66167176, z: -4.051571e-17, w: -4.5911628e-17}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1}
+    - name: Risu_rig:_R_Ear2
+      parentName: Risu_rig:_R_Ear1
+      position: {x: 0.009212281, y: 0.0005433858, z: -0.0037960298}
+      rotation: {x: -4.1752848e-17, y: -4.2764315e-17, z: 0.71551794, w: 0.69859433}
+      scale: {x: 1, y: 1, z: 1.0000002}
+    - name: Risu_rig:_R_Shoulder2
+      parentName: Risu_rig:Spine2
+      position: {x: 0.029178645, y: 0.0022963043, z: -0.003999984}
+      rotation: {x: 0.99890006, y: -0.041963402, z: -0.020856425, w: 0.0016926044}
+      scale: {x: 1, y: 1.0000002, z: 1.0000004}
+    - name: Risu_rig:_R_Arm
+      parentName: Risu_rig:_R_Shoulder2
+      position: {x: 0.025043149, y: -0.0003547538, z: -0.0019801105}
+      rotation: {x: 0.001533754, y: 0.044330094, z: -0.06750401, w: 0.99673253}
+      scale: {x: 1.0000001, y: 0.99999917, z: 0.9999996}
+    - name: Risu_rig:_R_Hand
+      parentName: Risu_rig:_R_Arm
+      position: {x: 0.029666953, y: 0.00078309845, z: 0.00016573144}
+      rotation: {x: 0.0007663146, y: 0.04637286, z: -0.016504344, w: 0.9987876}
+      scale: {x: 1.0000001, y: 1.0000007, z: 1.0000002}
+    - name: Risu_rig:_R_Hand1
+      parentName: Risu_rig:_R_Hand
+      position: {x: 0.009271168, y: 0.0006264637, z: 0.0010221421}
+      rotation: {x: 0.000000019092113, y: 0.020371992, z: -0.000000019586878, w: 0.99979246}
+      scale: {x: 1.0000001, y: 1.0000007, z: 1.0000008}
+    - name: Risu_rig:_R_Finger1
+      parentName: Risu_rig:_R_Hand1
+      position: {x: 0.01087479, y: 0.0020509085, z: -0.0069455323}
+      rotation: {x: -0.000000005662339, y: 0.18387656, z: -0.000000022925821, w: 0.9829494}
+      scale: {x: 1.0000001, y: 1.0000011, z: 1.0000008}
+    - name: Risu_rig:_R_Finger2
+      parentName: Risu_rig:_R_Hand1
+      position: {x: 0.013002882, y: 0.0015665024, z: -0.0015111866}
+      rotation: {x: 0.0053366343, y: -0.025339877, z: 0.0007250433, w: 0.99966437}
+      scale: {x: 1.0000004, y: 1.0000014, z: 1.0000013}
+    - name: Risu_rig:_R_Finger3
+      parentName: Risu_rig:_R_Hand1
+      position: {x: 0.012878088, y: 0.001292693, z: 0.0037289506}
+      rotation: {x: 0.000000007742484, y: -0.08363091, z: 8.6743823e-10, w: 0.9964968}
+      scale: {x: 1.0000001, y: 1.0000015, z: 1.0000015}
+    - name: Risu_rig:_R_Finger4
+      parentName: Risu_rig:_R_Hand1
+      position: {x: 0.010175234, y: 0.0020342395, z: 0.008299563}
+      rotation: {x: -0.000000018162355, y: -0.27352855, z: -0.000000004248415, w: 0.96186393}
+      scale: {x: 1.0000005, y: 1.0000014, z: 1.0000012}
+    - name: Risu_rig:_Tell
+      parentName: Risu_rig:_HIps
+      position: {x: 0.036341503, y: -0.000035919067, z: -0.022432238}
+      rotation: {x: 0.43540025, y: -0.5571595, z: 0.55586886, w: 0.43704674}
+      scale: {x: 1.0000002, y: 0.9999996, z: 1.0000001}
+    - name: Risu_rig:_Tell1
+      parentName: Risu_rig:_Tell
+      position: {x: -0.028802468, y: 0.00084956246, z: -0.00008165685}
+      rotation: {x: 0.000000029802319, y: -0, z: -0.08716645, w: 0.99619377}
+      scale: {x: 1.0000002, y: 1.0000002, z: 0.9999999}
+    - name: Risu_rig:_Tell2
+      parentName: Risu_rig:_Tell1
+      position: {x: -0.03356884, y: 0.0015907012, z: 0.000111927715}
+      rotation: {x: -0.00000002940233, y: -0.000000004866347, z: -0.076669455, w: 0.9970566}
+      scale: {x: 1.0000002, y: 0.99999976, z: 1.0000005}
+    - name: Risu_rig:_Tell3
+      parentName: Risu_rig:_Tell2
+      position: {x: -0.029319543, y: 0.0027152838, z: -0.000077336495}
+      rotation: {x: 0.00000003923715, y: 0.000000036701852, z: -0.041203514, w: 0.9991508}
+      scale: {x: 1.0000002, y: 1.0000001, z: 1}
+    - name: Risu_rig:_Tell4
+      parentName: Risu_rig:_Tell3
+      position: {x: -0.033936515, y: 0.001072524, z: 0.00019849131}
+      rotation: {x: 0.009283362, y: 0.70704585, z: -0.009283371, w: 0.70704585}
+      scale: {x: 1.0000001, y: 0.9999997, z: 1.0000002}
+    - name: Risu_rig:_L_UPLeg
+      parentName: Risu_rig:_HIps
+      position: {x: 0.0039199996, y: -0.02647, z: 0.00071505434}
+      rotation: {x: -0.0027960541, y: 0.99732345, z: -0.0052844477, w: -0.072871126}
+      scale: {x: 1, y: 0.99999976, z: 1}
+    - name: Risu_rig:joint1
+      parentName: Risu_rig:_L_UPLeg
+      position: {x: -0.0210299, y: 0.0015138137, z: -0.0132885575}
+      rotation: {x: -0.007913071, y: -0.16387981, z: 0.003079854, w: 0.9864438}
+      scale: {x: 1.0000006, y: 1.0000007, z: 1.0000014}
+    - name: Risu_rig:_jointL2
+      parentName: Risu_rig:joint1
+      position: {x: -0.027728295, y: 0.0018983015, z: 0.012672022}
+      rotation: {x: -0.023137664, y: 0.35830343, z: -0.0013507868, w: 0.9333175}
+      scale: {x: 1.0000005, y: 1.0000004, z: 1.0000008}
+    - name: Risu_rig:_joint3
+      parentName: Risu_rig:_jointL2
+      position: {x: -0.010947945, y: 0.000011481774, z: 0.016044134}
+      rotation: {x: -0.0027123245, y: 0.07852604, z: -0.0035573908, w: 0.99690205}
+      scale: {x: 1.0000005, y: 1.0000004, z: 1.0000008}
+    - name: Risu_rig:joint2
+      parentName: Risu_rig:_joint3
+      position: {x: -0.0035350504, y: -0.00053481077, z: -0.033553865}
+      rotation: {x: 0.038200602, y: -0.37088922, z: -0.01994475, w: 0.92767674}
+      scale: {x: 1.0000004, y: 0.99999994, z: 1.0000006}
+    - name: Risu_rig:_L_feet
+      parentName: Risu_rig:joint2
+      position: {x: -0.0018817214, y: -0.0002735588, z: -0.016666586}
+      rotation: {x: -0.66824, y: -0.7439458, z: -0.0000000012534854, w: 0.0000000019077522}
+      scale: {x: 1.0000001, y: 1, z: 0.9999997}
+    - name: Risu_rig:_R_UPLeg
+      parentName: Risu_rig:_HIps
+      position: {x: 0.00392336, y: 0.026472816, z: 0.00071506493}
+      rotation: {x: -0.00080882106, y: -0.012400632, z: -0.02094242, w: 0.99970347}
+      scale: {x: 1, y: 0.9999998, z: 1}
+    - name: Risu_rig:joint1
+      parentName: Risu_rig:_R_UPLeg
+      position: {x: 0.023435751, y: -0.0013750122, z: 0.009509462}
+      rotation: {x: 0.0015159524, y: 0.02381133, z: -0.0003132439, w: 0.99971527}
+      scale: {x: 1.0000005, y: 1.0000006, z: 0.99999994}
+    - name: Risu_rig:_jointR_Leg
+      parentName: Risu_rig:joint1
+      position: {x: 0.029853124, y: -0.0019708837, z: -0.0067172353}
+      rotation: {x: -0.038552012, y: 0.35582548, z: 0.00794568, w: 0.93372315}
+      scale: {x: 0.99999994, y: 1, z: 1}
+    - name: Risu_rig:_joint1
+      parentName: Risu_rig:_jointR_Leg
+      position: {x: 0.0140208285, y: -0.00018484387, z: -0.013511036}
+      rotation: {x: 0.000000006519258, y: -0, z: -1.5279511e-10, w: 1}
+      scale: {x: 1.0000006, y: 1.0000008, z: 0.9999999}
+    - name: Risu_rig:joint2
+      parentName: Risu_rig:_joint1
+      position: {x: 0.001971492, y: 0.000436996, z: 0.033640977}
+      rotation: {x: 0.04733878, y: -0.36838186, z: -0.032994032, w: 0.9278821}
+      scale: {x: 1.0000006, y: 1.0000004, z: 0.9999998}
+    - name: Risu_rig:_R_feet
+      parentName: Risu_rig:joint2
+      position: {x: 0.0009796753, y: 0.00021709518, z: 0.016716821}
+      rotation: {x: 0.66824013, y: 0.74394566, z: -1.6425705e-10, w: 0.0000000015624622}
+      scale: {x: 1.0000002, y: 1.0000007, z: 1.0000004}
+    - name: Risu_rig:joint4
+      parentName: Risu_rig:_HIps
+      position: {x: 0.03930272, y: -0.00006183892, z: 0.001128643}
+      rotation: {x: -0, y: -0, z: -0, w: 1}
+      scale: {x: 0.9999999, y: 0.9999999, z: 1}
+    - name: imagePlane1
+      parentName: Player_winner_right(Clone)
+      position: {x: 0.30596957, y: 0.13500746, z: -0.22037883}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 3.931747, y: 3.931747, z: 3.931747}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
