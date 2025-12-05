@@ -3119,6 +3119,7 @@ GameObject:
   - component: {fileID: 8427100980178498739}
   - component: {fileID: 5873431350986867485}
   - component: {fileID: 9011339760900524497}
+  - component: {fileID: 5788659911372820208}
   m_Layer: 0
   m_Name: Risu_rig 1
   m_TagString: Player
@@ -3366,6 +3367,28 @@ MonoBehaviour:
   skinMaterial1: {fileID: 2100000, guid: cdf0a04cb9e8a694d9a4141595f851ea, type: 2}
   skinMaterial2: {fileID: 2100000, guid: e0825b6a1b89c2e4f98c0f84be7ca21c, type: 2}
   skinMaterial3: {fileID: 2100000, guid: beff4b5cc558c974e8df9322ff84927e, type: 2}
+--- !u!114 &5788659911372820208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7459081349001929016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkAnimator
+  ShowTopMostFoldoutHeaderGroup: 1
+  TransitionStateInfoList:
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -453240694
+    DestinationState: 2075013949
+    TransitionDuration: 0
+    TriggerNameHash: -316645540
+    TransitionIndex: 2
+  m_Animator: {fileID: 8427100980178498739}
 --- !u!1 &7481435165760361928
 GameObject:
   m_ObjectHideFlags: 0
