@@ -3189,7 +3189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3014565496
+  GlobalObjectIdHash: 3519466044
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -3248,13 +3248,12 @@ MonoBehaviour:
   _punchDamage: 20
   _punchForce: 10
   _stunTime: 1
-  _haveTrans: {fileID: 1831080694025742889, guid: 419aae24f019f2246ba04f5665a3af8e, type: 3}
+  _haveTrans: {fileID: 84731178285349141}
   _itemFlightTime: 2
   _effDash_2: {fileID: 773825968017154068, guid: 28c381c7693f60c43bd845de5f9783e4, type: 3}
-  _eff_HitPunch: {fileID: 0}
-  _headPoint: {fileID: 0}
+  _eff_HitPunch: {fileID: 7155706149333254684, guid: a786b69b36d65074288da092aa9f581b, type: 3}
+  _headPoint: {fileID: 7838561722115832706}
   _playerNumber: 1
-  _cameraShake: {fileID: 0}
   _FootCollider: {fileID: 7817851643849097461, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
 --- !u!54 &4346886339305241986
 Rigidbody:
