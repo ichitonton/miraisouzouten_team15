@@ -3807,6 +3807,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2593fc0be459db64fa87c4fe482afefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
+  _combineToStatic: 1
 --- !u!1001 &162321453
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9349,6 +9350,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2593fc0be459db64fa87c4fe482afefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
+  _combineToStatic: 1
 --- !u!1001 &431838369
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14259,6 +14261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2593fc0be459db64fa87c4fe482afefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
+  _combineToStatic: 1
 --- !u!1001 &679800330
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18846,6 +18849,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2593fc0be459db64fa87c4fe482afefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
+  _combineToStatic: 1
 --- !u!1001 &887191427
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19619,8 +19623,6 @@ MonoBehaviour:
   _lookAtBaseHeight: 0
   _lookAtHeightSideView: 4
   _lookAtHeightTopView: -1
-  _minHeightScale: 1
-  _maxHeightScale: 1
   _zoomInKey: 98
   _zoomOutKey: 118
   _manualZoomSpeed: 10
@@ -263062,6 +263064,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2593fc0be459db64fa87c4fe482afefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
+  _combineToStatic: 1
 --- !u!1001 &1228961616
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -268388,6 +268391,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2593fc0be459db64fa87c4fe482afefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
+  _combineToStatic: 1
 --- !u!1001 &1533118065
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -268578,6 +268582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2593fc0be459db64fa87c4fe482afefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
+  _combineToStatic: 1
 --- !u!1001 &1539208394
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -269968,6 +269973,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2593fc0be459db64fa87c4fe482afefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
+  _combineToStatic: 1
 --- !u!1001 &1593793786
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -270061,6 +270067,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2593fc0be459db64fa87c4fe482afefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
+  _combineToStatic: 1
 --- !u!1001 &1593917211
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -271355,6 +271362,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2593fc0be459db64fa87c4fe482afefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
+  _combineToStatic: 1
 --- !u!1 &1674874470
 GameObject:
   m_ObjectHideFlags: 0
@@ -274208,6 +274216,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2593fc0be459db64fa87c4fe482afefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
+  _combineToStatic: 1
 --- !u!1001 &1830674836
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -275348,6 +275357,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2593fc0be459db64fa87c4fe482afefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
+  _combineToStatic: 1
 --- !u!1001 &1888827161
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -276511,6 +276521,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2593fc0be459db64fa87c4fe482afefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
+  _combineToStatic: 1
 --- !u!1001 &1964542355
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -277496,6 +277507,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2593fc0be459db64fa87c4fe482afefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
+  _combineToStatic: 1
 --- !u!1001 &2024152022
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -279401,6 +279413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2593fc0be459db64fa87c4fe482afefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
+  _combineToStatic: 1
 --- !u!1001 &2102962023
 PrefabInstance:
   m_ObjectHideFlags: 0
