@@ -306,7 +306,7 @@ public class MovePlayerKey : NetworkBehaviour
     //パンチオブジェクト非アクティブ化
     void PunchActiveFalse()
     {
-        ToggleColliderClientRpc(false);
+        ToggleColliderServerRpc(false);
     }
     //パンチクールダウンリセット
     void SetPunchReset()
@@ -512,7 +512,7 @@ public class MovePlayerKey : NetworkBehaviour
                 );
             }
 
-            ToggleColliderClientRpc(true);
+            ToggleColliderServerRpc(true);
 
             Invoke(nameof(PunchActiveFalse), _punchDuration);
 
