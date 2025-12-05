@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.36445355, g: 0.45148998, b: 0.6603774, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 410b53f3cb297b54b860f216f6dd5438, type: 2}
   m_HaloStrength: 1
   m_FlareStrength: 0
   m_FlareFadeSpeed: 3
@@ -8044,16 +8044,28 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 22b42228e4fcab04389dc9a2d532c254, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.7955
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 22b42228e4fcab04389dc9a2d532c254, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.7955
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 22b42228e4fcab04389dc9a2d532c254, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.7955
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 22b42228e4fcab04389dc9a2d532c254, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -101.12519
+      value: -97.722
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 22b42228e4fcab04389dc9a2d532c254, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5
+      value: -66.7
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 22b42228e4fcab04389dc9a2d532c254, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -634.6
+      value: -998
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 22b42228e4fcab04389dc9a2d532c254, type: 3}
       propertyPath: m_LocalRotation.w
@@ -8192,7 +8204,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 22b42228e4fcab04389dc9a2d532c254, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5
+      value: -21
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 22b42228e4fcab04389dc9a2d532c254, type: 3}
       propertyPath: m_LocalPosition.z
