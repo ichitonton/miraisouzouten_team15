@@ -10,6 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 420058978842697883}
   - component: {fileID: 6062687166195725737}
+  - component: {fileID: 5821377537480181424}
+  - component: {fileID: 8333864430798299636}
+  - component: {fileID: -9166671611561208469}
   m_Layer: 0
   m_Name: MapColorManager
   m_TagString: Untagged
@@ -26,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 4436157478839491397}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 170.2718, y: 179.43477, z: 0}
+  m_LocalPosition: {x: 2.6362, y: 2.71557, z: 6.83144}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -46,13 +49,70 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MapColorManager
   mapCamera: {fileID: 0}
   mapTexture: {fileID: 8400000, guid: a450adcbaaefc1b47b508dab223a180e, type: 2}
-  replacementShader: {fileID: 4800000, guid: 54eaf4a247b4f524c82f1d7f744762c5, type: 3}
+  PointReplacementShader: {fileID: 4800000, guid: 774cd77ef805dc844839f6cedcbe7b97, type: 3}
+  SurfaceReplacementShader: {fileID: 4800000, guid: 54eaf4a247b4f524c82f1d7f744762c5, type: 3}
+  HybridReplacementShader: {fileID: 4800000, guid: b52545ca785046041a204f02399cf100, type: 3}
   _colorSettings:
   - _tagName: Field
-    _color: {r: 1, g: 0, b: 0, a: 0}
+    _color: {r: 1, g: 0.54509807, b: 0.54905653, a: 0.75686276}
   _defaultColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   mapLayerName: Map
-  _player: {fileID: 0}
-  heightSensitivity: 0.4
-  minBrightness: 0.6
-  maxBrightness: 1.4
+  _playerManual: []
+  heightSensitivity: 0.59
+  _SurfaceMinBrightness: 0.3
+  _SurfaceMaxBrightness: 0.75
+  _pointSensitivity: 0.3
+  _PointMinBrightness: 0.8
+  _PointMaxBrightness: 1.2
+  _pointRadius: 1.5
+  _viewMode: 2
+--- !u!114 &5821377537480181424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4436157478839491397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23825ed6c0b56d74f93103d7e9c9237d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapScreenController
+  snapshotCamera: {fileID: 0}
+  snapshotRT: {fileID: 8400000, guid: 555b8fc80b36bd247911d0884682da1b, type: 2}
+  mapRoot: {fileID: 0}
+  blurBG: {fileID: 0}
+  toggleKey: 9
+--- !u!114 &8333864430798299636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4436157478839491397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70d80846fadbb404d91ed120cee4bb56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapIconManager
+  _iconDatabase: {fileID: 11400000, guid: f913b98631298254888ba7415d100410, type: 2}
+  _mapCamera: {fileID: 0}
+  _mapRect: {fileID: 0}
+  _iconUIPrefab: {fileID: 0}
+  _updateInterval: 0.2
+--- !u!114 &-9166671611561208469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4436157478839491397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8b754131e557084d8aaee46ccfae83d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMapIconManager
+  _mapCamera: {fileID: 0}
+  _mapRect: {fileID: 0}
+  _playerIconPrefab: {fileID: 0}
+  _updateInterval: 0.1
