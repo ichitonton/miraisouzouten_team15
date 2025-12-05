@@ -3217,31 +3217,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a8ecbcdaa6aa064bb37e68248506b83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovePlayerKeyLocal
-  _up: 0
-  _down: 0
-  _left: 0
-  _right: 0
-  _jump: 0
-  _punch: 0
-  _useItem: 0
+  _up: 119
+  _down: 115
+  _left: 97
+  _right: 100
+  _jump: 99
+  _punch: 101
+  _useItem: 102
   _moveSpeed: 7
   _jumpForce: 7
   _punchDuration: 0.5
   _punchDelay: 0.5
-  _punchObj: {fileID: 0}
+  _punchObj: {fileID: 2597632125628933293}
   _toGetPunchTime: 0.5
   _MaxHp: 100
   _punchDamage: 20
   _punchForce: 10
   _stunTime: 1
-  _haveTrans: {fileID: 0}
+  _haveTrans: {fileID: 84731178285349141}
   _itemFlightTime: 2
-  _effDash_2: {fileID: 0}
-  _eff_HitPunch: {fileID: 0}
-  _headPoint: {fileID: 0}
-  _playerNumber: 0
-  _cameraShake: {fileID: 0}
-  _FootCollider: {fileID: 0}
+  _effDash_2: {fileID: 773825968017154068, guid: 28c381c7693f60c43bd845de5f9783e4, type: 3}
+  _eff_HitPunch: {fileID: 7155706149333254684, guid: a786b69b36d65074288da092aa9f581b, type: 3}
+  _headPoint: {fileID: 3520387096421248167}
+  _playerNumber: 1
+  _FootCollider: {fileID: 7834988206752535424}
 --- !u!1 &7481435165760361928
 GameObject:
   m_ObjectHideFlags: 0
