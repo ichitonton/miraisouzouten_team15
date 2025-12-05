@@ -106,7 +106,6 @@ public class MovePlayerKey : NetworkBehaviour
 
         _pool = GameObject.Find("ItemObjectPool");
 
-        _punchObj.SetActive(false);
 
         if (IsServer)
         {
@@ -485,13 +484,15 @@ public class MovePlayerKey : NetworkBehaviour
     [ServerRpc]
     void ToggleColliderServerRpc(bool state)
     {
+        Debug.Log($"serverRPC punch {state}");
         ToggleColliderClientRpc(state);
     }
 
     [ClientRpc]
     void ToggleColliderClientRpc(bool state)
     {
-        GetComponent<Collider>().enabled = state;
+        Debug.Log($"clientRPC punch {state}");
+        _punchObj.GetComponent<SphereCollider>().enabled = state;
     }
     void Punch()
     {
