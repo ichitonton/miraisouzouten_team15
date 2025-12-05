@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 3901016798145775322}
   - component: {fileID: 7919820755987623234}
   - component: {fileID: 7154387244181288650}
+  - component: {fileID: -4869060843529026045}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -273,3 +274,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 5
+--- !u!114 &-4869060843529026045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2653239795193628215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9e0acc1f91b50c46accd44529afdb23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMapIconTarget
+  _iconTarget: {fileID: 0}
+  _onlyLocalInLan: 1
+  _registerWhenNoNetwork: 1

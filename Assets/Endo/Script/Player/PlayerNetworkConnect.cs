@@ -91,12 +91,6 @@ public class PlayerNetworkConnect : NetworkBehaviour
                 StartCoroutine(DelayedPlayerReplace());
             }
         }
-        //// Client‘¤FHost‚Ö‚ÌÚ‘±Š®—¹
-        //if (nm.IsClient && !nm.IsServer)
-        //{
-        //    Debug.Log($"[Client] Host‚ÉÚ‘±Š®—¹: {clientId}");
-        //    StartCoroutine(DelayedPlayerReplace());
-        //}
 
     }
 

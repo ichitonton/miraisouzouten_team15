@@ -55,6 +55,12 @@ public class MapColorManager : MonoBehaviour
     [SerializeField] private float _PointMaxBrightness = 1.0f;
     [SerializeField] private float _pointRadius = 1.0f;
 
+    [Header("高さでの色変化")]
+    [SerializeField] private float _globalHeightRef = 10f;
+    [SerializeField] private float _globalHeightSensitivity = 0.01f;
+    [SerializeField] private float _globalMinScale = 0.9f;
+    [SerializeField] private float _globalMaxScale = 1.1f;
+
     //MapObjectがついているオブジェクトリスト
     private static readonly List<GameObject> registeredObjects = new();
     // 追加：結合後メッシュ（静的マップ専用）
@@ -317,7 +323,7 @@ public class MapColorManager : MonoBehaviour
     {
 
         // 1) プレイヤーの掃除（DestroyされたTransform除去）
-        CleanupPlayers();
+        //CleanupPlayers();
         int count = _playerList.Count;
 
         
@@ -341,10 +347,10 @@ public class MapColorManager : MonoBehaviour
             _playerPosCache[i] = new Vector4(p.x, p.y, p.z, 0);
         }
 
-        Debug.Log($"[ShaderSend] PlayerCount={count}");
+        //Debug.Log($"[ShaderSend] PlayerCount={count}");
         for (int i = 0; i < count; i++)
         {
-            Debug.Log($"[ShaderSend] P{i}={_playerPosCache[i]}");
+            //Debug.Log($"[ShaderSend] P{i}={_playerPosCache[i]}");
         }
 
 
@@ -360,6 +366,14 @@ public class MapColorManager : MonoBehaviour
         drawMat.SetFloat("_PointMinBrightness", _PointMinBrightness);
         drawMat.SetFloat("_PointMaxBrightness", _PointMaxBrightness);
         drawMat.SetFloat("_PointRadius", _pointRadius);
+
+        // 追加：高さ係数用
+        drawMat.SetFloat("_GlobalHeightRef", _globalHeightRef);
+        drawMat.SetFloat("_GlobalHeightSensitivity", _globalHeightSensitivity);
+        drawMat.SetFloat("_GlobalMinScale", _globalMinScale);
+        drawMat.SetFloat("_GlobalMaxScale", _globalMaxScale);
+
+
     }
 
 
