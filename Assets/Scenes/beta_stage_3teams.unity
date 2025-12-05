@@ -10013,6 +10013,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4010641475284064404, guid: a17eb770de5cba846ad5aac15dbf7745, type: 3}
+      propertyPath: NetworkConfig.PlayerPrefab
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8186086817822115411, guid: a17eb770de5cba846ad5aac15dbf7745, type: 3}
       propertyPath: m_Name
       value: NetworkManager
@@ -13000,15 +13004,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 724504353435010307, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -32.85198
+      value: -27.92
       objectReference: {fileID: 0}
     - target: {fileID: 724504353435010307, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 87.28313
+      value: 14.05
       objectReference: {fileID: 0}
     - target: {fileID: 724504353435010307, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 23.64
       objectReference: {fileID: 0}
     - target: {fileID: 724504353435010307, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: m_LocalRotation.w
@@ -13042,6 +13046,10 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 234636410
       objectReference: {fileID: 0}
+    - target: {fileID: 7550963095654367113, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _pivot
+      value: 
+      objectReference: {fileID: 1861130343}
     - target: {fileID: 8136259294011377221, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: m_Name
       value: NetworkConnectManager
@@ -25006,6 +25014,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 2213381287313018758, guid: 889a51681c380874398405191af35704, type: 3}
   m_PrefabInstance: {fileID: 1158017332}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1861130343 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 724504353435010307, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+  m_PrefabInstance: {fileID: 964517451}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1862554753
 PrefabInstance:
