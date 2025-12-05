@@ -9,7 +9,7 @@ public class obstacles_Manager : MonoBehaviour
 
 	private void Start()
 	{
-		SetTransform = m_transform.position;
+		SetTransform = transform.position;
 	}
 
 	public float GetWeight()
