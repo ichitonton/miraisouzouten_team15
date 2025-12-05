@@ -93,6 +93,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d28e4c01c5d24044cab50d991f360532, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2888395632498644448}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d28e4c01c5d24044cab50d991f360532, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -5649774723592151311}
   m_SourcePrefab: {fileID: 100100000, guid: d28e4c01c5d24044cab50d991f360532, type: 3}
 --- !u!1 &6683862319799710109 stripped
 GameObject:
@@ -276,3 +279,17 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &-5649774723592151311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6683862319799710109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 396e659ba4ecd374d9bc4f72cfd63243, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapIconTarget
+  overrideName: 
+  useIcon: 1

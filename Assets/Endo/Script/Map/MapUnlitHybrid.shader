@@ -21,6 +21,13 @@ Shader "Hidden/MapUnlitHybrid"
         _PointMinBrightness("Point Min Brightness", Float) = 0.3
         _PointMaxBrightness("Point Max Brightness", Float) = 1.0
 
+        // ここから追加：プレイヤーの高さで全体トーンを変える用
+        _GlobalHeightRef("Global Height Ref", Float) = 10.0          // 基準高さ（例: 10）
+        _GlobalHeightSensitivity("Global Height Sensitivity", Float) = 0.01
+        _GlobalMinScale("Global Min Scale", Float) = 0.8
+        _GlobalMaxScale("Global Max Scale", Float) = 1.2
+
+
     }
 
     SubShader
@@ -53,6 +60,14 @@ Shader "Hidden/MapUnlitHybrid"
             float _PointRadius;
             float _PointMinBrightness;
             float _PointMaxBrightness;
+
+
+            // グローバル高さ補正用
+            float _AvgPlayerHeight;          // C# から送る「プレイヤー平均高さ」
+            float _GlobalHeightRef;          // 基準高さ（この高さのとき倍率1.0）
+            float _GlobalHeightSensitivity;  // 高さ差 → 明るさ倍率 への変換係数
+            float _GlobalMinScale;           // どれだけ暗くするかの下限
+            float _GlobalMaxScale;           // どれだけ明るくするかの上限
 
             //カラーの配列
             float4 _Colors[32];
@@ -98,13 +113,21 @@ Shader "Hidden/MapUnlitHybrid"
                     //オブジェクトとプレイヤーの高低差の値を絶対値で
                     float heightDiff = abs(wp.y - _PlayerPos[n].y);
 
-                    //遠ければ暗く、近ければ明るい
-                    float bri = 1 - heightDiff * _HeightSensitivity;
+                    // 元の高さベースの明るさ
+                    float baseBri = 1.0 - heightDiff * _HeightSensitivity;
+                    baseBri = clamp(baseBri, _SurfaceMinBrightness, _SurfaceMaxBrightness);
 
-                    // _SurfaceMinBrightness～_SurfaceMaxBrightnessの間に値を修正
-                    bri = clamp(bri, _SurfaceMinBrightness, _SurfaceMaxBrightness);
+                    // プレイヤー n の「絶対の高さ」から係数を作る
+                    float playerH = _PlayerPos[n].y;
+                    float hDelta = playerH - _GlobalHeightRef;                   // 基準高さとの差
+                    float heightScale = 1.0 + hDelta * _GlobalHeightSensitivity; // 差を係数に変換
+                    heightScale = clamp(heightScale, _GlobalMinScale, _GlobalMaxScale);
 
-                    heightMax = max(heightMax, bri);//一番明るい値を採用
+                    // プレイヤー n の高さを反映した明るさ
+                    float bri = baseBri * heightScale;
+
+                    // そのピクセルは、影響が一番強いプレイヤーの明るさを採用
+                    heightMax = max(heightMax, bri);
                 }
 
                 // ===== Point（距離の丸） =====

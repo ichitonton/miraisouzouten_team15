@@ -78,12 +78,11 @@ public class PlayerMapIconTarget : MonoBehaviour
     {
         var gm = GameManager.Instance;
 
-        var net = GetComponent<NetworkObject>();
-
         if (gm != null && gm._IsLanModeActive)
         {
             // ここで IsLocalPlayer / IsOwner を見る
             // Host でも LocalClientId を持っているので true になるはず
+            var net = GetComponent<NetworkObject>();
             Debug.Log("オーなプレイヤーですか" + net.IsLocalPlayer);
             return net.IsLocalPlayer;      // か、必要なら IsLocalPlayer でもOK
         }
