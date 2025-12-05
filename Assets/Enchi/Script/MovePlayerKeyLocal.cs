@@ -3,7 +3,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class MovePlayerKey : NetworkBehaviour
+public class MovePlayerKeyLocal : MonoBehaviour
 {
     [SerializeField] KeyCode _up;
     [SerializeField] KeyCode _down;
@@ -105,28 +105,8 @@ public class MovePlayerKey : NetworkBehaviour
         _target = gameObject.GetComponent<UICursorToWorld>().GetItemTargetTransform();
 
         _pool = GameObject.Find("ItemObjectPool");
-
-        if (IsServer)
-        {
-            Invoke("SetRigidFalse", 0.1f);
-        }
-        else
-        {
-
-            Rigidbody rb = GetComponent<Rigidbody>();
-            rb.isKinematic = true; // クライアントでは物理演算しない
-        }
-        if (IsOwner)
-        {
-            GetComponent<UICursorToWorld>().SpawnTarget();
-        }
     }
 
-    void SetRigidFalse()
-    {
-        Rigidbody rb = GetComponent<Rigidbody>();
-        rb.isKinematic = false; // クライアントでは物理演算しない
-    }
 
     // Update is called once per frame
     void Update()
@@ -141,7 +121,6 @@ public class MovePlayerKey : NetworkBehaviour
         {
             _animBlend -= 0.1f;
         }
-        if (IsOwner)
         {
             var pads = Gamepad.all;
 
@@ -339,7 +318,6 @@ public class MovePlayerKey : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
     void RotateToMoveDirectionServerRpc(Vector3 dir)
     {
         dir.y = 0.0f;
@@ -353,7 +331,6 @@ public class MovePlayerKey : NetworkBehaviour
             Time.deltaTime * 10.0f  // ← 回転速度（数字を上げれば速く振り向く）
         );
     }
-    [ServerRpc]
     void LinerVelocityServerRpc(Vector3 dir)
     {
         _rb.linearVelocity = dir;

@@ -76,7 +76,7 @@ public class PlayerJoint : NetworkBehaviour
             //Debug.Log($"OwnerClientId = {OwnerClientId}");
 
             // 2人にテレポート命令
-            TeleportClientRpc(posA, posB, clientA, clientB);
+            TeleportServerRpc(posA, posB, clientA, clientB);
             Joint();
             Invoke("SetOwner", 0.1f);
         }
@@ -85,16 +85,15 @@ public class PlayerJoint : NetworkBehaviour
     // ========================
     // クライアント側でのみ実行される Teleport RPC
     // ========================
-    [ClientRpc]
-    private void TeleportClientRpc(Vector3 posA, Vector3 posB, ulong clientA, ulong clientB)
+    [ServerRpc]
+    private void TeleportServerRpc(Vector3 posA, Vector3 posB, ulong clientA, ulong clientB)
     {
         ulong local = OwnerClientId;
 
         // --- ローカルクライアントが A 担当なら ---
         if (local == clientA)
         {
-            _playerA.GetComponent<NetworkObject>()
-                .ChangeOwnership(0);
+            _playerA.GetComponent<NetworkObject>().ChangeOwnership(0);
             var nt = _playerA.GetComponent<NetworkTransform>();
             nt.Teleport(posA, _playerA.transform.rotation, _playerA.transform.localScale);
             Debug.Log("[Teleport] Player A テレポート");

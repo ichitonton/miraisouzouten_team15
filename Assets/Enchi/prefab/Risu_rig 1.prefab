@@ -1432,7 +1432,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2597632125628933293}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -3118,6 +3118,7 @@ GameObject:
   - component: {fileID: 4346886339305241986}
   - component: {fileID: 8427100980178498739}
   - component: {fileID: 5873431350986867485}
+  - component: {fileID: 9011339760900524497}
   m_Layer: 0
   m_Name: Risu_rig 1
   m_TagString: Player
@@ -3190,7 +3191,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 72
-  itemTarget: {fileID: 3966227638361369922, guid: 2f78ca4fa4ae40b43a36dab265e8dcf3, type: 3}
+  itemTarget: {fileID: 3966227638361369922, guid: 47e8d3d437e31b240a8e429851b25c6f, type: 3}
 --- !u!114 &3642851848305508783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3251,7 +3252,7 @@ MonoBehaviour:
   _effDash_2: {fileID: 773825968017154068, guid: 28c381c7693f60c43bd845de5f9783e4, type: 3}
   _eff_HitPunch: {fileID: 7155706149333254684, guid: a786b69b36d65074288da092aa9f581b, type: 3}
   _headPoint: {fileID: 4282508271658273791}
-  _playerNumber: 0
+  _playerNumber: 2
   _cameraShake: {fileID: 2247439086646993430, guid: b8f87a968c5906e45ad7c98f9ad2db40, type: 3}
   _FootCollider: {fileID: 7817851643849097461, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
 --- !u!54 &4346886339305241986
@@ -3349,6 +3350,23 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &9011339760900524497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7459081349001929016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6130ec2031e7a744b9fc90951405272a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SetSkinMaterial
+  ShowTopMostFoldoutHeaderGroup: 1
+  playerSkin: {fileID: 6609132362112859094}
+  skinMaterial1: {fileID: 2100000, guid: cdf0a04cb9e8a694d9a4141595f851ea, type: 2}
+  skinMaterial2: {fileID: 2100000, guid: e0825b6a1b89c2e4f98c0f84be7ca21c, type: 2}
+  skinMaterial3: {fileID: 2100000, guid: beff4b5cc558c974e8df9322ff84927e, type: 2}
 --- !u!1 &7481435165760361928
 GameObject:
   m_ObjectHideFlags: 0

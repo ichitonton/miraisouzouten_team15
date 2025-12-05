@@ -351,7 +351,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 839e8c003caadda45825b3330e7545e5, type: 2}
+  - {fileID: 2100000, guid: cdf0a04cb9e8a694d9a4141595f851ea, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1432,7 +1432,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2597632125628933293}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -3119,6 +3119,7 @@ GameObject:
   - component: {fileID: 8427100980178498739}
   - component: {fileID: -4386107049502542322}
   - component: {fileID: 7313837968559615433}
+  - component: {fileID: -2356800231678809462}
   m_Layer: 0
   m_Name: Risu_rig
   m_TagString: Player
@@ -3188,7 +3189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3519466044
+  GlobalObjectIdHash: 3014565496
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -3241,19 +3242,19 @@ MonoBehaviour:
   _jumpForce: 7
   _punchDuration: 0.5
   _punchDelay: 0.4
-  _punchObj: {fileID: 2597632125628933293}
+  _punchObj: {fileID: 2597632125628933293, guid: 419aae24f019f2246ba04f5665a3af8e, type: 3}
   _toGetPunchTime: 0.5
   _MaxHp: 100
   _punchDamage: 20
   _punchForce: 10
-  _stunTime: 4
-  _haveTrans: {fileID: 0}
+  _stunTime: 1
+  _haveTrans: {fileID: 1831080694025742889, guid: 419aae24f019f2246ba04f5665a3af8e, type: 3}
   _itemFlightTime: 2
   _effDash_2: {fileID: 773825968017154068, guid: 28c381c7693f60c43bd845de5f9783e4, type: 3}
-  _eff_HitPunch: {fileID: 7155706149333254684, guid: a786b69b36d65074288da092aa9f581b, type: 3}
-  _headPoint: {fileID: 2907767407704484893}
-  _playerNumber: 0
-  _cameraShake: {fileID: 2247439086646993430, guid: b8f87a968c5906e45ad7c98f9ad2db40, type: 3}
+  _eff_HitPunch: {fileID: 0}
+  _headPoint: {fileID: 0}
+  _playerNumber: 1
+  _cameraShake: {fileID: 0}
   _FootCollider: {fileID: 7817851643849097461, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
 --- !u!54 &4346886339305241986
 Rigidbody:
@@ -3367,6 +3368,23 @@ MonoBehaviour:
   UseRigidBodyForMotion: 0
   AutoUpdateKinematicState: 1
   AutoSetKinematicOnDespawn: 1
+--- !u!114 &-2356800231678809462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7459081349001929016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6130ec2031e7a744b9fc90951405272a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SetSkinMaterial
+  ShowTopMostFoldoutHeaderGroup: 1
+  playerSkin: {fileID: 6609132362112859094}
+  skinMaterial1: {fileID: 2100000, guid: 0f3b17e667c107747a9c024008983d2a, type: 2}
+  skinMaterial2: {fileID: 2100000, guid: 1c1e1c24d8078cb44b22c9519de93816, type: 2}
+  skinMaterial3: {fileID: 2100000, guid: 77f487ed7b691f649b927d66451d9e4e, type: 2}
 --- !u!1 &7481435165760361928
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,7 @@
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using static MovePlayerKey;
 
 public class UICursorToWorld : MonoBehaviour
 {
@@ -10,9 +12,17 @@ public class UICursorToWorld : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;  // 地面レイヤー
     [SerializeField] private GameObject itemTarget;
 
+
+    Gamepad gamepad;
+
+
+    Vector2 screenPos;
     void Start()
     {
-        //SpawnTarget();
+        //if (worldTarget != null)
+        //{
+        //    SpawnTarget();
+        //}
     }
 
     public void SpawnTarget()
@@ -33,21 +43,37 @@ public class UICursorToWorld : MonoBehaviour
                 }
             }
         }
+        screenPos.x = Screen.width / 2;
+        screenPos.x = Screen.height / 2;
     }
 
     void Update()
     {
-        Vector2 screenPos;
+        var pads = Gamepad.all;
 
-        // Canvas が Overlay か ScreenSpace-Camera かで処理を分ける
-        if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        for (int i = 0; i < pads.Count; i++)
         {
-            screenPos = RectTransformUtility.WorldToScreenPoint(null, uiIcon.position);
+            Gamepad pad = pads[i];
+            if (pad.buttonSouth.wasPressedThisFrame)
+            {
+                Debug.Log($"Player {i + 1} : A button pressed!");
+            }
         }
-        else
-        {
-            screenPos = RectTransformUtility.WorldToScreenPoint(uiCamera, uiIcon.position);
-        }
+        gamepad = pads[(int)GetComponent<MovePlayerKey>().GetPlayerNumber() - 1];
+
+        Vector2 move = gamepad.rightStick.ReadValue();
+
+        screenPos += move * 10f;
+
+        //// Canvas が Overlay か ScreenSpace-Camera かで処理を分ける
+        //if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        //{
+        //    screenPos = RectTransformUtility.WorldToScreenPoint(null, uiIcon.position);
+        //}
+        //else
+        //{
+        //    screenPos = RectTransformUtility.WorldToScreenPoint(uiCamera, uiIcon.position);
+        //}
 
         // 2. スクリーン座標を元にレイを飛ばす
         Ray ray = uiCamera.ScreenPointToRay(screenPos);

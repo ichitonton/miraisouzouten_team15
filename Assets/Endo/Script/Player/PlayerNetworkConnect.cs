@@ -24,6 +24,8 @@ public class PlayerNetworkConnect : NetworkBehaviour
 
     private int playerCount = 0;
 
+    private bool _didReplace = false;
+
     private void Start()
     {
         var nm = NetworkManager.Singleton;
@@ -82,17 +84,28 @@ public class PlayerNetworkConnect : NetworkBehaviour
             return;
         }
 
-        // Client側：Hostへの接続完了
-        if (nm.IsClient && !nm.IsServer)
+        if (!NetworkManager.Singleton.IsServer)
         {
-            Debug.Log($"[Client] Hostに接続完了: {clientId}");
-            StartCoroutine(DelayedPlayerReplace());
+            if (clientId == NetworkManager.Singleton.LocalClientId)
+            {
+                StartCoroutine(DelayedPlayerReplace());
+            }
         }
+        //// Client側：Hostへの接続完了
+        //if (nm.IsClient && !nm.IsServer)
+        //{
+        //    Debug.Log($"[Client] Hostに接続完了: {clientId}");
+        //    StartCoroutine(DelayedPlayerReplace());
+        //}
 
     }
 
     private IEnumerator DelayedPlayerReplace()
     {
+        if (_didReplace) yield break;   // ← 二重実行を防止！！
+
+        _didReplace = true;
+
         yield return new WaitForSeconds(_delayTime); // ← 接続安定化のため少し待つ
         ReplaceLocalPlayersWithNetworkPlayers();
     }
@@ -153,7 +166,7 @@ public class PlayerNetworkConnect : NetworkBehaviour
 
         foreach (var lp in localPlayers)
         {
-            
+
             //// NetworkObjectがすでにあるならスキップ
             //if (lp.TryGetComponent<NetworkObject>(out var netObj))
             //{
@@ -170,11 +183,23 @@ public class PlayerNetworkConnect : NetworkBehaviour
 
             Debug.Log($"[Network] Local PlayerをNetwork上に再生成: {lp.name} at {pos}");
             //Hostに自分の生成を依頼（ServerRpc）
-           
-            RequestPlayerSpawnServerRpc(NetworkManager.Singleton.LocalClientId, pos, rot,count);
 
-            // 元のローカルオブジェクトを削除
-            Destroy(lp);
+            RequestPlayerSpawnServerRpc(NetworkManager.Singleton.LocalClientId, pos, rot, count);
+
+            // 元のローカルオブジェクトを削除// NetworkObjectを壊してよいのはホストだけ
+            if (IsServer)
+            {
+                Destroy(lp);
+            }
+            else
+            {
+                // クライアントはローカル用の Player なら DestroyOK
+                if (!lp.TryGetComponent<NetworkObject>(out _))
+                {
+                    Destroy(lp); // NetworkObjectなしならOK
+                }
+            }
+
             //リストからも消す
             GameManager.Instance._objectList.Remove(lp);
         }
