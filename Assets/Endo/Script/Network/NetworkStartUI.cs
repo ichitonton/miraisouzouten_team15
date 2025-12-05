@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class NetworkStartUI : MonoBehaviour
 {
@@ -24,25 +26,43 @@ public class NetworkStartUI : MonoBehaviour
 
         if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
         {
-            //ホストとして入る
-            if (GUILayout.Button("ホストとして接続"))
-            {
-                _net.GetComponent<LanHost>().StartHostConnect();
-                //_net.GetComponent<PlayerNetworkConnect>().InitPlayerNetwork();
+            ////ホストとして入る
+            //if (GUILayout.Button("ホストとして接続"))
+            //{
+            //    _net.GetComponent<LanHost>().StartHostConnect();
+            //    //_net.GetComponent<PlayerNetworkConnect>().InitPlayerNetwork();
                 
-                //_net.GetComponent<LanHostDiscovery>().StartHostConnect();
+            //    //_net.GetComponent<LanHostDiscovery>().StartHostConnect();
 
-            }
-            //クライアントとして入る
-            if (GUILayout.Button("ローカルLAN内のIPを自動取得してClientとして接続"))
-            {
-                _net.GetComponent<LanClient>().StartClientConnect();
-                //_net.GetComponent<PlayerNetworkConnect>().InitPlayerNetwork();
+            //}
+            ////クライアントとして入る
+            //if (GUILayout.Button("ローカルLAN内のIPを自動取得してClientとして接続"))
+            //{
+            //    _net.GetComponent<LanClient>().StartClientConnect();
+            //    //_net.GetComponent<PlayerNetworkConnect>().InitPlayerNetwork();
 
-                //_net.GetComponent<LanClientDiscovery>().StartClientConnect();
+            //    //_net.GetComponent<LanClientDiscovery>().StartClientConnect();
 
-            }
+            //}
         }
 
     }
+
+    private void LateUpdate()
+    {
+        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
+        {
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                _net.GetComponent<LanHost>().StartHostConnect();
+            }
+            else if (Input.GetKeyDown(KeyCode.C))
+            {
+                _net.GetComponent<LanClient>().StartClientConnect();
+            }
+        }
+
+        
+    }
+
 }

@@ -69,8 +69,11 @@ public class GameManager : NetworkBehaviour
 
     private void OnGUI()
     {
+
+
         
-        if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 100, 120, 30), "プレイヤー1生成"))
+
+        /*if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 100, 120, 30), "プレイヤー1生成"))
         {
             List<GameObject> players = _objectList.FindAll(obj => obj.CompareTag("Player"));
 
@@ -82,10 +85,63 @@ public class GameManager : NetworkBehaviour
 
             GameObject player = Instantiate(_player1, _pivot.position, Quaternion.identity);
             _objectList.Add(player);
-        }
+        }*/
 
         //ホストとして入る
-        if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 50, 120, 30), "プレイヤー2生成"))
+        /*if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 50, 120, 30), "プレイヤー2生成"))
+        {
+            List<GameObject> players = _objectList.FindAll(obj => obj.CompareTag("Player"));
+
+            if (players.Count >= 2)
+            {
+                Debug.Log("プレイヤー二人もういますけど");
+                return;
+            }
+
+            GameObject player = Instantiate(_player2, _pivot.position, Quaternion.identity);
+            _objectList.Add(player);
+        }*/
+
+        //生成
+        /*if (GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height / 2, 100, 30), "Test生成"))
+        {
+            if (!_IsLanModeActive) return;
+
+            //NetworkObjectSpawner.Instance.RequestSpawnObject("KintaroAme", new Vector3(0f,10f,0f),Quaternion.identity, NetworkObjectSpawner.OwnerMode.Host);
+            NetworkEffectSpawner.Instance.PlayEffect(0, new Vector3(0f, 5f, 0f), Quaternion.identity);
+
+        }*/
+
+        //生成
+        /*if (GUI.Button(new Rect(1000f, 100f, 100, 30), "マップ表示"))
+        {
+
+            bool active = !_ui.gameObject.activeSelf;
+           _ui.gameObject.SetActive(active);
+
+        }*/
+
+    }
+    // Update is called once per frame
+    void LateUpdate()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            List<GameObject> players = _objectList.FindAll(obj => obj.CompareTag("Player"));
+
+            if (players.Count >= 2)
+            {
+                Debug.Log("プレイヤー二人もういますけど");
+                return;
+            }
+
+            GameObject player = Instantiate(_player1, _pivot.position, Quaternion.identity);
+            Debug.Log("わいた");
+            _objectList.Add(player);
+
+        }
+
+        else if(Input.GetKeyDown(KeyCode.RightShift))
         {
             List<GameObject> players = _objectList.FindAll(obj => obj.CompareTag("Player"));
 
@@ -98,31 +154,6 @@ public class GameManager : NetworkBehaviour
             GameObject player = Instantiate(_player2, _pivot.position, Quaternion.identity);
             _objectList.Add(player);
         }
-
-        //生成
-        if (GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height / 2, 100, 30), "Test生成"))
-        {
-            if (!_IsLanModeActive) return;
-
-            //NetworkObjectSpawner.Instance.RequestSpawnObject("KintaroAme", new Vector3(0f,10f,0f),Quaternion.identity, NetworkObjectSpawner.OwnerMode.Host);
-            NetworkEffectSpawner.Instance.PlayEffect(0, new Vector3(0f, 5f, 0f), Quaternion.identity);
-
-        }
-
-        //生成
-        if (GUI.Button(new Rect(1000f, 100f, 100, 30), "マップ表示"))
-        {
-
-            bool active = !_ui.gameObject.activeSelf;
-           _ui.gameObject.SetActive(active);
-
-        }
-
-    }
-    // Update is called once per frame
-    void LateUpdate()
-    {
-
     }
 
     private void OnClientDisconnected(ulong clientId)
