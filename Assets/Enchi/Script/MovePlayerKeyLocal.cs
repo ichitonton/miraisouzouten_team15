@@ -41,7 +41,7 @@ public class MovePlayerKeyLocal : MonoBehaviour
     ParticleSystem _effDash2Ps;
 
     //カメラシェイク
-    [SerializeField] ShakeByPerlinNoise _cameraShake;
+    //[SerializeField] ShakeByPerlinNoise _cameraShake;
 
     Rigidbody _rb;
 
@@ -93,16 +93,16 @@ public class MovePlayerKeyLocal : MonoBehaviour
         _anim = GetComponent<Animator>();
 
         //シェイク用カメラ自動取得
-        if (_cameraShake == null)
-        {
-            var cam = Camera.main;
-            if (cam != null)
-            {
-                _cameraShake = cam.GetComponent<ShakeByPerlinNoise>();
-            }
-        }
+        //if (_cameraShake == null)
+        //{
+        //    var cam = Camera.main;
+        //    if (cam != null)
+        //    {
+        //        _cameraShake = cam.GetComponent<ShakeByPerlinNoise>();
+        //    }
+        //}
+        _punchObj.SetActive(false);
 
-        _target = gameObject.GetComponent<UICursorToWorld>().GetItemTargetTransform();
 
         _pool = GameObject.Find("ItemObjectPool");
     }
@@ -132,7 +132,13 @@ public class MovePlayerKeyLocal : MonoBehaviour
                     Debug.Log($"Player {i + 1} : A button pressed!");
                 }
             }
-            gamepad = pads[(int)_playerNumber - 1];
+            if (pads.Count >= (int)_playerNumber)
+            {
+                if (pads[(int)_playerNumber - 1] != null)
+                {
+                    gamepad = pads[(int)_playerNumber - 1];
+                }
+            }
             if (_haveItem != ItemType.None && _haveItem != ItemType.Max)
             {
                 UseItem();
@@ -453,7 +459,7 @@ public class MovePlayerKeyLocal : MonoBehaviour
     }
     void Punch()
     {
-        if ((Input.GetKeyDown(_punch) || gamepad.buttonSouth.wasPressedThisFrame) && _canPunch)
+        if ((Input.GetKeyDown(_punch) || (gamepad != null && gamepad.buttonSouth.wasPressedThisFrame)) && _canPunch)
         {
 
             _anim.SetTrigger("Punch");

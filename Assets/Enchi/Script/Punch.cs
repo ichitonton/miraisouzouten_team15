@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Netcode;
+using UnityEngine;
 
 public class Punch : MonoBehaviour
 {
@@ -46,7 +47,7 @@ public class Punch : MonoBehaviour
 			Debug.LogWarning($"[Punch IGNORE] 自分自身ヒット → 無視 ({other.name})");
 			return;
 		}
-		if (other.CompareTag("Joint"))
+		if (other.GetComponent<JointLiner>() != null)
 		{
 			Debug.LogWarning($"[Punch IGNORE] Joint 除外 → {other.name}");
 			return;
@@ -78,9 +79,14 @@ public class Punch : MonoBehaviour
 		}
 
 		// ノックバック
-		rb.AddForce((transform.forward + Vector3.up * 0.1f) * _punchForce, ForceMode.Impulse);
+		KnockBack(rb);
 	}
 
+	[ServerRpc]
+	void KnockBack(Rigidbody rb)
+	{
+        rb.AddForce((transform.forward + Vector3.up * 0.1f) * _punchForce, ForceMode.Impulse);
+    }
 	bool IsSweets(Collider other)
 	{
 		Transform t = other.transform;

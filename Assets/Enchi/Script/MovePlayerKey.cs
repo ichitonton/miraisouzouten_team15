@@ -41,7 +41,7 @@ public class MovePlayerKey : NetworkBehaviour
     ParticleSystem _effDash2Ps;
 
     //カメラシェイク
-    [SerializeField] ShakeByPerlinNoise _cameraShake;
+    //[SerializeField] ShakeByPerlinNoise _cameraShake;
 
     Rigidbody _rb;
 
@@ -93,18 +93,20 @@ public class MovePlayerKey : NetworkBehaviour
         _anim = GetComponent<Animator>();
 
         //シェイク用カメラ自動取得
-        if (_cameraShake == null)
-        {
-            var cam = Camera.main;
-            if (cam != null)
-            {
-                _cameraShake = cam.GetComponent<ShakeByPerlinNoise>();
-            }
-        }
+        //if (_cameraShake == null)
+        //{
+        //    var cam = Camera.main;
+        //    if (cam != null)
+        //    {
+        //        _cameraShake = cam.GetComponent<ShakeByPerlinNoise>();
+        //    }
+        //}
 
         _target = gameObject.GetComponent<UICursorToWorld>().GetItemTargetTransform();
 
         _pool = GameObject.Find("ItemObjectPool");
+
+        _punchObj.SetActive(false);
 
         if (IsServer)
         {
@@ -153,7 +155,13 @@ public class MovePlayerKey : NetworkBehaviour
                     Debug.Log($"Player {i + 1} : A button pressed!");
                 }
             }
-            gamepad = pads[(int)_playerNumber - 1];
+            if (pads.Count >= (int)_playerNumber)
+            {
+                if (pads[(int)_playerNumber - 1] != null)
+                {
+                    gamepad = pads[(int)_playerNumber - 1];
+                }
+            }
             if (_haveItem != ItemType.None && _haveItem != ItemType.Max)
             {
                 UseItem();
@@ -298,7 +306,7 @@ public class MovePlayerKey : NetworkBehaviour
     //パンチオブジェクト非アクティブ化
     void PunchActiveFalse()
     {
-        _punchObj.SetActive(false);
+        ToggleColliderClientRpc(false);
     }
     //パンチクールダウンリセット
     void SetPunchReset()
@@ -474,9 +482,20 @@ public class MovePlayerKey : NetworkBehaviour
         RotateToMoveDirectionServerRpc(_lookVector);
 
     }
+    [ServerRpc]
+    void ToggleColliderServerRpc(bool state)
+    {
+        ToggleColliderClientRpc(state);
+    }
+
+    [ClientRpc]
+    void ToggleColliderClientRpc(bool state)
+    {
+        GetComponent<Collider>().enabled = state;
+    }
     void Punch()
     {
-        if ((Input.GetKeyDown(_punch) || gamepad.buttonSouth.wasPressedThisFrame) && _canPunch)
+        if ((Input.GetKeyDown(_punch) || (gamepad != null && gamepad.buttonSouth.wasPressedThisFrame)) && _canPunch)
         {
 
             _anim.SetTrigger("Punch");
@@ -493,7 +512,7 @@ public class MovePlayerKey : NetworkBehaviour
                 );
             }
 
-            _punchObj.SetActive(true);
+            ToggleColliderClientRpc(true);
 
             Invoke(nameof(PunchActiveFalse), _punchDuration);
 

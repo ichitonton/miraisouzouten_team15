@@ -3247,13 +3247,12 @@ MonoBehaviour:
   _punchDamage: 20
   _punchForce: 10
   _stunTime: 4
-  _haveTrans: {fileID: 0}
+  _haveTrans: {fileID: 84731178285349141}
   _itemFlightTime: 2
   _effDash_2: {fileID: 773825968017154068, guid: 28c381c7693f60c43bd845de5f9783e4, type: 3}
   _eff_HitPunch: {fileID: 7155706149333254684, guid: a786b69b36d65074288da092aa9f581b, type: 3}
-  _headPoint: {fileID: 4282508271658273791}
+  _headPoint: {fileID: 84731178285349141}
   _playerNumber: 2
-  _cameraShake: {fileID: 2247439086646993430, guid: b8f87a968c5906e45ad7c98f9ad2db40, type: 3}
   _FootCollider: {fileID: 7817851643849097461, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
 --- !u!54 &4346886339305241986
 Rigidbody:
