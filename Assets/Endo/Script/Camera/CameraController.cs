@@ -42,12 +42,6 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float _lookAtHeightTopView = -1.0f;// 俯瞰に近い時にどれだけ下を見るか
 
 
-    // ピッチに応じてカメラ高さを変えるパラメータ
-    [Header("高さ制御")]
-    [SerializeField] private float _minHeightScale = 0.8f; // ピッチが高いとき
-    [SerializeField] private float _maxHeightScale = 1.5f; // ピッチが低いとき
-
-
 
     [Header("ズーム入力")]
     [SerializeField] private KeyCode _zoomInKey = KeyCode.B;   // ズームイン
@@ -139,8 +133,8 @@ public class CameraController : MonoBehaviour
         Vector3 center = (_player1.transform.position + _player2.transform.position) / 2f;
 
         //ピッチ角を offset に反映
-        //Quaternion rotation = Quaternion.Euler(_pitch, 0f, 0f);
-        Vector3 rotatedOffset = GetRotatedOffset(1.0f);
+        Quaternion rotation = Quaternion.Euler(_pitch, 0f, 0f);
+        Vector3 rotatedOffset = rotation * _offset;
 
 
         //カメラの位置
@@ -151,22 +145,15 @@ public class CameraController : MonoBehaviour
 
         // プレイヤー間の距離から「自動ズーム値」を算出
         float distance = Vector3.Distance(_player1.transform.position, _player2.transform.position);
-        float baseZoom = Mathf.Lerp(_minZoom, _maxZoom, distance / _zoomLimiter);
+
+        // まず 0 1 にクランプ
+        float t = Mathf.Clamp01(distance / _zoomLimiter);
+
+        // 0→_minZoom, 1→_maxZoom の範囲内に収まる
+        float baseZoom = Mathf.Lerp(_minZoom, _maxZoom, t);
 
         // 手動オフセットを足して最終ターゲットズームに
         float targetZoom = Mathf.Clamp(baseZoom + _manualZoomOffset, _minZoom, _maxZoom);
-
-        // 見切れチェック
-        Vector3 viewPos1 = _cam.WorldToViewportPoint(_player1.transform.position);
-        Vector3 viewPos2 = _cam.WorldToViewportPoint(_player2.transform.position);
-
-
-        // 広め（ズームアウト判定）
-        float outerBorder = 0.10f;
-        bool outsideP1 = (viewPos1.x < outerBorder || viewPos1.x > 1f - outerBorder ||
-                          viewPos1.y < outerBorder || viewPos1.y > 1f - outerBorder);
-        bool outsideP2 = (viewPos2.x < outerBorder || viewPos2.x > 1f - outerBorder ||
-                          viewPos2.y < outerBorder || viewPos2.y > 1f - outerBorder);
 
         // スムーズに補間
         _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, targetZoom, Time.deltaTime * _zoomSpeed);
@@ -175,7 +162,7 @@ public class CameraController : MonoBehaviour
         center.y -= 1f;
         // 見る位置（ピッチに応じて高さを調整）
         Vector3 lookAtPos = GetLookAtPosition(center);
-        Debug.Log("今見ている位置は" + lookAtPos);
+        //Debug.Log("今見ている位置は" + lookAtPos);
         transform.LookAt(lookAtPos);
 
     }
@@ -217,15 +204,15 @@ public class CameraController : MonoBehaviour
         float targetZoom = Mathf.Clamp(baseZoom + _manualZoomOffset, _minZoom, _maxZoom);
         _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, targetZoom, Time.deltaTime * _zoomSpeed);
 
-        Debug.Log("カメラのビュー" +  _cam.fieldOfView);
-        Debug.Log("マニュアル" + _manualZoomOffset);
+        //Debug.Log("カメラのビュー" +  _cam.fieldOfView);
+        //Debug.Log("マニュアル" + _manualZoomOffset);
 
         //見る位置
         //center.y -= 1f;
 
         // 見る位置（ピッチに応じて高さを調整）
         Vector3 lookAtPos = GetLookAtPosition(center);
-        Debug.Log("今見ている位置は" + lookAtPos);
+        //Debug.Log("今見ている位置は" + lookAtPos);
         transform.LookAt(lookAtPos);
     }
 
@@ -258,28 +245,6 @@ public class CameraController : MonoBehaviour
             _manualZoomOffset += dir * _manualZoomSpeed * Time.deltaTime;
             _manualZoomOffset = Mathf.Clamp(_manualZoomOffset, -_maxManualOffset, _maxManualOffset);
         }
-    }
-
-    /// <summary>
-    /// ピッチに応じて高さを変えつつ、オフセットを回転させた値を返す
-    /// distanceFactor : 1.0f = 通常、0.5f = シングル用みたいな調整用
-    /// </summary>
-    private Vector3 GetRotatedOffset(float distanceFactor = 1f)
-    {
-        // ピッチを 0～1 に正規化
-        float pitch01 = Mathf.InverseLerp(_minPitch, _maxPitch, _pitch);
-        // ピッチが低いほど heightScale が大きくなるように（反比例イメージ）
-        float heightScale = Mathf.Lerp(_maxHeightScale, _minHeightScale, pitch01);
-
-        // 元のオフセットに距離係数を掛ける
-        Vector3 baseOffset = _offset * distanceFactor;
-
-        // 高さだけスケール
-        baseOffset.y *= heightScale;
-
-        // ピッチで回転
-        Quaternion rotation = Quaternion.Euler(_pitch, 0f, 0f);
-        return rotation * baseOffset;
     }
 
     /// <summary>
