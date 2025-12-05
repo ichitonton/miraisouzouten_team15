@@ -172,10 +172,35 @@ public class MovePlayerKey : NetworkBehaviour
                 Move();
             }
             //_anim.linearVelocityBlending = true;
-            _anim.SetFloat("Blend", _animBlend);
+            AnimBlendServerRpc(_animBlend);
+        }
+        if(IsServer)
+        {
+            //_anim.SetFloat("Blend", _animBlend);
+
         }
 
         UpdateDustEffect();
+    }
+    [ServerRpc(RequireOwnership = false)]
+    void AnimBlendServerRpc(float blend)
+    {
+        _anim.SetFloat("Blend", blend);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    void AnimItemServerRpc(bool Item)
+    {
+        _anim.SetBool("ItemBomb", Item);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    void AnimDyingServerRpc(bool Dying)
+    {
+        _anim.SetBool("Blend", Dying);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    void AnimPunchServerRpc()
+    {
+        _anim.SetTrigger("Punch");
     }
 
     void UpdateDustEffect()
@@ -243,7 +268,7 @@ public class MovePlayerKey : NetworkBehaviour
     void SetHaveItem()
     {
         _haveItem = (ItemType)Random.Range((int)ItemType.Bomb, (int)ItemType.Max);
-        _anim.SetBool("ItemBomb", true);
+        AnimItemServerRpc(true);
 
         //bool _isChild = false;
 
@@ -325,7 +350,7 @@ public class MovePlayerKey : NetworkBehaviour
     {
         Debug.Log("受けうつけないお");
         _canNotInputKey = true;
-        _anim.SetBool("Dying", true);
+        AnimDyingServerRpc(true);
 
         Invoke(nameof(UnlockStun), delay);
     }
@@ -334,7 +359,7 @@ public class MovePlayerKey : NetworkBehaviour
     {
         _canNotInputKey = false;
 
-        _anim.SetBool("Dying", false);
+        AnimDyingServerRpc(false);
     }
     //ダメージ（受けるダメージ）
     void AddDamage(int damage)
@@ -481,7 +506,7 @@ public class MovePlayerKey : NetworkBehaviour
         RotateToMoveDirectionServerRpc(_lookVector);
 
     }
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     void ToggleColliderServerRpc(bool state)
     {
         Debug.Log($"serverRPC punch {state}");
@@ -499,7 +524,7 @@ public class MovePlayerKey : NetworkBehaviour
         if ((Input.GetKeyDown(_punch) || (gamepad != null && gamepad.buttonSouth.wasPressedThisFrame)) && _canPunch)
         {
 
-            _anim.SetTrigger("Punch");
+            AnimPunchServerRpc();
 
             // 頭の位置からエフェクトを出す
             if (_headPoint != null)
@@ -542,7 +567,7 @@ public class MovePlayerKey : NetworkBehaviour
             rb.linearVelocity = velocity;
 
             _haveItem = ItemType.None;
-            _anim.SetBool("ItemBomb", false);
+            AnimItemServerRpc(false);
             _item = null;
         }
 
