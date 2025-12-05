@@ -84,8 +84,8 @@ Shader "Hidden/MapUnlitHybrid"
             float4 frag (Varyings i) : SV_Target
             {
 
-                //int id = UNITY_ACCESS_INSTANCED_PROP(_TagId);
-                //float3 baseColor = _Colors[id].rgb;
+                int id = UNITY_ACCESS_INSTANCED_PROP(Props,_TagId);
+                float3 baseColor = _Colors[id].rgb;
 
                 //â¡éZÇ≈ÇÕÇ»Ç≠
                 float3 wp = i.worldPos;
@@ -122,7 +122,7 @@ Shader "Hidden/MapUnlitHybrid"
                 // ===== çáê¨ =====
                 float final = heightMax * pointMax;
 
-                return float4(_Color.rgb * final, 1);
+                return float4(baseColor * final, 1);
             }
 
             ENDHLSL
