@@ -4003,6 +4003,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MapUI
       objectReference: {fileID: 0}
+    - target: {fileID: 907310234364654221, guid: 2f80947f443408e4ebe3372c495c2362, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4684543797143096725, guid: 2f80947f443408e4ebe3372c495c2362, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4029,11 +4033,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4684543797143096725, guid: 2f80947f443408e4ebe3372c495c2362, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1200
+      value: 1300
       objectReference: {fileID: 0}
     - target: {fileID: 4684543797143096725, guid: 2f80947f443408e4ebe3372c495c2362, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 750
+      value: 970
       objectReference: {fileID: 0}
     - target: {fileID: 4684543797143096725, guid: 2f80947f443408e4ebe3372c495c2362, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8483,6 +8487,10 @@ PrefabInstance:
     - target: {fileID: 2209226509701005121, guid: 64ab4107ef62cf14888c4ecb0e353308, type: 3}
       propertyPath: m_Name
       value: MapCamera
+      objectReference: {fileID: 0}
+    - target: {fileID: 2209226509701005121, guid: 64ab4107ef62cf14888c4ecb0e353308, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2858491064971693939, guid: 64ab4107ef62cf14888c4ecb0e353308, type: 3}
       propertyPath: m_LocalPosition.x
@@ -13002,6 +13010,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -6755786080962722358, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _effectDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: 61e24ca55fa48c74499045329cf5f3d0, type: 2}
     - target: {fileID: 724504353435010307, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: m_LocalPosition.x
       value: -27.92
@@ -13993,6 +14005,10 @@ PrefabInstance:
     - target: {fileID: 5923863355032412062, guid: e168da6fc87efd9458ed0d3a3b87d2f3, type: 3}
       propertyPath: m_Name
       value: SnapShotCamera
+      objectReference: {fileID: 0}
+    - target: {fileID: 5923863355032412062, guid: e168da6fc87efd9458ed0d3a3b87d2f3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -16090,6 +16106,10 @@ PrefabInstance:
       propertyPath: _pivot
       value: 
       objectReference: {fileID: 706702271}
+    - target: {fileID: 2617391042355764094, guid: 8d44d5ef5c7f909459a4803066c4d9fb, type: 3}
+      propertyPath: _onlineMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3160356118247068721, guid: 8d44d5ef5c7f909459a4803066c4d9fb, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 3388700519
@@ -19052,6 +19072,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MapColorManager
       objectReference: {fileID: 0}
+    - target: {fileID: 4436157478839491397, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5821377537480181424, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
       propertyPath: blurBG
       value: 
@@ -19068,6 +19092,26 @@ PrefabInstance:
       propertyPath: mapCamera
       value: 
       objectReference: {fileID: 711477193}
+    - target: {fileID: 6062687166195725737, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
+      propertyPath: _heightRange
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6062687166195725737, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
+      propertyPath: _globalMaxScale
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6062687166195725737, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
+      propertyPath: _globalMinScale
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6062687166195725737, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
+      propertyPath: _globalHeightRef
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6062687166195725737, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
+      propertyPath: _globalHeightSensitivity
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 6062687166195725737, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
       propertyPath: _colorSettings.Array.data[0]._color.b
       value: 0.3652285
@@ -23587,6 +23631,10 @@ PrefabInstance:
     - target: {fileID: 8650306199286682738, guid: b2dfbacbd6cc87641a890b156e7ab21b, type: 3}
       propertyPath: m_Name
       value: BlurBG
+      objectReference: {fileID: 0}
+    - target: {fileID: 8650306199286682738, guid: b2dfbacbd6cc87641a890b156e7ab21b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

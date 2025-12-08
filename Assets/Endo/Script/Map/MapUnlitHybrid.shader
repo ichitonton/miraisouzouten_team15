@@ -26,7 +26,8 @@ Shader "Hidden/MapUnlitHybrid"
         _GlobalHeightSensitivity("Global Height Sensitivity", Float) = 0.01
         _GlobalMinScale("Global Min Scale", Float) = 0.8
         _GlobalMaxScale("Global Max Scale", Float) = 1.2
-
+        //  この高さ差までは「そのプレイヤーの段」とみなす
+        _HeightAffectRange("Height Affect Range", Float) = 1.0
 
     }
 
@@ -69,6 +70,8 @@ Shader "Hidden/MapUnlitHybrid"
             float _GlobalMinScale;           // どれだけ暗くするかの下限
             float _GlobalMaxScale;           // どれだけ明るくするかの上限
 
+            float _HeightAffectRange;
+
             //カラーの配列
             float4 _Colors[32];
             int _ColorCount;
@@ -98,41 +101,57 @@ Shader "Hidden/MapUnlitHybrid"
 
             float4 frag (Varyings i) : SV_Target
             {
-
-                int id = UNITY_ACCESS_INSTANCED_PROP(Props,_TagId);
+                int id = UNITY_ACCESS_INSTANCED_PROP(Props, _TagId);
                 float3 baseColor = _Colors[id].rgb;
 
-                //加算ではなく
                 float3 wp = i.worldPos;
 
-                // ===== Surface(高さ) =====
-                float heightMax = _SurfaceMinBrightness;
+                // ===== 1) このピクセルに一番近い高さのプレイヤーを探す =====
+                int   bestIndex = -1;
+                float bestDiff  = 999999.0;
 
+                [loop]
                 for (int n = 0; n < _PlayerCount; n++)
                 {
-                    //オブジェクトとプレイヤーの高低差の値を絶対値で
-                    float heightDiff = abs(wp.y - _PlayerPos[n].y);
-
-                    // 元の高さベースの明るさ
-                    float baseBri = 1.0 - heightDiff * _HeightSensitivity;
-                    baseBri = clamp(baseBri, _SurfaceMinBrightness, _SurfaceMaxBrightness);
-
-                    // プレイヤー n の「絶対の高さ」から係数を作る
-                    float playerH = _PlayerPos[n].y;
-                    float hDelta = playerH - _GlobalHeightRef;                   // 基準高さとの差
-                    float heightScale = 1.0 + hDelta * _GlobalHeightSensitivity; // 差を係数に変換
-                    heightScale = clamp(heightScale, _GlobalMinScale, _GlobalMaxScale);
-
-                    // プレイヤー n の高さを反映した明るさ
-                    float bri = baseBri * heightScale;
-
-                    // そのピクセルは、影響が一番強いプレイヤーの明るさを採用
-                    heightMax = max(heightMax, bri);
+                    float d = abs(wp.y - _PlayerPos[n].y);
+                    if (d < bestDiff)
+                    {
+                        bestDiff  = d;
+                        bestIndex = n;
+                    }
                 }
 
-                // ===== Point（距離の丸） =====
+                // ===== 2) 高さモード（そのプレイヤーだけを見る） =====
+                float heightBright = _SurfaceMinBrightness;
+
+                if (bestIndex >= 0)
+                {
+                    float playerY = _PlayerPos[bestIndex].y;
+
+                    //  ここがポイント：高さ差が _HeightAffectRange を超えたら「影響なし」
+                    if (bestDiff <= _HeightAffectRange)
+                    {
+                        // bestDiff が 01_HeightAffectRange のとき 01 に正規化
+                        float t = 1.0 - (bestDiff / _HeightAffectRange);
+                        t = saturate(t);
+
+                        // t=0 → Min、t=1 → Max
+                        float baseBri = lerp(_SurfaceMinBrightness, _SurfaceMaxBrightness, t);
+
+                        // プレイヤー絶対高さで少し補正
+                        float hDelta = playerY - _GlobalHeightRef;
+                        float heightScale = 1.0 + hDelta * _GlobalHeightSensitivity;
+                        heightScale = clamp(heightScale, _GlobalMinScale, _GlobalMaxScale);
+
+                        heightBright = baseBri * heightScale;
+                    }
+                    // else の場合 = 遠すぎる → heightBright は _SurfaceMinBrightness のまま
+                }
+
+                // ===== 3) Point（距離●） =====
                 float pointMax = _PointMinBrightness;
 
+                [loop]
                 for (int n = 0; n < _PlayerCount; n++)
                 {
                     float dist = distance(wp, _PlayerPos[n]);
@@ -142,8 +161,8 @@ Shader "Hidden/MapUnlitHybrid"
                     pointMax = max(pointMax, bri);
                 }
 
-                // ===== 合成 =====
-                float final = heightMax * pointMax;
+                // ===== 4) 合成 =====
+                float final = heightBright * pointMax;
 
                 return float4(baseColor * final, 1);
             }
