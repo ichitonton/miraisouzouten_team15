@@ -61,6 +61,8 @@ public class MapColorManager : MonoBehaviour
     [SerializeField] private float _globalMinScale = 0.9f;
     [SerializeField] private float _globalMaxScale = 1.1f;
 
+    [SerializeField, Range(0.0001f, 1f)] private float _heightRange = 0.3f;
+
     //MapObjectがついているオブジェクトリスト
     private static readonly List<GameObject> registeredObjects = new();
     // 追加：結合後メッシュ（静的マップ専用）
@@ -373,6 +375,7 @@ public class MapColorManager : MonoBehaviour
         drawMat.SetFloat("_GlobalMinScale", _globalMinScale);
         drawMat.SetFloat("_GlobalMaxScale", _globalMaxScale);
 
+        drawMat.SetFloat("_HeightAffectRange", _heightRange);
 
     }
 
