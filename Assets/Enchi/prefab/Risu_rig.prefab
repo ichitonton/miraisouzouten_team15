@@ -3162,7 +3162,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7459081349001929016}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 190eccf086a49004dad277a2443f84f1, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -3237,14 +3237,13 @@ MonoBehaviour:
   _left: 97
   _right: 100
   _jump: 32
-  _punch: 101
-  _useItem: 102
+  _punchKey: 101
+  _useItemKey: 102
   _moveSpeed: 7.5
   _jumpForce: 7
   _punchDuration: 0.5
   _punchDelay: 0.4
   _punchObj: {fileID: 2597632125628933293}
-  _toGetPunchTime: 0.5
   _MaxHp: 100
   _punchDamage: 20
   _punchForce: 10
@@ -3264,7 +3263,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7459081349001929016}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 5
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -3281,7 +3280,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!95 &8427100980178498739
 Animator:

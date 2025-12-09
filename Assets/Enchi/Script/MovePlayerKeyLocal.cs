@@ -2,6 +2,7 @@ using NUnit.Framework.Constraints;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.EventSystems.StandaloneInputModule;
 
 public class MovePlayerKeyLocal : MonoBehaviour
 {
@@ -402,60 +403,67 @@ public class MovePlayerKeyLocal : MonoBehaviour
             _effDash2Instance.transform.position = backPos;
         }
 
+        //エフェクトの位置更新
+        if (_effDash2Instance)
+        {
+            Vector3 backPos = transform.position
+                              - transform.forward * 0.5f;
+
+            _effDash2Instance.transform.position = backPos;
+        }
+
         _moveVector.Normalize();
         _moveVector *= _moveSpeed;
-        _moveVector.y = _rb.linearVelocity.y;
+        // _moveVector.y = _rb.linearVelocity.y;
+        Vector3 input = _moveVector.normalized;
+        Vector3 moveDir = input;
+        Vector3 vel = _rb.linearVelocity;
 
-
-        _moveDir = new Vector3(_moveVector.x, 0, _moveVector.z);
-
-        //エフェクト関連
-        // 1フレームで一度だけ、子のPSのEmissionを切り替える
-        foreach (var ps in GetComponentsInChildren<ParticleSystem>())
+        //坂でも原則しない
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.5f))
         {
-            var em = ps.emission;
-            em.enabled = hasInput;
+            moveDir = Vector3.ProjectOnPlane(input, hit.normal).normalized;
         }
 
-        // if (_moveVector != Vector3.zero)
+        // 加速・減速（Valorant に近い値）
+        float accel = 80.0f;      // 前方向の加速
+        float deaccel = 50f;    // 入力を離した時の減速
+        float maxSpeed = 7f;    // 走り速度
+
+
+        //Vector3 vel = _rb.linearVelocity;
+
+        // y 以外の現在速度
+        Vector3 horizontalVel = new Vector3(vel.x, 0, vel.z);
+
+        // 速度更新
+        if (input.magnitude > 0.1f)
         {
-            _lookVector = _moveVector;
+            // 加速
+            horizontalVel = Vector3.MoveTowards(horizontalVel, moveDir * _moveSpeed, accel * Time.fixedDeltaTime);
         }
-
-
-        if (_moveDir.sqrMagnitude > 0.01f)
+        else
         {
-            _lastMoveDir = _moveDir;
+            // 減速
+            horizontalVel = Vector3.MoveTowards(horizontalVel, Vector3.zero, deaccel * Time.fixedDeltaTime);
+        }
+        ////transform.LookAt(transform.position + new Vector3(_moveVector.x, 0, _moveVector.z));
+        if (_rb.linearVelocity.sqrMagnitude < _moveSpeed * _moveSpeed)
+            LinerVelocityServerRpc(new Vector3(horizontalVel.x, vel.y, horizontalVel.z));
 
-            //Quaternion targetRotation = Quaternion.LookRotation(_moveDir);
-            //transform.rotation = Quaternion.Slerp(
-            //    transform.rotation,
-            //    targetRotation,
-            //    Time.deltaTime * 10.0f
-            //);
+        _lookVector = new Vector3(_moveVector.x, 0.0f, _moveVector.z);
+
+        //向き変更
+        RotateToMoveDirectionServerRpc(_lookVector);
+
+        //アニメションブレンド更新
+        if (_moveVector != Vector3.zero)
+        {
             if (_animBlend < 1)
             {
                 _animBlend += 0.2f;
             }
         }
-        else if (_lastMoveDir.sqrMagnitude > 0.01f)
-        {
-            //Quaternion targetRotation = Quaternion.LookRotation(_lastMoveDir);
-            //transform.rotation = Quaternion.Slerp(
-            //    transform.rotation,
-            //    targetRotation,
-            //    Time.deltaTime * 10.0f
-            //);
-
-        }
-        else
-        {
-        }
-        //transform.LookAt(transform.position + new Vector3(_moveVector.x, 0, _moveVector.z));
-        LinerVelocityServerRpc(_moveVector);
-
-        RotateToMoveDirectionServerRpc(_lookVector);
-
     }
     void Punch()
     {
