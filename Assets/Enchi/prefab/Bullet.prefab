@@ -11,10 +11,12 @@ GameObject:
   - component: {fileID: 3979130052655624584}
   - component: {fileID: 4928828586976650922}
   - component: {fileID: 3417974305552593681}
+  - component: {fileID: 659642024424579812}
   - component: {fileID: -703690015018114993}
   - component: {fileID: 8270740165184306623}
   - component: {fileID: 4714788614635270857}
-  - component: {fileID: 8933755694467409217}
+  - component: {fileID: -7245834394638101022}
+  - component: {fileID: -7878129366624751514}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -94,6 +96,31 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &659642024424579812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1175553167635930660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 2576176498
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &-703690015018114993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,6 +133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 213bd7a614de0d545a5b309a6f9e24a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  ShowTopMostFoldoutHeaderGroup: 1
   _blast: {fileID: 8000710731528051159, guid: c0ae90c3517c73c4591b28c1f9b53ff2, type: 3}
   _speed: 10
   _lifeTime: 5
@@ -159,7 +187,7 @@ CapsuleCollider:
   m_Height: 1.8
   m_Direction: 2
   m_Center: {x: 0, y: -0.00000013411045, z: -0.19319046}
---- !u!114 &8933755694467409217
+--- !u!114 &-7245834394638101022
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -205,6 +233,19 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &-7878129366624751514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1175553167635930660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b4e3481e2b83fd44b7ce6912b504db8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PooledNetworkObject
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1001 &3299333727002077250
 PrefabInstance:
   m_ObjectHideFlags: 0

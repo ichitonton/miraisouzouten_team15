@@ -2,15 +2,23 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class NetworkObjectPoolSingleton : MonoBehaviour
+public class NetworkObjectPool : MonoBehaviour
 {
-    public static NetworkObjectPoolSingleton Instance;
+    public static NetworkObjectPool Instance { get; private set; }
 
     private Dictionary<NetworkObject, Queue<NetworkObject>> pool = new();
 
     void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
+
+        DontDestroyOnLoad(gameObject);
     }
 
     // プレハブ別にプールを作成（一度だけ）

@@ -61,7 +61,7 @@ public class NetworkObjectSpawner : NetworkBehaviour
         var prefab = _prefabDatabase.GetPrefab(prefabID);
         if (prefab == null)
         {
-            Debug.LogError($"Prefab ID '{prefabID}' ‚ªŒ©‚Â‚©‚ç‚È‚¢I");
+            Debug.LogError($"PooledNetworkObject ID '{prefabID}' ‚ªŒ©‚Â‚©‚ç‚È‚¢I");
             return;
         }
 

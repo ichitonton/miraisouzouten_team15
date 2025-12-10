@@ -1,4 +1,5 @@
 using NUnit.Framework.Constraints;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -26,6 +27,7 @@ public class MovePlayerKey : NetworkBehaviour
     [SerializeField] float _stunTime = 1.0f;//パンチした時のスタン時間
     [SerializeField] Transform _haveTrans;//持ってるアイテム
     Transform _target;
+    [SerializeField]private GameObject _itemBomb;
     [SerializeField] float _itemFlightTime = 2.0f; // 投げるオブジェクトがターゲットに到達するまでの時間
 
     //エフェクト関連
@@ -49,8 +51,9 @@ public class MovePlayerKey : NetworkBehaviour
     private float _moveSpeedInitial;
     private bool _canPunch = true;
     private ItemType _haveItem = ItemType.None;
-    private GameObject _item;
-    GameObject _pool = null;
+    NetworkObjectPool _ObjectPool = null;
+
+    GameObject _item;
 
     float _animBlend = 0.0f;
 
@@ -68,6 +71,7 @@ public class MovePlayerKey : NetworkBehaviour
     bool _InputPunch = false;
 
 
+    private Dictionary<ulong, NetworkObject> itemDictionary;
 
     public enum ItemType
     {
@@ -86,6 +90,14 @@ public class MovePlayerKey : NetworkBehaviour
     }
 
 
+    void Awake()
+    {
+        itemDictionary = new()
+    {
+        { (ulong)ItemType.Bomb, _itemBomb.GetComponent<NetworkObject>() }
+    };
+    }
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -96,9 +108,8 @@ public class MovePlayerKey : NetworkBehaviour
         _moveSpeedInitial = _moveSpeed;
         _anim = GetComponent<Animator>();
 
-        _target = gameObject.GetComponent<UICursorToWorld>().GetItemTargetTransform();
 
-        _pool = GameObject.Find("ItemObjectPool");
+        _ObjectPool = NetworkObjectPool.Instance;
 
 
         if (IsServer)
@@ -113,6 +124,7 @@ public class MovePlayerKey : NetworkBehaviour
         if (IsOwner)
         {
             GetComponent<UICursorToWorld>().SpawnTarget();
+            _target = gameObject.GetComponent<UICursorToWorld>().GetItemTargetTransform();
         }
     }
 
@@ -131,10 +143,9 @@ public class MovePlayerKey : NetworkBehaviour
             {
                 UseItem();
             }
-            //
-                Jump();
-                Punch();
-                Move();
+            Jump();
+            Punch();
+            Move();
             //移動モーション
             AnimBlendServerRpc(_animBlend);
         }
@@ -167,6 +178,10 @@ public class MovePlayerKey : NetworkBehaviour
             }
         }
         }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            LotteryHaveItem(0.5f);
+        }
 
         UpdateDustEffect();
     }
@@ -180,12 +195,12 @@ public class MovePlayerKey : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void AnimItemServerRpc(bool Item)
     {
-        _anim.SetBool("ItemBomb", Item);
+        _anim.SetBool("Item", Item);
     }
     [ServerRpc(RequireOwnership = false)]
     void AnimDyingServerRpc(bool Dying)
     {
-        _anim.SetBool("Blend", Dying);
+        _anim.SetBool("Dying", Dying);
     }
     [ServerRpc(RequireOwnership = false)]
     void AnimPunchServerRpc()
@@ -255,39 +270,27 @@ public class MovePlayerKey : NetworkBehaviour
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    void SpawnItemServerRpc(int itemId, Vector3 pos, Quaternion rot)
+    {
+        NetworkObject obj = _ObjectPool.Get(_itemBomb.GetComponent<NetworkObject>(), pos, rot);
+        obj.Spawn(true); 
+        obj.GetComponent<PooledNetworkObject>().SetPrefab(_itemBomb.GetComponent<NetworkObject>());
+
+        _itemBomb.GetComponent<Collider>().isTrigger = true;
+        _itemBomb.GetComponent<Rigidbody>().isKinematic = true;
+
+        _item = obj.gameObject;
+    }
     void SetHaveItem()
     {
-        _haveItem = (ItemType)Random.Range((int)ItemType.Bomb, (int)ItemType.Max);
+        //_haveItem = (ItemType)Random.Range((int)ItemType.Bomb, (int)ItemType.Max);
+        _haveItem = ItemType.Bomb;
         AnimItemServerRpc(true);
 
-        //bool _isChild = false;
-
         //プレイヤーにアイテムを持たせる
-        for (int i = 0; i < _pool.transform.childCount; i++)
-        {
-            //非アクティブの子オブジェクト検索
-            GameObject _kari = _pool.transform.GetChild(i).gameObject;
-            if (_kari.GetComponent<ItemBomb>() != null &&
-                !_kari.activeSelf)
-            {
-                _kari.gameObject.SetActive(true);
-                _kari.transform.position = _haveTrans.transform.position;
-                _kari.transform.rotation = transform.rotation;
+        SpawnItemServerRpc((int)_haveItem, _haveTrans.position, _haveTrans.rotation);
 
-                _item = _kari.gameObject;
-
-                //_isChild = true;
-                _item.transform.SetParent(transform);
-                break;
-            }
-        }
-
-        //子オブジェクトが足りなければ新規作成
-        //if (!_isChild)
-        //_item = Instantiate(_itemObj, _haveTrans.transform.position, transform.rotation, transform);
-
-        _item.GetComponent<Collider>().enabled = false;
-        _item.GetComponent<Rigidbody>().isKinematic = true;
 
         //アイテムプール内で更新をかけて、非アクティブオブジェクトが不足しているときに新規作成
 
@@ -338,7 +341,7 @@ public class MovePlayerKey : NetworkBehaviour
     //スタン（効果時間）
     public void Stun(float delay)
     {
-        Debug.Log("受けうつけないお");
+        //Debug.Log("受けうつけないお");
         _canNotInputKey = true;
         AnimDyingServerRpc(true);
 
@@ -413,7 +416,6 @@ public class MovePlayerKey : NetworkBehaviour
 
         _moveVector.Normalize();
         _moveVector *= _moveSpeed;
-        // _moveVector.y = _rb.linearVelocity.y;
         Vector3 input = _moveVector.normalized;
         Vector3 moveDir = input; 
         Vector3 vel = _rb.linearVelocity;
@@ -427,10 +429,6 @@ public class MovePlayerKey : NetworkBehaviour
         // 加速・減速（Valorant に近い値）
         float accel = 80.0f;      // 前方向の加速
         float deaccel = 50f;    // 入力を離した時の減速
-        float maxSpeed = 7f;    // 走り速度
-
-
-        //Vector3 vel = _rb.linearVelocity;
 
         // y 以外の現在速度
         Vector3 horizontalVel = new Vector3(vel.x, 0, vel.z);
@@ -465,17 +463,18 @@ public class MovePlayerKey : NetworkBehaviour
             }
         }
     }
+
     [ServerRpc(RequireOwnership = false)]
     void ToggleColliderServerRpc(bool state)
     {
-        Debug.Log($"serverRPC punch {state}");
+        //Debug.Log($"serverRPC punch {state}");
         ToggleColliderClientRpc(state);
     }
 
     [ClientRpc]
     void ToggleColliderClientRpc(bool state)
     {
-        Debug.Log($"clientRPC punch {state}");
+        //Debug.Log($"clientRPC punch {state}");
         _punchObj.GetComponent<SphereCollider>().enabled = state;
     }
     void Punch()
@@ -506,45 +505,45 @@ public class MovePlayerKey : NetworkBehaviour
         }
     }
 
+    //[ServerRpc(RequireOwnership = false)]
+    //void ThrowServerRpc(Vector3 velocity)
+    //{
+    //    Rigidbody rb = _item.GetComponent<Rigidbody>();
+    //    rb.linearVelocity = velocity;
+    //    rb.isKinematic = false;
+    //    Collider col = _item.GetComponent<Collider>();
+    //    col.enabled = true;
+    //}
     void UseItem()
     {
-        if (Input.GetKeyDown(_useItemKey) || gamepad.buttonEast.isPressed)
+        if (_InputUseItem)
         {
-
-            _item.GetComponent<Collider>().enabled = true;
-            _item.GetComponent<Rigidbody>().isKinematic = false;
-
-            _item.transform.SetParent(_pool.transform);
-
-            _item.transform.position = transform.position + transform.up * 2.5f;
-
             if (!_target || !_item) return;
-            Rigidbody rb = _item.GetComponent<Rigidbody>();
-
             // 初速度を計算して付与
             Vector3 velocity = CalculateVelocity(_target.position, _item.transform.position, _itemFlightTime);
-            rb.linearVelocity = velocity;
+
+            Debug.Log($"velocity{velocity}");
+            _item.GetComponent<Item>().ThrowServerRpc(velocity);
 
             _haveItem = ItemType.None;
             AnimItemServerRpc(false);
             _item = null;
         }
+    }
 
-        /// target に time 秒で到達するための初速度を計算
-        Vector3 CalculateVelocity(Vector3 target, Vector3 origin, float time)
-        {
-            Vector3 distance = target - origin;
-            Vector3 distanceXZ = new Vector3(distance.x, 0, distance.z);
+    /// target に time 秒で到達するための初速度を計算
+    Vector3 CalculateVelocity(Vector3 target, Vector3 origin, float time)
+    {
+        Vector3 distance = target - origin;
+        Vector3 distanceXZ = new Vector3(distance.x, 0, distance.z);
 
-            float sy = distance.y;
-            float sxz = distanceXZ.magnitude;
+        float sy = distance.y;
+        float sxz = distanceXZ.magnitude;
 
-            Vector3 result = distanceXZ / time; // XZ方向の速度
-            result.y = sy / time - 0.5f * Physics.gravity.y * time;
+        Vector3 result = distanceXZ / time; // XZ方向の速度
+        result.y = sy / time - 0.5f * Physics.gravity.y * time;
 
-            return result;
-        }
-
+        return result;
     }
 
     //カメラシェイク用
