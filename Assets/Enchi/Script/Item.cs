@@ -2,7 +2,6 @@ using Unity.Mathematics;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class Item : NetworkBehaviour
 {
