@@ -50,6 +50,8 @@ public class NetworkStartUI : MonoBehaviour
 
     private void LateUpdate()
     {
+
+        if (NetworkManager.Singleton == null) return;
         if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
         {
             if (Input.GetKeyDown(KeyCode.H))

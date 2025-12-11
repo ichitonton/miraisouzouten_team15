@@ -79,6 +79,8 @@ public class CameraController : MonoBehaviour
         // まずズーム入力を読む
         HandleZoomInput();
 
+        if (NetworkManager.Singleton == null) return;
+
         if (GameManager.Instance._IsLanModeActive == true)
         {
             //Debug.Log("カメラの処理をオンライン用に切り替えます");
