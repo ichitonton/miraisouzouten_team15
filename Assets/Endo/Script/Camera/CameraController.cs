@@ -50,12 +50,23 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float _maxManualOffset = 10f;     // 自動ズームからどれだけズラせるか
     private float _manualZoomOffset = 0f;                      // 手動オフセット
 
-    private void Start()
+    // オブジェクトを透明にしたいよ
+	[Header("カメラ障害物フェード")]
+	[SerializeField] private LayerMask _obstacleMask;   // 壁・柱とかのレイヤーを指定
+	[SerializeField] private int _maxObstacleHits = 16; // 1フレームの最大ヒット数
+
+	// 今フェード中のオブジェクトたち
+	private readonly List<CameraObstacleFader> _fadingNow = new List<CameraObstacleFader>();
+	private RaycastHit[] _obstacleHits;
+
+	private void Start()
     {
         _cam = GetComponent<Camera>();
         var nm = NetworkManager.Singleton;
 
-        Debug.Log(NetworkManager.Singleton);
+		_obstacleHits = new RaycastHit[_maxObstacleHits];
+
+		Debug.Log(NetworkManager.Singleton);
 
         //ローカルネットワークに接続したとき
         nm.OnClientConnectedCallback += OnClientConnected;
@@ -107,7 +118,9 @@ public class CameraController : MonoBehaviour
         {
             PairPlayer();
         }
-    }
+
+		HandleObstacleFadeForPlayers();
+	}
 
 
     private void PairPlayer()
@@ -293,5 +306,75 @@ public class CameraController : MonoBehaviour
 
         }
     }
+    //レイを飛ばす処理
+	private void HandleObstacleFadeForPlayers()
+	{
+		if (_players == null || _players.Count == 0)
+			return;
+
+		// 今フレームで「レイに当たった」フェーダー
+		var hitsThisFrame = new HashSet<CameraObstacleFader>();
+
+		Vector3 camPos = transform.position;
+
+		// 1人 or 2人どっちでもOK：今いるプレイヤー全員にレイを飛ばす
+		for (int i = 0; i < _players.Count; i++)
+		{
+			var player = _players[i];
+			if (player == null) continue;
+
+			Vector3 to = player.transform.position;
+			Vector3 dir = to - camPos;
+			float dist = dir.magnitude;
+			if (dist <= 0.01f) continue;
+
+			dir /= dist;
+
+			int hitCount = Physics.RaycastNonAlloc(
+				camPos,
+				dir,
+				_obstacleHits,
+				dist,
+				_obstacleMask,
+				QueryTriggerInteraction.Ignore
+			);
+
+			for (int h = 0; h < hitCount; h++)
+			{
+				var hit = _obstacleHits[h];
+				if (hit.collider == null) continue;
+
+				var fader = hit.collider.GetComponentInParent<CameraObstacleFader>();
+				if (fader == null) continue;
+
+				hitsThisFrame.Add(fader);
+
+				// まだフェードリストに入ってないなら、フェード開始
+				if (!_fadingNow.Contains(fader))
+				{
+					fader.SetFaded(true);
+					_fadingNow.Add(fader);
+				}
+			}
+		}
+
+		// 先フレームまでフェードしてたけど、
+		// 今フレームはどのプレイヤーとの線上にもいないやつは元に戻す
+		for (int i = _fadingNow.Count - 1; i >= 0; i--)
+		{
+			var fader = _fadingNow[i];
+			if (fader == null)
+			{
+				_fadingNow.RemoveAt(i);
+				continue;
+			}
+
+			if (!hitsThisFrame.Contains(fader))
+			{
+				fader.SetFaded(false);
+				_fadingNow.RemoveAt(i);
+			}
+		}
+	}
 
 }
