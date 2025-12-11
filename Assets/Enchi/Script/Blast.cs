@@ -7,7 +7,7 @@ public class Blast : NetworkBehaviour
     [SerializeField] float _lifeTime = 0.1f;
     [SerializeField] float _impactForce = 10.0f;
 
-	[SerializeField] int _explosionEffectId = 2;
+	//[SerializeField] int _explosionEffectId = 2;
 
 	Rigidbody _rigidbody;
     float _boneTime = 0.0f;
@@ -18,15 +18,25 @@ public class Blast : NetworkBehaviour
         //Invoke("ActiveFalse", _lifeTime);
         _boneTime = 0.0f;
     }
-    void OnEnable()
+    public override void OnNetworkSpawn()
     {
+        Debug.Log("Spawn Ç≥ÇÍÇΩÇÊÅI");
+        Collider col = GetComponent<Collider>();
+        col.isTrigger = true;
         _boneTime = 0.0f;
-		NetworkEffectSpawner.Instance.PlayEffect(
-		   _explosionEffectId,
-		   transform.position,
-		   Quaternion.identity
-	   );
-	}
+        GetComponent<ParticleSystem>().Play();
+        //Invoke("SetColTriggerServerRpc", 0.4f);
+    }
+
+    //   void OnEnable()
+    //   {
+    //       _boneTime = 0.0f;
+    //	NetworkEffectSpawner.Instance.PlayEffect(
+    //	   _explosionEffectId,
+    //	   transform.position,
+    //	   Quaternion.identity
+    //   );
+    //}
     // Update is called once per frame
     void Update()
     {
