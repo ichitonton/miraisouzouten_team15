@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: CharacterModel_NihonsyatikurisBlue_Texture 1
-  m_Shader: {fileID: 4800000, guid: 324c76aebd288d74c837cca3a847a9a9, type: 3}
+  m_Shader: {fileID: 4800000, guid: 988bc59f3c61c6641a43435847b23e69, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -113,6 +113,7 @@ Material:
     - _EnvironmentReflections: 1
     - _Fade1: 0.03
     - _Fade2: 0.03
+    - _FadeMultiplier: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
