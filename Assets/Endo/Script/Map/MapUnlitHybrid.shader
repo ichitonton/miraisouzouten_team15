@@ -29,6 +29,9 @@ Shader "Hidden/MapUnlitHybrid"
         //  この高さ差までは「そのプレイヤーの段」とみなす
         _HeightAffectRange("Height Affect Range", Float) = 1.0
 
+        //_Alpha
+        _Alpha("Alpha",Float) = 1.0
+
     }
 
     SubShader
@@ -72,13 +75,19 @@ Shader "Hidden/MapUnlitHybrid"
 
             float _HeightAffectRange;
 
+            float _Alpha;
+
             //カラーの配列
             float4 _Colors[32];
             int _ColorCount;
 
-            UNITY_INSTANCING_BUFFER_START(Props)
-            UNITY_DEFINE_INSTANCED_PROP(int, _TagId)
-            UNITY_INSTANCING_BUFFER_END(Props)
+            // ここを「普通の」uniform にする
+            int _TagId;
+
+            //  instancing ブロックは消す
+            // UNITY_INSTANCING_BUFFER_START(Props)
+            // UNITY_DEFINE_INSTANCED_PROP(int, _TagId)
+            // UNITY_INSTANCING_BUFFER_END(Props)
 
             struct Attributes
             {
@@ -101,10 +110,12 @@ Shader "Hidden/MapUnlitHybrid"
 
             float4 frag (Varyings i) : SV_Target
             {
-                int id = UNITY_ACCESS_INSTANCED_PROP(Props, _TagId);
-                float3 baseColor = _Colors[id].rgb;
-
+            
                 float3 wp = i.worldPos;
+
+                // _TagId をそのまま使う
+                int id = clamp(_TagId, 0, _ColorCount - 1);
+                float3 baseColor = _Colors[id].rgb;
 
                 // ===== 1) このピクセルに一番近い高さのプレイヤーを探す =====
                 int   bestIndex = -1;
@@ -164,7 +175,7 @@ Shader "Hidden/MapUnlitHybrid"
                 // ===== 4) 合成 =====
                 float final = heightBright * pointMax;
 
-                return float4(baseColor * final, 1);
+                return float4(baseColor * final, _Alpha);
             }
 
             ENDHLSL

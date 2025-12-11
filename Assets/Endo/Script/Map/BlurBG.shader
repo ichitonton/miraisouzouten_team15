@@ -69,34 +69,50 @@ Shader "Custom/BlurBG"
 
             float4 frag (Varyings i) : SV_Target
             {
-                // ==== ピクセル化処理 ====
-                // 1ピクセルのブロックサイズ（UV空間）
-                float2 blockSize = _PixelSize * _MainTex_TexelSize.xy;
+                // ===== 純粋なブラー =====
+                // テクセルサイズにブラー半径を掛けて、画面上の距離に変換
+                float2 r = _PixelSize * _MainTex_TexelSize.xy;
 
-                // UVを blockSize 単位で丸める（これでモザイク）
-                float2 baseUV = floor(i.uv / blockSize) * blockSize;
+                // 中心
+                float4 col = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
 
-                // 中心サンプル
-                float4 col = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, baseUV);
+                // ガウシアンっぽい9タップブラー（＋少しだけ広げた15タップ風）
+                float4 acc = col * 4.0;
+                float  w   = 4.0;
 
-                // ==== かるいブラー（周囲4サンプルを混ぜる） ====
-                float2 offset = blockSize * 0.5;
+                // 十字方向
+                float4 c1 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv + float2( r.x,  0));
+                float4 c2 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv + float2(-r.x,  0));
+                float4 c3 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv + float2( 0,  r.y));
+                float4 c4 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv + float2( 0, -r.y));
 
-                float4 c1 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, baseUV + float2( offset.x,  0));
-                float4 c2 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, baseUV + float2(-offset.x,  0));
-                float4 c3 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, baseUV + float2( 0,  offset.y));
-                float4 c4 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, baseUV + float2( 0, -offset.y));
+                acc += (c1 + c2 + c3 + c4) * 2.0;
+                w   += 2.0 * 4.0;
 
-                float4 blurCol = (col + c1 + c2 + c3 + c4) / 5.0;
+                // 斜め方向
+                float4 c5 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv + float2( r.x,  r.y));
+                float4 c6 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv + float2(-r.x,  r.y));
+                float4 c7 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv + float2( r.x, -r.y));
+                float4 c8 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv + float2(-r.x, -r.y));
 
-                // ブラー強度でミックス
+                acc += (c5 + c6 + c7 + c8);
+                w   += 4.0;
+
+                float4 blurCol = acc / w;
+
+                // 元の絵とブラーのミックス
                 float4 finalCol = lerp(col, blurCol, _BlurStrength);
 
-                // 全体にTint（暗く＋α値もこれで調整可）
-                finalCol.rgb = lerp(finalCol.rgb, _Tint.rgb, _Tint.a);
-                finalCol.a = 1.0; // RawImage の Color.a に任せたければここを変えてもOK
+                // 少しだけ明るいところを強調（光がにじんで見える用のミニBloom）
+                float luma = dot(finalCol.rgb, float3(0.299, 0.587, 0.114));
+                float glow = saturate((luma - 0.6) * 2.0);   // 明るい部分だけ強調
+                finalCol.rgb = lerp(finalCol.rgb, finalCol.rgb * 1.2, glow);
 
-                // UIカラーも乗算（必要なければ消していい）
+                // 全体にTint（暗くしつつ、背景を目立たなくする）
+                finalCol.rgb = lerp(finalCol.rgb, _Tint.rgb, _Tint.a);
+                finalCol.a   = 1.0;
+
+                // UI側の Color も乗算
                 finalCol *= i.color;
 
                 return finalCol;

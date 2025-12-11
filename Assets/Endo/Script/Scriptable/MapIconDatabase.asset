@@ -13,23 +13,15 @@ MonoBehaviour:
   m_Name: MapIconDatabase
   m_EditorClassIdentifier: Assembly-CSharp::MapIconDatabase
   _entries:
+  - prefab: {fileID: 1949463524628189057, guid: dd9a5f8b428036b479daed04844aac44, type: 3}
+    icon: {fileID: 21300000, guid: de42d6ab3a5a5eb4682ac22cb1bcab02, type: 3}
   - prefab: {fileID: 6845853872365190221, guid: b9abccb11b995ec48a57cd8230f15b8b, type: 3}
     icon: {fileID: 21300000, guid: 5b78eb8b3f24c684b9fc75be09c05ef8, type: 3}
-  - prefab: {fileID: 2801467627326373979, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
-    icon: {fileID: 0}
-  - prefab: {fileID: 3786234121961396847, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
-    icon: {fileID: 0}
-  - prefab: {fileID: 4951464363076143965, guid: 66dc2d0ba71baae4998ef22fc2315c2a, type: 3}
-    icon: {fileID: 21300000, guid: 1b24177ef3244d24e93eda6d899a373f, type: 3}
-  - prefab: {fileID: 2211509180903102658, guid: d8773a82c121c6d44aae709673fd0f2e, type: 3}
-    icon: {fileID: 21300000, guid: 34b25627e3eea3d44996354f100b6c03, type: 3}
+  - prefab: {fileID: 4179413458884221484, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
+    icon: {fileID: 21300000, guid: c82201a819c4d934ca136c3752198cec, type: 3}
   - prefab: {fileID: 4229715837851546189, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
     icon: {fileID: 21300000, guid: ad92ae20368307a40b263ffb7fb3c5f3, type: 3}
-  - prefab: {fileID: 8160404072800314456, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
-    icon: {fileID: 0}
-  - prefab: {fileID: 5483395256311698979, guid: f3e266d1925bd9e46ad610895be20fa1, type: 3}
-    icon: {fileID: 0}
-  - prefab: {fileID: 6683862319799710109, guid: 86fefe511bda5ac478868983b0ad4473, type: 3}
-    icon: {fileID: 0}
-  - prefab: {fileID: 660025392728973613, guid: 85860d6972d5d614b81d590de7a0383e, type: 3}
-    icon: {fileID: 21300000, guid: 38594c702f342904eab6dc53043426dd, type: 3}
+  - prefab: {fileID: 6831876321883954817, guid: b59f9fc312882b043b8de1287488fca1, type: 3}
+    icon: {fileID: 21300000, guid: 8c949855612d4a5459572e71db205d8a, type: 3}
+  - prefab: {fileID: 2211509180903102658, guid: d8773a82c121c6d44aae709673fd0f2e, type: 3}
+    icon: {fileID: 21300000, guid: 34b25627e3eea3d44996354f100b6c03, type: 3}

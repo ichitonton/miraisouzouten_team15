@@ -5,6 +5,7 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.CompilerServices;
 using System;
+using UnityEngine.InputSystem;
 
 [System.Serializable]
 public class MapColor
@@ -40,8 +41,6 @@ public class MapColorManager : MonoBehaviour
     //配列はキャッシュして毎回メモリを確保しない
     private Vector4[] _playerPosCache;
 
-
-
     [Header("Surface Settings")]
     // 高低差の基準
     [SerializeField, Range(0.0001f, 2f)] private float heightSensitivity = 0.4f;
@@ -62,6 +61,12 @@ public class MapColorManager : MonoBehaviour
     [SerializeField] private float _globalMaxScale = 1.1f;
 
     [SerializeField, Range(0.0001f, 1f)] private float _heightRange = 0.3f;
+
+    [Header("Alpha")]
+    [SerializeField,Range(0.1f,1)] private float _alpha = 1f;
+
+    [Header("Delay")]
+    [SerializeField,Range(0.01f,1f)] private float __updateInterval = 0.05f;
 
     //MapObjectがついているオブジェクトリスト
     private static readonly List<GameObject> registeredObjects = new();
@@ -141,7 +146,7 @@ public class MapColorManager : MonoBehaviour
         drawMat.SetColorArray("_Colors", _colorArray);
 
         //メッシュの結合
-        //CombineMeshes();
+        CombineMeshes();
         //自動停止
         var token = this.GetCancellationTokenOnDestroy();
 
@@ -153,83 +158,140 @@ public class MapColorManager : MonoBehaviour
 
             if (_playerList.Count == 0)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(0.1f), cancellationToken: token);
+                await UniTask.Delay(TimeSpan.FromSeconds(__updateInterval), cancellationToken: token);
                 continue;
             }
 
             RenderMap();
-            await UniTask.Delay(TimeSpan.FromSeconds(0.05f), cancellationToken: token);
+            await UniTask.Delay(TimeSpan.FromSeconds(__updateInterval), cancellationToken: token);
         }
     }
 
-    //オブジェクトのメッシュを結合して一つにする
+    // オブジェクトのメッシュを結合して一つにする
     private void CombineMeshes()
     {
-
         _combinedStaticObjects.Clear();
         _dynamicObjects.Clear();
-        // タグごとに MeshFilter を集める
-        var tagToMeshFilters = new Dictionary<string, List<MeshFilter>>();
+
+        // タグごとに MeshFilter を集める（キーは小文字タグ）
+        var tagToMeshFilters = new Dictionary<string, Dictionary<string, List<MeshFilter>>>();
+
+        // この MapColorManager のワールド→ローカル行列
+        Matrix4x4 worldToLocal = transform.worldToLocalMatrix;
 
         foreach (var go in registeredObjects)
         {
             if (go == null) continue;
 
             var mf = go.GetComponent<MeshFilter>();
-            if (mf == null) continue;
+            if (mf == null || mf.sharedMesh == null) continue;
+
+            var mesh = mf.sharedMesh;
+
+            // ★ Read/Write チェック（無効なら結合には使えない）
+            if (!mesh.isReadable)
+            {
+                Debug.LogError($"[MapColorManager] '{go.name}' の Mesh は Read/Write 無効です。インポート設定で ON にしてください。");
+                continue;
+            }
 
             var mapObj = go.GetComponent<MapObject>();
 
-            // 動く系 or Combineしちゃダメなやつ
+            // ★ 動く系 or Combineしちゃダメなやつは dynamic 側へ
             if (mapObj != null && !mapObj.CombineToStatic)
             {
                 _dynamicObjects.Add(go);
                 continue;
             }
 
-            // 実際のタグ名（UnityのTagとして存在するやつ）
-            string originalTag = go.tag;
+            // 色判定用キー（小文字タグ）
+            string originalKey = GetTagOrParentTag(go);    // 例: "Field"
+            string key = originalKey.ToLower();  // 例: "field"
 
-            // 色テーブル用キー（小文字化）
-            string key = originalTag.ToLower();
-
-            if (!tagToMeshFilters.TryGetValue(key, out var list))
+            if (!tagToMeshFilters.TryGetValue(originalKey, out var dic))
             {
-                list = new List<MeshFilter>();
-                tagToMeshFilters[key] = list;
+                dic = new Dictionary<string, List<MeshFilter>>();
+                var list = new List<MeshFilter>(); 
+                dic[key]= list;
+                tagToMeshFilters[originalKey] = dic;
             }
-            list.Add(mf);
+            dic[key].Add(mf);
+
         }
 
-        // ==== タグごとに1つのメッシュに結合 ====
+        // ==== タグごとに 1 メッシュへ結合 ====
+        int mapLayer = LayerMask.NameToLayer(mapLayerName); // 例: "Map"
+
         foreach (var kv in tagToMeshFilters)
         {
-            string key = kv.Key;               // 小文字キー（例: "field", "wall", "untagged"）
-            List<MeshFilter> list = kv.Value;
+            var dic = kv.Value;
+
+            string key = "untagget";
+            List<MeshFilter> list = null;
+            foreach (var d in dic)
+            {
+                key = d.Key;
+                list = d.Value; 
+            }
+            
+            Debug.Log("メッシュの数" + list.Count);
             if (list.Count == 0) continue;
 
-            // 結合処理（CombineInstance 略）
+            // 1) CombineInstance 配列を作成
+            var combines = new CombineInstance[list.Count];
+            for (int i = 0; i < list.Count; i++)
+            {
+                var mf = list[i];
+                var mesh = mf.sharedMesh;
+                if (mesh == null) continue;
 
-            var combinedGO = new GameObject($"MapCombined_{key}");
+                combines[i] = new CombineInstance
+                {
+                    mesh = mesh,
+                    subMeshIndex = 0,
+                    // 各メッシュのローカル→ワールド を MapColorManager のローカル空間に変換
+                    transform = worldToLocal * mf.transform.localToWorldMatrix
+                };
+            }
+
+            // 2) 結合メッシュを作る
+            var combinedMesh = new Mesh();
+            combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+            combinedMesh.CombineMeshes(combines, true, true);
+
+            if (combinedMesh.vertexCount == 0)
+            {
+                Debug.LogError($"[MapColorManager] CombineMeshes の結果、'{kv.Key}' グループの頂点数が 0 でした。スキップします。");
+                continue;
+            }
+
+            // 3) 結合結果用 GameObject を作成
+            var combinedGO = new GameObject($"MapCombined_{kv.Key}");
             combinedGO.transform.SetParent(this.transform, worldPositionStays: false);
-            combinedGO.layer = mapCamera.gameObject.layer;
+
+            // Layer を Map に（見つからなければそのまま）
+            if (mapLayer != -1) combinedGO.layer = mapLayer;
+
+            combinedGO.tag = kv.Key;
 
             var mfCombined = combinedGO.AddComponent<MeshFilter>();
-            mfCombined.sharedMesh = _combinedMesh;
+            mfCombined.sharedMesh = combinedMesh;
 
             var mrCombined = combinedGO.AddComponent<MeshRenderer>();
-            mrCombined.sharedMaterial = new Material(Shader.Find("Hidden/InternalErrorShader"));
+            mrCombined.sharedMaterial = drawMat; // Map 用シェーダーマテリアル
 
-            // タグの設定： "untagged" はいじらない
-            if (!string.Equals(key, "untagged"))
+            // 4) タグIDを MaterialPropertyBlock に設定（シェーダー側で色分け用）
+            if (_tagToId.TryGetValue(key, out int id))
             {
-                // タグ名は Unity 側の定義に合わせたいので、先に大文字小文字付きのものを使いたいなら
-                // 最初に originalTag を別で持っておく設計でもOK
-                combinedGO.tag = char.ToUpper(key[0]) + key.Substring(1); // 例: "field" → "Field"
+                var mpb = new MaterialPropertyBlock();
+                mpb.SetInt("_TagId", id);
+                mrCombined.SetPropertyBlock(mpb);
             }
-            // "untagged" の場合は何もせず、デフォルト(Untagged)のまま
 
             _combinedStaticObjects.Add(combinedGO);
+            Debug.Log($"[CombineMeshes] '{kv.Key}' -> verts={combinedMesh.vertexCount}");
+
+            //MapObjectをつけておく
         }
 
         // 動的オブジェクトだけ registeredObjects に残す
@@ -261,11 +323,12 @@ public class MapColorManager : MonoBehaviour
         UpdateShaderParams();
 
         // ========= Mesh描画 =========
-        Debug.Log("登録されてるオブジェクトの数" + registeredObjects.Count);
+        Debug.Log("登録されてる動的オブジェクトの数" + registeredObjects.Count);
+        Debug.Log("登録されてる静的オブジェクトの数" + _combinedStaticObjects.Count);
         // ==========================
         // 1) 結合済み静的メッシュの描画
         // ==========================
-        /*foreach (var go in _combinedStaticObjects)
+        foreach (var go in _combinedStaticObjects)
         {
             if (go == null) continue;
 
@@ -273,19 +336,27 @@ public class MapColorManager : MonoBehaviour
             if (mf == null) continue;
 
             var mesh = mf.sharedMesh;
-            if (mesh == null) continue;   // ★ ここ追加
+            if (mesh == null) continue;   // ここ追加
 
-            // タグからベースカラー取得（tagToColor方式）
-            Color baseColor = Color.red;
-            string tag = go.tag.ToLower();
-            if (_nameToColor.TryGetValue(tag, out var colorFromTag))
-                baseColor = colorFromTag;
+            
+            // ---- タグから TagId を決める ----
+            string unityTag = GetTagOrParentTag(go); // "Field", "Iwa" など
+            string key = unityTag.ToLower();
 
-            drawMat.SetColor("_Color", baseColor);
+            int tagId = 0;
+            if (!_tagToId.TryGetValue(key, out tagId))
+            {
+                // 未登録タグなら 0 番にフォールバック
+                tagId = 0;
+            }
+
+            drawMat.SetInt("_TagId", tagId);
             drawMat.SetPass(0);
 
-            Graphics.DrawMeshNow(mf.sharedMesh, Matrix4x4.identity);
-        }*/
+            Debug.Log("結合オブジェクト描画");
+
+            Graphics.DrawMeshNow(mf.sharedMesh, go.transform.localToWorldMatrix);
+        }
 
         // ==========================
         // 2) 動的オブジェクトの描画
@@ -300,16 +371,17 @@ public class MapColorManager : MonoBehaviour
             var mesh = mf.sharedMesh;
             if (mesh == null) continue;   // ★ ここ追加
 
-            Color baseColor = Color.red;
-            string tag = go.tag.ToLower();
+            // ---- タグ（子が Untagged なら親） ----
+            string unityTag = GetTagOrParentTag(go);
+            string key = unityTag.ToLower();
 
-            if (tag == "untagged" && go.transform.parent != null)
-                tag = go.transform.parent.tag.ToLower();
+            int tagId = 0;
+            if (!_tagToId.TryGetValue(key, out tagId))
+            {
+                tagId = 0;
+            }
 
-            if (_nameToColor.TryGetValue(tag, out var colorFromTag))
-                baseColor = colorFromTag;
-
-            drawMat.SetColor("_Color", baseColor);
+            drawMat.SetInt("_TagId", tagId);
             drawMat.SetPass(0);
 
             Graphics.DrawMeshNow(mf.sharedMesh, go.transform.localToWorldMatrix);
@@ -377,6 +449,8 @@ public class MapColorManager : MonoBehaviour
 
         drawMat.SetFloat("_HeightAffectRange", _heightRange);
 
+        drawMat.SetFloat("_Alpha", _alpha);
+
     }
 
 
@@ -389,16 +463,6 @@ public class MapColorManager : MonoBehaviour
             var target = r.gameObject;
             if (!registeredObjects.Contains(target))
                 registeredObjects.Add(target);
-
-            var tag = target.tag.ToLower();
-
-            if (_tagToId.TryGetValue(tag, out int id))
-            {
-                var mpb = new MaterialPropertyBlock();
-                r.GetPropertyBlock(mpb);
-                mpb.SetInt("_TagId", id);
-                r.SetPropertyBlock(mpb);
-            }
         }
     }
 
@@ -467,4 +531,25 @@ public class MapColorManager : MonoBehaviour
 
         }
     }
+
+    /// <summary>
+    /// Untagged の場合は親のタグをたどって Tag を取得する
+    /// </summary>
+    private string GetTagOrParentTag(GameObject go)
+    {
+        Transform t = go.transform;
+
+        while (t != null)
+        {
+            string tag = t.gameObject.tag;
+
+            if (!string.Equals(tag, "Untagged", StringComparison.OrdinalIgnoreCase))
+                return tag; // 見つかったタグ（小文字）
+
+            t = t.parent;
+        }
+
+        return "untagged"; // 最後までなければ untagged
+    }
+
 }

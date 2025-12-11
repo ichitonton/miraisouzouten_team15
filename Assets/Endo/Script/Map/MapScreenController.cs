@@ -14,6 +14,9 @@ public class MapScreenController : MonoBehaviour
     [SerializeField] private GameObject mapRoot;   // 全体マップのパネル
     [SerializeField] private RawImage blurBG;      // 背景ブラー用 RawImage
 
+    [Header("OtherUI")]
+    [SerializeField] private GameObject _otherUI;   // 全体マップのパネル
+
     [Header("Input")]
     [SerializeField] private KeyCode toggleKey = KeyCode.Tab; // とりあえずTabとか
 
@@ -71,6 +74,7 @@ public class MapScreenController : MonoBehaviour
         // 背景ブラーUIとマップUIを表示
         if (blurBG != null) blurBG.gameObject.SetActive(true);
         if (mapRoot != null) mapRoot.SetActive(true);
+        if(_otherUI != null) _otherUI.gameObject.SetActive(false);
     }
 
     private void CloseMap()
@@ -79,6 +83,7 @@ public class MapScreenController : MonoBehaviour
 
         if (mapRoot != null) mapRoot.SetActive(false);
         if (blurBG != null) blurBG.gameObject.SetActive(false);
+        if (_otherUI != null) _otherUI.gameObject.SetActive(true);
     }
 
 }
