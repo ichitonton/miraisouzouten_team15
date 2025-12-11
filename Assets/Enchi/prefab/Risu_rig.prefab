@@ -1193,6 +1193,7 @@ Transform:
   - {fileID: 3475107429813776314}
   - {fileID: 2910589370453340999}
   - {fileID: 7807117485017070064}
+  - {fileID: 7533343180309272194}
   m_Father: {fileID: 3520387096421248167}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2361873894670714630
@@ -2528,6 +2529,37 @@ Transform:
   - {fileID: 2358025849464400872}
   m_Father: {fileID: 4283350002401564512}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5782443933133439062
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7533343180309272194}
+  m_Layer: 0
+  m_Name: HaveItemPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7533343180309272194
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5782443933133439062}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.09, z: 0.7}
+  m_LocalScale: {x: 1.1111114, y: 1.1111114, z: 1.1111114}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7817302887972989326}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5807231202986688665
 GameObject:
   m_ObjectHideFlags: 0
@@ -3162,7 +3194,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7459081349001929016}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 190eccf086a49004dad277a2443f84f1, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -3237,19 +3269,19 @@ MonoBehaviour:
   _left: 97
   _right: 100
   _jump: 32
-  _punch: 101
-  _useItem: 102
+  _punchKey: 101
+  _useItemKey: 102
   _moveSpeed: 7.5
   _jumpForce: 7
   _punchDuration: 0.5
   _punchDelay: 0.4
   _punchObj: {fileID: 2597632125628933293}
-  _toGetPunchTime: 0.5
   _MaxHp: 100
   _punchDamage: 20
   _punchForce: 10
   _stunTime: 1
-  _haveTrans: {fileID: 84731178285349141}
+  _haveTrans: {fileID: 7533343180309272194}
+  _itemBomb: {fileID: 5829897982676275080, guid: 8b04250a52ccfdb47b90f1726a8e4259, type: 3}
   _itemFlightTime: 2
   _effDash_2: {fileID: 773825968017154068, guid: 28c381c7693f60c43bd845de5f9783e4, type: 3}
   _eff_HitPunch: {fileID: 7155706149333254684, guid: a786b69b36d65074288da092aa9f581b, type: 3}
@@ -3264,7 +3296,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7459081349001929016}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 5
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -3281,7 +3313,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!95 &8427100980178498739
 Animator:
@@ -3589,7 +3621,7 @@ Transform:
   m_GameObject: {fileID: 8248706627301410253}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: -1.1241406, z: 0.5684599}
+  m_LocalPosition: {x: 0, y: 1, z: 1.15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

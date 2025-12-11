@@ -72,6 +72,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   ShowTopMostFoldoutHeaderGroup: 1
+  _itemBomb: {fileID: 0}
 --- !u!1001 &8408197160458054321
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -127,6 +128,10 @@ PrefabInstance:
     - target: {fileID: 6605696531207017778, guid: 8b04250a52ccfdb47b90f1726a8e4259, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806896105312345136, guid: 8b04250a52ccfdb47b90f1726a8e4259, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 4283818405
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

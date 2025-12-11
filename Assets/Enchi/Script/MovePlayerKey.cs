@@ -1,6 +1,8 @@
 using NUnit.Framework.Constraints;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class MovePlayerKey : NetworkBehaviour
@@ -10,8 +12,8 @@ public class MovePlayerKey : NetworkBehaviour
     [SerializeField] KeyCode _left;
     [SerializeField] KeyCode _right;
     [SerializeField] KeyCode _jump;
-    [SerializeField] KeyCode _punch;
-    [SerializeField] KeyCode _useItem;
+    [SerializeField] KeyCode _punchKey;
+    [SerializeField] KeyCode _useItemKey;
 
     [SerializeField] float _moveSpeed = 7.0f;
     [SerializeField] float _jumpForce = 7.0f;
@@ -19,14 +21,13 @@ public class MovePlayerKey : NetworkBehaviour
     [SerializeField] float _punchDuration = 0.5f;
     [SerializeField] float _punchDelay = 0.5f;
     [SerializeField] GameObject _punchObj;
-    [SerializeField] float _toGetPunchTime = 0.5f;
     [SerializeField] int _MaxHp = 100;
     [SerializeField] int _punchDamage = 20;
     [SerializeField] float _punchForce = 10.0f;
     [SerializeField] float _stunTime = 1.0f;//パンチした時のスタン時間
-    //[SerializeField] GameObject _itemObj; // 投げるオブジェクト
     [SerializeField] Transform _haveTrans;//持ってるアイテム
     Transform _target;
+    [SerializeField]private GameObject _itemBomb;
     [SerializeField] float _itemFlightTime = 2.0f; // 投げるオブジェクトがターゲットに到達するまでの時間
 
     //エフェクト関連
@@ -35,13 +36,11 @@ public class MovePlayerKey : NetworkBehaviour
     [SerializeField] Transform _headPoint; //頭の位置
     private int _punchStartEffectId = 3;   //頭のエフェクト
 
+    //そのPCの中でのプレイヤー番号
     [SerializeField] PlayerNumber _playerNumber = PlayerNumber.None;
 
     GameObject _effDash2Instance;
     ParticleSystem _effDash2Ps;
-
-    //カメラシェイク
-    //[SerializeField] ShakeByPerlinNoise _cameraShake;
 
     Rigidbody _rb;
 
@@ -52,8 +51,9 @@ public class MovePlayerKey : NetworkBehaviour
     private float _moveSpeedInitial;
     private bool _canPunch = true;
     private ItemType _haveItem = ItemType.None;
-    private GameObject _item;
-    GameObject _pool = null;
+    NetworkObjectPool _ObjectPool = null;
+
+    GameObject _item;
 
     float _animBlend = 0.0f;
 
@@ -64,6 +64,14 @@ public class MovePlayerKey : NetworkBehaviour
     [SerializeField] CanJump _FootCollider;
 
     Animator _anim;
+
+    //入力受付フラグ
+    Vector2 _InputMove = Vector2.zero;
+    bool _InputUseItem = false;
+    bool _InputPunch = false;
+
+
+    private Dictionary<ulong, NetworkObject> itemDictionary;
 
     public enum ItemType
     {
@@ -82,6 +90,14 @@ public class MovePlayerKey : NetworkBehaviour
     }
 
 
+    void Awake()
+    {
+        itemDictionary = new()
+    {
+        { (ulong)ItemType.Bomb, _itemBomb.GetComponent<NetworkObject>() }
+    };
+    }
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -92,19 +108,8 @@ public class MovePlayerKey : NetworkBehaviour
         _moveSpeedInitial = _moveSpeed;
         _anim = GetComponent<Animator>();
 
-        //シェイク用カメラ自動取得
-        //if (_cameraShake == null)
-        //{
-        //    var cam = Camera.main;
-        //    if (cam != null)
-        //    {
-        //        _cameraShake = cam.GetComponent<ShakeByPerlinNoise>();
-        //    }
-        //}
 
-        _target = gameObject.GetComponent<UICursorToWorld>().GetItemTargetTransform();
-
-        _pool = GameObject.Find("ItemObjectPool");
+        _ObjectPool = NetworkObjectPool.Instance;
 
 
         if (IsServer)
@@ -113,13 +118,13 @@ public class MovePlayerKey : NetworkBehaviour
         }
         else
         {
-
             Rigidbody rb = GetComponent<Rigidbody>();
             rb.isKinematic = true; // クライアントでは物理演算しない
         }
         if (IsOwner)
         {
             GetComponent<UICursorToWorld>().SpawnTarget();
+            _target = gameObject.GetComponent<UICursorToWorld>().GetItemTargetTransform();
         }
     }
 
@@ -129,59 +134,59 @@ public class MovePlayerKey : NetworkBehaviour
         rb.isKinematic = false; // クライアントでは物理演算しない
     }
 
-    // Update is called once per frame
+    void FixedUpdate()
+    {
+        if (IsOwner)
+        {
+            //アイテムを持ってるとき
+            if (_haveItem != ItemType.None && _haveItem != ItemType.Max)
+            {
+                UseItem();
+            }
+            Jump();
+            Punch();
+            Move();
+            //移動モーション
+            AnimBlendServerRpc(_animBlend);
+        }
+    }
+
     void Update()
     {
+
         if (_item != null)
         {
             _item.transform.position = _haveTrans.position;
             _item.transform.eulerAngles = _haveTrans.eulerAngles;
         }
-        //Debug.Log(_haveItem);
+
+        //アニメーションブレンド値リセット
         if (_animBlend > 0)
         {
             _animBlend -= 0.1f;
         }
+
         if (IsOwner)
+    {
+        if (!_canNotInputKey)
         {
-            var pads = Gamepad.all;
-
-            for (int i = 0; i < pads.Count; i++)
+            //パッド入力
+            if (!InputGamePad())
             {
-                Gamepad pad = pads[i];
-                if (pad.buttonSouth.wasPressedThisFrame)
-                {
-                    Debug.Log($"Player {i + 1} : A button pressed!");
-                }
+                //キーボード入力
+                InputKeyboard();
             }
-            if (pads.Count >= (int)_playerNumber)
-            {
-                if (pads[(int)_playerNumber - 1] != null)
-                {
-                    gamepad = pads[(int)_playerNumber - 1];
-                }
-            }
-            if (_haveItem != ItemType.None && _haveItem != ItemType.Max)
-            {
-                UseItem();
-            }
-            if (!_canNotInputKey)
-            {
-                Jump();
-                Punch();
-                Move();
-            }
-            //_anim.linearVelocityBlending = true;
-            AnimBlendServerRpc(_animBlend);
         }
-        if(IsServer)
+        }
+        if (Input.GetKeyDown(KeyCode.Q))
         {
-            //_anim.SetFloat("Blend", _animBlend);
-
+            LotteryHaveItem(0.5f);
         }
 
         UpdateDustEffect();
     }
+
+    //アニメーション
     [ServerRpc(RequireOwnership = false)]
     void AnimBlendServerRpc(float blend)
     {
@@ -190,12 +195,12 @@ public class MovePlayerKey : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void AnimItemServerRpc(bool Item)
     {
-        _anim.SetBool("ItemBomb", Item);
+        _anim.SetBool("Item", Item);
     }
     [ServerRpc(RequireOwnership = false)]
     void AnimDyingServerRpc(bool Dying)
     {
-        _anim.SetBool("Blend", Dying);
+        _anim.SetBool("Dying", Dying);
     }
     [ServerRpc(RequireOwnership = false)]
     void AnimPunchServerRpc()
@@ -265,39 +270,27 @@ public class MovePlayerKey : NetworkBehaviour
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    void SpawnItemServerRpc(int itemId, Vector3 pos, Quaternion rot)
+    {
+        NetworkObject obj = _ObjectPool.Get(_itemBomb.GetComponent<NetworkObject>(), pos, rot);
+        obj.Spawn(true); 
+        obj.GetComponent<PooledNetworkObject>().SetPrefab(_itemBomb.GetComponent<NetworkObject>());
+
+        _itemBomb.GetComponent<Collider>().isTrigger = true;
+        _itemBomb.GetComponent<Rigidbody>().isKinematic = true;
+
+        _item = obj.gameObject;
+    }
     void SetHaveItem()
     {
-        _haveItem = (ItemType)Random.Range((int)ItemType.Bomb, (int)ItemType.Max);
+        //_haveItem = (ItemType)Random.Range((int)ItemType.Bomb, (int)ItemType.Max);
+        _haveItem = ItemType.Bomb;
         AnimItemServerRpc(true);
 
-        //bool _isChild = false;
-
         //プレイヤーにアイテムを持たせる
-        for (int i = 0; i < _pool.transform.childCount; i++)
-        {
-            //非アクティブの子オブジェクト検索
-            GameObject _kari = _pool.transform.GetChild(i).gameObject;
-            if (_kari.GetComponent<ItemBomb>() != null &&
-                !_kari.activeSelf)
-            {
-                _kari.gameObject.SetActive(true);
-                _kari.transform.position = _haveTrans.transform.position;
-                _kari.transform.rotation = transform.rotation;
+        SpawnItemServerRpc((int)_haveItem, _haveTrans.position, _haveTrans.rotation);
 
-                _item = _kari.gameObject;
-
-                //_isChild = true;
-                _item.transform.SetParent(transform);
-                break;
-            }
-        }
-
-        //子オブジェクトが足りなければ新規作成
-        //if (!_isChild)
-        //_item = Instantiate(_itemObj, _haveTrans.transform.position, transform.rotation, transform);
-
-        _item.GetComponent<Collider>().enabled = false;
-        _item.GetComponent<Rigidbody>().isKinematic = true;
 
         //アイテムプール内で更新をかけて、非アクティブオブジェクトが不足しているときに新規作成
 
@@ -348,7 +341,7 @@ public class MovePlayerKey : NetworkBehaviour
     //スタン（効果時間）
     public void Stun(float delay)
     {
-        Debug.Log("受けうつけないお");
+        //Debug.Log("受けうつけないお");
         _canNotInputKey = true;
         AnimDyingServerRpc(true);
 
@@ -371,7 +364,7 @@ public class MovePlayerKey : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     void RotateToMoveDirectionServerRpc(Vector3 dir)
     {
         dir.y = 0.0f;
@@ -385,17 +378,17 @@ public class MovePlayerKey : NetworkBehaviour
             Time.deltaTime * 10.0f  // ← 回転速度（数字を上げれば速く振り向く）
         );
     }
-    [ServerRpc]
+
+    [ServerRpc(RequireOwnership = false)]
     void LinerVelocityServerRpc(Vector3 dir)
     {
-        _rb.linearVelocity = dir;
+       //_rb.AddForce(dir, ForceMode.Acceleration);
+       _rb.linearVelocity = dir;
     }
-
 
     //
     //MOVE関係
     //
-
     void Jump()
     {
         if (_FootCollider.GetCanJump())
@@ -409,40 +402,10 @@ public class MovePlayerKey : NetworkBehaviour
     void Move()
     {
         Vector3 _moveVector = Vector3.zero;
-        //Vector3 _lookVector = Vector3.zero;
-        bool hasInput = false;
+        _moveVector = new Vector3(_InputMove.x, 0, _InputMove.y);
+        //Debug.Log($"_moveVector {_moveVector}");
 
-        if (gamepad != null)
-        {
-            Vector2 stick = gamepad.leftStick.ReadValue();
-            Debug.Log("Left Stick: " + stick);
-
-            _moveVector.x += stick.x;
-            _moveVector.z += stick.y;
-        }
-
-
-        if (Input.GetKey(_up))
-        {
-            _moveVector.z += 1;
-            hasInput = true;
-        }
-        if (Input.GetKey(_left))
-        {
-            _moveVector.x += -1;
-            hasInput = true;
-        }
-        if (Input.GetKey(_down))
-        {
-            _moveVector.z += -1;
-            hasInput = true;
-        }
-        if (Input.GetKey(_right))
-        {
-            _moveVector.x += 1;
-            hasInput = true;
-        }
-
+        //エフェクトの位置更新
         if (_effDash2Instance)
         {
             Vector3 backPos = transform.position
@@ -453,75 +416,70 @@ public class MovePlayerKey : NetworkBehaviour
 
         _moveVector.Normalize();
         _moveVector *= _moveSpeed;
-        _moveVector.y = _rb.linearVelocity.y;
+        Vector3 input = _moveVector.normalized;
+        Vector3 moveDir = input; 
+        Vector3 vel = _rb.linearVelocity;
 
-
-        _moveDir = new Vector3(_moveVector.x, 0, _moveVector.z);
-
-        //エフェクト関連
-        // 1フレームで一度だけ、子のPSのEmissionを切り替える
-        foreach (var ps in GetComponentsInChildren<ParticleSystem>())
+        //坂でも原則しない
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.5f))
         {
-            var em = ps.emission;
-            em.enabled = hasInput;
+            moveDir = Vector3.ProjectOnPlane(input, hit.normal).normalized;
         }
 
-        // if (_moveVector != Vector3.zero)
+        // 加速・減速（Valorant に近い値）
+        float accel = 80.0f;      // 前方向の加速
+        float deaccel = 50f;    // 入力を離した時の減速
+
+        // y 以外の現在速度
+        Vector3 horizontalVel = new Vector3(vel.x, 0, vel.z);
+
+        // 速度更新
+        if (input.magnitude > 0.1f)
         {
-            _lookVector = _moveVector;
+            // 加速
+            horizontalVel = Vector3.MoveTowards(horizontalVel, moveDir * _moveSpeed, accel * Time.fixedDeltaTime);
         }
-
-
-        if (_moveDir.sqrMagnitude > 0.01f)
+        else
         {
-            _lastMoveDir = _moveDir;
+            // 減速
+            horizontalVel = Vector3.MoveTowards(horizontalVel, Vector3.zero, deaccel * Time.fixedDeltaTime);
+        }
+        ////transform.LookAt(transform.position + new Vector3(_moveVector.x, 0, _moveVector.z));
+        //if (_rb.linearVelocity.sqrMagnitude < _moveSpeed * _moveSpeed)
+        LinerVelocityServerRpc(new Vector3(horizontalVel.x, vel.y, horizontalVel.z));
 
-            //Quaternion targetRotation = Quaternion.LookRotation(_moveDir);
-            //transform.rotation = Quaternion.Slerp(
-            //    transform.rotation,
-            //    targetRotation,
-            //    Time.deltaTime * 10.0f
-            //);
+
+        _lookVector = new Vector3(_moveVector.x, 0.0f, _moveVector.z);
+
+        //向き変更
+        RotateToMoveDirectionServerRpc(_lookVector);
+
+        //アニメションブレンド更新
+        if (_moveVector != Vector3.zero)
+        {
             if (_animBlend < 1)
             {
                 _animBlend += 0.2f;
             }
         }
-        else if (_lastMoveDir.sqrMagnitude > 0.01f)
-        {
-            //Quaternion targetRotation = Quaternion.LookRotation(_lastMoveDir);
-            //transform.rotation = Quaternion.Slerp(
-            //    transform.rotation,
-            //    targetRotation,
-            //    Time.deltaTime * 10.0f
-            //);
-
-        }
-        else
-        {
-        }
-        //transform.LookAt(transform.position + new Vector3(_moveVector.x, 0, _moveVector.z));
-        LinerVelocityServerRpc(_moveVector);
-
-        RotateToMoveDirectionServerRpc(_lookVector);
-
     }
+
     [ServerRpc(RequireOwnership = false)]
     void ToggleColliderServerRpc(bool state)
     {
-        Debug.Log($"serverRPC punch {state}");
+        //Debug.Log($"serverRPC punch {state}");
         ToggleColliderClientRpc(state);
     }
 
     [ClientRpc]
     void ToggleColliderClientRpc(bool state)
     {
-        Debug.Log($"clientRPC punch {state}");
+        //Debug.Log($"clientRPC punch {state}");
         _punchObj.GetComponent<SphereCollider>().enabled = state;
     }
     void Punch()
     {
-        if ((Input.GetKeyDown(_punch) || (gamepad != null && gamepad.buttonSouth.wasPressedThisFrame)) && _canPunch)
+        if ((Input.GetKeyDown(_punchKey) || (gamepad != null && gamepad.buttonSouth.wasPressedThisFrame)) && _canPunch)
         {
 
             AnimPunchServerRpc();
@@ -547,45 +505,45 @@ public class MovePlayerKey : NetworkBehaviour
         }
     }
 
+    //[ServerRpc(RequireOwnership = false)]
+    //void ThrowServerRpc(Vector3 velocity)
+    //{
+    //    Rigidbody rb = _item.GetComponent<Rigidbody>();
+    //    rb.linearVelocity = velocity;
+    //    rb.isKinematic = false;
+    //    Collider col = _item.GetComponent<Collider>();
+    //    col.enabled = true;
+    //}
     void UseItem()
     {
-        if (Input.GetKeyDown(_useItem) || gamepad.buttonEast.isPressed)
+        if (_InputUseItem)
         {
-
-            _item.GetComponent<Collider>().enabled = true;
-            _item.GetComponent<Rigidbody>().isKinematic = false;
-
-            _item.transform.SetParent(_pool.transform);
-
-            _item.transform.position = transform.position + transform.up * 2.5f;
-
             if (!_target || !_item) return;
-            Rigidbody rb = _item.GetComponent<Rigidbody>();
-
             // 初速度を計算して付与
             Vector3 velocity = CalculateVelocity(_target.position, _item.transform.position, _itemFlightTime);
-            rb.linearVelocity = velocity;
+
+            Debug.Log($"velocity{velocity}");
+            _item.GetComponent<Item>().ThrowServerRpc(velocity);
 
             _haveItem = ItemType.None;
             AnimItemServerRpc(false);
             _item = null;
         }
+    }
 
-        /// target に time 秒で到達するための初速度を計算
-        Vector3 CalculateVelocity(Vector3 target, Vector3 origin, float time)
-        {
-            Vector3 distance = target - origin;
-            Vector3 distanceXZ = new Vector3(distance.x, 0, distance.z);
+    /// target に time 秒で到達するための初速度を計算
+    Vector3 CalculateVelocity(Vector3 target, Vector3 origin, float time)
+    {
+        Vector3 distance = target - origin;
+        Vector3 distanceXZ = new Vector3(distance.x, 0, distance.z);
 
-            float sy = distance.y;
-            float sxz = distanceXZ.magnitude;
+        float sy = distance.y;
+        float sxz = distanceXZ.magnitude;
 
-            Vector3 result = distanceXZ / time; // XZ方向の速度
-            result.y = sy / time - 0.5f * Physics.gravity.y * time;
+        Vector3 result = distanceXZ / time; // XZ方向の速度
+        result.y = sy / time - 0.5f * Physics.gravity.y * time;
 
-            return result;
-        }
-
+        return result;
     }
 
     //カメラシェイク用
@@ -598,4 +556,110 @@ public class MovePlayerKey : NetworkBehaviour
         shaker.StartShake();
     }
 
+    bool InputKeyboard()
+    {
+        bool hasInput = false;
+        _InputMove = Vector2.zero;
+        _InputUseItem = false;
+        _InputPunch = false;
+        _InputMove = Vector2.zero;
+        if (Input.GetKey(_up))
+        {
+            _InputMove.y += 1;
+            hasInput = true;
+        }
+        if (Input.GetKey(_left))
+        {
+            _InputMove.x += -1;
+            hasInput = true;
+        }
+        if (Input.GetKey(_down))
+        {
+            _InputMove.y += -1;
+            hasInput = true;
+        }
+        if (Input.GetKey(_right))
+        {
+            _InputMove.x += 1;
+            hasInput = true;
+        }
+        if (hasInput)
+        {
+            _InputMove.Normalize();
+        }
+
+        if (Input.GetKeyDown(_useItemKey))
+        {
+            _InputUseItem = true;
+            hasInput = true;
+        }
+        if (Input.GetKeyDown(_punchKey))
+        {
+            _InputPunch = true;
+            hasInput = true;
+        }
+
+        return hasInput;
+    }
+
+    //パッドの入力受付、入力がなければfalseを返す
+    bool InputGamePad()
+    {
+        bool hasInput = false;
+        _InputMove = Vector2.zero;
+        _InputUseItem = false;
+        _InputPunch = false;
+
+        var pads = Gamepad.all;
+        //自分の番号のパッドを取得
+        for (int i = 0; i < pads.Count; i++)
+        {
+            Gamepad pad = pads[i];
+            //if (pad.buttonSouth.wasPressedThisFrame)
+            //{
+            //    Debug.Log($"Player {i + 1} : A button pressed!");
+            //}
+        }
+        if (pads.Count >= (int)_playerNumber)
+        {
+            if (pads[(int)_playerNumber - 1] != null)
+            {
+                gamepad = pads[(int)_playerNumber - 1];
+            }
+        }
+        if (gamepad == null)
+        { 
+            return hasInput;
+        }
+
+        _InputMove = gamepad.leftStick.ReadValue();
+        if(_InputMove != Vector2.zero)
+        {
+              hasInput = true;
+        }
+        //Debug.Log("Left Stick: " + stick);
+        if (gamepad.buttonSouth.wasPressedThisFrame ||
+           gamepad.buttonWest.wasPressedThisFrame ||
+           gamepad.leftShoulder.wasPressedThisFrame ||
+           gamepad.leftTrigger.wasPressedThisFrame)//A,X,L1,L2
+        {
+            _InputUseItem = gamepad.buttonEast.wasPressedThisFrame;
+            hasInput = true;
+        }
+        if (gamepad.buttonEast.wasPressedThisFrame ||
+           gamepad.buttonNorth.wasPressedThisFrame ||
+           gamepad.rightShoulder.wasPressedThisFrame ||
+           gamepad.rightTrigger.wasPressedThisFrame)//B,Y,R1,R2
+        {
+            _InputPunch = gamepad.buttonSouth.wasPressedThisFrame;
+            hasInput = true;
+        }
+
+
+
+
+        return hasInput;
+    }
+
 }
+

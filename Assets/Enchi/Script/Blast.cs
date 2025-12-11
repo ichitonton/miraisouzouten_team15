@@ -1,6 +1,8 @@
+using System;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Blast : MonoBehaviour
+public class Blast : NetworkBehaviour
 {
     [SerializeField] float _lifeTime = 0.1f;
     [SerializeField] float _impactForce = 10.0f;
@@ -39,13 +41,14 @@ public class Blast : MonoBehaviour
 
     void ActiveFalse()
     {
-        this.gameObject.SetActive(false);
+        GetComponent<PooledNetworkObject>().DestroySelf();
     }
 
     //‚Ô‚Â‚©‚Á‚½‚Æ‚«‚Ìˆ—
     void OnCollisionEnter(Collision other)
     {
-                Debug.Log("Blast Hit : " + other.transform.name);
+        if (!IsServer) return; // © ‚±‚ê‚ª•K{
+        Debug.Log("Blast Hit : " + other.transform.name);
         if (other.transform.GetComponent<Rigidbody>() != null)
         {
             if (other.transform.GetComponent<MovePlayerKey>() != null)

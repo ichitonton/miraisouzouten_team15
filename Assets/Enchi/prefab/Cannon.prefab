@@ -11,8 +11,10 @@ GameObject:
   - component: {fileID: 1728581546449387350}
   - component: {fileID: 7072076204173438955}
   - component: {fileID: 7529396073810810880}
+  - component: {fileID: -3986561082421325321}
   - component: {fileID: 1447279098542405471}
   - component: {fileID: 6012352138678728008}
+  - component: {fileID: 2001777900650240280}
   m_Layer: 0
   m_Name: Cannon
   m_TagString: Untagged
@@ -93,6 +95,31 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-3986561082421325321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7156797738833649092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 2445308879
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &1447279098542405471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,6 +132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a34de39b4bb3b44439094395c9b0a2be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  ShowTopMostFoldoutHeaderGroup: 1
   _bullet: {fileID: 1175553167635930660, guid: 1dd7b23365f94c84ab07e576c73d9383, type: 3}
   _bulletTransform: {fileID: 7762563885764872470}
   _shotDelay: 7
@@ -154,6 +182,27 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!65 &2001777900650240280
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7156797738833649092}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.19, y: 2, z: 3}
+  m_Center: {x: -0.37, y: -0.3, z: 0.7}
 --- !u!1 &8838097114850360759
 GameObject:
   m_ObjectHideFlags: 0
