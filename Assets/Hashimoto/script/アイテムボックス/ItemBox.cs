@@ -1,12 +1,13 @@
-using UnityEngine;
 using System.Collections;
+using Unity.Netcode;
+using UnityEngine;
 
-public class ItemBox : MonoBehaviour
+public class ItemBox : NetworkBehaviour
 {
 	[Header("箱の見た目（子オブジェクト）")]
 	[SerializeField] GameObject _boxObject;
 
-	[Header("割れるエフェクト（Prefab）")]
+	[Header("割れるエフェクト（PooledNetworkObject）")]
 	[SerializeField] GameObject eff_Item_Debris;
 
 	[Header("復活までの時間")]
@@ -40,6 +41,7 @@ public class ItemBox : MonoBehaviour
 
 	private void OnTriggerEnter(Collider other)
 	{
+		if (!IsServer) return;
 		if (_used) return;
 		if (other.GetComponent<MovePlayerKey>()!=null)
 		other.GetComponent<MovePlayerKey>().LotteryHaveItem(itemChoose);

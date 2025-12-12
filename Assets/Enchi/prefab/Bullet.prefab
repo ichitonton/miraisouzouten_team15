@@ -258,6 +258,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: eff_cannon_smoke
       objectReference: {fileID: 0}
+    - target: {fileID: 160423822499424338, guid: 8a653ede50c58714991365c458ab278d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4049912949740721458, guid: 8a653ede50c58714991365c458ab278d, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.0001
+      objectReference: {fileID: 0}
     - target: {fileID: 7152229035777758563, guid: 8a653ede50c58714991365c458ab278d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

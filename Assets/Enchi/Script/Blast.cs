@@ -11,6 +11,7 @@ public class Blast : NetworkBehaviour
 
 	Rigidbody _rigidbody;
     float _boneTime = 0.0f;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -55,10 +56,9 @@ public class Blast : NetworkBehaviour
     }
 
     //‚Ô‚Â‚©‚Á‚½‚Æ‚«‚Ìˆ—
-    void OnCollisionEnter(Collision other)
+    void OnTriggerEnter(Collider other)
     {
         if (!IsServer) return; // © ‚±‚ê‚ª•K{
-        Debug.Log("Blast Hit : " + other.transform.name);
         if (other.transform.GetComponent<Rigidbody>() != null)
         {
             if (other.transform.GetComponent<MovePlayerKey>() != null)
