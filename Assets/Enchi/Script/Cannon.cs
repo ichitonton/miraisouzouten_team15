@@ -33,8 +33,4 @@ public class Cannon : NetworkBehaviour
 
         Invoke("GenerateBulletServerRpc", _shotDelay);
     }
-
-
-
-
 }

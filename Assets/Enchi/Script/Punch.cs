@@ -64,7 +64,10 @@ public class Punch : MonoBehaviour
 		// ★プレイヤー判定
 		if (otherPlayer != null)
 		{
-			Debug.LogWarning($"[Punch EFFECT] Player HIT → {otherPlayer.name}");
+			//スター状態なら無効
+			if (otherPlayer.GetUseStar()) return;
+
+            Debug.LogWarning($"[Punch EFFECT] Player HIT → {otherPlayer.name}");
 			otherPlayer.ToGetPunch(_punchDamage, _stunTime);
 
 			NetworkEffectSpawner.Instance.PlayEffect(_hitDmgEffectId, transform.position, Quaternion.identity);

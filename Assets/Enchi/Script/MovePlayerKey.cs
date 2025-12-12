@@ -4,6 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class MovePlayerKey : NetworkBehaviour
 {
@@ -27,7 +28,16 @@ public class MovePlayerKey : NetworkBehaviour
     [SerializeField] float _stunTime = 1.0f;//パンチした時のスタン時間
     [SerializeField] Transform _haveTrans;//持ってるアイテム
     Transform _target;
-    [SerializeField]private GameObject _itemBomb;
+    [SerializeField] private GameObject _itemBomb;
+    [SerializeField] private GameObject _itemShouse;
+    [SerializeField] private float _itemShoeseDelay = 7.0f;
+    [SerializeField] private float _itemShoeseChangeSpeed = 1.5f;
+    private bool _itemShoeseUse = false;
+
+    [SerializeField] private GameObject _itemStar;
+    [SerializeField] private float _itemStarDelay = 7.0f;
+    [SerializeField] private float _itemStarChangeSpeed = 1.3f;
+    private bool _itemStarUse = false;
     [SerializeField] float _itemFlightTime = 2.0f; // 投げるオブジェクトがターゲットに到達するまでの時間
 
     //エフェクト関連
@@ -77,6 +87,8 @@ public class MovePlayerKey : NetworkBehaviour
     {
         None,
         Bomb,
+        Shoese,
+        Star,
         Max
     }
 
@@ -94,7 +106,9 @@ public class MovePlayerKey : NetworkBehaviour
     {
         itemDictionary = new()
     {
-        { (ulong)ItemType.Bomb, _itemBomb.GetComponent<NetworkObject>() }
+        { (ulong)ItemType.Bomb, _itemBomb.GetComponent<NetworkObject>() },
+        { (ulong)ItemType.Shoese, _itemShouse.GetComponent<NetworkObject>() },
+        { (ulong)ItemType.Star, _itemStar.GetComponent<NetworkObject>() }
     };
     }
 
@@ -145,7 +159,10 @@ public class MovePlayerKey : NetworkBehaviour
             }
             Jump();
             Punch();
-            Move();
+            if (!_canNotInputKey)
+            {
+                Move();
+            }
             //移動モーション
             AnimBlendServerRpc(_animBlend);
         }
@@ -233,6 +250,10 @@ public class MovePlayerKey : NetworkBehaviour
     //
     //ゲッター
     //
+    public bool GetUseStar()
+    {
+        return _itemStarUse;
+    }
     public PlayerNumber GetPlayerNumber()
     {
         return _playerNumber;
@@ -273,19 +294,24 @@ public class MovePlayerKey : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void SpawnItemServerRpc(int itemId, Vector3 pos, Quaternion rot)
     {
-        NetworkObject obj = _ObjectPool.Get(_itemBomb.GetComponent<NetworkObject>(), pos, rot);
-        obj.Spawn(true); 
-        obj.GetComponent<PooledNetworkObject>().SetPrefab(_itemBomb.GetComponent<NetworkObject>());
+        GameObject _prefab = null;
+        _prefab = itemDictionary[(ulong)_haveItem].gameObject;
 
-        _itemBomb.GetComponent<Collider>().isTrigger = true;
-        _itemBomb.GetComponent<Rigidbody>().isKinematic = true;
+        NetworkObject obj = _ObjectPool.Get(_prefab.GetComponent<NetworkObject>(), pos, rot);
+        obj.Spawn(true); 
+        obj.GetComponent<PooledNetworkObject>().SetPrefab(_prefab.GetComponent<NetworkObject>());
+
+        if(_prefab.GetComponent<Collider>() != null)
+        _prefab.GetComponent<Collider>().isTrigger = true;
+        if (_prefab.GetComponent<Rigidbody>() != null)
+            _prefab.GetComponent<Rigidbody>().isKinematic = true;
 
         _item = obj.gameObject;
     }
     void SetHaveItem()
     {
-        //_haveItem = (ItemType)Random.Range((int)ItemType.Bomb, (int)ItemType.Max);
-        _haveItem = ItemType.Bomb;
+        _haveItem = (ItemType)Random.Range((int)ItemType.Bomb, (int)ItemType.Max);
+        //_haveItem = ItemType.Bomb;
         AnimItemServerRpc(true);
 
         //プレイヤーにアイテムを持たせる
@@ -311,6 +337,8 @@ public class MovePlayerKey : NetworkBehaviour
     //移動速度に倍率をかける（かける倍率,  何秒後にリセットするか）
     public void MoveSpeedChange(float dampValue, float delay)
     {
+        //スター効果中は変更しない　靴が優先
+        if (_itemShoeseUse) return;
         _moveSpeed = _moveSpeedInitial * dampValue;
         Invoke("ResetMoveSpeed", delay);
     }
@@ -318,6 +346,8 @@ public class MovePlayerKey : NetworkBehaviour
     //移動速度を初期値に戻す
     public void ResetMoveSpeed()
     {
+        //まだ使用中ならリセットしない
+        if (_itemShoeseUse || _itemStarUse) return;
         _moveSpeed = _moveSpeedInitial;
     }
     //パンチオブジェクト非アクティブ化
@@ -341,6 +371,8 @@ public class MovePlayerKey : NetworkBehaviour
     //スタン（効果時間）
     public void Stun(float delay)
     {
+        //スター状態だったら無効
+        if (_itemStarUse) return;
         //Debug.Log("受けうつけないお");
         _canNotInputKey = true;
         AnimDyingServerRpc(true);
@@ -353,6 +385,16 @@ public class MovePlayerKey : NetworkBehaviour
         _canNotInputKey = false;
 
         AnimDyingServerRpc(false);
+    }
+
+    void UnlockStar()
+    {
+        _itemStarUse = false;
+    }
+
+    void UnlockShoese()
+    {
+        _itemShoeseUse = false;
     }
     //ダメージ（受けるダメージ）
     void AddDamage(int damage)
@@ -519,13 +561,36 @@ public class MovePlayerKey : NetworkBehaviour
         if (_InputUseItem)
         {
             if (!_target || !_item) return;
-            // 初速度を計算して付与
-            Vector3 velocity = CalculateVelocity(_target.position, _item.transform.position, _itemFlightTime);
+            if (_item.GetComponent<Rigidbody>() != null)
+            {//投げる系のアイテムはこっち
+                // 初速度を計算して付与
+                Vector3 velocity = CalculateVelocity(_target.position, _item.transform.position, _itemFlightTime);
 
-            Debug.Log($"velocity{velocity}");
-            _item.GetComponent<Item>().ThrowServerRpc(velocity);
+                Debug.Log($"velocity{velocity}");
+                _item.GetComponent<Item>().ThrowServerRpc(velocity);
+            }
+            else
+            {//使い切りのアイテムはこっち
+                _item.GetComponent<PooledNetworkObject>().DestroySelf();
+                //靴の効果
+                if (_haveItem == ItemType.Shoese)
+                {
+                    MoveSpeedChange(_itemShoeseChangeSpeed, _itemShoeseDelay);
+                    _itemShoeseUse = true;
 
-            _haveItem = ItemType.None;
+                    Invoke("UnlockShoese", _itemShoeseDelay);
+                }
+                //星の硬貨の効果
+                else if (_haveItem == ItemType.Star)
+                {
+                    MoveSpeedChange(_itemStarChangeSpeed, _itemStarDelay);
+                    _itemStarUse = true;
+                    //一定時間後にスター効果解除
+                    Invoke("UnlockStar", _itemStarDelay);
+                }
+            }
+
+                _haveItem = ItemType.None;
             AnimItemServerRpc(false);
             _item = null;
         }
