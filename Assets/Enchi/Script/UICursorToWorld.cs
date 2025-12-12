@@ -29,7 +29,7 @@ public class UICursorToWorld : MonoBehaviour
     public void SpawnTarget()
     {        
         canvas = Object.FindFirstObjectByType<Canvas>();
-        uiCamera =  Object.FindFirstObjectByType<Camera>();
+        uiCamera = Camera.main;
         worldTarget =Instantiate(itemTarget, transform.position, Quaternion.identity).transform;
 
         for (int i = 0; i < canvas.transform.childCount; i++)
@@ -45,7 +45,7 @@ public class UICursorToWorld : MonoBehaviour
             }
         }
         screenPos.x = Screen.width / 2;
-        screenPos.x = Screen.height / 2;
+        screenPos.y = Screen.height / 2;
 
         //Debug.Log(canvas);
         //Debug.Log(uiCamera);
@@ -56,6 +56,7 @@ public class UICursorToWorld : MonoBehaviour
     {   // ====== 必須：null チェック ======
         if (canvas == null || uiCamera == null || uiIcon == null || worldTarget == null)
         {
+
             return; // 必要な準備ができてないので処理しない
         }
         var pads = Gamepad.all;
@@ -102,7 +103,7 @@ public class UICursorToWorld : MonoBehaviour
         // 3. レイキャスト（地面レイヤーのみ）
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundLayer))
         {
-            //Debug.Log("hit: " + hit.point);
+            Debug.Log("hit: " + hit.point);
 
             worldTarget.position = hit.point + Vector3.up * 0.01f;
         }
