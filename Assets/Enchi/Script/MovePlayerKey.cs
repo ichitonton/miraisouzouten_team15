@@ -422,44 +422,15 @@ public class MovePlayerKey : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    void LinerVelocityServerRpc(Vector3 dir)
-    {
-       //_rb.AddForce(dir, ForceMode.Acceleration);
-       _rb.linearVelocity = dir;
-    }
-
-    //
-    //MOVE関係
-    //
-    void Jump()
-    {
-        if (_FootCollider.GetCanJump())
-        {
-            if (Input.GetKeyDown(_jump))
-            {
-                _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
-            }
-        }
-    }
-    void Move()
+    void LinerVelocityServerRpc(Vector3 _InputMove)
     {
         Vector3 _moveVector = Vector3.zero;
         _moveVector = new Vector3(_InputMove.x, 0, _InputMove.y);
-        //Debug.Log($"_moveVector {_moveVector}");
-
-        //エフェクトの位置更新
-        if (_effDash2Instance)
-        {
-            Vector3 backPos = transform.position
-                              - transform.forward * 0.5f;
-
-            _effDash2Instance.transform.position = backPos;
-        }
 
         _moveVector.Normalize();
         _moveVector *= _moveSpeed;
         Vector3 input = _moveVector.normalized;
-        Vector3 moveDir = input; 
+        Vector3 moveDir = input;
         Vector3 vel = _rb.linearVelocity;
 
         //坂でも原則しない
@@ -486,11 +457,29 @@ public class MovePlayerKey : NetworkBehaviour
             // 減速
             horizontalVel = Vector3.MoveTowards(horizontalVel, Vector3.zero, deaccel * Time.fixedDeltaTime);
         }
-        ////transform.LookAt(transform.position + new Vector3(_moveVector.x, 0, _moveVector.z));
-        //if (_rb.linearVelocity.sqrMagnitude < _moveSpeed * _moveSpeed)
-        LinerVelocityServerRpc(new Vector3(horizontalVel.x, vel.y, horizontalVel.z));
+        //_rb.AddForce(dir, ForceMode.Acceleration);
+        _rb.linearVelocity = new Vector3(horizontalVel.x, vel.y, horizontalVel.z);
+    }
 
+    //
+    //MOVE関係
+    //
+    void Jump()
+    {
+        if (_FootCollider.GetCanJump())
+        {
+            if (Input.GetKeyDown(_jump))
+            {
+                _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+            }
+        }
+    }
 
+    void Move()
+    {
+        LinerVelocityServerRpc(_InputMove);
+        Vector3 _moveVector = Vector3.zero;
+        _moveVector = new Vector3(_InputMove.x, 0, _InputMove.y);
         _lookVector = new Vector3(_moveVector.x, 0.0f, _moveVector.z);
 
         //向き変更

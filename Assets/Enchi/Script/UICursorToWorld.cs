@@ -1,6 +1,7 @@
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using static MovePlayerKey;
 using static MovePlayerKeyLocal;
 
@@ -28,7 +29,7 @@ public class UICursorToWorld : MonoBehaviour
 
     public void SpawnTarget()
     {        
-        canvas = Object.FindFirstObjectByType<Canvas>();
+        canvas = Object.FindFirstObjectByType<Canvas>();//ƒLƒƒƒ“ƒoƒX‚Í1‚Â‚É‚µ‚È‚¢‚Æ‚¿‚á‚ñ‚ÆŽæ“¾‚Å‚«‚È‚¢
         uiCamera = Camera.main;
         worldTarget =Instantiate(itemTarget, transform.position, Quaternion.identity).transform;
 
@@ -50,6 +51,24 @@ public class UICursorToWorld : MonoBehaviour
         //Debug.Log(canvas);
         //Debug.Log(uiCamera);
         //Debug.Log(worldTarget);
+    }
+    private void OnGUI()
+    {
+
+        if (NetworkManager.Singleton == null) return;
+
+        GUILayout.BeginArea(new Rect(400, 10, 300, 200), GUI.skin.box);
+
+        GUILayout.Label($"canvas: {canvas}");
+        GUILayout.Label($"uiCamera: {uiCamera}");
+        GUILayout.Label($"uiIcon: {uiIcon}");
+        GUILayout.Label($"worldTarget: {worldTarget}");
+
+        var scene = SceneManager.GetActiveScene();
+
+        GUILayout.Label($"ScenaName: {scene.name}");
+
+        GUILayout.EndArea();
     }
 
     void Update()

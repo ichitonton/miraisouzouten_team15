@@ -9,7 +9,10 @@ public class RopeSpawner : NetworkBehaviour
     [SerializeField] private GameObject _ropeObject = default;
     private PlayerNetworkConnect _playerNetworkConnect = null;
     [SerializeField] private float _delayTime = 0.1f;
-    [SerializeField] private Transform _pivot;
+    [SerializeField] private Transform _pivotId0;
+    [SerializeField] private Transform _pivotId1;
+    [SerializeField] private Transform _pivotId2;
+    private Transform _pivot;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -100,6 +103,14 @@ public class RopeSpawner : NetworkBehaviour
 
 
         Debug.Log($"[Host] Client {clientId} からRope生成リクエストを受信");
+
+        clientId %= 3;
+        if (clientId == 0)
+            _pivot = _pivotId0;
+        else if (clientId == 1)
+            _pivot = _pivotId1;
+        else if (clientId == 2)
+            _pivot = _pivotId2;
 
         // Ropeを生成
         GameObject rope = Instantiate(_ropeObject, _pivot.position, Quaternion.identity);
