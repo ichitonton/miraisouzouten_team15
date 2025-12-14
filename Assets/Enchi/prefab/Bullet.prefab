@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 4714788614635270857}
   - component: {fileID: -7245834394638101022}
   - component: {fileID: -7878129366624751514}
+  - component: {fileID: 8480206913540367793}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -134,7 +135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   ShowTopMostFoldoutHeaderGroup: 1
-  _blast: {fileID: 8428949574918892556, guid: ce20844a984c4a5448ec7076ef629a5a, type: 3}
+  _blast: {fileID: 8000710731528051159, guid: c0ae90c3517c73c4591b28c1f9b53ff2, type: 3}
   _speed: 10
   _lifeTime: 5
 --- !u!54 &8270740165184306623
@@ -246,6 +247,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PooledNetworkObject
   ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &8480206913540367793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1175553167635930660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc9443ce45d3b0047a5f903efd2c7a0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1001 &3299333727002077250
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -260,6 +274,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 160423822499424338, guid: 8a653ede50c58714991365c458ab278d, type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 252185105452222214, guid: 8a653ede50c58714991365c458ab278d, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3419616591020193212, guid: 8a653ede50c58714991365c458ab278d, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4049912949740721458, guid: 8a653ede50c58714991365c458ab278d, type: 3}
+      propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4049912949740721458, guid: 8a653ede50c58714991365c458ab278d, type: 3}

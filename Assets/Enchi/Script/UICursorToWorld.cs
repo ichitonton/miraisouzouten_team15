@@ -52,25 +52,6 @@ public class UICursorToWorld : MonoBehaviour
         //Debug.Log(uiCamera);
         //Debug.Log(worldTarget);
     }
-    private void OnGUI()
-    {
-
-        if (NetworkManager.Singleton == null) return;
-
-        GUILayout.BeginArea(new Rect(400, 10, 300, 200), GUI.skin.box);
-
-        GUILayout.Label($"canvas: {canvas}");
-        GUILayout.Label($"uiCamera: {uiCamera}");
-        GUILayout.Label($"uiIcon: {uiIcon}");
-        GUILayout.Label($"worldTarget: {worldTarget}");
-
-        var scene = SceneManager.GetActiveScene();
-
-        GUILayout.Label($"ScenaName: {scene.name}");
-
-        GUILayout.EndArea();
-    }
-
     void Update()
     {   // ====== 必須：null チェック ======
         if (canvas == null || uiCamera == null || uiIcon == null || worldTarget == null)
