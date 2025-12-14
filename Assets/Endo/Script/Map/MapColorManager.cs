@@ -6,6 +6,7 @@ using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.CompilerServices;
 using System;
 using UnityEngine.InputSystem;
+using Unity.Netcode;
 
 [System.Serializable]
 public class MapColor
@@ -484,51 +485,54 @@ public class MapColorManager : MonoBehaviour
     {
         _playerList.Clear();
 
-        if (GameManager.Instance._IsLanModeActive == true)
+        //ネットワークマネージャーなかったら処理しない
+        if (NetworkManager.Singleton != null)
         {
-
-            int i = 0;
-
-            foreach (var playerRef in GameManager.Instance._networkObjectList)
+            if (GameManager.Instance._IsLanModeActive == true)
             {
-                //これで「実際に存在するネットワークオブジェクトを取り出す」処理。
-                //成功した場合 playerObj に GameObject が入る。
 
-                if (playerRef.TryGet(out var playerObj))
+                int i = 0;
+
+                foreach (var playerRef in GameManager.Instance._networkObjectList)
                 {
-                    //プレイヤーのタグを持っているかつ所有権があるなら
-                    if (playerObj.gameObject.CompareTag("Player") && playerObj.IsOwner)
+                    //これで「実際に存在するネットワークオブジェクトを取り出す」処理。
+                    //成功した場合 playerObj に GameObject が入る。
+
+                    if (playerRef.TryGet(out var playerObj))
                     {
-                        //Debug.Log("所有権を持ったプレイヤーです");
-                        _playerList.Add(playerObj.gameObject.transform);
-                        i++;
+                        //プレイヤーのタグを持っているかつ所有権があるなら
+                        if (playerObj.gameObject.CompareTag("Player") && playerObj.IsOwner)
+                        {
+                            //Debug.Log("所有権を持ったプレイヤーです");
+                            _playerList.Add(playerObj.gameObject.transform);
+                            i++;
+                        }
                     }
-                }
 
-            }
-            Debug.Log("オンラインプレイヤーの数" + i);
-        }
-        else
-        {
-            // 1) 手動登録があれば優先
-            if (_playerManual != null && _playerManual.Length > 0)
-            {
-                foreach (var t in _playerManual)
-                {
-                    if (t != null) _playerList.Add(t);
                 }
+                Debug.Log("オンラインプレイヤーの数" + i);
             }
             else
             {
-                // 2) なければタグで自動検出
-                var found = GameObject.FindGameObjectsWithTag("Player");
-                foreach (var go in found)
+                // 1) 手動登録があれば優先
+                if (_playerManual != null && _playerManual.Length > 0)
                 {
-                    if (go != null)
-                        _playerList.Add(go.transform);
+                    foreach (var t in _playerManual)
+                    {
+                        if (t != null) _playerList.Add(t);
+                    }
+                }
+                else
+                {
+                    // 2) なければタグで自動検出
+                    var found = GameObject.FindGameObjectsWithTag("Player");
+                    foreach (var go in found)
+                    {
+                        if (go != null)
+                            _playerList.Add(go.transform);
+                    }
                 }
             }
-
         }
     }
 

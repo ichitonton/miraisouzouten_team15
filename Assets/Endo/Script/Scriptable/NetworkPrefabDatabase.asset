@@ -15,7 +15,34 @@ MonoBehaviour:
   _entries:
   - _id: Daifuku
     _prefab: {fileID: 3786234121961396847, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
+    _rarityEnum: 1
   - _id: KintaroAme
     _prefab: {fileID: 4229715837851546189, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
-  - _id: 
-    _prefab: {fileID: 0}
+    _rarityEnum: 2
+  - _id: Dorayaki
+    _prefab: {fileID: 6845853872365190221, guid: b9abccb11b995ec48a57cd8230f15b8b, type: 3}
+    _rarityEnum: 1
+  - _id: Daihuku
+    _prefab: {fileID: 2801467627326373979, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
+    _rarityEnum: 2
+  - _id: Imoyoukan
+    _prefab: {fileID: 4179413458884221484, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
+    _rarityEnum: 1
+  - _id: KuriManzyu
+    _prefab: {fileID: 8160404072800314456, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
+    _rarityEnum: 2
+  - _id: Kohakutou
+    _prefab: {fileID: 6831876321883954817, guid: b59f9fc312882b043b8de1287488fca1, type: 3}
+    _rarityEnum: 1
+  - _id: Ohagi
+    _prefab: {fileID: 660025392728973613, guid: 85860d6972d5d614b81d590de7a0383e, type: 3}
+    _rarityEnum: 2
+  - _id: RingoAme
+    _prefab: {fileID: 6683862319799710109, guid: 86fefe511bda5ac478868983b0ad4473, type: 3}
+    _rarityEnum: 1
+  - _id: Sakuramochi
+    _prefab: {fileID: 4951464363076143965, guid: 66dc2d0ba71baae4998ef22fc2315c2a, type: 3}
+    _rarityEnum: 2
+  - _id: SansyokuDango
+    _prefab: {fileID: 5483395256311698979, guid: f3e266d1925bd9e46ad610895be20fa1, type: 3}
+    _rarityEnum: 1

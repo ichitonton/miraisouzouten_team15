@@ -22,6 +22,13 @@ public class PooledNetworkObject : NetworkBehaviour
 
     public void DestroySelf()
     {
+        //リクエスト
+        DestroySelfServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void DestroySelfServerRpc()
+    {
         NetworkObjectPool.Instance.Return(prefab, NetworkObject);
     }
 }

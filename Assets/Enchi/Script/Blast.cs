@@ -50,6 +50,7 @@ public class Blast : NetworkBehaviour
 
     }
 
+    
     void ActiveFalse()
     {
         GetComponent<PooledNetworkObject>().DestroySelf();
