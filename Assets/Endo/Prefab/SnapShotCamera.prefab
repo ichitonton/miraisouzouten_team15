@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5429002678483579611}
   - component: {fileID: 8913599040737821214}
   - component: {fileID: 2006582666876573511}
-  - component: {fileID: 4560448868180995536}
+  - component: {fileID: 1900254146532976098}
   m_Layer: 0
   m_Name: SnapShotCamera
   m_TagString: MainCamera
@@ -129,7 +129,7 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &4560448868180995536
+--- !u!114 &1900254146532976098
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -138,27 +138,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5923863355032412062}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a84fd211630f904d967f7b17104ffd7, type: 3}
+  m_Script: {fileID: 11500000, guid: 9d218c8de1bc7754885c5d37d8918573, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraController
-  _GameManager: {fileID: 0}
-  _playerNetworkConnect: {fileID: 0}
-  _offset: {x: 0, y: 15, z: -15}
-  _smoothSpeed: 5
-  _minZoom: 30
-  _maxZoom: 50
-  _zoomLimiter: 15.1
-  _zoomSpeed: 10
-  _zoomView: 10
-  _rotateSpeed: 10
-  _minPitch: -30
-  _maxPitch: 30
-  _lookAtBaseHeight: 0
-  _lookAtHeightSideView: 4
-  _lookAtHeightTopView: -1
-  _minHeightScale: 1
-  _maxHeightScale: 1
-  _zoomInKey: 98
-  _zoomOutKey: 118
-  _manualZoomSpeed: 10
-  _maxManualOffset: 50
+  m_EditorClassIdentifier: Assembly-CSharp::SnapShotCameraController
+  _cameraObject: {fileID: 0}

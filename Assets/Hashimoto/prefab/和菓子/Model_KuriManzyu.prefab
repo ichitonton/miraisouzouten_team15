@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Sweets
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a852eac619c99794cac5f3519c345927, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
