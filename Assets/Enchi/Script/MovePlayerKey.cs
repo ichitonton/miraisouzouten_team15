@@ -41,13 +41,12 @@ public class MovePlayerKey : NetworkBehaviour
     [SerializeField] float _itemFlightTime = 2.0f; // 投げるオブジェクトがターゲットに到達するまでの時間
 
     //エフェクト関連
-    [SerializeField] GameObject _effDash_2; // 移動中エフェクト
-    [SerializeField] GameObject _eff_HitPunch; // パンチダメージエフェクト
     [SerializeField] Transform _headPoint; //頭の位置
     private int _punchStartEffectId = 3;   //頭のエフェクト
+	private int _hitDyingEffectId = 10; // スタンエフェクト
 
-    //そのPCの中でのプレイヤー番号
-    [SerializeField] PlayerNumber _playerNumber = PlayerNumber.None;
+	//そのPCの中でのプレイヤー番号
+	[SerializeField] PlayerNumber _playerNumber = PlayerNumber.None;
 
     GameObject _effDash2Instance;
     ParticleSystem _effDash2Ps;
@@ -366,18 +365,20 @@ public class MovePlayerKey : NetworkBehaviour
     {
         Stun(stunTime);
         AddDamage(damage);
-    }
+		
+	}
 
-    //スタン（効果時間）
-    public void Stun(float delay)
+	//スタン（効果時間）
+	public void Stun(float delay)
     {
         //スター状態だったら無効
         if (_itemStarUse) return;
         //Debug.Log("受けうつけないお");
         _canNotInputKey = true;
         AnimDyingServerRpc(true);
+		NetworkEffectSpawner.Instance.PlayEffect(_hitDyingEffectId, transform.position, Quaternion.identity);
 
-        Invoke(nameof(UnlockStun), delay);
+		Invoke(nameof(UnlockStun), delay);
     }
     //スタン解除
     void UnlockStun()

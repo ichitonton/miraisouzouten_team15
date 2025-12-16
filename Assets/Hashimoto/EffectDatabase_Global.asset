@@ -43,3 +43,6 @@ MonoBehaviour:
   - effectId: 9
     label: wagashi_TeleportArea
     prefab: {fileID: 4363443134215985865, guid: 11d7cf9ee77c17e48821ff603a998b23, type: 3}
+  - effectId: 10
+    label: player_Dying
+    prefab: {fileID: 7859407524413696225, guid: 023271473a99d564d8db894f141a8cd9, type: 3}

@@ -26,8 +26,16 @@ Shader "Universal Render Pipeline/Toon/ThreeTone_Outline_Fog_JP"
         [Toggle(_ALPHATEST_ON)] _AlphaClip ("アルファカット有効", Float) = 0
         _Cutoff ("カットオフ閾値", Range(0,1)) = 0.5
 
-        // ← これ追加（フェード用）
+        // フェード用
         _FadeMultiplier ("フェード係数(0=真っ黒,1=通常)", Range(0,1)) = 1
+
+        // --- Bloom / Fresnel 追加（強さはデフォルト0） ---
+        [HDR] _BloomColor      ("ブルーム用発光カラー", Color) = (1,1,1,1)
+        _BloomStrength         ("ブルーム強さ", Range(0,5)) = 0
+
+        _FresnelColor          ("フレネルカラー", Color) = (1,1,1,1)
+        _FresnelPower          ("フレネルの鋭さ", Range(0.1,8)) = 2
+        _FresnelStrength       ("フレネル強さ", Range(0,3)) = 0
     }
 
     SubShader
@@ -77,7 +85,14 @@ Shader "Universal Render Pipeline/Toon/ThreeTone_Outline_Fog_JP"
                 half4 _OutlineColor;
                 half  _OutlineWidth;
                 half  _Cutoff;
-                half  _FadeMultiplier;   // ← 追加
+                half  _FadeMultiplier;   // フェード
+
+                // Bloom / Fresnel
+                half4 _BloomColor;
+                half  _BloomStrength;
+                half4 _FresnelColor;
+                half  _FresnelPower;
+                half  _FresnelStrength;
             CBUFFER_END
 
             struct Attributes {
@@ -182,7 +197,26 @@ Shader "Universal Render Pipeline/Toon/ThreeTone_Outline_Fog_JP"
 
                 half3 col = wL * baseTone + wM * midTone + wS * shadowTone;
 
-                // ← フェード適用（0〜1）
+                // カメラ方向（フレネル用）
+                float3 viewDir = normalize(_WorldSpaceCameraPos - IN.posWS);
+
+                // --- フレネル（リムライト） ---
+                {
+                    half ndv  = saturate(dot(nWS, viewDir));
+                    half fres = pow(1.0h - ndv, _FresnelPower);
+                    fres *= _FresnelStrength;
+                    col += _FresnelColor.rgb * fres * _FresnelColor.a;
+                }
+
+                // --- Bloom用発光 ---
+                {
+                    // とりあえず「明るいところほど光る」簡単版
+                    half bloomMask = v; // 0=影,1=完全な明部
+                    half bloom     = bloomMask * _BloomStrength;
+                    col += _BloomColor.rgb * bloom * _BloomColor.a;
+                }
+
+                // フェード適用（0〜1）
                 col *= _FadeMultiplier;
 
                 col = MixFog(col, IN.fogCoord);
