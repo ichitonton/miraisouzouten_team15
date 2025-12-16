@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using System.Collections.Generic;
-using TMPro.EditorUtilities;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -58,12 +57,13 @@ public class Jibaku : NetworkBehaviour
         //Rigidbody rb = GetComponent<Rigidbody>();
         //rb.isKinematic = true; // クライアントでは物理演算しない
 
+            _anim = GetComponent<Animator>();
         if (IsServer)
         {
             _rigidbody = GetComponent<Rigidbody>();
             _rigidbody.isKinematic = false;
             _isTimerOn = false;
-            _anim = GetComponent<Animator>();
+            //_anim = GetComponent<Animator>();
             _animInfo = _anim.GetCurrentAnimatorStateInfo(0);
             _agent = GetComponent<NavMeshAgent>();
             _agent.speed = _moveSpeed;
@@ -74,8 +74,9 @@ public class Jibaku : NetworkBehaviour
             _state = State.Idol;
             _animBlend = (float)_state;
         }
-        else
+        else if(IsClient)
         {
+            _animInfo = _anim.GetCurrentAnimatorStateInfo(0);
             GetComponent<Rigidbody>().isKinematic = true;
             GetComponent<NavMeshAgent>().enabled = false;
         }
@@ -84,64 +85,69 @@ public class Jibaku : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!IsServer) return;
-        if (!_agent.isOnNavMesh)
+        if (IsServer)
         {
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(transform.position, out hit, 2.0f, NavMesh.AllAreas))
+            if (!_agent.isOnNavMesh)
             {
-                _agent.Warp(hit.position);
-            }
-            else
-            {
-                Debug.LogError("NavMesh が近くに無い！");
-            }
-        }
-        if (_agent == null) return;
-        if (!_agent.enabled) return;
-        if (!_spawner)return;
-        List<Transform> _karis = new List<Transform>();
-        Debug.Log($"センサー内のプレイヤー{_spawner.GetPlayers().Count}");
-        for (int i = 0; i < _spawner.GetPlayers().Count; i++)
-        {
-            for (int j = 0; j < _sensour.GetPlayers().Count; j++)
-            {
-                if (_spawner.GetPlayers()[i] == _sensour.GetPlayers()[j])
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(transform.position, out hit, 2.0f, NavMesh.AllAreas))
                 {
-                    _karis.Add(_spawner.GetPlayers()[i]);
+                    _agent.Warp(hit.position);
+                }
+                else
+                {
+                    Debug.LogError("NavMesh が近くに無い！");
                 }
             }
+            if (_agent == null) return;
+            if (!_agent.enabled) return;
+            if (!_spawner) return;
+            List<Transform> _karis = new List<Transform>();
+            Debug.Log($"センサー内のプレイヤー{_spawner.GetPlayers().Count}");
+            for (int i = 0; i < _spawner.GetPlayers().Count; i++)
+            {
+                for (int j = 0; j < _sensour.GetPlayers().Count; j++)
+                {
+                    if (_spawner.GetPlayers()[i] == _sensour.GetPlayers()[j])
+                    {
+                        _karis.Add(_spawner.GetPlayers()[i]);
+                    }
+                }
+            }
+            _players = _karis;
+
+            _animInfo = _anim.GetCurrentAnimatorStateInfo(0);
+
+            //Debug.Log("すてーと"+_state.ToString());
+            if (_state == State.Idol)
+            {
+                IdolServerRpc();
+            }
+            else if (_state == State.Hakken1)
+            {
+                _agent.SetDestination(PlayerPosition());
+                HakkenServerRpc();
+            }
+            else if (_state == State.Oikake)
+            {
+                _agent.SetDestination(PlayerPosition());
+                OikakeServerRpc();
+            }
+            _animInfoOld = _animInfo;
+            AnimBlendClientRpc(_animBlend);
+            AnimBlendServerRpc(_animBlend);
         }
-        _players = _karis;
-
-        _animInfo = _anim.GetCurrentAnimatorStateInfo(0);
-
-        //Debug.Log("すてーと"+_state.ToString());
-        if (_state == State.Idol)
-        {
-            IdolServerRpc();
-        }
-        else if (_state == State.Hakken1)
-        {
-            _agent.SetDestination(PlayerPosition());
-            HakkenServerRpc();
-        }
-        else if (_state == State.Oikake)
-        {
-            _agent.SetDestination(PlayerPosition());
-            OikakeServerRpc();
-        }
-
-        AnimBlendServerRpc(_animBlend);
-
-
-        _animInfoOld = _animInfo;
     }
 
     public void SetSpawner(NetworkObject obj)
     {
         _spawnerObj = obj;
         _spawner = obj.GetComponent<EnemySpawner>();
+    }
+    [ClientRpc]
+    void AnimBlendClientRpc(float blend)
+    {
+        _anim.SetFloat("Blend", blend);
     }
 
     //アニメーション
