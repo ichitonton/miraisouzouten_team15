@@ -81,6 +81,7 @@ public class CannonBullet : NetworkBehaviour
         if (other == null) return;
         if (!IsServer) return; // © ‚±‚ê‚ª•K
         if (other.GetComponent<Cannon>() != null) return;
+        if (other.GetComponent<MeshRenderer>() == null) return;
         BlastGenerateServerRpc();
         //ActiveFalseServerRpc();
     }
