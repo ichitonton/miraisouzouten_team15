@@ -103,7 +103,7 @@ public class UICursorToWorld : MonoBehaviour
         // 3. レイキャスト（地面レイヤーのみ）
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundLayer))
         {
-            Debug.Log("hit: " + hit.point);
+            //Debug.Log("hit: " + hit.point);
 
             worldTarget.position = hit.point + Vector3.up * 0.01f;
         }

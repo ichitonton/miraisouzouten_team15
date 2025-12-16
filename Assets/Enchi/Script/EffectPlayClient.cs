@@ -10,7 +10,7 @@ public class EffectPlayClient : NetworkBehaviour
         //子オブジェクトがParticleSystemを持っているか確認
         if(GetComponentInChildren<ParticleSystem>() != null)
         {
-            Debug.Log("ぷれいエフェクト");
+            //Debug.Log("ぷれいエフェクト");
             _effect = GetComponentInChildren<ParticleSystem>();
             PlayEffectClientRpc();
         }

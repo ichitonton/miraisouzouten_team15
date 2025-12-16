@@ -14,9 +14,9 @@ public class CannonBullet : NetworkBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Debug.Log("Blast enabled? " + this.enabled);
-        Debug.Log("GameObject active? " + gameObject.activeInHierarchy);
-        Debug.Log("CannonBullet Start");
+        //Debug.Log("Blast enabled? " + this.enabled);
+        //Debug.Log("GameObject active? " + gameObject.activeInHierarchy);
+        //Debug.Log("CannonBullet Start");
         _rigidbody = GetComponent<Rigidbody>();
         //Invoke("ActiveFalse", _lifeTime);
         _boneTime = 0.0f;

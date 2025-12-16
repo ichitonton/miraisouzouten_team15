@@ -1,16 +1,22 @@
 using NUnit.Framework;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using static UnityEngine.GraphicsBuffer;
 
-public class Jibaku : MonoBehaviour
+public class Jibaku : NetworkBehaviour
 {
     [SerializeField] Sensour _sensour;
     [SerializeField] float _moveSpeed = 3.0f;
     [SerializeField] GameObject _blast;
-    [SerializeField] float _blastTimer = 1.0f;
+    [SerializeField] float _blastTimerTouchPlayer = 1.0f;
+    [SerializeField] float _blastTimerTouchPunch = 2.0f;
+
+    NetworkObject _spawnerObj;
+    EnemySpawner _spawner;
 
     List<Transform> _players;
     Vector3 _distance;
@@ -47,48 +53,102 @@ public class Jibaku : MonoBehaviour
         Modoru
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override void OnNetworkSpawn()
     {
-        _rigidbody = GetComponent<Rigidbody>();
-        _isTimerOn = false;
-        _anim = GetComponent<Animator>();
-        _animInfo = _anim.GetCurrentAnimatorStateInfo(0);
-        _agent = GetComponent<NavMeshAgent>();
-        _agent.updateRotation = false;
-        _hakken = false;
+        //Rigidbody rb = GetComponent<Rigidbody>();
+        //rb.isKinematic = true; // クライアントでは物理演算しない
+
+        if (IsServer)
+        {
+            _rigidbody = GetComponent<Rigidbody>();
+            _rigidbody.isKinematic = false;
+            _isTimerOn = false;
+            _anim = GetComponent<Animator>();
+            _animInfo = _anim.GetCurrentAnimatorStateInfo(0);
+            _agent = GetComponent<NavMeshAgent>();
+            _agent.speed = _moveSpeed;
+            _agent.updateRotation = true;
+            _agent.updatePosition = true;
+            _hakken = false;
+
+            _state = State.Idol;
+            _animBlend = (float)_state;
+        }
+        else
+        {
+            GetComponent<Rigidbody>().isKinematic = true;
+            GetComponent<NavMeshAgent>().enabled = false;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        _players = _sensour.GetPlayers();
+        if (!IsServer) return;
+        if (!_agent.isOnNavMesh)
+        {
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(transform.position, out hit, 2.0f, NavMesh.AllAreas))
+            {
+                _agent.Warp(hit.position);
+            }
+            else
+            {
+                Debug.LogError("NavMesh が近くに無い！");
+            }
+        }
+        if (_agent == null) return;
+        if (!_agent.enabled) return;
+        if (!_spawner)return;
+        List<Transform> _karis = new List<Transform>();
+        Debug.Log($"センサー内のプレイヤー{_spawner.GetPlayers().Count}");
+        for (int i = 0; i < _spawner.GetPlayers().Count; i++)
+        {
+            for (int j = 0; j < _sensour.GetPlayers().Count; j++)
+            {
+                if (_spawner.GetPlayers()[i] == _sensour.GetPlayers()[j])
+                {
+                    _karis.Add(_spawner.GetPlayers()[i]);
+                }
+            }
+        }
+        _players = _karis;
+
         _animInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
+        //Debug.Log("すてーと"+_state.ToString());
         if (_state == State.Idol)
         {
-            Idol();
+            IdolServerRpc();
         }
         else if (_state == State.Hakken1)
         {
-            Hakken();
+            _agent.SetDestination(PlayerPosition());
+            HakkenServerRpc();
         }
         else if (_state == State.Oikake)
         {
-            Oikake();
-        }
-        else if (_state == State.Death)
-        {
-            Death();
+            _agent.SetDestination(PlayerPosition());
+            OikakeServerRpc();
         }
 
+        AnimBlendServerRpc(_animBlend);
 
-
-
-
-        _anim.SetFloat("Blend", _animBlend);
 
         _animInfoOld = _animInfo;
+    }
+
+    public void SetSpawner(NetworkObject obj)
+    {
+        _spawnerObj = obj;
+        _spawner = obj.GetComponent<EnemySpawner>();
+    }
+
+    //アニメーション
+    [ServerRpc(RequireOwnership = false)]
+    void AnimBlendServerRpc(float blend)
+    {
+        _anim.SetFloat("Blend", blend);
     }
 
     Vector3 PlayerPosition()
@@ -113,7 +173,7 @@ public class Jibaku : MonoBehaviour
         else
         {
             // センサー範囲にプレイヤーがいない → 初期位置へ戻る
-            return transform.parent.position;
+            return _spawnerObj.transform.position;
         }
     }
     void RotateToMoveDirection()
@@ -132,74 +192,85 @@ public class Jibaku : MonoBehaviour
         );
     }
 
-    void Idol()
+    [ServerRpc(RequireOwnership = false)]
+    void IdolServerRpc()
     {
-        //まじでごり押しプログラミング
-        if (0.5f > _animInfo.normalizedTime % 1.0f && _animInfo.normalizedTime % 1.0f > 0.1f)
+        bool _isRotating = false;
+        float t = _animInfo.normalizedTime % 1.0f;
+
+        // 区間に入った瞬間
+        if (!_isRotating && t > 0.1f && t < 0.5f)
         {
-            //Debug.Log("回る");
-            // Y軸回転を直接変更するには、rotationの値を取得・修正して再代入する必要があります
-            Quaternion rot = _rigidbody.rotation;
-            Vector3 euler = rot.eulerAngles;
-            euler.y += 3.0f;
-            transform.rotation = Quaternion.Euler(euler);
+            _isRotating = true;
+        }
+
+        // 区間を抜けたら止める
+        if (_isRotating && t >= 0.5f)
+        {
+            _isRotating = false;
+        }
+
+        if (_isRotating)
+        {
+            Debug.Log("回転中");
+            transform.rotation *= Quaternion.Euler(0f, Time.deltaTime * 90f, 0f);
         }
 
         //センサー内に入ったプレイヤーを検知
         if (_players != null && _players.Count > 0)
         {
+            if (Random.Range(0, 2) == 0)
+            {
+                Debug.Log("発見した！その1");
+                _animBlend = (float)State.Hakken1;
+            }
+            else
+            {
+                Debug.Log("発見した！その2");
+                _animBlend = (float)State.Hakken2;
+            }
+            _agent.speed = 0.1f;
+            _anim.Play(_anim.GetCurrentAnimatorStateInfo(0).fullPathHash, 0, 0f);
             _state = State.Hakken1;
         }
     }
-    void Hakken()
+    [ServerRpc(RequireOwnership = false)]
+    void HakkenServerRpc()
     {
         // Debug.Log(_animInfo.normalizedTime);]
         //アニメーションが一周したら追いかけ状態へ
-        if (_animInfo.normalizedTime - _animInfoOld.normalizedTime < 0.0f)
+        if (_animInfo.normalizedTime > 0.9f)
         {
             if (_animBlend == (float)State.Hakken1 || _animBlend == (float)State.Hakken2)
             {
                 Debug.Log("追いかけるよ！");
                 _state = State.Oikake;
                 _animBlend = (float)_state;
+
+                _anim.Play(_anim.GetCurrentAnimatorStateInfo(0).fullPathHash, 0, 0f);
                 _hakken = false;
             }
-            else if (_animBlend == (float)State.Idol)
-            {
-                Debug.Log("発見した！");
-                _agent.SetDestination(PlayerPosition());
-                _agent.speed = 0.1f;
-                _hakken = true;
-
-                if (Random.Range(0, 2) == 0)
-                {
-                    Debug.Log("発見した！その1");
-                    _animBlend = (float)State.Hakken1;
-                }
-                else
-                {
-                    Debug.Log("発見した！その2");
-                    _animBlend = (float)State.Hakken2;
-                }
-            }
         }
-                RotateToMoveDirection();
+        RotateToMoveDirection();
     }
 
-    void Oikake()
+    [ServerRpc(RequireOwnership = false)]
+    void OikakeServerRpc()
     {
-        _agent.SetDestination(PlayerPosition());
+        Debug.Log("追いかけ中");
+        //Debug.Log($"追いかけ中！{PlayerPosition()}");
+        //_agent.SetDestination(PlayerPosition());
         _agent.speed = _moveSpeed;
 
         RotateToMoveDirection();
-        
-        if (PlayerPosition() == transform.parent.position)
-        {
-            Debug.Log("戻る！");
 
-            float dist = Vector3.Distance(transform.position, transform.parent.position);
+        if (PlayerPosition() == _spawnerObj.transform.position)
+        {
+
+            float dist = Vector3.Distance(transform.position, _spawnerObj.transform.position);
+            Debug.Log($"戻る！{dist}");
             // 初期位置にほぼ戻った
-            if (dist < 1.0f)
+            if (dist < 3.0f)
             {
                 Debug.Log("戻った！");
                 _state = State.Idol;
@@ -210,63 +281,32 @@ public class Jibaku : MonoBehaviour
         }
     }
 
-    void Death()
+    [ServerRpc(RequireOwnership = false)]
+    void BlastGenerateServerRpc()
     {
-        if (_animInfo.normalizedTime > 0.8f)
-        {
-            _isTimerOn = true;
-            BlastGenerate();
-        }
+        if (!IsServer) return; // ← これが必須
+        NetworkObjectPool _ObjectPool = NetworkObjectPool.Instance;
+        NetworkObject obj = _ObjectPool.Get(_blast.GetComponent<NetworkObject>(), transform.position, Quaternion.identity);
+        obj.Spawn(true);
+        obj.GetComponent<PooledNetworkObject>().SetPrefab(_blast.GetComponent<NetworkObject>());
     }
-
-    void ActiveFalse()
+    [ServerRpc(RequireOwnership = false)]
+    void DespawnServerRpc()
     {
-        this.gameObject.SetActive(false);
-    }
-
-    void BlastGenerate()
-    {
-        if (gameObject.activeSelf && _isTimerOn)
-        {
-            _isChild = false;
-
-            for (int i = 0; i < transform.childCount; i++)
-            {
-                //非アクティブの子オブジェクト検索
-                _kari = transform.parent.GetChild(i);
-                if (_kari.gameObject.GetComponent<Blast>() != null &&
-                    !_kari.gameObject.activeSelf)
-                {
-                    _kari.gameObject.SetActive(true);
-                    _kari.position = transform.position;
-                    _kari.rotation = transform.rotation;
-
-                    _isChild = true;
-                    break;
-                }
-            }
-
-            //子オブジェクトが足りなければ新規作成
-            if (!_isChild)
-            {
-                Instantiate(_blast, transform.position, transform.rotation, transform.parent);
-            }
-            ActiveFalse();
-        }
+        BlastGenerateServerRpc();
+        _spawnerObj.GetComponent<EnemySpawner>().EnemyIsDead();
+        _rigidbody.isKinematic = true;
+        GetComponent<PooledNetworkObject>().DestroySelf();
     }
 
 
     //ぶつかったときの処理
     void OnCollisionEnter(Collision other)
     {
+        if (!IsServer) return;
         if (other.transform.GetComponent<Rigidbody>() != null)
         {
-            if (!_isTimerOn)
-            {
-                Invoke("BlastGenerate", _blastTimer);
-                _isTimerOn = true;
-                
-            }
+            Invoke("DespawnServerRpc", _blastTimerTouchPlayer);
         }
 
     }
@@ -277,10 +317,12 @@ public class Jibaku : MonoBehaviour
         {
             //ActiveFalse();
             _state = State.Death;
-            _animBlend = (float)_state; 
+            _animBlend = (float)_state;
             _anim.Play(_anim.GetCurrentAnimatorStateInfo(0).fullPathHash, 0, 0f);
             _isTimerOn = false;
             _agent.speed = 0.0f;
+            CancelInvoke("DespawnServerRpc");
+            Invoke("DespawnServerRpc", _blastTimerTouchPunch);
         }
     }
 }

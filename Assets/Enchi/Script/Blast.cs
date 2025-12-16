@@ -21,11 +21,10 @@ public class Blast : NetworkBehaviour
     }
     public override void OnNetworkSpawn()
     {
-        Debug.Log("Spawn Ç≥ÇÍÇΩÇÊÅI");
+        //Debug.Log("Spawn Ç≥ÇÍÇΩÇÊÅI");
         Collider col = GetComponent<Collider>();
         col.isTrigger = true;
         _boneTime = 0.0f;
-        GetComponent<ParticleSystem>().Play();
         //Invoke("SetColTriggerServerRpc", 0.4f);
     }
 
