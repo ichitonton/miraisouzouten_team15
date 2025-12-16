@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 464179852
+  GlobalObjectIdHash: 1989277275
   InScenePlacedSourceGlobalObjectIdHash: 464179852
   DeferredDespawnTick: 0
   Ownership: 1
@@ -94,7 +94,9 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _ropeObject: {fileID: 8760411629864592299, guid: 764c8895dafe2e14692afc5e3025bafd, type: 3}
   _delayTime: 0.1
-  _pivot: {fileID: 0}
+  _pivotId0: {fileID: 0}
+  _pivotId1: {fileID: 0}
+  _pivotId2: {fileID: 0}
 --- !u!114 &-7120915012445352639
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,7 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NetworkEffectSpawner
   ShowTopMostFoldoutHeaderGroup: 1
-  _effectDatabase: {fileID: 11400000, guid: fd3da8a62cda0db45a44819cf55d50d0, type: 2}
+  _effectDatabase: {fileID: 11400000, guid: 61e24ca55fa48c74499045329cf5f3d0, type: 2}
 --- !u!114 &-6180074972188493470
 MonoBehaviour:
   m_ObjectHideFlags: 0
