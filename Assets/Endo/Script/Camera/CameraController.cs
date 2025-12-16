@@ -59,6 +59,9 @@ public class CameraController : MonoBehaviour
 	private readonly List<CameraObstacleFader> _fadingNow = new List<CameraObstacleFader>();
 	private RaycastHit[] _obstacleHits;
 
+    [Header("Delay")]
+    private float _delayTime = 0.5f;
+
 	private void Start()
     {
         _cam = GetComponent<Camera>();
@@ -91,8 +94,9 @@ public class CameraController : MonoBehaviour
             }*/
             var players = GameManager.Instance._networkObjectList;
 
-            //Debug.Log("ネットワークオブジェクトの数 = " + players.Count);
+            Debug.Log("ネットワークオブジェクトの数 = " + players.Count);
             //Debug.Log(_players.Count);
+
         }
         else
         {
@@ -241,7 +245,7 @@ public class CameraController : MonoBehaviour
     private IEnumerator DelayRegisterPlayer()
     {
 
-        yield return new WaitForSeconds(_playerNetworkConnect._delayTime + 0.3f);
+        yield return new WaitForSeconds(_playerNetworkConnect._delayTime + _delayTime);
         //Debug.Log("カメラが追うプレイヤーを再登録します");
         RegisterPlayer();
 
@@ -290,23 +294,27 @@ public class CameraController : MonoBehaviour
     {
         _players.Clear();//一回リセット
 
+        Debug.Log("カメラに映すプレイヤーを登録");
+
+        Debug.Log("ネットワークオブジェクトの数" + GameManager.Instance._networkObjectList.Count);
 
         foreach (var playerRef in GameManager.Instance._networkObjectList)
         {
             //これで「実際に存在するネットワークオブジェクトを取り出す」処理。
             //成功した場合 playerObj に GameObject が入る。
+
             if (playerRef.TryGet(out var playerObj))
             {
                 //プレイヤーのタグを持っているかつ所有権があるなら
                 if(playerObj.gameObject.CompareTag("Player") && playerObj.IsOwner)
                 {
-                    //Debug.Log("所有権を持ったプレイヤーです");
+                    Debug.Log("所有権を持ったプレイヤーです");
                     _players.Add(playerObj.gameObject);
                 }
             }
-
-
         }
+
+        Debug.Log("カメラに映すプレイヤーの数");
     }
     //レイを飛ばす処理
 	private void HandleObstacleFadeForPlayers()

@@ -29,6 +29,7 @@ public class PlayerJoint : NetworkBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+
         List<GameObject> players = new List<GameObject>();
         ulong clientId = NetworkManager.Singleton.LocalClientId;
 
@@ -39,7 +40,7 @@ public class PlayerJoint : NetworkBehaviour
             if (playerRef.TryGet(out var playerObj))
             {
                 //プレイヤーのタグを持っているかつ所有権があるなら
-                if (playerObj.gameObject.CompareTag("Player") && playerObj.OwnerClientId == OwnerClientId)
+                if (playerObj.gameObject.CompareTag("Player") && playerObj.OwnerClientId == gameObject.GetComponent<NetworkObject>().OwnerClientId)
                 {
                     Debug.Log("所有権を持ったプレイヤーです");
                     players.Add(playerObj.gameObject);
@@ -93,7 +94,7 @@ public class PlayerJoint : NetworkBehaviour
         // --- ローカルクライアントが A 担当なら ---
         if (local == clientA)
         {
-            _playerA.GetComponent<NetworkObject>().ChangeOwnership(0);
+            //_playerA.GetComponent<NetworkObject>().ChangeOwnership(0);
             var nt = _playerA.GetComponent<NetworkTransform>();
             nt.Teleport(posA, _playerA.transform.rotation, _playerA.transform.localScale);
             Debug.Log("[Teleport] Player A テレポート");
@@ -103,7 +104,7 @@ public class PlayerJoint : NetworkBehaviour
         // --- ローカルクライアントが B 担当なら ---
         if (local == clientB)
         {
-            _playerB.GetComponent<NetworkObject>().ChangeOwnership(0);
+            //_playerB.GetComponent<NetworkObject>().ChangeOwnership(0);
             var nt = _playerB.GetComponent<NetworkTransform>();
             nt.Teleport(posB, _playerB.transform.rotation, _playerB.transform.localScale);
             Debug.Log("[Teleport] Player B テレポート");
@@ -113,8 +114,8 @@ public class PlayerJoint : NetworkBehaviour
 
     void SetOwner()
     {
-        _playerA.GetComponent<NetworkObject>().ChangeOwnership(OwnerClientId);
-        _playerB.GetComponent<NetworkObject>().ChangeOwnership(OwnerClientId);
+        //_playerA.GetComponent<NetworkObject>().ChangeOwnership(OwnerClientId);
+        //_playerB.GetComponent<NetworkObject>().ChangeOwnership(OwnerClientId);
     }
 
     //[ServerRpc(RequireOwnership = false)]
