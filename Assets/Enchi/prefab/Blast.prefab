@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 4323047002570187010}
   - component: {fileID: 4866339956056439094}
   - component: {fileID: -5229641961098113913}
-  - component: {fileID: 6825856116699882376}
   - component: {fileID: 3991042228347542025}
   m_Layer: 0
   m_Name: Blast
@@ -98,19 +97,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1.7
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6825856116699882376
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8000710731528051159}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc9443ce45d3b0047a5f903efd2c7a0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EffectPlayClient
-  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!114 &3991042228347542025
 MonoBehaviour:
   m_ObjectHideFlags: 0
