@@ -50,11 +50,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7890c151eef352e45ae34473f7b4164f, type: 3}
       propertyPath: m_Name
-      value: Model_Imoyoukan (1)
+      value: Model_Imoyoukan
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7890c151eef352e45ae34473f7b4164f, type: 3}
       propertyPath: m_TagString
       value: Sweets
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7890c151eef352e45ae34473f7b4164f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -85,7 +85,7 @@ public class PlayerJoint : NetworkBehaviour
     // ========================
     // クライアント側でのみ実行される Teleport RPC
     // ========================
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void TeleportServerRpc(Vector3 posA, Vector3 posB, ulong clientA, ulong clientB)
     {
         ulong local = OwnerClientId;

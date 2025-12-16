@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 420058978842697883}
-  - component: {fileID: 6062687166195725737}
   - component: {fileID: 5821377537480181424}
+  - component: {fileID: 6062687166195725737}
   - component: {fileID: 8333864430798299636}
   - component: {fileID: -9166671611561208469}
   m_Layer: 0
@@ -35,6 +35,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5821377537480181424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4436157478839491397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23825ed6c0b56d74f93103d7e9c9237d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapScreenController
+  _snapshotCamera: {fileID: 0}
+  _snapshotRT: {fileID: 0}
+  _mapCamera: {fileID: 0}
+  mapRoot: {fileID: 0}
+  blurBG: {fileID: 0}
+  _otherUI: {fileID: 0}
+  toggleKey: 9
 --- !u!114 &6062687166195725737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,24 +84,14 @@ MonoBehaviour:
   _PointMinBrightness: 0.8
   _PointMaxBrightness: 1.2
   _pointRadius: 1.5
+  _globalHeightRef: 10
+  _globalHeightSensitivity: 0.01
+  _globalMinScale: 0.9
+  _globalMaxScale: 1.1
+  _heightRange: 0.3
+  _alpha: 1
+  __updateInterval: 0.05
   _viewMode: 2
---- !u!114 &5821377537480181424
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4436157478839491397}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23825ed6c0b56d74f93103d7e9c9237d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MapScreenController
-  snapshotCamera: {fileID: 0}
-  snapshotRT: {fileID: 8400000, guid: 555b8fc80b36bd247911d0884682da1b, type: 2}
-  mapRoot: {fileID: 0}
-  blurBG: {fileID: 0}
-  toggleKey: 9
 --- !u!114 &8333864430798299636
 MonoBehaviour:
   m_ObjectHideFlags: 0

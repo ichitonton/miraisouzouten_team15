@@ -2,13 +2,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cysharp.Threading.Tasks;
 using System;
+using System.Collections;
 
 public class MapScreenController : MonoBehaviour
 {
 
     [Header("Snapshot")]
-    [SerializeField] private Camera snapshotCamera;
-    [SerializeField] private RenderTexture snapshotRT;
+    [SerializeField] private Camera _snapshotCamera;
+    [SerializeField] private RenderTexture _snapshotRT;
+
+    [Header("MapCamera")]
+    [SerializeField] private Camera _mapCamera;
 
     [Header("UI")]
     [SerializeField] private GameObject mapRoot;   // 全体マップのパネル
@@ -20,6 +24,11 @@ public class MapScreenController : MonoBehaviour
     [Header("Input")]
     [SerializeField] private KeyCode toggleKey = KeyCode.Tab; // とりあえずTabとか
 
+
+    private MapColorManager _colorManager;
+    private MapIconManager _iconManager;
+    private PlayerMapIconManager _playerMapIconManager;
+
     private bool _isOpen = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -27,9 +36,9 @@ public class MapScreenController : MonoBehaviour
     {
 
         // 念のためここでも紐付け
-        if (blurBG != null && snapshotRT != null)
+        if (blurBG != null && _snapshotRT != null)
         {
-            blurBG.texture = snapshotRT;
+            blurBG.texture = _snapshotRT;
         }
 
 
@@ -38,11 +47,17 @@ public class MapScreenController : MonoBehaviour
         if (blurBG != null) blurBG.gameObject.SetActive(false);
 
         // カメラは常にONでRTを更新し続ける
-        if (snapshotCamera != null)
+        if (_snapshotCamera != null)
         {
-            snapshotCamera.enabled = true;
-            snapshotCamera.targetTexture = snapshotRT;
+            _snapshotCamera.enabled = true;
+            _snapshotCamera.targetTexture = _snapshotRT;
         }
+
+        _colorManager = GetComponent<MapColorManager>();
+        _iconManager = GetComponent<MapIconManager>();
+        _playerMapIconManager = GetComponent<PlayerMapIconManager>();
+
+        StartCoroutine(SystemOff());
 
     }
 
@@ -72,6 +87,11 @@ public class MapScreenController : MonoBehaviour
 
        
         // 背景ブラーUIとマップUIを表示
+        if(_snapshotCamera != null) _snapshotCamera.gameObject.SetActive(true);
+        if (_mapCamera != null) _mapCamera.gameObject.SetActive(true);
+        if(_colorManager != null) _colorManager.enabled = true;
+        if (_colorManager != null) _iconManager.enabled = true;
+        if (_colorManager != null) _playerMapIconManager.enabled = true;
         if (blurBG != null) blurBG.gameObject.SetActive(true);
         if (mapRoot != null) mapRoot.SetActive(true);
         if(_otherUI != null) _otherUI.gameObject.SetActive(false);
@@ -81,9 +101,21 @@ public class MapScreenController : MonoBehaviour
     {
         _isOpen = false;
 
+        if (_snapshotCamera != null) _snapshotCamera.gameObject.SetActive(false);
+        if (_mapCamera != null) _mapCamera.gameObject.SetActive(false);
+        if (_colorManager != null) _colorManager.enabled = false;
+        if (_colorManager != null) _iconManager.enabled = false;
+        if (_colorManager != null) _playerMapIconManager.enabled = false;
         if (mapRoot != null) mapRoot.SetActive(false);
         if (blurBG != null) blurBG.gameObject.SetActive(false);
         if (_otherUI != null) _otherUI.gameObject.SetActive(true);
+    }
+
+    private IEnumerator SystemOff()
+    {
+        //1秒後にすべてオフ
+        yield return  new WaitForSeconds(1.0f);
+        CloseMap();
     }
 
 }

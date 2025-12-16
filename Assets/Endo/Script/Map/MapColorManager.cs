@@ -7,6 +7,7 @@ using Cysharp.Threading.Tasks.CompilerServices;
 using System;
 using UnityEngine.InputSystem;
 using Unity.Netcode;
+using System.Linq;
 
 [System.Serializable]
 public class MapColor
@@ -64,13 +65,16 @@ public class MapColorManager : MonoBehaviour
     [SerializeField, Range(0.0001f, 1f)] private float _heightRange = 0.3f;
 
     [Header("Alpha")]
-    [SerializeField,Range(0.1f,1)] private float _alpha = 1f;
+    [SerializeField, Range(0.1f, 1)] private float _alpha = 1f;
 
     [Header("Delay")]
-    [SerializeField,Range(0.01f,1f)] private float __updateInterval = 0.05f;
+    [SerializeField, Range(0.01f, 1f)] private float __updateInterval = 0.05f;
+
+    [Header("root")]
+    private static List<GameObject> _stageRoot = new();
 
     //MapObjectがついているオブジェクトリスト
-    private static readonly List<GameObject> registeredObjects = new();
+    private static readonly List<GameObject> _registeredObjects = new();
     // 追加：結合後メッシュ（静的マップ専用）
     private readonly List<GameObject> _combinedStaticObjects = new();
     // 追加：動的オブジェクトだけを保持（＝Combineしないやつ）
@@ -88,6 +92,8 @@ public class MapColorManager : MonoBehaviour
     private Material drawMat;
     //MapTextureに描くオブジェクトがあるなら一つもメッシュにする
     private Mesh _combinedMesh;
+
+
 
     public enum ViewMode
     {
@@ -111,34 +117,12 @@ public class MapColorManager : MonoBehaviour
 
 
         // 色テーブル初期化
-        _nameToColor.Clear();
-        foreach (var e in _colorSettings)
-        {
-            if (!string.IsNullOrEmpty(e._tagName))
-            {
-                var key = e._tagName.ToLower();
-                _nameToColor[key] = e._color;
-            }
-        }
-
-        //名前からIndex番号に変換
-        int idx = 0;
-        foreach (var e in _colorSettings)
-        {
-            if (!string.IsNullOrEmpty(e._tagName))
-            {
-                var key = e._tagName.ToLower();
-                _nameToColor[key] = e._color;
-
-                _tagToId[key] = idx;
-                _colorArray[idx] = e._color;
-
-                idx++;
-            }
-        }
+        BuildColorTable();
 
         mapCamera.enabled = true;
     }
+
+
 
     private async UniTaskVoid Start()
     {
@@ -148,6 +132,10 @@ public class MapColorManager : MonoBehaviour
 
         //メッシュの結合
         CombineMeshes();
+
+        //マップオブジェクトを静的オブジェクトに(描画コストやパフォーマンスの向上)
+        //Debug.Log("root数" + _stageRoot.Count);
+        MakeStageStaticBatched(_stageRoot);
         //自動停止
         var token = this.GetCancellationTokenOnDestroy();
 
@@ -180,7 +168,7 @@ public class MapColorManager : MonoBehaviour
         // この MapColorManager のワールド→ローカル行列
         Matrix4x4 worldToLocal = transform.worldToLocalMatrix;
 
-        foreach (var go in registeredObjects)
+        foreach (var go in _registeredObjects)
         {
             if (go == null) continue;
 
@@ -188,6 +176,9 @@ public class MapColorManager : MonoBehaviour
             if (mf == null || mf.sharedMesh == null) continue;
 
             var mesh = mf.sharedMesh;
+
+            var r = go.GetComponent<Renderer>();
+            //Debug.Log($"[{go.name}] isStatic={go.isStatic} partOfStaticBatch={(r != null && r.isPartOfStaticBatch)} mesh={mf.sharedMesh.name} readable={mf.sharedMesh.isReadable}");
 
             // ★ Read/Write チェック（無効なら結合には使えない）
             if (!mesh.isReadable)
@@ -212,8 +203,8 @@ public class MapColorManager : MonoBehaviour
             if (!tagToMeshFilters.TryGetValue(originalKey, out var dic))
             {
                 dic = new Dictionary<string, List<MeshFilter>>();
-                var list = new List<MeshFilter>(); 
-                dic[key]= list;
+                var list = new List<MeshFilter>();
+                dic[key] = list;
                 tagToMeshFilters[originalKey] = dic;
             }
             dic[key].Add(mf);
@@ -232,10 +223,10 @@ public class MapColorManager : MonoBehaviour
             foreach (var d in dic)
             {
                 key = d.Key;
-                list = d.Value; 
+                list = d.Value;
             }
-            
-            Debug.Log("メッシュの数" + list.Count);
+
+            //Debug.Log("メッシュの数" + list.Count);
             if (list.Count == 0) continue;
 
             // 1) CombineInstance 配列を作成
@@ -290,16 +281,12 @@ public class MapColorManager : MonoBehaviour
             }
 
             _combinedStaticObjects.Add(combinedGO);
-            Debug.Log($"[CombineMeshes] '{kv.Key}' -> verts={combinedMesh.vertexCount}");
+            //Debug.Log($"[CombineMeshes] '{kv.Key}' -> verts={combinedMesh.vertexCount}");
 
             //MapObjectをつけておく
         }
 
-        // 動的オブジェクトだけ registeredObjects に残す
-        registeredObjects.Clear();
-        registeredObjects.AddRange(_dynamicObjects);
-
-        Debug.Log($"[MapColorManager] Combined Static: {_combinedStaticObjects.Count}, Dynamic: {_dynamicObjects.Count}");
+        //Debug.Log($"[MapColorManager] Combined Static: {_combinedStaticObjects.Count}, Dynamic: {_dynamicObjects.Count}");
     }
 
     private void RenderMap()
@@ -324,8 +311,8 @@ public class MapColorManager : MonoBehaviour
         UpdateShaderParams();
 
         // ========= Mesh描画 =========
-        Debug.Log("登録されてる動的オブジェクトの数" + registeredObjects.Count);
-        Debug.Log("登録されてる静的オブジェクトの数" + _combinedStaticObjects.Count);
+        //Debug.Log("登録されてる動的オブジェクトの数" + _registeredObjects.Count);
+        //Debug.Log("登録されてる静的オブジェクトの数" + _combinedStaticObjects.Count);
         // ==========================
         // 1) 結合済み静的メッシュの描画
         // ==========================
@@ -339,14 +326,16 @@ public class MapColorManager : MonoBehaviour
             var mesh = mf.sharedMesh;
             if (mesh == null) continue;   // ここ追加
 
-            
+
             // ---- タグから TagId を決める ----
             string unityTag = GetTagOrParentTag(go); // "Field", "Iwa" など
             string key = unityTag.ToLower();
 
             int tagId = 0;
+            //タグID登録
             if (!_tagToId.TryGetValue(key, out tagId))
             {
+                Debug.LogWarning($"[Map] TagId not found. unityTag='{unityTag}', key='{key}'. Fallback to 0.");
                 // 未登録タグなら 0 番にフォールバック
                 tagId = 0;
             }
@@ -362,7 +351,7 @@ public class MapColorManager : MonoBehaviour
         // ==========================
         // 2) 動的オブジェクトの描画
         // ==========================
-        foreach (var go in registeredObjects)
+        foreach (var go in _dynamicObjects)
         {
             if (go == null) continue;
 
@@ -401,7 +390,7 @@ public class MapColorManager : MonoBehaviour
         //CleanupPlayers();
         int count = _playerList.Count;
 
-        
+
         Debug.Log("プレイヤーの数" + count);
         if (count == 0)
             return; // いないなら終了
@@ -459,11 +448,15 @@ public class MapColorManager : MonoBehaviour
     public static void Register(GameObject obj)
     {
         if (obj == null) return;
+
+        //親オブジェクトの設定
+        _stageRoot.Add(obj);
+
         foreach (var r in obj.GetComponentsInChildren<Renderer>(true))
         {
             var target = r.gameObject;
-            if (!registeredObjects.Contains(target))
-                registeredObjects.Add(target);
+            if (!_registeredObjects.Contains(target))
+                _registeredObjects.Add(target);
         }
     }
 
@@ -473,7 +466,7 @@ public class MapColorManager : MonoBehaviour
         foreach (var r in obj.GetComponentsInChildren<Renderer>(true))
         {
             var target = r.gameObject;
-            registeredObjects.Remove(target);
+            _registeredObjects.Remove(target);
         }
     }
 
@@ -556,4 +549,103 @@ public class MapColorManager : MonoBehaviour
         return "untagged"; // 最後までなければ untagged
     }
 
+    //マップの元オブジェクトをStaticにして軽量化
+    private void MakeStageStaticBatched(List<GameObject> list)
+    {
+
+        foreach (var root in list)
+        {
+            if (root == null) continue;
+
+
+            // ステージ内の MeshRenderer を全部 Static 扱いにする
+            var renderers = root.GetComponentsInChildren<MeshRenderer>(true);
+            foreach (var r in renderers)
+            {
+                r.gameObject.isStatic = true;
+            }
+
+            // まとめて1回だけ実行
+            StaticBatchingUtility.Combine(root);
+
+            //Debug.Log($"StaticBatch done. renderers={renderers.Length}");
+
+            LogStaticBatchState(root);
+
+        }
+
+    }
+
+    private void BuildColorTable()
+    {
+        _tagToId.Clear();
+        Array.Clear(_colorArray, 0, _colorArray.Length);
+
+        int idx = 0;
+        foreach (var e in _colorSettings)
+        {
+            if (string.IsNullOrEmpty(e._tagName)) continue;
+
+            var key = e._tagName.ToLower();
+
+            _tagToId[key] = idx;
+            _colorArray[idx] = e._color;
+
+            idx++;
+            if (idx >= _colorArray.Length) break;
+        }
+
+        drawMat.SetInt("_ColorCount", idx);              // ★ _colorSettings.Count じゃなく “実際に詰めた数”
+        drawMat.SetColorArray("_Colors", _colorArray);
+    }
+
+    private void LogStaticBatchState(GameObject root)
+    {
+        var rs = root.GetComponentsInChildren<MeshRenderer>(true);
+
+        int part = 0;
+        foreach (var r in rs)
+            if (r != null && r.isPartOfStaticBatch) part++;
+
+        //Debug.Log($"StaticBatch: {part}/{rs.Length} renderers are in static batch");
+    }
+
+
+    //Editor専用のデバッグ
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        ValidateTagNamesInColorSettings();
+    }
+
+    private void ValidateTagNamesInColorSettings()
+    {
+        // Inspectorで選べるTag一覧をHashSet化（大文字小文字を無視）
+        var tagSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var t in UnityEditorInternal.InternalEditorUtility.tags)
+        {
+            if (!string.IsNullOrEmpty(t))
+                tagSet.Add(t);
+        }
+
+        for (int i = 0; i < _colorSettings.Count; i++)
+        {
+            var e = _colorSettings[i];
+            if (e == null) continue;
+
+            var name = e._tagName?.Trim();
+            if (string.IsNullOrEmpty(name)) continue;
+
+            if (!tagSet.Contains(name))
+            {
+                Debug.LogError(
+                    $"[MapColorManager] ColorSettings[{i}] のタグ '{name}' は Tag 一覧に存在しません。 " +
+                    $"(Project Settings > Tags and Layers で追加するか、スペルを修正してください)",
+                    this
+                );
+            }
+        }
+    }
+#endif
 }

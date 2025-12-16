@@ -91,8 +91,8 @@ public class CameraController : MonoBehaviour
             }*/
             var players = GameManager.Instance._networkObjectList;
 
-            Debug.Log("ネットワークオブジェクトの数 = " + players.Count);
-            Debug.Log(_players.Count);
+            //Debug.Log("ネットワークオブジェクトの数 = " + players.Count);
+            //Debug.Log(_players.Count);
         }
         else
         {
