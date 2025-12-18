@@ -7,72 +7,73 @@ using Unity.Netcode;
 
 public class NetworkObjectRandomGenerator : NetworkBehaviour
 {
-    [Header("Database")]
-    [SerializeField] private NetworkPrefabDatabase _database;
+	[Header("データベース")]
+	[SerializeField] private NetworkPrefabDatabase _database;
 
-    [Header("Spawn Pivots")]
-    [SerializeField] private Transform[] _pivots;
+	[Header("スポーン基準点（Pivot）")]
+	[SerializeField] private Transform[] _pivots;
 
-    [Header("Spawn Area")]
-    [SerializeField, Range(0f, 50f)] private float _spawnRadius = 3f;
+	[Header("スポーン範囲")]
+	[SerializeField, Range(0f, 50f)] private float _spawnRadius = 3f;
 
-    [Tooltip("同じ場所に生成しない判定の最小距離（メートル）。大きいほど重複しにくい")]
-    [SerializeField, Range(0.1f, 10f)] private float _minDistanceBetweenSpawns = 1.0f;
+	[Tooltip("同じ場所に生成しない判定の最小距離（メートル）。大きいほど重複しにくい")]
+	[SerializeField, Range(0.1f, 10f)] private float _minDistanceBetweenSpawns = 1.0f;
 
-    [Tooltip("1体生成するために、位置抽選を何回までやり直すか")]
-    [SerializeField, Range(1, 200)] private int _maxAttemptsPerSpawn = 40;
+	[Tooltip("1体生成するために、位置抽選を何回までやり直すか")]
+	[SerializeField, Range(1, 200)] private int _maxAttemptsPerSpawn = 40;
 
-    [Header("Ground / Collision (Optional)")]
-    [SerializeField] private bool _snapToGround = true;
+	[Header("地面 / 衝突（任意）")]
+	[SerializeField] private bool _snapToGround = true;
 
-    [Tooltip("地面判定のRayの開始高さ")]
-    [SerializeField, Range(0.1f, 50f)] private float _groundRayStartHeight = 10f;
+	[Tooltip("地面判定Rayの開始高さ")]
+	[SerializeField, Range(0.1f, 50f)] private float _groundRayStartHeight = 10f;
 
-    [Tooltip("地面判定のRayの長さ")]
-    [SerializeField, Range(0.1f, 200f)] private float _groundRayLength = 50f;
+	[Tooltip("地面判定Rayの長さ")]
+	[SerializeField, Range(0.1f, 200f)] private float _groundRayLength = 50f;
 
-    [SerializeField] private LayerMask _groundMask = ~0;
+	[SerializeField] private LayerMask _groundMask = ~0;
 
-    [Tooltip("このレイヤーに当たる場所には生成しない（壁・障害物など）")]
-    [SerializeField] private LayerMask _blockedMask = 0;
+	[Tooltip("このレイヤーに当たる場所には生成しない（壁・障害物など）")]
+	[SerializeField] private LayerMask _blockedMask = 0;
 
-    [Tooltip("障害物チェック半径。0ならOverlapチェックしない")]
-    [SerializeField, Range(0f, 5f)] private float _blockedCheckRadius = 0.5f;
+	[Tooltip("障害物チェック半径。0ならOverlapチェックしない")]
+	[SerializeField, Range(0f, 5f)] private float _blockedCheckRadius = 0.5f;
 
-    [Header("Rarity Chances (%)")]
-    [SerializeField, Range(0f, 100f)] private float _rarity1Percent = 60f;
-    [SerializeField, Range(0f, 100f)] private float _rarity2Percent = 30f;
-    [SerializeField, Range(0f, 100f)] private float _rarity3Percent = 10f;
+	[Header("レアリティ確率（%）")]
+	[SerializeField, Range(0f, 100f)] private float _rarity1Percent = 60f;
+	[SerializeField, Range(0f, 100f)] private float _rarity2Percent = 30f;
+	[SerializeField, Range(0f, 100f)] private float _rarity3Percent = 10f;
 
-    [Header("Spawn Timing")]
-    [Tooltip("合計で何個生成するか（MaxAliveで止まる方が優先される）")]
-    [SerializeField, Min(1)] private int _totalSpawnCount = 30;
+	[Header("スポーン間隔")]
+	[Tooltip("合計で何個生成するか（MaxAliveで止まる方が優先される）")]
+	[SerializeField, Min(1)] private int _totalSpawnCount = 30;
 
-    [Tooltip("生成タイミングごとに一気に生む数（例: 5）")]
-    [SerializeField, Min(1)] private int _burstSpawnCount = 5;
+	[Tooltip("生成タイミングごとに一気に生む数（例: 5）")]
+	[SerializeField, Min(1)] private int _burstSpawnCount = 5;
 
-    [Tooltip("何秒ごとにバースト生成するか")]
-    [SerializeField, Range(0f, 60f)] private float _spawnInterval = 3.0f;
+	[Tooltip("何秒ごとにバースト生成するか")]
+	[SerializeField, Range(0f, 60f)] private float _spawnInterval = 3.0f;
 
-    [Header("Max Alive (Stop Condition)")]
-    [Tooltip("場に存在できる最大数。到達したらコルーチンを止める")]
-    [SerializeField, Min(1)] private int _maxAliveObjects = 20;
+	[Header("最大同時存在数（停止条件）")]
+	[Tooltip("場に存在できる最大数。到達したらコルーチンを止める")]
+	[SerializeField, Min(1)] private int _maxAliveObjects = 20;
 
-    [Tooltip("開始時に自動で生成を開始")]
-    [SerializeField] private bool _spawnOnNetworkSpawn = true;
+	[Tooltip("開始時に自動で生成を開始")]
+	[SerializeField] private bool _spawnOnNetworkSpawn = true;
 
-    [Tooltip("pivotを全体で使い捨てにする（trueだと同じpivotは二度と使わない）")]
-    [SerializeField] private bool _useUniquePivotOverall = false;
+	[Tooltip("Pivotを全体で使い捨てにする（trueだと同じpivotは二度と使わない）")]
+	[SerializeField] private bool _useUniquePivotOverall = false;
 
-    [Header("Random (Optional)")]
-    [SerializeField] private bool _useFixedSeed = false;
-    [SerializeField] private int _fixedSeed = 12345;
+	[Header("乱数（任意）")]
+	[SerializeField] private bool _useFixedSeed = false;
+	[SerializeField] private int _fixedSeed = 12345;
 
-    [Header("Debug")]
-    [SerializeField] private bool _drawGizmos = true;
+	[Header("デバッグ")]
+	[SerializeField] private bool _drawGizmos = true;
 
-    // ----- runtime -----
-    private Coroutine _spawnRoutine;
+
+	// ----- runtime -----
+	private Coroutine _spawnRoutine;
 
     // 「同じ場所に生成しない」用（グリッド化してHashSet管理）
     private HashSet<Vector3Int> _occupiedCells = new HashSet<Vector3Int>();
