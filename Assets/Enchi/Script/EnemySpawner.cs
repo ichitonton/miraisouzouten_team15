@@ -1,6 +1,10 @@
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using Unity.AI.Navigation;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Rendering;
 
 public class EnemySpawner : NetworkBehaviour
 {
@@ -8,12 +12,43 @@ public class EnemySpawner : NetworkBehaviour
     GameObject _enemySave;
     [SerializeField] float _respawnDelay = 5.0f;
     List<Transform> _players = new List<Transform>();
+    int _areaId = 0;
+
 
     Transform _kari;
     public override void OnNetworkSpawn()
     {
         if (!IsServer) return;
-        GenerateEnemyServerRpc();
+		var m = Regex.Match(name, @"\d+");
+		if (m.Success && int.TryParse(m.Value, out int value))
+		{
+			Debug.Log($"{name} -> {value}");
+			GetComponent<NavMeshSurface>().defaultArea = value;
+			_areaId = value;
+		}
+		else
+		{
+			Debug.Log($"{name} êîéöÇ™å©Ç¬Ç©ÇÁÇÒ");
+			GetComponent<NavMeshSurface>().defaultArea = 0; 
+            _areaId = 0;
+		}
+		//int value =  NavMesh.GetAreaFromName(gameObject.name);
+		//bool ok = int.TryParse(name, out value);
+
+		//if (ok)
+		//{
+		//	Debug.Log($"{name} ïœä∑ê¨å˜");
+		//}
+		//else
+		//{
+		//	Debug.Log($"{name} ïœä∑é∏îs");
+		//}
+        Invoke("GenerateEnemyServerRpc",3.0f); 
+	}
+
+    public int AreaId()
+    {
+        return _areaId;
     }
 
     public void EnemyIsDead()
@@ -28,11 +63,12 @@ public class EnemySpawner : NetworkBehaviour
     {
         if (!IsServer) return; // Å© Ç±ÇÍÇ™ïKê{
         NetworkObjectPool _ObjectPool = NetworkObjectPool.Instance;
-        NetworkObject obj = _ObjectPool.Get(_enemy.GetComponent<NetworkObject>(), transform.position, Quaternion.identity);
+        NetworkObject obj = _ObjectPool.Get(_enemy.GetComponent<NetworkObject>(), this.transform.position, Quaternion.identity);
         obj.Spawn(true);
         obj.GetComponent<PooledNetworkObject>().SetPrefab(_enemy.GetComponent<NetworkObject>());
         obj.gameObject.GetComponent<Jibaku>().SetSpawner(GetComponent<NetworkObject>());
-        Debug.Log($"ìGê∂ê¨ÇµÇΩÇÊ{_enemy}ê∂ê¨Ç‡Ç∆:{gameObject}");
+        obj.GetComponent<NavMeshAgent>().areaMask = GetComponent<NavMeshSurface>().defaultArea;
+		Debug.Log($"ìGê∂ê¨ÇµÇΩÇÊ{_enemy.name}ê∂ê¨Ç‡Ç∆:{gameObject.name}");
     }
 
 

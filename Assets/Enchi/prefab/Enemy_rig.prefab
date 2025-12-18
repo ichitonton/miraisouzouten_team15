@@ -255,7 +255,8 @@ MonoBehaviour:
   _sensour: {fileID: 6009029739629666943}
   _moveSpeed: 3
   _blast: {fileID: 8000710731528051159, guid: c0ae90c3517c73c4591b28c1f9b53ff2, type: 3}
-  _blastTimer: 1
+  _blastTimerTouchPlayer: 1
+  _blastTimerTouchPunch: 2
 --- !u!95 &5365119963423340437
 Animator:
   serializedVersion: 7
