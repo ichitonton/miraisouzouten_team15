@@ -119,19 +119,39 @@ MonoBehaviour:
   - teamName: Red
     teamIcon: {fileID: 21300000, guid: ddf44f3682ce6884db069ac9c6948719, type: 3}
     teamId: 0
+    player1Material: {fileID: 2100000, guid: e6c25096c43a5934192a66357dd292dc, type: 2}
+    player2Material: {fileID: 2100000, guid: cf510b4b2cc258a4c850eb4720ef8eb4, type: 2}
     finalScore: 0
   - teamName: Blue
     teamIcon: {fileID: 21300000, guid: 01bd619325d1a1943924f724a0b402aa, type: 3}
     teamId: 1
+    player1Material: {fileID: 2100000, guid: 56d366cbac5841948aef0f087ec0c86b, type: 2}
+    player2Material: {fileID: 2100000, guid: 9eb2257c546303b49825ded2fec2abbb, type: 2}
     finalScore: 0
   - teamName: purple
     teamIcon: {fileID: 21300000, guid: 1252ffa89f4f21c42891d669def61bf3, type: 3}
     teamId: 2
+    player1Material: {fileID: 2100000, guid: adcc6d3fcf1c279418b5cc356b0c5291, type: 2}
+    player2Material: {fileID: 2100000, guid: 6ffad95a1fc25ff44b33b6a3b4dec1f6, type: 2}
     finalScore: 0
   rankingSlots:
   - {fileID: 7889969414908846424}
   - {fileID: 3124785294003136967}
   - {fileID: 8541090698450574434}
+  rankModelPrefabs:
+  - {fileID: 571579462530698960, guid: 55eae7b22b2cafb4b9bc04e44b442661, type: 3}
+  - {fileID: 8757783023458737635, guid: cd5aca8a6211e2148b8ddbff06703c2b, type: 3}
+  - {fileID: 5453683222022494773, guid: 103461a941590b943ad45e58cdd63838, type: 3}
+  - {fileID: 5453683222022494773, guid: 103461a941590b943ad45e58cdd63838, type: 3}
+  - {fileID: 5453683222022494773, guid: 103461a941590b943ad45e58cdd63838, type: 3}
+  - {fileID: 5453683222022494773, guid: 103461a941590b943ad45e58cdd63838, type: 3}
+  standPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &1806439930787917559
 GameObject:
   m_ObjectHideFlags: 0
