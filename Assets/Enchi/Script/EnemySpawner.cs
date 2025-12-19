@@ -19,19 +19,21 @@ public class EnemySpawner : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         if (!IsServer) return;
-		var m = Regex.Match(name, @"\d+");
-		if (m.Success && int.TryParse(m.Value, out int value))
-		{
-			Debug.Log($"{name} -> {value}");
-			GetComponent<NavMeshSurface>().defaultArea = value;
-			_areaId = value;
-		}
-		else
-		{
-			Debug.Log($"{name} 数字が見つからん");
-			GetComponent<NavMeshSurface>().defaultArea = 0; 
-            _areaId = 0;
-		}
+		//var m = Regex.Match(name, @"\d+");
+		//if (m.Success && int.TryParse(m.Value, out int value))
+		//{
+  //          value += 3;
+
+  //          Debug.Log($"{name}{GetComponent<NavMeshSurface>().defaultArea} -> {value}");
+		//	GetComponent<NavMeshSurface>().defaultArea = value;
+		//	_areaId = value;
+		//}
+		//else
+		//{
+		//	Debug.Log($"{name} 数字が見つからん");
+		//	GetComponent<NavMeshSurface>().defaultArea = 3; 
+  //          _areaId = 3;
+		//}
 		//int value =  NavMesh.GetAreaFromName(gameObject.name);
 		//bool ok = int.TryParse(name, out value);
 
@@ -67,7 +69,7 @@ public class EnemySpawner : NetworkBehaviour
         obj.Spawn(true);
         obj.GetComponent<PooledNetworkObject>().SetPrefab(_enemy.GetComponent<NetworkObject>());
         obj.gameObject.GetComponent<Jibaku>().SetSpawner(GetComponent<NetworkObject>());
-        obj.GetComponent<NavMeshAgent>().areaMask = GetComponent<NavMeshSurface>().defaultArea;
+        obj.GetComponent<NavMeshAgent>().areaMask = 1 << GetComponent<NavMeshSurface>().defaultArea;
 		Debug.Log($"敵生成したよ{_enemy.name}生成もと:{gameObject.name}");
     }
 
@@ -77,7 +79,7 @@ public class EnemySpawner : NetworkBehaviour
     {
         if (other.gameObject.GetComponent<MovePlayerKey>() != null)
         {
-            Debug.Log("センサー内にいるよ2");
+            //Debug.Log("センサー内にいるよ2");
             _players.Add(other.transform);
         }
     }
@@ -86,7 +88,7 @@ public class EnemySpawner : NetworkBehaviour
     {
         if (other.gameObject.GetComponent<MovePlayerKey>() != null)
         {
-            Debug.Log("センサー内にいないよ2");
+            //Debug.Log("センサー内にいないよ2");
             _players.Remove(other.transform);
         }
     }

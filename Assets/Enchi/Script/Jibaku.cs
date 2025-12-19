@@ -89,14 +89,30 @@ public class Jibaku : NetworkBehaviour
 	{
 		if (IsServer)
 		{
+			//Debug.Log($" {_spawnerObj.name} :_agent {_agent.isOnNavMesh}");
 			if (!_agent.isOnNavMesh)
-				_agent.areaMask = _spawner.AreaId();
-			if (_agent == null) return;
+			{
+                //_agent.areaMask =  1<<_spawnerObj.GetComponent<NavMeshSurface>().defaultArea;
+
+                if (NavMesh.SamplePosition(_spawnerObj.transform.position,out NavMeshHit hit,5f,_agent.areaMask))
+                {
+                    _agent.Warp(hit.position);
+                }
+                else
+                {
+                    Debug.LogError(_spawnerObj.name + "Warp失敗：NavMeshが見つからない");
+                }
+            }
+			else
+			{
+				//Debug.Log("のってるよ");
+            }
+            if (_agent == null) return;
 			if (!_agent.enabled) return;
 			if (!_spawner) return;
 			List<Transform> _karis = new List<Transform>();
-			Debug.Log($"name {_agent.areaMask} spauner{_spawnerObj.name}");
-			Debug.Log($"センサー内のプレイヤー{_spawner.GetPlayers().Count}");
+			//Debug.Log($"{_agent.areaMask} spauner{_spawnerObj.name}");
+			//Debug.Log($"センサー内のプレイヤー{_spawner.GetPlayers().Count}");
 			for (int i = 0; i < _spawner.GetPlayers().Count; i++)
 			{
 				for (int j = 0; j < _sensour.GetPlayers().Count; j++)
@@ -136,6 +152,7 @@ public class Jibaku : NetworkBehaviour
 	{
 		_spawnerObj = obj;
 		_spawner = obj.GetComponent<EnemySpawner>();
+		Debug.Log(_spawnerObj.name + "いれた" + _spawner.enabled);
 	}
 	[ClientRpc]
 	void AnimBlendClientRpc(float blend)
@@ -211,7 +228,7 @@ public class Jibaku : NetworkBehaviour
 
 		if (_isRotating)
 		{
-			Debug.Log("回転中");
+			//Debug.Log("回転中");
 			transform.rotation *= Quaternion.Euler(0f, Time.deltaTime * 90f, 0f);
 		}
 
@@ -220,12 +237,12 @@ public class Jibaku : NetworkBehaviour
 		{
 			if (Random.Range(0, 2) == 0)
 			{
-				Debug.Log("発見した！その1");
+				//Debug.Log("発見した！その1");
 				_animBlend = (float)State.Hakken1;
 			}
 			else
 			{
-				Debug.Log("発見した！その2");
+				//Debug.Log("発見した！その2");
 				_animBlend = (float)State.Hakken2;
 			}
 			_agent.speed = 0.1f;
@@ -242,7 +259,7 @@ public class Jibaku : NetworkBehaviour
 		{
 			if (_animBlend == (float)State.Hakken1 || _animBlend == (float)State.Hakken2)
 			{
-				Debug.Log("追いかけるよ！");
+				//Debug.Log("追いかけるよ！");
 				_state = State.Oikake;
 				_animBlend = (float)_state;
 
@@ -256,7 +273,7 @@ public class Jibaku : NetworkBehaviour
 	[ServerRpc(RequireOwnership = false)]
 	void OikakeServerRpc()
 	{
-		Debug.Log("追いかけ中");
+		//Debug.Log("追いかけ中");
 		//Debug.Log($"追いかけ中！{PlayerPosition()}");
 		//_agent.SetDestination(PlayerPosition());
 		_agent.speed = _moveSpeed;
