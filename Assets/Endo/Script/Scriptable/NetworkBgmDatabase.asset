@@ -16,7 +16,7 @@ MonoBehaviour:
   - tag: FuwaFuwa
     clips:
     - {fileID: 8300000, guid: 4a7195df860ca9c48b306bfac88f62ee, type: 3}
-    volume: 0.5
+    volume: 0.05
     loop: 1
     fadeSeconds: 0
     outputMixerGroup: {fileID: 0}

@@ -4,6 +4,7 @@ using Unity.Netcode.Transports.UTP;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine.SceneManagement;
+using UnityEditor;
 
 
 public class NetworkDebug : MonoBehaviour
@@ -25,7 +26,7 @@ public class NetworkDebug : MonoBehaviour
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisConnected;
         NetworkManager.Singleton.OnServerStarted += OnServerStarted;
 
-
+        
 
     }
 
