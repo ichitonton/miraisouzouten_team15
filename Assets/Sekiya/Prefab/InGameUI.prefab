@@ -864,7 +864,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8975819983189298326
 RectTransform:
   m_ObjectHideFlags: 0
@@ -937,11 +937,12 @@ MonoBehaviour:
   targetNumber: 2
   iconImage: {fileID: 588245512400604866}
   itemSprites:
-  - {fileID: 0}
+  - {fileID: 21300000, guid: 62cd3cfcc10c7bc4399c500e335b6b84, type: 3}
   - {fileID: 21300000, guid: 00f14b0643972cf46b061e5b91d7d9cb, type: 3}
+  - {fileID: 21300000, guid: 136855dcb5253ea4ab25085a04199eb3, type: 3}
   - {fileID: 21300000, guid: 62445b7bd4b4c7845a05202d86ecd1f9, type: 3}
   - {fileID: 21300000, guid: 49b901f506c41a7499d8c425d6b9e9ea, type: 3}
-  - {fileID: 0}
+  - {fileID: 21300000, guid: 62cd3cfcc10c7bc4399c500e335b6b84, type: 3}
 --- !u!1 &2819313224343800206
 GameObject:
   m_ObjectHideFlags: 0
@@ -3404,7 +3405,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4237295973110423912
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3479,6 +3480,7 @@ MonoBehaviour:
   itemSprites:
   - {fileID: 21300000, guid: 62cd3cfcc10c7bc4399c500e335b6b84, type: 3}
   - {fileID: 21300000, guid: 00f14b0643972cf46b061e5b91d7d9cb, type: 3}
+  - {fileID: 21300000, guid: 136855dcb5253ea4ab25085a04199eb3, type: 3}
   - {fileID: 21300000, guid: 62445b7bd4b4c7845a05202d86ecd1f9, type: 3}
   - {fileID: 21300000, guid: 49b901f506c41a7499d8c425d6b9e9ea, type: 3}
   - {fileID: 21300000, guid: 62cd3cfcc10c7bc4399c500e335b6b84, type: 3}
