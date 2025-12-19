@@ -44,8 +44,10 @@ public class ItemBox : NetworkBehaviour
 		if (!IsServer) return;
 		if (!other.gameObject.CompareTag("Player")) return;
 		if (_used) return;
-		if (other.GetComponent<MovePlayerKey>()!=null)
-		other.GetComponent<MovePlayerKey>().LotteryHaveItem(itemChoose);
+		var player = other.GetComponentInParent<MovePlayerKey>();
+		if (player == null) return;
+
+		player.LotteryHaveItem(itemChoose);
 
 		_used = true;
 
