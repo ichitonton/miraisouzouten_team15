@@ -514,7 +514,7 @@ public class MovePlayerKey : NetworkBehaviour
     }
     void Punch()
     {
-        if ((Input.GetKeyDown(_punchKey) || (gamepad != null && gamepad.buttonSouth.wasPressedThisFrame)) && _canPunch)
+        if (_InputPunch && _canPunch)
         {
 
             AnimPunchServerRpc();
@@ -701,7 +701,7 @@ public class MovePlayerKey : NetworkBehaviour
            gamepad.leftShoulder.wasPressedThisFrame ||
            gamepad.leftTrigger.wasPressedThisFrame)//A,X,L1,L2
         {
-            _InputUseItem = gamepad.buttonEast.wasPressedThisFrame;
+            _InputUseItem = true;
             hasInput = true;
         }
         if (gamepad.buttonEast.wasPressedThisFrame ||
@@ -709,7 +709,7 @@ public class MovePlayerKey : NetworkBehaviour
            gamepad.rightShoulder.wasPressedThisFrame ||
            gamepad.rightTrigger.wasPressedThisFrame)//B,Y,R1,R2
         {
-            _InputPunch = gamepad.buttonSouth.wasPressedThisFrame;
+            _InputPunch =true;
             hasInput = true;
         }
 
