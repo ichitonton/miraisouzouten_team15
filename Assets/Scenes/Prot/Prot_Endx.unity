@@ -19610,6 +19610,10 @@ MonoBehaviour:
   _zoomOutKey: 118
   _manualZoomSpeed: 10
   _maxManualOffset: 50
+  _obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
+  _maxObstacleHits: 16
 --- !u!114 &927675403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -280012,6 +280016,21 @@ SceneRoots:
   - {fileID: 474728444}
   - {fileID: 706964493}
   - {fileID: 1151788013}
+  - {fileID: 1089480462}
+  - {fileID: 1580962948}
+  - {fileID: 1306973605}
+  - {fileID: 1359739368}
+  - {fileID: 1360859710}
+  - {fileID: 1476955963}
+  - {fileID: 8912988}
+  - {fileID: 1858923038}
+  - {fileID: 1020830664}
+  - {fileID: 127741793}
+  - {fileID: 1448955836}
+  - {fileID: 993614476}
+  - {fileID: 164523309}
+  - {fileID: 1102934993}
+  - {fileID: 2146825548}
   - {fileID: 1674874472}
   - {fileID: 1937510932}
   - {fileID: 1889061079}
@@ -280020,20 +280039,5 @@ SceneRoots:
   - {fileID: 4709241532169341300}
   - {fileID: 448244805}
   - {fileID: 102936505}
-  - {fileID: 1089480462}
-  - {fileID: 1580962948}
-  - {fileID: 1306973605}
-  - {fileID: 1359739368}
-  - {fileID: 1360859710}
-  - {fileID: 1476955963}
-  - {fileID: 2042045798}
-  - {fileID: 8912988}
-  - {fileID: 1858923038}
   - {fileID: 12856128}
-  - {fileID: 1020830664}
-  - {fileID: 127741793}
-  - {fileID: 1448955836}
-  - {fileID: 993614476}
-  - {fileID: 164523309}
-  - {fileID: 1102934993}
-  - {fileID: 2146825548}
+  - {fileID: 2042045798}

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using NUnit.Framework.Interfaces;
+using Unity.Netcode.Components;
 
 
 public class GameManager : NetworkBehaviour
@@ -16,7 +17,11 @@ public class GameManager : NetworkBehaviour
     [Header("ローカル内で動くやつだからNetworkObjectついてないプレイヤー入れてね")]
     [SerializeField] private GameObject _player1;
     [SerializeField] private GameObject _player2;
-    [SerializeField] private Transform _pivot;
+
+    [Header("SpawnPoint")]
+    [SerializeField] private Transform _spawnPos;
+    [Header("StartPosition")]
+    [SerializeField] private Transform[] _pivot;
        
     private GameObject[] _players;
     private GameObject _networkUi;
@@ -69,23 +74,20 @@ public class GameManager : NetworkBehaviour
 
     private void OnGUI()
     {
+        if (NetworkManager.Singleton == null) return; 
+        if (!NetworkManager.Singleton.IsServer) return;
 
-
-        
-
-        /*if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 100, 120, 30), "プレイヤー1生成"))
+        if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 100, 120, 30), "ゲームスタート"))
         {
-            List<GameObject> players = _objectList.FindAll(obj => obj.CompareTag("Player"));
+            if (!_IsLanModeActive) return;
 
-            if (players.Count >= 2)
+            for(int i = 0;i < 3;i++)
             {
-                Debug.Log("プレイヤー二人もういますけど");
-                return;
+                if (_pivot[i] == null) continue;   
+                PlayerTeleportAndConnect(_pivot[i].position, (ulong)i);
             }
 
-            GameObject player = Instantiate(_player1, _pivot.position, Quaternion.identity);
-            _objectList.Add(player);
-        }*/
+        }
 
         //ホストとして入る
         /*if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 50, 120, 30), "プレイヤー2生成"))
@@ -135,7 +137,7 @@ public class GameManager : NetworkBehaviour
                 return;
             }
 
-            GameObject player = Instantiate(_player1, _pivot.position, Quaternion.identity);
+            GameObject player = Instantiate(_player1, _spawnPos.position, Quaternion.identity);
             Debug.Log("わいた");
             _objectList.Add(player);
 
@@ -151,7 +153,7 @@ public class GameManager : NetworkBehaviour
                 return;
             }
 
-            GameObject player = Instantiate(_player2, _pivot.position, Quaternion.identity);
+            GameObject player = Instantiate(_player2, _spawnPos.position, Quaternion.identity);
             _objectList.Add(player);
         }
     }
@@ -197,6 +199,70 @@ public class GameManager : NetworkBehaviour
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientDisconnected;
         }
         
+    }
+
+    private void PlayerTeleportAndConnect(Vector3 pos,ulong id)
+    {
+
+        List<GameObject> players = new List<GameObject>();
+
+        foreach (var playerRef in GameManager.Instance._networkObjectList)
+        {
+            //これで「実際に存在するネットワークオブジェクトを取り出す」処理。
+            //成功した場合 playerObj に GameObject が入る。
+            if (playerRef.TryGet(out var playerObj))
+            {
+                //プレイヤーのタグを持っているかつ所有権があるなら
+                if (playerObj.gameObject.CompareTag("Player") && playerObj.OwnerClientId == id)
+                {
+                    Debug.Log("所有権を持ったプレイヤーです");
+                    players.Add(playerObj.gameObject);
+                }
+            }
+
+
+        }
+
+        Debug.Log("テレポートするプレイヤーの数" + players.Count);
+
+        if (players.Count <= 0)
+        {
+            Debug.Log("テレポートさせるプレイヤーがいませんでした");
+            return;
+        }
+
+        for(int i = 0; i < players.Count; i++)
+        {
+            Vector3 newPos = pos;
+            newPos.z = newPos.z + (i * -1f);
+            var netTrans = players[i].GetComponent<NetworkTransform>();
+            netTrans.Teleport(newPos, netTrans.gameObject.transform.rotation, netTrans.gameObject.transform.localScale);
+        }
+
+
+        //プレイヤーが二人いなかったらロープをつながない
+        if (players.Count <= 1)
+        {
+            Debug.Log("ボッチやぞ");
+            return;
+        }
+
+        foreach (var ropeRef in GameManager.Instance._networkObjectList)
+        {
+            //これで「実際に存在するネットワークオブジェクトを取り出す」処理。
+            //成功した場合 playerObj に GameObject が入る。
+            if (ropeRef.TryGet(out var ropeObj))
+            {
+                //プレイヤーのタグを持っているかつ所有権があるなら
+                if (ropeObj.gameObject.CompareTag("Rope") && ropeObj.OwnerClientId == id)
+                {
+                    Debug.Log("所有権のあるあみです");
+                    //少し待ってからロープでつなぐ
+                    StartCoroutine(ropeObj.gameObject.GetComponent<PlayerJoint>().DelayConnect());
+                }
+            }
+        }
+
     }
 
 }
