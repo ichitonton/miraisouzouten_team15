@@ -85,6 +85,8 @@ public class GameManager : NetworkBehaviour
             {
                 if (_pivot[i] == null) continue;   
                 PlayerTeleportAndConnect(_pivot[i].position, (ulong)i);
+                //‚Ó‚í‚Ó‚íBGM‚ğ‘SClient‚Å—¬‚·&ƒ‹[ƒv‚ ‚è
+                NetworkSoundManager.Instance.PlayBgm("FuwaFuwa", NetworkSoundManager.SoundScope.AllClients, true);
             }
 
         }
