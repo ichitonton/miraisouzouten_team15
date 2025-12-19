@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
+using UnityEngine.InputSystem;
 
 public class MapScreenController : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class MapScreenController : MonoBehaviour
     [SerializeField] private RawImage blurBG;      // 背景ブラー用 RawImage
 
     [Header("OtherUI")]
-    [SerializeField] private GameObject _otherUI;   // 全体マップのパネル
+    [SerializeField] private GameObject[] _otherUI;   // 全体マップのパネル
 
     [Header("Input")]
     [SerializeField] private KeyCode toggleKey = KeyCode.Tab; // とりあえずTabとか
@@ -28,6 +29,8 @@ public class MapScreenController : MonoBehaviour
     private MapColorManager _colorManager;
     private MapIconManager _iconManager;
     private PlayerMapIconManager _playerMapIconManager;
+
+
 
     private bool _isOpen = false;
 
@@ -64,9 +67,29 @@ public class MapScreenController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+
+
         if (Input.GetKeyDown(toggleKey))
         {
             ToggleMap();
+        }
+        //ゲームパッドでマップ表示
+        InputGamepad();
+
+    }
+
+    private void InputGamepad()
+    {
+        foreach(var gp in Gamepad.all)
+        {
+            if (gp == null) continue;
+
+            if(gp.buttonNorth.wasPressedThisFrame)
+            {
+                ToggleMap();
+            }
+
         }
     }
 
@@ -94,7 +117,12 @@ public class MapScreenController : MonoBehaviour
         if (_colorManager != null) _playerMapIconManager.enabled = true;
         if (blurBG != null) blurBG.gameObject.SetActive(true);
         if (mapRoot != null) mapRoot.SetActive(true);
-        if(_otherUI != null) _otherUI.gameObject.SetActive(false);
+
+        foreach (var ui in _otherUI)
+        {
+            if (ui != null) ui.gameObject.SetActive(false);
+        }
+        
     }
 
     private void CloseMap()
@@ -108,7 +136,10 @@ public class MapScreenController : MonoBehaviour
         if (_colorManager != null) _playerMapIconManager.enabled = false;
         if (mapRoot != null) mapRoot.SetActive(false);
         if (blurBG != null) blurBG.gameObject.SetActive(false);
-        if (_otherUI != null) _otherUI.gameObject.SetActive(true);
+        foreach (var ui in _otherUI)
+        {
+            if (ui != null) ui.gameObject.SetActive(true);
+        }
     }
 
     private IEnumerator SystemOff()
@@ -117,5 +148,6 @@ public class MapScreenController : MonoBehaviour
         yield return  new WaitForSeconds(1.0f);
         CloseMap();
     }
+
 
 }
