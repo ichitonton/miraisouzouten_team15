@@ -3153,6 +3153,7 @@ GameObject:
   - component: {fileID: 7313837968559615433}
   - component: {fileID: -2356800231678809462}
   - component: {fileID: -6520160973488650656}
+  - component: {fileID: 2191849881936588458}
   m_Layer: 0
   m_Name: Risu_rig
   m_TagString: Player
@@ -3282,6 +3283,7 @@ MonoBehaviour:
   _stunTime: 1
   _haveTrans: {fileID: 7533343180309272194}
   _itemBomb: {fileID: 5829897982676275080, guid: 8b04250a52ccfdb47b90f1726a8e4259, type: 3}
+  _itemBlackHole: {fileID: 5829897982676275080, guid: bcbc9ec3f4a24f647951f6a4a44e0f69, type: 3}
   _itemShouse: {fileID: 7378108386830483345, guid: 300e19193fcbcbf40bb398a530904e3f, type: 3}
   _itemShoeseDelay: 7
   _itemShoeseChangeSpeed: 1.5
@@ -3289,8 +3291,6 @@ MonoBehaviour:
   _itemStarDelay: 7
   _itemStarChangeSpeed: 1.3
   _itemFlightTime: 2
-  _effDash_2: {fileID: 773825968017154068, guid: 28c381c7693f60c43bd845de5f9783e4, type: 3}
-  _eff_HitPunch: {fileID: 7155706149333254684, guid: a786b69b36d65074288da092aa9f581b, type: 3}
   _headPoint: {fileID: 7838561722115832706}
   _playerNumber: 1
   _FootCollider: {fileID: 7817851643849097461, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
@@ -3452,6 +3452,19 @@ MonoBehaviour:
     TriggerNameHash: -316645540
     TransitionIndex: 0
   m_Animator: {fileID: 8427100980178498739}
+--- !u!114 &2191849881936588458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7459081349001929016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b4e3481e2b83fd44b7ce6912b504db8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PooledNetworkObject
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &7481435165760361928
 GameObject:
   m_ObjectHideFlags: 0

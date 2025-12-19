@@ -29,6 +29,7 @@ public class MovePlayerKey : NetworkBehaviour
     [SerializeField] Transform _haveTrans;//éùÇ¡ÇƒÇÈÉAÉCÉeÉÄ
     Transform _target;
     [SerializeField] private GameObject _itemBomb;
+    [SerializeField] private GameObject _itemBlackHole;
     [SerializeField] private GameObject _itemShouse;
     [SerializeField] private float _itemShoeseDelay = 7.0f;
     [SerializeField] private float _itemShoeseChangeSpeed = 1.5f;
@@ -86,6 +87,7 @@ public class MovePlayerKey : NetworkBehaviour
     {
         None,
         Bomb,
+        BlackHole,
         Shoese,
         Star,
         Max
@@ -106,6 +108,7 @@ public class MovePlayerKey : NetworkBehaviour
         itemDictionary = new()
     {
         { (ulong)ItemType.Bomb, _itemBomb.GetComponent<NetworkObject>() },
+        { (ulong)ItemType.BlackHole, _itemBlackHole.GetComponent<NetworkObject>() },
         { (ulong)ItemType.Shoese, _itemShouse.GetComponent<NetworkObject>() },
         { (ulong)ItemType.Star, _itemStar.GetComponent<NetworkObject>() }
     };

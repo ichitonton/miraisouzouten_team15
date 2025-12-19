@@ -1,6 +1,7 @@
 using Unity.Mathematics;
 using Unity.Netcode;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 public class Item : NetworkBehaviour
@@ -16,6 +17,7 @@ public class Item : NetworkBehaviour
         rb.isKinematic = false;
         Collider col = GetComponent<Collider>();
         col.isTrigger = true;
+        _isTimerOn = false;
     }
     void IsTmerOn()
     {
@@ -44,10 +46,14 @@ public class Item : NetworkBehaviour
     void BlastGenerateServerRpc()
     {
         NetworkObjectPool _ObjectPool = NetworkObjectPool.Instance;
+        if (_ObjectPool == null)
+        {
+            Debug.LogError("NetworkObjectPool: prefab is NULL");
+            return;
+        }
         NetworkObject obj = _ObjectPool.Get(_blast.GetComponent<NetworkObject>(), transform.position, quaternion.identity);
         obj.Spawn(true);
         obj.GetComponent<PooledNetworkObject>().SetPrefab(_blast.GetComponent<NetworkObject>());
-
         GetComponent<PooledNetworkObject>().DestroySelf();
     }
 
@@ -58,7 +64,8 @@ public class Item : NetworkBehaviour
         {
             if (other.gameObject.tag == "Field" || other.gameObject.GetComponent<MovePlayerKey>())
             {
-                Invoke("BlastGenerateServerRpc", _blastTimer);
+                BlastGenerateServerRpc();
+                //Invoke("BlastGenerateServerRpc", _blastTimer);
                 _isTimerOn = true;
             }
         }
