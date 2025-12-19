@@ -41,6 +41,10 @@ public class MovePlayerKey : NetworkBehaviour
     private bool _itemStarUse = false;
     [SerializeField] float _itemFlightTime = 2.0f; // 投げるオブジェクトがターゲットに到達するまでの時間
 
+    [SerializeField]ParticleSystem _dashParticleSystem;
+    [SerializeField]ParticleSystem _mutekiParticleSystem;
+    [SerializeField]ParticleSystem _shoeseParticleSystem;
+
     //エフェクト関連
     [SerializeField] Transform _headPoint; //頭の位置
     private int _punchStartEffectId = 3;   //頭のエフェクト
@@ -127,6 +131,9 @@ public class MovePlayerKey : NetworkBehaviour
 
         _ObjectPool = NetworkObjectPool.Instance;
 
+        _dashParticleSystem.Stop();
+        _mutekiParticleSystem.Stop(); 
+        _shoeseParticleSystem.Stop();
 
         if (IsServer)
         {
@@ -232,20 +239,24 @@ public class MovePlayerKey : NetworkBehaviour
         float speed = new Vector3(_rb.linearVelocity.x, 0, _rb.linearVelocity.z).magnitude;
         bool isMoving = speed > 1.0f;
 
-        foreach (var ps in GetComponentsInChildren<ParticleSystem>())
-        {
-            var em = ps.emission;
+       // foreach (var ps in GetComponentsInChildren<ParticleSystem>())
+        //{
+            var em = _dashParticleSystem.emission;
             em.enabled = isMoving;
 
-            if (isMoving && !ps.isPlaying)
+            //if (isMoving && !ps.isPlaying)
+            if (isMoving && !_dashParticleSystem.isPlaying)
             {
-                ps.Play();
+               // ps.Play();
+                _dashParticleSystem.Play();
             }
-            else if (!isMoving && ps.isPlaying)
+            //else if (!isMoving && ps.isPlaying)
+            else if (!isMoving && _dashParticleSystem.isPlaying)
             {
-                ps.Stop();
+                //ps.Stop();
+                _dashParticleSystem.Stop();
             }
-        }
+       // }
     }
 
 
@@ -393,11 +404,13 @@ public class MovePlayerKey : NetworkBehaviour
 
     void UnlockStar()
     {
+        _mutekiParticleSystem.Stop();
         _itemStarUse = false;
     }
 
     void UnlockShoese()
     {
+        _shoeseParticleSystem.Stop();
         _itemShoeseUse = false;
     }
     //ダメージ（受けるダメージ）
@@ -514,7 +527,7 @@ public class MovePlayerKey : NetworkBehaviour
     }
     void Punch()
     {
-        if ((Input.GetKeyDown(_punchKey) || (gamepad != null && gamepad.buttonSouth.wasPressedThisFrame)) && _canPunch)
+        if (_InputPunch && _canPunch)
         {
 
             AnimPunchServerRpc();
@@ -568,6 +581,7 @@ public class MovePlayerKey : NetworkBehaviour
                 //靴の効果
                 if (_haveItem == ItemType.Shoese)
                 {
+                    _shoeseParticleSystem.Play();
                     MoveSpeedChange(_itemShoeseChangeSpeed, _itemShoeseDelay);
                     _itemShoeseUse = true;
 
@@ -576,6 +590,7 @@ public class MovePlayerKey : NetworkBehaviour
                 //星の硬貨の効果
                 else if (_haveItem == ItemType.Star)
                 {
+                    _mutekiParticleSystem.Play();
                     MoveSpeedChange(_itemStarChangeSpeed, _itemStarDelay);
                     _itemStarUse = true;
                     //一定時間後にスター効果解除
@@ -696,20 +711,14 @@ public class MovePlayerKey : NetworkBehaviour
               hasInput = true;
         }
         //Debug.Log("Left Stick: " + stick);
-        if (gamepad.buttonSouth.wasPressedThisFrame ||
-           gamepad.buttonWest.wasPressedThisFrame ||
-           gamepad.leftShoulder.wasPressedThisFrame ||
-           gamepad.leftTrigger.wasPressedThisFrame)//A,X,L1,L2
+        if (gamepad.buttonSouth.wasPressedThisFrame)//A
         {
-            _InputUseItem = gamepad.buttonEast.wasPressedThisFrame;
+            _InputUseItem = true;
             hasInput = true;
         }
-        if (gamepad.buttonEast.wasPressedThisFrame ||
-           gamepad.buttonNorth.wasPressedThisFrame ||
-           gamepad.rightShoulder.wasPressedThisFrame ||
-           gamepad.rightTrigger.wasPressedThisFrame)//B,Y,R1,R2
+        if (gamepad.buttonEast.wasPressedThisFrame)//B
         {
-            _InputPunch = gamepad.buttonSouth.wasPressedThisFrame;
+            _InputPunch =true;
             hasInput = true;
         }
 
