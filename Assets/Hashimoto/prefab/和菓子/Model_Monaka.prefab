@@ -75,7 +75,7 @@ PrefabInstance:
       addedObject: {fileID: 2853679185357932447}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 17dc1150fbfeb7b4393a46e139e72526, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6033103434618220749}
+      addedObject: {fileID: -2944204904965013514}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 17dc1150fbfeb7b4393a46e139e72526, type: 3}
       insertIndex: -1
       addedObject: {fileID: 577621446108074405}
@@ -151,7 +151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpawnManager: {fileID: 0}
   weight: 200
---- !u!114 &6033103434618220749
+--- !u!114 &-2944204904965013514
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -163,7 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 231973132
+  GlobalObjectIdHash: 2093502639
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1

@@ -30,6 +30,60 @@ public class PlayerJoint : NetworkBehaviour
     void Start()
     {
 
+        //Connect();
+    }
+
+    // ========================
+    // クライアント側でのみ実行される Teleport RPC
+    // ========================
+    [ServerRpc(RequireOwnership = false)]
+    private void TeleportServerRpc(Vector3 posA, Vector3 posB, ulong clientA, ulong clientB)
+    {
+        ulong local = OwnerClientId;
+
+        // --- ローカルクライアントが A 担当なら ---
+        if (local == clientA)
+        {
+            //_playerA.GetComponent<NetworkObject>().ChangeOwnership(0);
+            var nt = _playerA.GetComponent<NetworkTransform>();
+            nt.Teleport(/*_playerA.transform.position*/posA, _playerA.transform.rotation, _playerA.transform.localScale);
+            Debug.Log("[Teleport] Player A テレポート");
+            //_playerA.GetComponent<NetworkObject>().ChangeOwnership(local);
+        }
+
+        // --- ローカルクライアントが B 担当なら ---
+        if (local == clientB)
+        {
+            //_playerB.GetComponent<NetworkObject>().ChangeOwnership(0);
+            var nt = _playerB.GetComponent<NetworkTransform>();
+            nt.Teleport(/*_playerB.transform.position*/posB, _playerB.transform.rotation, _playerB.transform.localScale);
+            Debug.Log("[Teleport] Player B テレポート");
+            //_playerB.GetComponent<NetworkObject>().ChangeOwnership(local);
+        }
+    }
+
+    void SetOwner()
+    {
+        //_playerA.GetComponent<NetworkObject>().ChangeOwnership(OwnerClientId);
+        //_playerB.GetComponent<NetworkObject>().ChangeOwnership(OwnerClientId);
+    }
+
+    //[ServerRpc(RequireOwnership = false)]
+    //void ReturnOwnerServerRpc(ulong objectId, ulong newOwnerId)
+    //{
+    //    if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(objectId, out var obj))
+    //    {
+    //        obj.ChangeOwnership(newOwnerId);
+    //        //Debug.LogError($" newOwnerId: {newOwnerId} ");
+    //    }
+    //    else
+    //    {
+    //        Debug.LogError($"ReturnOwnerServerRpc: objectId {objectId} が存在しません");
+    //    }
+    //}
+
+    public void Connect()
+    {
         List<GameObject> players = new List<GameObject>();
         ulong clientId = NetworkManager.Singleton.LocalClientId;
 
@@ -77,60 +131,19 @@ public class PlayerJoint : NetworkBehaviour
             //Debug.Log($"OwnerClientId = {OwnerClientId}");
 
             // 2人にテレポート命令
-            TeleportServerRpc(posA, posB, clientA, clientB);
+            //TeleportServerRpc(, posB, clientA, clientB);
             Joint();
-            Invoke("SetOwner", 0.1f);
+            //Invoke("SetOwner", 0.1f);
         }
     }
 
-    // ========================
-    // クライアント側でのみ実行される Teleport RPC
-    // ========================
-    [ServerRpc(RequireOwnership = false)]
-    private void TeleportServerRpc(Vector3 posA, Vector3 posB, ulong clientA, ulong clientB)
+
+    public IEnumerator DelayConnect()
     {
-        ulong local = OwnerClientId;
-
-        // --- ローカルクライアントが A 担当なら ---
-        if (local == clientA)
-        {
-            //_playerA.GetComponent<NetworkObject>().ChangeOwnership(0);
-            var nt = _playerA.GetComponent<NetworkTransform>();
-            nt.Teleport(posA, _playerA.transform.rotation, _playerA.transform.localScale);
-            Debug.Log("[Teleport] Player A テレポート");
-            //_playerA.GetComponent<NetworkObject>().ChangeOwnership(local);
-        }
-
-        // --- ローカルクライアントが B 担当なら ---
-        if (local == clientB)
-        {
-            //_playerB.GetComponent<NetworkObject>().ChangeOwnership(0);
-            var nt = _playerB.GetComponent<NetworkTransform>();
-            nt.Teleport(posB, _playerB.transform.rotation, _playerB.transform.localScale);
-            Debug.Log("[Teleport] Player B テレポート");
-            //_playerB.GetComponent<NetworkObject>().ChangeOwnership(local);
-        }
+        yield return new WaitForSeconds(0.2f);
+        Connect();
     }
 
-    void SetOwner()
-    {
-        //_playerA.GetComponent<NetworkObject>().ChangeOwnership(OwnerClientId);
-        //_playerB.GetComponent<NetworkObject>().ChangeOwnership(OwnerClientId);
-    }
-
-    //[ServerRpc(RequireOwnership = false)]
-    //void ReturnOwnerServerRpc(ulong objectId, ulong newOwnerId)
-    //{
-    //    if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(objectId, out var obj))
-    //    {
-    //        obj.ChangeOwnership(newOwnerId);
-    //        //Debug.LogError($" newOwnerId: {newOwnerId} ");
-    //    }
-    //    else
-    //    {
-    //        Debug.LogError($"ReturnOwnerServerRpc: objectId {objectId} が存在しません");
-    //    }
-    //}
 
 
     void Joint()

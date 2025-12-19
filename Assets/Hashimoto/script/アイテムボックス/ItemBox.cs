@@ -42,27 +42,34 @@ public class ItemBox : NetworkBehaviour
 	private void OnTriggerEnter(Collider other)
 	{
 		if (!IsServer) return;
+		if (!other.gameObject.CompareTag("Player")) return;
 		if (_used) return;
-		if (other.GetComponent<MovePlayerKey>()!=null)
-		other.GetComponent<MovePlayerKey>().LotteryHaveItem(itemChoose);
+		var player = other.GetComponentInParent<MovePlayerKey>();
+		if (player == null) return;
+
+		player.LotteryHaveItem(itemChoose);
 
 		_used = true;
 
 		// 箱を非表示にする
 		if (_boxObject != null)
 		{
-			_boxObject.SetActive(false);
+			//_boxObject.GetComponent<NetworkObject>().Despawn(false);//falseすればSetSctive(falseとほぼ同じ)
+			//_boxObject.SetActive(false);
+			SetEffectClientRpc(false);
 		}
 
 		// 判定オフ
-		SetColliders(false);
+		//SetColliders(false);
 
 		// 割れるエフェクト
 		if (eff_Item_Debris != null)
 		{
-			Instantiate(eff_Item_Debris,
-				_boxObject != null ? _boxObject.transform.position : transform.position,
-				transform.rotation);
+			NetworkEffectSpawner.Instance.PlayEffect("item_Debris", _boxObject.transform.position, _boxObject.transform.rotation);
+			//NetworkEffectSpawner.Instance.
+			//Instantiate(eff_Item_Debris,
+			//	_boxObject != null ? _boxObject.transform.position : transform.position,
+			//	transform.rotation);
 		}
 
 		// 復活まで
@@ -76,11 +83,11 @@ public class ItemBox : NetworkBehaviour
 		_used = false;
 
 		// 箱をいったん Scale 0 に
-		_boxObject.SetActive(true);
+		SetEffectClientRpc(true);
 		_boxObject.transform.localScale = Vector3.zero;
 
 		// Collider 戻す
-		SetColliders(true);
+		//SetColliders(true);
 
 		// 徐々に元のサイズに戻しながら回転
 		float t = 0f;
@@ -104,5 +111,12 @@ public class ItemBox : NetworkBehaviour
 	{
 		foreach (var col in _colliders)
 			col.enabled = enabled;
+	}
+
+	[ClientRpc]
+	private void SetEffectClientRpc(bool enabled)
+	{
+		_boxObject.SetActive(enabled);
+		SetColliders(enabled);
 	}
 }

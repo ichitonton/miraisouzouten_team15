@@ -23,6 +23,7 @@ public class SpawnManager : MonoBehaviour
 
 	public void DestroySweets(GameObject sweets)
 	{
+		Debug.Log(sweets);
 		if (!objList.Contains(sweets)) return;
 		objList.Remove(sweets);
 
