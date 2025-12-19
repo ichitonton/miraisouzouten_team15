@@ -75197,36 +75197,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5560108720057357279, guid: 59190f9254b376e4ea15859a47d45ae0, type: 3}
   m_PrefabInstance: {fileID: 1785559473}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1786141451 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1638634355049430559, guid: aaf0e7a6c62d9784e84449540eb77e6a, type: 3}
-  m_PrefabInstance: {fileID: 1969737474}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1786141456
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1786141451}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2334098958
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!1 &1788153587
 GameObject:
   m_ObjectHideFlags: 0
@@ -81937,33 +81907,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_Item_Box (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 5113150046142741522, guid: aaf0e7a6c62d9784e84449540eb77e6a, type: 3}
+    - target: {fileID: 6408924417655734557, guid: aaf0e7a6c62d9784e84449540eb77e6a, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 1914105058
+      value: 4228918095
       objectReference: {fileID: 0}
-    - target: {fileID: 5113150046142741522, guid: aaf0e7a6c62d9784e84449540eb77e6a, type: 3}
-      propertyPath: SceneMigrationSynchronization
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5113150046142741522, guid: aaf0e7a6c62d9784e84449540eb77e6a, type: 3}
+    - target: {fileID: 6408924417655734557, guid: aaf0e7a6c62d9784e84449540eb77e6a, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
-      value: 903433502
-      objectReference: {fileID: 0}
-    - target: {fileID: 9005633436179683820, guid: aaf0e7a6c62d9784e84449540eb77e6a, type: 3}
-      propertyPath: GlobalObjectIdHash
-      value: 962344147
-      objectReference: {fileID: 0}
-    - target: {fileID: 9005633436179683820, guid: aaf0e7a6c62d9784e84449540eb77e6a, type: 3}
-      propertyPath: InScenePlacedSourceGlobalObjectIdHash
-      value: 3285752214
+      value: 2514265857
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1638634355049430559, guid: aaf0e7a6c62d9784e84449540eb77e6a, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 1786141456}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aaf0e7a6c62d9784e84449540eb77e6a, type: 3}
 --- !u!1001 &1969912722
 PrefabInstance:

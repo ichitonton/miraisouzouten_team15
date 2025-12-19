@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 293755588448281459}
-  - component: {fileID: 5113150046142741522}
+  - component: {fileID: 6408924417655734557}
   - component: {fileID: 5094418034846958841}
   - component: {fileID: 100781520511849062}
   m_Layer: 0
@@ -35,7 +35,7 @@ Transform:
   - {fileID: 4374045015764790541}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5113150046142741522
+--- !u!114 &6408924417655734557
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,14 +47,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 903433502
+  GlobalObjectIdHash: 2334098958
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
+  SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
@@ -74,7 +74,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Item_Box
   ShowTopMostFoldoutHeaderGroup: 1
   _boxObject: {fileID: 8238017249467446276}
-  eff_Item_Debris: {fileID: 8581695615063258488, guid: 7827b258beefb5a4fba1526f27b86d46, type: 3}
+  eff_Item_Debris: {fileID: 3175971528712050799, guid: 7827b258beefb5a4fba1526f27b86d46, type: 3}
   respawnTime: 5
   itemChoose: 0.5
   appearDuration: 0.5

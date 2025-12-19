@@ -148,6 +148,7 @@ public class GoalToUI : NetworkBehaviour
             // SpawnManager側もNetworkObject.Despawn()を使っている前提
             if (go.TryGetComponent<JapaneseSweets_Manager>(out var sweet))
             {
+                if (go == null) continue;
                 spawnManager.DestroySweets(go);
                 sweet.SetReset();
             }
@@ -165,7 +166,8 @@ public class GoalToUI : NetworkBehaviour
         if (!IsServer) return; // ★重要：サーバー以外は無視
 
         if (!other.CompareTag(TagSweets) && !other.CompareTag(TagObstacles)) return;
-        if (!list.Contains(other.gameObject)) list.Add(other.gameObject);
+       // if (!list.Contains(other.gameObject)) list.Add(other.gameObject);
+        list.Add(other.gameObject);
 
         // NetworkVariableを書き換える（クライアントには自動で通知される）
         if (other.TryGetComponent<JapaneseSweets_Manager>(out var sweet))
