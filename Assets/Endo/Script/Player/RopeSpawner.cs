@@ -115,8 +115,12 @@ public class RopeSpawner : NetworkBehaviour
         // Ropeを生成
         GameObject rope = Instantiate(_ropeObject, _pivot.position, Quaternion.identity);
         var netObj = rope.GetComponent<NetworkObject>();
+
         //オブジェクトのオーナーを決める
         netObj.SpawnWithOwnership(clientId);
+
+        //ネットワークオブジェクトのリストに格納
+        GameManager.Instance._networkObjectList.Add(new NetworkObjectReference(netObj));
 
         // ClientRpcの送信先を1クライアントに限定
         ClientRpcParams rpcParams = new ClientRpcParams
