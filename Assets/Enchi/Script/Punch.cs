@@ -83,6 +83,7 @@ public class Punch : MonoBehaviour
 
 		// ノックバック
 		KnockBack(rb);
+		NetworkSoundManager.Instance.PlaySfx("Punch", NetworkSoundManager.SoundScope.LocalOnly,false);
 	}
 
 	[ServerRpc]

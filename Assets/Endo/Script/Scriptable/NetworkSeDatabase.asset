@@ -35,14 +35,14 @@ MonoBehaviour:
     pitchMax: 1.1
     spatialBlend: 1
     minDistance: 1
-    maxDistance: 45
+    maxDistance: 60
     cooldownSeconds: 0
     maxSimultaneous: 0
     outputMixerGroup: {fileID: 0}
   - tag: Punch
     clips:
     - {fileID: 8300000, guid: a995ef6ebea390f47871c3b965a100ac, type: 3}
-    volume: 0
+    volume: 0.35
     randomizePitch: 1
     pitchMin: 0.95
     pitchMax: 1

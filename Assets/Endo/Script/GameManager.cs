@@ -55,6 +55,8 @@ public class GameManager : NetworkBehaviour
     //ネットワークオブジェクトのリスト
     public NetworkList<NetworkObjectReference> _networkObjectList = new NetworkList<NetworkObjectReference>();
 
+    //ゲームスタートしたかどうか
+    private bool _isStart = false;
     private void Awake()
     {
         //シングルトンのインスタンス生成
@@ -74,6 +76,7 @@ public class GameManager : NetworkBehaviour
 
     private void OnGUI()
     {
+        if (_isStart) return;
         if (NetworkManager.Singleton == null) return; 
         if (!NetworkManager.Singleton.IsServer) return;
 
@@ -87,6 +90,7 @@ public class GameManager : NetworkBehaviour
                 PlayerTeleportAndConnect(_pivot[i].position, (ulong)i);
                 //ふわふわBGMを全Clientで流す&ループあり
                 NetworkSoundManager.Instance.PlayBgm("FuwaFuwa", NetworkSoundManager.SoundScope.AllClients, true);
+                _isStart = true;
             }
 
         }
