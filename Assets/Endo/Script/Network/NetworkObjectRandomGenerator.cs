@@ -370,7 +370,7 @@ public class NetworkObjectRandomGenerator : NetworkBehaviour
             }
         }
 
-        pos = candidate;
+        
         return true;
     }
 
