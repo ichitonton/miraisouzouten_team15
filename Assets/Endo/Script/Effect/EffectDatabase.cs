@@ -16,6 +16,7 @@ public class EffectDatabase : ScriptableObject
     [SerializeField]
     private List<EffectEntry> _effects = new List<EffectEntry>();
 
+    public IReadOnlyList<EffectEntry> Effects => _effects; // ★追加
     /// <summary>
     /// ID から対応するエフェクトPrefabを取得
     /// </summary>
