@@ -134,25 +134,25 @@ Material:
     - _ShadowOffset: -0.14
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
-    - _SpecPower: 64
-    - _SpecStrength: 1
+    - _SpecPower: 13
+    - _SpecStrength: 0.3
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
     - _Threshold1: 0.45
     - _Threshold2: 0.2
-    - _WetHighlightBoost: 0.2
+    - _WetHighlightBoost: 1.57
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _HighlightColor: {r: 0.8018868, g: 0.3517711, b: 0.65184814, a: 1}
+    - _HighlightColor: {r: 0.8584906, g: 0.21462265, b: 0.7785895, a: 1}
     - _MidColor: {r: 0.78039217, g: 0.60784316, b: 0.8392157, a: 0.6}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _ShadowColor: {r: 0.16470589, g: 0.08627451, b: 0.18039216, a: 1}
-    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _SpecColor: {r: 0.6509434, g: 0.371529, b: 0.62235326, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

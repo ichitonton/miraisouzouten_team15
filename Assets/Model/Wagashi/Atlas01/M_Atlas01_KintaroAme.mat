@@ -125,11 +125,11 @@ Material:
     - _HighlightThreshold: 0.82
     - _LightContrast: 1
     - _Metallic: 0
-    - _MochiSSSStrength: 0.5
+    - _MochiSSSStrength: 0.722
     - _OcclusionStrength: 1
     - _OutlineWidth: 0.02
     - _Parallax: 0.005
-    - _PowderHighlightReduce: 0.01
+    - _PowderHighlightReduce: 0.043
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _SampleGI: 0
@@ -144,7 +144,7 @@ Material:
     - _Surface: 0
     - _Threshold1: 0.45
     - _Threshold2: 0.2
-    - _WetHighlightBoost: 0.45
+    - _WetHighlightBoost: 0.96
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
