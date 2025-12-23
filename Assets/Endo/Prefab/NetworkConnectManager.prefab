@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5874703381638314871}
   - component: {fileID: 7550963095654367113}
   - component: {fileID: -7120915012445352639}
-  - component: {fileID: -6755786080962722358}
+  - component: {fileID: 5836284649128474004}
   - component: {fileID: -6180074972188493470}
   m_Layer: 0
   m_Name: NetworkConnectManager
@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1989277275
+  GlobalObjectIdHash: 464179852
   InScenePlacedSourceGlobalObjectIdHash: 464179852
   DeferredDespawnTick: 0
   Ownership: 1
@@ -111,7 +111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NetworkObjectSpawner
   ShowTopMostFoldoutHeaderGroup: 1
   _prefabDatabase: {fileID: 11400000, guid: a480dd88622b4ab49a612da3b759a321, type: 2}
---- !u!114 &-6755786080962722358
+--- !u!114 &5836284649128474004
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -120,11 +120,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8136259294011377221}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06d5c1554c29f8e4a8695f1f8b18b349, type: 3}
+  m_Script: {fileID: 11500000, guid: 436a3bf6a1ae4b04e9d83c251cc7d825, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NetworkEffectSpawner
   ShowTopMostFoldoutHeaderGroup: 1
-  _effectDatabase: {fileID: 11400000, guid: 61e24ca55fa48c74499045329cf5f3d0, type: 2}
+  _effectDatabase: {fileID: 0}
+  _poolRoot: {fileID: 0}
+  _prewarmPerEffect: 0
 --- !u!114 &-6180074972188493470
 MonoBehaviour:
   m_ObjectHideFlags: 0

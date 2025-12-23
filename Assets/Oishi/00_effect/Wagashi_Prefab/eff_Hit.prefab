@@ -19722,6 +19722,7 @@ GameObject:
   - component: {fileID: 575222904367346823}
   - component: {fileID: 2578380959746822402}
   - component: {fileID: 3073381175964193274}
+  - component: {fileID: -3496408015551254773}
   m_Layer: 0
   m_Name: eff_Hit
   m_TagString: Untagged
@@ -24553,6 +24554,20 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &-3496408015551254773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3765247001742513998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb1beb7fb6350d446b14952e787b1194, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PooledEffect
+  delay: 0
+  maxLifeTime: 2
 --- !u!1 &4776257540214316034
 GameObject:
   m_ObjectHideFlags: 0
