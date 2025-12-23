@@ -14108,6 +14108,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5560108720057357279, guid: 59190f9254b376e4ea15859a47d45ae0, type: 3}
   m_PrefabInstance: {fileID: 307797891}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &313368192
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 313368193}
+  m_Layer: 0
+  m_Name: EffectPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &313368193
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 313368192}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.68245, y: 5.5918, z: -62.88388}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &313729269
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32299,6 +32330,14 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 702996930
       objectReference: {fileID: 0}
+    - target: {fileID: 5836284649128474004, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _poolRoot
+      value: 
+      objectReference: {fileID: 313368193}
+    - target: {fileID: 5836284649128474004, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _effectDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: 61e24ca55fa48c74499045329cf5f3d0, type: 2}
     - target: {fileID: 7550963095654367113, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: _pivot
       value: 
@@ -90961,3 +91000,4 @@ SceneRoots:
   - {fileID: 1450310508}
   - {fileID: 684299370}
   - {fileID: 1941068907}
+  - {fileID: 313368193}
