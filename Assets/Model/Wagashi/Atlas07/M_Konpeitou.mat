@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: M_Konpeitou
+  m_Shader: {fileID: 4800000, guid: 0d1e04285f4d5b748b91a4375a1f2e42, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses:
+  - MOTIONVECTORS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AlphaClip: 0
+    - _BackScatter: 1.34
+    - _BloomSoftness: 0.057
+    - _BloomStrength: 0
+    - _BloomThreshold: 0.85
+    - _Cutoff: 0.5
+    - _Fade1: 0.03
+    - _Fade2: 0.03
+    - _FresnelPower: 2
+    - _FresnelStrength: 3
+    - _HighlightSmooth: 0.5
+    - _HighlightStrength: 0.61
+    - _HighlightThreshold: 1
+    - _LightContrast: 1
+    - _MochiSSSStrength: 0.209
+    - _NoiseScale: 8
+    - _NoiseStrength: 0.7
+    - _OutlineWidth: 0.02
+    - _PowderHighlightReduce: 0.8
+    - _Purity: 0.115
+    - _PurityVariance: 0.905
+    - _ReceiveShadows: 1
+    - _ScatterStrength: 0.68
+    - _ShadowOffset: 0
+    - _SpecPower: 89
+    - _SpecStrength: 0.69
+    - _Thickness: 0.15
+    - _Threshold1: 0.45
+    - _Threshold2: 0.2
+    - _WetHighlightBoost: 0.26
+    m_Colors:
+    - _BaseColor: {r: 0.9056604, g: 0.6536134, b: 0.7354159, a: 1}
+    - _BloomColor: {r: 0.5849056, g: 0.16278034, b: 0.16278034, a: 1}
+    - _FresnelColor: {r: 0.9245283, g: 0.14391243, b: 0.14391243, a: 1}
+    - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MidColor: {r: 0.4056604, g: 0.10524209, b: 0.10524209, a: 0.6}
+    - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ScatterColor: {r: 0.7924528, g: 0.22801706, b: 0.22801706, a: 1}
+    - _ShadowColor: {r: 0.5660378, g: 0.120149545, b: 0.120149545, a: 1}
+    - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!114 &8692129872454890090
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
+  version: 10

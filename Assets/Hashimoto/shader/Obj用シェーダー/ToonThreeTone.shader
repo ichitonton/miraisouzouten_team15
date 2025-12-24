@@ -36,6 +36,9 @@ Shader "Universal Render Pipeline/Toon/ThreeTone_Outline_Fog_JP"
         _FresnelColor          ("フレネルカラー", Color) = (1,1,1,1)
         _FresnelPower          ("フレネルの鋭さ", Range(0.1,8)) = 2
         _FresnelStrength       ("フレネル強さ", Range(0,3)) = 0
+
+        
+
     }
 
     SubShader
@@ -93,6 +96,9 @@ Shader "Universal Render Pipeline/Toon/ThreeTone_Outline_Fog_JP"
                 half4 _FresnelColor;
                 half  _FresnelPower;
                 half  _FresnelStrength;
+
+               
+
             CBUFFER_END
 
             struct Attributes {
@@ -177,6 +183,9 @@ Shader "Universal Render Pipeline/Toon/ThreeTone_Outline_Fog_JP"
                 return OUT;
             }
 
+                        
+
+
             half4 frag(Varyings IN) : SV_Target
             {
                 #ifdef _ALPHATEST_ON
@@ -199,6 +208,9 @@ Shader "Universal Render Pipeline/Toon/ThreeTone_Outline_Fog_JP"
 
                 // カメラ方向（フレネル用）
                 float3 viewDir = normalize(_WorldSpaceCameraPos - IN.posWS);
+
+                
+
 
                 // --- フレネル（リムライト） ---
                 {

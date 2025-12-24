@@ -1,18 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-2892787606106767604
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 9
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
@@ -20,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_Atlas03_MameDaihuku
+  m_Name: M_Konpeitou 1
   m_Shader: {fileID: 4800000, guid: 0d1e04285f4d5b748b91a4375a1f2e42, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -38,7 +25,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 59043dcff1608dc4c86e776637743379, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -102,9 +89,12 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _BackScatter: 0
+    - _BackScatter: 1.42
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
+    - _BloomSoftness: 0.05
+    - _BloomStrength: 0.19
+    - _BloomThreshold: 0.85
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
@@ -117,50 +107,69 @@ Material:
     - _EnvironmentReflections: 1
     - _Fade1: 0.03
     - _Fade2: 0.03
+    - _FadeMultiplier: 1
+    - _FresnelPower: 2.35
+    - _FresnelStrength: 3
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _HighlightSmooth: 0.09
-    - _HighlightStrength: 0.24
-    - _HighlightThreshold: 0.86
+    - _HighlightSmooth: 0.5
+    - _HighlightStrength: 0.64
+    - _HighlightThreshold: 1
     - _LightContrast: 1
     - _Metallic: 0
-    - _MochiSSSStrength: 0.23
-    - _NoiseScale: 0.1
-    - _NoiseStrength: 0
+    - _MochiSSSStrength: 0.236
+    - _NoiseScale: 9.2
+    - _NoiseStrength: 0.57
     - _OcclusionStrength: 1
     - _OutlineWidth: 0.02
     - _Parallax: 0.005
-    - _PowderHighlightReduce: 1
-    - _Purity: 1
-    - _PurityVariance: 0
+    - _PowderHighlightReduce: 0.8
+    - _Purity: 0.115
+    - _PurityVariance: 0.845
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _ScatterStrength: 0
+    - _ScatterStrength: 0.77
     - _ShadowOffset: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
-    - _SpecPower: 64
-    - _SpecStrength: 0.57
+    - _SpecPower: 80
+    - _SpecStrength: 0.77
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
-    - _Thickness: 0.01
+    - _Thickness: 0.23
     - _Threshold1: 0.45
     - _Threshold2: 0.2
-    - _WetHighlightBoost: 0
+    - _WetHighlightBoost: 0.19
     - _WorkflowMode: 1
+    - _XRMotionVectorsPass: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor: {r: 0.45098042, g: 0.65921307, b: 0.94509804, a: 1}
+    - _BloomColor: {r: 0.44313723, g: 0.4993532, b: 0.972549, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FresnelColor: {r: 0.6039216, g: 0.6287388, b: 0.78431374, a: 1}
     - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _MidColor: {r: 0.85, g: 0.85, b: 0.85, a: 0.6}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ScatterColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShadowColor: {r: 0.54999995, g: 0.54999995, b: 0.54999995, a: 1}
-    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _MidColor: {r: 0.05098039, g: 0.060147814, b: 0.44313726, a: 0.6}
+    - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ScatterColor: {r: 0, g: 0.054832935, b: 1, a: 1}
+    - _ShadowColor: {r: 0, g: 0.11605785, b: 0.48235294, a: 1}
+    - _SpecColor: {r: 0.3726415, g: 0.4751683, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
+--- !u!114 &8692129872454890090
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
+  version: 10

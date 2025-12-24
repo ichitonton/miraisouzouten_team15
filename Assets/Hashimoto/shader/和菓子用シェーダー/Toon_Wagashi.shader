@@ -5,6 +5,7 @@
 //  ・MaskMap(R=粉 G=濡れ B=モチ)で質感制御
 //  ・MochiSSSStrength でモチモチ簡易SSS
 //  ・Specular(Blinn-Phong)でメタリック/濡れツヤ追加
+//  + Fresnel / Bloom(擬似) 追加
 //  Tested: Unity 6000系 / URP 14+
 // ============================================================================
 
@@ -45,6 +46,28 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
         _PowderHighlightReduce ("粉: ハイライト減少量", Range(0,1)) = 0.8
         _WetHighlightBoost     ("濡れ: ハイライト増加量", Range(0,2)) = 1.0
         _MochiSSSStrength      ("モチ: 影を明るくする強さ", Range(0,1)) = 0.4
+
+        // --- Konpeito: Purity / Internal Scatter (擬似) ---
+        _Purity            ("純度(1=透明寄り,0=白濁)", Range(0,1)) = 0.8
+        _PurityVariance    ("純度ムラ(ノイズの効き)", Range(0,1)) = 0.5
+        _NoiseScale        ("ノイズスケール(WS)", Range(0.1,50)) = 8
+        _NoiseStrength     ("ノイズ強さ", Range(0,2)) = 1
+
+        _ScatterColor      ("内部散乱カラー", Color) = (1,1,1,1)
+        _ScatterStrength   ("内部散乱強さ", Range(0,3)) = 0.8
+        _BackScatter       ("裏からの透け(擬似SSS)", Range(0,3)) = 0.6
+        _Thickness         ("厚み(擬似)", Range(0.01,3)) = 1.0
+
+        // --- Fresnel ---
+        _FresnelColor     ("フレネルカラー", Color) = (1,1,1,1)
+        _FresnelPower     ("フレネルの鋭さ", Range(0.1,8)) = 2
+        _FresnelStrength  ("フレネル強さ", Range(0,3)) = 0
+
+        // --- Bloom(擬似発光) ---
+        [HDR] _BloomColor     ("ブルーム用発光カラー", Color) = (1,1,1,1)
+        _BloomStrength        ("ブルーム強さ", Range(0,5)) = 0
+        _BloomThreshold       ("ブルーム開始閾値", Range(0,1)) = 0.85
+        _BloomSoftness        ("ブルームぼかし幅", Range(0,0.5)) = 0.05
     }
 
     SubShader
@@ -52,9 +75,6 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
         Tags { "RenderPipeline"="UniversalPipeline" "RenderType"="Opaque" "Queue"="Geometry" }
         LOD 200
 
-        // =====================================================================
-        // PASS 0: 本体（トゥーン受光 + Fog）
-        // =====================================================================
         Pass
         {
             Name "ForwardLitToon"
@@ -76,7 +96,6 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
-            // LerpWhiteTo など共通マテリアル関数
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonMaterial.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
@@ -102,7 +121,6 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
                 half  _HighlightSmooth;
                 half  _HighlightStrength;
 
-                // スペキュラ
                 half4 _SpecColor;
                 half  _SpecPower;
                 half  _SpecStrength;
@@ -114,6 +132,25 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
                 half  _PowderHighlightReduce;
                 half  _WetHighlightBoost;
                 half  _MochiSSSStrength;
+
+                half  _Purity;
+                half  _PurityVariance;
+                half  _NoiseScale;
+                half  _NoiseStrength;
+
+                half4 _ScatterColor;
+                half  _ScatterStrength;
+                half  _BackScatter;
+                half  _Thickness;
+
+                half4 _FresnelColor;
+                half  _FresnelPower;
+                half  _FresnelStrength;
+
+                half4 _BloomColor;
+                half  _BloomStrength;
+                half  _BloomThreshold;
+                half  _BloomSoftness;
             CBUFFER_END
 
             struct Attributes {
@@ -198,6 +235,39 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
                 return OUT;
             }
 
+            float Hash31(float3 p)
+            {
+                p = frac(p * 0.1031);
+                p += dot(p, p.yzx + 33.33);
+                return frac((p.x + p.y) * p.z);
+            }
+
+            float ValueNoise3D(float3 p)
+            {
+                float3 ip = floor(p);
+                float3 fp = frac(p);
+                fp = fp * fp * (3.0 - 2.0 * fp);
+
+                float n000 = Hash31(ip + float3(0,0,0));
+                float n100 = Hash31(ip + float3(1,0,0));
+                float n010 = Hash31(ip + float3(0,1,0));
+                float n110 = Hash31(ip + float3(1,1,0));
+                float n001 = Hash31(ip + float3(0,0,1));
+                float n101 = Hash31(ip + float3(1,0,1));
+                float n011 = Hash31(ip + float3(0,1,1));
+                float n111 = Hash31(ip + float3(1,1,1));
+
+                float nx00 = lerp(n000, n100, fp.x);
+                float nx10 = lerp(n010, n110, fp.x);
+                float nx01 = lerp(n001, n101, fp.x);
+                float nx11 = lerp(n011, n111, fp.x);
+
+                float nxy0 = lerp(nx00, nx10, fp.y);
+                float nxy1 = lerp(nx01, nx11, fp.y);
+
+                return lerp(nxy0, nxy1, fp.z);
+            }
+
             half4 frag(Varyings IN) : SV_Target
             {
                 #ifdef _ALPHATEST_ON
@@ -212,9 +282,9 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
                 // 質感マスク
                 float2 maskUV = TRANSFORM_TEX(IN.uv, _MaskMap);
                 half3 maskSample = SAMPLE_TEXTURE2D(_MaskMap, sampler_MaskMap, maskUV).rgb;
-                half  maskPowder = maskSample.r; // 粉
-                half  maskWet    = maskSample.g; // 濡れ
-                half  maskMochi  = maskSample.b; // モチ
+                half  maskPowder = maskSample.r;
+                half  maskWet    = maskSample.g;
+                half  maskMochi  = maskSample.b;
 
                 half wL, wM, wS;
                 ThreeBandWeights(v, _Threshold1, _Threshold2, _Fade1, _Fade2, wL, wM, wS);
@@ -225,15 +295,37 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
 
                 half3 col = wL * baseTone + wM * midTone + wS * shadowTone;
 
-                // --- ハイライト（粉・濡れ反映） ---
+                // main light 1回だけ
+                Light mainLight = GetMainLight(IN.shadowCoord);
+
+                // -------------------------
+                // Konpeito: 内部散乱（擬似）
+                // -------------------------
+                float noiseV = ValueNoise3D(IN.posWS * _NoiseScale) * _NoiseStrength;
+                half purityLocal = saturate(_Purity + (noiseV - 0.5h) * 2.0h * _PurityVariance);
+                half impurity = 1.0h - purityLocal;
+
+                half ndl = dot(nWS, mainLight.direction);
+                half backLit = saturate(-ndl);
+
+                half thicknessAtten = exp2(-_Thickness * 1.2h);
+                half frontHaze = saturate(v) * 0.35h;
+
+                half scatter =
+                    impurity * _ScatterStrength *
+                    (frontHaze + backLit * _BackScatter * thicknessAtten);
+
+                col += _ScatterColor.rgb * scatter * _ScatterColor.a;
+
+                // -------------------------
+                // ハイライト（粉・濡れ反映）
+                // -------------------------
                 {
                     half t  = _HighlightThreshold;
                     half s  = saturate(_HighlightSmooth);
                     half hMask = smoothstep(t - s, t + s, v);
 
-                    // 粉：ハイライトを減少
                     half powderFactor = 1.0h - maskPowder * _PowderHighlightReduce;
-                    // 濡れ：ハイライトを増加
                     half wetFactor    = 1.0h + maskWet * _WetHighlightBoost;
 
                     half highlightStrength = _HighlightStrength * powderFactor * wetFactor;
@@ -242,40 +334,74 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
                     col = lerp(col, highlightBase, hMask * highlightStrength);
                 }
 
-                // --- スペキュラ（Blinn-Phong / 濡れ・メタリック） ---
+                // -------------------------
+                // スペキュラ（Blinn-Phong）
+                // -------------------------
                 {
-                    float3 viewDir = normalize(_WorldSpaceCameraPos - IN.posWS);
-                
-                    Light  mainLight = GetMainLight(IN.shadowCoord);
-                    float3 lightDir  = mainLight.direction;
-                    float3 halfDir   = normalize(viewDir + lightDir);
-                
+                    float3 viewDir  = normalize(_WorldSpaceCameraPos - IN.posWS);
+                    float3 lightDir = mainLight.direction;
+                    float3 halfDir  = normalize(viewDir + lightDir);
+
                     half nh = saturate(dot(nWS, halfDir));
-                
                     float power = max((float)_SpecPower, 1.0);
                     half  spec  = (half)pow(nh, power);
-                
-                    // ライトの減衰・影も反映
+
                     spec *= mainLight.shadowAttenuation * mainLight.distanceAttenuation;
-                
-                    // 粉・濡れマスクの掛け方を修正
+
                     half powderFactor = 1.0h - maskPowder * _PowderHighlightReduce;
                     half wetFactor    = 1.0h + maskWet    * _WetHighlightBoost;
-                
+
                     half specMask = powderFactor * wetFactor;
-                
+
                     spec *= specMask;
                     spec *= _SpecStrength;
-                
+
                     col += _SpecColor.rgb * spec * _SpecColor.a;
                 }
 
-
-                // --- モチモチ補正（簡易SSS） ---
+                // -------------------------
+                // モチモチ補正（簡易SSS）
+                // -------------------------
                 {
-                    half shadowFactor = 1.0h - v; // 影側で1
+                    half shadowFactor = 1.0h - v;
                     half mochiFactor  = maskMochi * _MochiSSSStrength * shadowFactor;
                     col = lerp(col, baseTone, mochiFactor);
+                }
+
+                // -------------------------
+                // Fresnel（リムライト）
+                // -------------------------
+                {
+                    float3 viewDir = normalize(_WorldSpaceCameraPos - IN.posWS);
+                    half ndv  = saturate(dot(nWS, viewDir));
+                    half fres = pow(1.0h - ndv, _FresnelPower);
+                    fres *= _FresnelStrength;
+
+                    // ちょい濡れで強く、粉で弱く（好み）
+                    half powderFactor = 1.0h - maskPowder * _PowderHighlightReduce;
+                    half wetFactor    = 1.0h + maskWet * (_WetHighlightBoost * 0.5h);
+                    fres *= powderFactor * wetFactor;
+
+                    col += _FresnelColor.rgb * fres * _FresnelColor.a;
+                }
+
+                // -------------------------
+                // Bloom(擬似発光)
+                //  ※これは「発光値を足すだけ」なので、実際にBloomで滲ませるには
+                //    URP側でBloomポストプロセスが有効＆HDR出力が必要
+                // -------------------------
+                {
+                    // “明部ほど光る” + 閾値/ぼかし
+                    half soft = max(_BloomSoftness, 1e-4h);
+                    half bloomMask = smoothstep(_BloomThreshold - soft, _BloomThreshold + soft, saturate(v));
+                    half bloom = bloomMask * _BloomStrength;
+
+                    // 濡れで強く、粉で弱く
+                    half powderFactor = 1.0h - maskPowder * _PowderHighlightReduce;
+                    half wetFactor    = 1.0h + maskWet * _WetHighlightBoost;
+                    bloom *= powderFactor * wetFactor;
+
+                    col += _BloomColor.rgb * bloom * _BloomColor.a;
                 }
 
                 col = MixFog(col, IN.fogCoord);
@@ -284,9 +410,6 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
             ENDHLSL
         }
 
-        // =====================================================================
-        // PASS 1: ShadowCaster
-        // =====================================================================
         Pass
         {
             Name "ShadowCaster"
@@ -311,9 +434,6 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
             ENDHLSL
         }
 
-        // =====================================================================
-        // PASS 2: アウトライン（Inverted Hull + Fog）
-        // =====================================================================
         Pass
         {
             Name "Outline"

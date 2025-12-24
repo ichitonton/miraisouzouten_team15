@@ -102,8 +102,12 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
+    - _BackScatter: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
+    - _BloomSoftness: 0.05
+    - _BloomStrength: 0
+    - _BloomThreshold: 0.857
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
@@ -116,6 +120,8 @@ Material:
     - _EnvironmentReflections: 1
     - _Fade1: 0.012
     - _Fade2: 0.143
+    - _FresnelPower: 0.1
+    - _FresnelStrength: 0
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -125,12 +131,17 @@ Material:
     - _LightContrast: 1.97
     - _Metallic: 0
     - _MochiSSSStrength: 0.12
+    - _NoiseScale: 8
+    - _NoiseStrength: 1
     - _OcclusionStrength: 1
     - _OutlineWidth: 0.02
     - _Parallax: 0.005
     - _PowderHighlightReduce: 0
+    - _Purity: 0.8
+    - _PurityVariance: 0.5
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _ScatterStrength: 0
     - _ShadowOffset: 0.05
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
@@ -140,6 +151,7 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
+    - _Thickness: 0.01
     - _Threshold1: 0.25
     - _Threshold2: 0.08
     - _WetHighlightBoost: 0
@@ -147,11 +159,14 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BloomColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FresnelColor: {r: 1, g: 1, b: 1, a: 1}
     - _HighlightColor: {r: 0.9056604, g: 0.77978945, b: 0.6707013, a: 0.33333334}
     - _MidColor: {r: 0.85, g: 0.85, b: 0.85, a: 0.49803922}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ScatterColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.5499999, g: 0.5499999, b: 0.5499999, a: 1}
     - _SpecColor: {r: 1, g: 0.94367146, b: 0.7122642, a: 1}
   m_BuildTextureStacks: []
