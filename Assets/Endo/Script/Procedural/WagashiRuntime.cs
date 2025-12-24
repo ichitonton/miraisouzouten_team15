@@ -9,4 +9,6 @@ public class WagashiRuntime : MonoBehaviour
     public float currentMass;
     public float currentBounciness;
     public float currentStretchFactor;
+    public float currentDynamicFriction;
+    public float currentStaticFriction;
 }

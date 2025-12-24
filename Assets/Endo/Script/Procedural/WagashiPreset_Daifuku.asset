@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f01cab4a821b553408d56f79c6f27ac9, type: 3}
+  m_Name: WagashiPreset_Daifuku
+  m_EditorClassIdentifier: Assembly-CSharp::WagashiPreset
+  wagashiName: Daifuku
+  wagashiPrefab: {fileID: 2801467627326373979, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
+  possibleColors:
+  - {r: 1, g: 0.91132075, b: 0.91132075, a: 0}
+  - {r: 1, g: 0.79811317, b: 0.91646063, a: 0}
+  - {r: 0.9981619, g: 1, b: 0.7150943, a: 0}
+  - {r: 1, g: 1, b: 1, a: 0}
+  useSingleMaterialInstance: 1
+  minScale: {x: 0.95, y: 1, z: 0.95}
+  maxScale: {x: 1.05, y: 1.1, z: 1.05}
+  minMass: 2.5
+  maxMass: 3.5
+  minBounciness: 0.18
+  maxBounciness: 0.32
+  useBucketForBounciness: 0
+  bucketDivisions: 5
+  minDynamicFriction: 0.762
+  maxDynamicFriction: 1.2
+  minStaticFriction: 0.9
+  maxStaticFriction: 1.4
+  frictionCombine: 3
+  bounceCombine: 3
+  minStretchFactor: 0.11
+  maxStretchFactor: 0.24
