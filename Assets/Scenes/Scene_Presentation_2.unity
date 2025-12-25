@@ -797,6 +797,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2213381287313018758, guid: 889a51681c380874398405191af35704, type: 3}
   m_PrefabInstance: {fileID: 15491859}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &16903962 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 384813539755260978, guid: 8c6c37a27af238849ba0791066c24cda, type: 3}
+  m_PrefabInstance: {fileID: 1307415621}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65efe20189f9f1041b37a108aeab98e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoalToUI
 --- !u!1001 &22733244
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12419,6 +12430,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 384813539755260978, guid: 8c6c37a27af238849ba0791066c24cda, type: 3}
+      propertyPath: targetPlayerId
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 384813539755260978, guid: 8c6c37a27af238849ba0791066c24cda, type: 3}
       propertyPath: 'countObjects.Array.data[0]'
       value: 
       objectReference: {fileID: 1751295342}
@@ -21332,6 +21347,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6700968861419430235, guid: 2ee97cdcfc40f9642a400c1858c4448c, type: 3}
   m_PrefabInstance: {fileID: 551885530}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &552046967 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 384813539755260978, guid: 8c6c37a27af238849ba0791066c24cda, type: 3}
+  m_PrefabInstance: {fileID: 251417864}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65efe20189f9f1041b37a108aeab98e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoalToUI
 --- !u!1001 &555287553
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21576,7 +21602,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 39964d016f088004eb344b00b74ce043, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.78
+      value: 6.785
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 39964d016f088004eb344b00b74ce043, type: 3}
       propertyPath: m_LocalPosition.z
@@ -26851,6 +26877,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 384813539755260978, guid: 8c6c37a27af238849ba0791066c24cda, type: 3}
+      propertyPath: targetPlayerId
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 384813539755260978, guid: 8c6c37a27af238849ba0791066c24cda, type: 3}
       propertyPath: 'countObjects.Array.data[0]'
       value: 
       objectReference: {fileID: 1751295342}
@@ -26913,6 +26943,10 @@ PrefabInstance:
     - target: {fileID: 8564661852305280008, guid: 8c6c37a27af238849ba0791066c24cda, type: 3}
       propertyPath: SceneMigrationSynchronization
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8734943798244667130, guid: 8c6c37a27af238849ba0791066c24cda, type: 3}
+      propertyPath: m_Name
+      value: pasted__pasted__pCube2
       objectReference: {fileID: 0}
     - target: {fileID: 8747491641000462686, guid: 8c6c37a27af238849ba0791066c24cda, type: 3}
       propertyPath: m_Layer
@@ -28581,6 +28615,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6700968861419430235, guid: 2ee97cdcfc40f9642a400c1858c4448c, type: 3}
   m_PrefabInstance: {fileID: 720813566}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &722058974 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 384813539755260978, guid: 8c6c37a27af238849ba0791066c24cda, type: 3}
+  m_PrefabInstance: {fileID: 673444169}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65efe20189f9f1041b37a108aeab98e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoalToUI
 --- !u!1001 &726306244
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -50732,6 +50777,10 @@ PrefabInstance:
       propertyPath: SceneMigrationSynchronization
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8734943798244667130, guid: 8c6c37a27af238849ba0791066c24cda, type: 3}
+      propertyPath: m_Name
+      value: pasted__pasted__pCube0
+      objectReference: {fileID: 0}
     - target: {fileID: 8747491641000462686, guid: 8c6c37a27af238849ba0791066c24cda, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -71643,15 +71692,15 @@ PrefabInstance:
     - target: {fileID: 4726046055732392677, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: goalRed
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 16903962}
     - target: {fileID: 4726046055732392677, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: goalBlue
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 552046967}
     - target: {fileID: 4726046055732392677, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: goalWhite
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 722058974}
     - target: {fileID: 5342359017251551364, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 16

@@ -592,7 +592,7 @@ public class MovePlayerKey : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void ItemTargetServerRpc(Vector3 pos)
     {
-        Debug.Log("OwnerClientId :"+(int)OwnerClientId + "_playerNumber: " + (int)_playerNumber + "ItemTargetServerRpc pos : " + pos);
+        //Debug.Log("OwnerClientId :"+(int)OwnerClientId + "_playerNumber: " + (int)_playerNumber + "ItemTargetServerRpc pos : " + pos);
         _target = pos;
     }
 

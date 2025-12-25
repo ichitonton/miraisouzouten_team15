@@ -14,7 +14,12 @@ public class MyTeamScore_UI : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this; // ©•ª©g‚ğ“o˜^
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
     }
 
     // ƒS[ƒ‹‘¤‚©‚ç”’l‚ğ‘—‚Á‚Ä‚à‚ç‚¤ŠÖ”

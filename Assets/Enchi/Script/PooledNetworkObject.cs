@@ -5,6 +5,11 @@ public class PooledNetworkObject : NetworkBehaviour
 {
     NetworkObject prefab;
 
+    public override void OnNetworkSpawn()
+    {
+        SetPrefab(NetworkObject);
+    }
+
     public void SetPrefab(NetworkObject pf)
     {
         prefab = pf;

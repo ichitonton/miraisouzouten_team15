@@ -53,33 +53,48 @@ public class GoalToUI : NetworkBehaviour
 
     [SerializeField] private SpawnManager spawnManager;
 
+    public System.Action OnScoreChanged;
 
-	public override void OnNetworkSpawn()
+
+
+    //public override void OnNetworkSpawn()
+    //{
+    //    // 1. 自分がこのゴールの担当者かチェック
+    //    bool isMyGoal = (NetworkManager.Singleton.LocalClientId == targetPlayerId);
+
+    //    // 2. 自分の担当ゴールの場合だけ、UIマネージャーと連携する
+    //    if (isMyGoal)
+    //    {
+    //        // UIの初期設定
+    //        if (MyTeamScore_UI.Instance != null)
+    //        {
+    //            MyTeamScore_UI.Instance.InitSlider(TimeupMAX);
+    //        }
+
+    //        // 値が変わった時の通知先を「UIマネージャー」にする
+    //        netScoreNow.OnValueChanged += (prev, curr) => PushToUI();
+    //        netScoreTotal.OnValueChanged += (prev, curr) => PushToUI();
+    //        netTimeUp.OnValueChanged += (prev, curr) => PushToUI();
+
+    //        // 初回表示
+    //        PushToUI();
+
+    //        netCount.OnValueChanged += (prev, current) => UpdateActiveObject();
+    //        UpdateActiveObject();
+    //    }
+    //}
+
+    public override void OnNetworkSpawn()
     {
-        // 1. 自分がこのゴールの担当者かチェック
-        bool isMyGoal = (NetworkManager.Singleton.LocalClientId == targetPlayerId);
-
-        // 2. 自分の担当ゴールの場合だけ、UIマネージャーと連携する
-        if (isMyGoal)
+        if (IsServer)
         {
-            // UIの初期設定
-            if (MyTeamScore_UI.Instance != null)
+            netScoreTotal.OnValueChanged += (prev, curr) =>
             {
-                MyTeamScore_UI.Instance.InitSlider(TimeupMAX);
-            }
-
-            // 値が変わった時の通知先を「UIマネージャー」にする
-            netScoreNow.OnValueChanged += (prev, curr) => PushToUI();
-            netScoreTotal.OnValueChanged += (prev, curr) => PushToUI();
-            netTimeUp.OnValueChanged += (prev, curr) => PushToUI();
-
-            // 初回表示
-            PushToUI();
-
-            netCount.OnValueChanged += (prev, current) => UpdateActiveObject();
-            UpdateActiveObject();
+                OnScoreChanged?.Invoke();
+            };
         }
     }
+
 
     // ★UIに情報を送る専用の関数
     private void PushToUI()
@@ -149,8 +164,8 @@ public class GoalToUI : NetworkBehaviour
             if (go.TryGetComponent<JapaneseSweets_Manager>(out var sweet))
             {
                 if (go == null) continue;
-                spawnManager.DestroySweets(go);
-                sweet.SetReset();
+                //spawnManager.DestroySweets(go);
+                //sweet.SetReset();
             }
             if (go.TryGetComponent<obstacles_Manager>(out var obs))
             {
@@ -226,15 +241,15 @@ public class GoalToUI : NetworkBehaviour
 			transform.rotation
 		);
 
-		// 和菓子縮小（即座に消します）
-		foreach (var go in list)
-		{
+        // 和菓子縮小（即座に消します）
+        foreach (var go in list)
+        {
             if (go != null && go.GetComponent<PooledNetworkObject>() != null)
                 go.GetComponent<PooledNetworkObject>().DestroySelf();
-		}
+        }
 
-		// 演出時間待つ
-		yield return new WaitForSeconds(shrinkDelay);
+        // 演出時間待つ
+        yield return new WaitForSeconds(shrinkDelay);
 
 		// スコア確定
 		netScoreTotal.Value += netScoreNow.Value;

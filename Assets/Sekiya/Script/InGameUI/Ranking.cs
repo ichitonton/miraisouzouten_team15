@@ -20,19 +20,24 @@ public class Ranking : MonoBehaviour
     private List<GoalToUI> _goalScripts = new List<GoalToUI>();
 
     // 親（UICanvasController）からゴールを受け取る関数
-    public void SetupGoals(GoalToUI red, GoalToUI blue, GoalToUI White)
+    public void SetupGoals(GoalToUI red, GoalToUI blue, GoalToUI white)
     {
         _goalScripts.Clear();
-        // リストの順番（0,1,2）はRed, Blue, Whiteの前提
         _goalScripts.Add(red);
         _goalScripts.Add(blue);
-        _goalScripts.Add(White);
+        _goalScripts.Add(white);
+
+        red.OnScoreChanged += UpdateRanking;
+        blue.OnScoreChanged += UpdateRanking;
+        white.OnScoreChanged += UpdateRanking;
+
+        UpdateRanking(); // 初期表示
     }
 
-    void Update()
-    {
-        UpdateRanking();
-    }
+    //void Update()
+    //{
+    //    UpdateRanking();
+    //}
 
     public void UpdateRanking()
     {

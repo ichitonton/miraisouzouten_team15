@@ -3240,7 +3240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 566168301
+  GlobalObjectIdHash: 3203163366
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -4073,6 +4073,14 @@ PrefabInstance:
     - target: {fileID: 7859407524413696225, guid: 023271473a99d564d8db894f141a8cd9, type: 3}
       propertyPath: m_Name
       value: eff_dying
+      objectReference: {fileID: 0}
+    - target: {fileID: 7980265075102380003, guid: 023271473a99d564d8db894f141a8cd9, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162807988490343093, guid: 023271473a99d564d8db894f141a8cd9, type: 3}
+      propertyPath: playOnAwake
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
