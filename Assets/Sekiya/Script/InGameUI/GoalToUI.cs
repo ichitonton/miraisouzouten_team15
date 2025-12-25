@@ -93,6 +93,25 @@ public class GoalToUI : NetworkBehaviour
                 OnScoreChanged?.Invoke();
             };
         }
+
+        bool isMyGoal =
+            NetworkManager.Singleton.LocalClientId == targetPlayerId;
+
+        // ★自分のゴールのUIだけ更新
+        if (!isMyGoal) return;
+
+        // ★クライアント側で必ず購読する
+        netScoreNow.OnValueChanged += (_, __) => PushToUI();
+        netScoreTotal.OnValueChanged += (_, __) => PushToUI();
+        netTimeUp.OnValueChanged += (_, __) => PushToUI();
+
+        // 初期表示
+        PushToUI();
+
+        UpdateActiveObject();
+
+        netCount.OnValueChanged += (prev, current) => UpdateActiveObject();
+        UpdateActiveObject();
     }
 
 
