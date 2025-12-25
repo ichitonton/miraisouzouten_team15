@@ -14,6 +14,7 @@ public class UICursorToWorld : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;  // ínñ ÉåÉCÉÑÅ[
     [SerializeField] private GameObject itemTarget;
 
+    public Vector3 CurrentTargetPos { get; private set; }
 
     Gamepad gamepad;
 
@@ -106,6 +107,7 @@ public class UICursorToWorld : MonoBehaviour
             //Debug.Log("hit: " + hit.point);
 
             worldTarget.position = hit.point + Vector3.up * 0.01f;
+            CurrentTargetPos = worldTarget.position;
         }
     }
 

@@ -1,6 +1,5 @@
 using Unity.Mathematics;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,9 +11,10 @@ public class Item : NetworkBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void OnNetworkSpawn()
     {
+        if(!IsServer)return;
         Invoke("IsTmerOn", 0.5f);
         Rigidbody rb = GetComponent<Rigidbody>();
-        rb.isKinematic = false;
+        rb.isKinematic = true;
         Collider col = GetComponent<Collider>();
         col.isTrigger = true;
         _isTimerOn = false;

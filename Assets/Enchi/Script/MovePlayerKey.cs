@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using UnityEngine.UIElements;
 
 public class MovePlayerKey : NetworkBehaviour
 {
@@ -27,7 +28,7 @@ public class MovePlayerKey : NetworkBehaviour
     [SerializeField] float _punchForce = 10.0f;
     [SerializeField] float _stunTime = 1.0f;//パンチした時のスタン時間
     [SerializeField] Transform _haveTrans;//持ってるアイテム
-    Transform _target;
+    Vector3 _target;
     [SerializeField] private GameObject _itemBomb;
     [SerializeField] private GameObject _itemBlackHole;
     [SerializeField] private GameObject _itemShouse;
@@ -44,6 +45,7 @@ public class MovePlayerKey : NetworkBehaviour
     [SerializeField]ParticleSystem _dashParticleSystem;
     [SerializeField]ParticleSystem _mutekiParticleSystem;
     [SerializeField]ParticleSystem _shoeseParticleSystem;
+    [SerializeField]ParticleSystem _dyingParticleSystem;
 
     //エフェクト関連
     [SerializeField] Transform _headPoint; //頭の位置
@@ -147,7 +149,7 @@ public class MovePlayerKey : NetworkBehaviour
         if (IsOwner)
         {
             GetComponent<UICursorToWorld>().SpawnTarget();
-            _target = gameObject.GetComponent<UICursorToWorld>().GetItemTargetTransform();
+            _target = GetComponent<UICursorToWorld>().GetItemTargetTransform().position;
         }
     }
 
@@ -160,6 +162,10 @@ public class MovePlayerKey : NetworkBehaviour
     void FixedUpdate()
     {
         if (IsOwner)
+        {
+            ItemTargetServerRpc(GetComponent<UICursorToWorld>().GetItemTargetTransform().position);
+        }
+        if (IsServer)
         {
             //アイテムを持ってるとき
             if (_haveItem != ItemType.None && _haveItem != ItemType.Max)
@@ -180,12 +186,14 @@ public class MovePlayerKey : NetworkBehaviour
     void Update()
     {
 
-        if (_item != null)
+        if (IsServer)
         {
-            _item.transform.position = _haveTrans.position;
-            _item.transform.eulerAngles = _haveTrans.eulerAngles;
+            if (_item != null)
+            {
+                _item.transform.position = _haveTrans.position;
+                _item.transform.eulerAngles = _haveTrans.eulerAngles;
+            }
         }
-
         //アニメーションブレンド値リセット
         if (_animBlend > 0)
         {
@@ -193,20 +201,27 @@ public class MovePlayerKey : NetworkBehaviour
         }
 
         if (IsOwner)
-    {
-        if (!_canNotInputKey)
         {
-            //パッド入力
-            if (!InputGamePad())
+            //ItemTargetServerRpc(_target);
+            //Debug.Log("_target.position : " + _target.position);
+            if (!_canNotInputKey)
             {
+            //パッド入力
+                if (!InputGamePad())
+                {
                 //キーボード入力
-                InputKeyboard();
-            }
-        }
-        }
+                    InputKeyboard();
+                }
+                SendInputServerRpc(_InputMove, _InputPunch, _InputUseItem);
+                //アイテムターゲット位置更新
+                if (_InputUseItem)
+                {
+                }
         if (Input.GetKeyDown(KeyCode.Q))
         {
             LotteryHaveItem(0.5f);
+        }
+            }
         }
 
         UpdateDustEffect();
@@ -318,21 +333,25 @@ public class MovePlayerKey : NetworkBehaviour
         _prefab.GetComponent<Collider>().isTrigger = true;
         if (_prefab.GetComponent<Rigidbody>() != null)
             _prefab.GetComponent<Rigidbody>().isKinematic = true;
+        SpawnItemClientRpc(itemId);
 
         _item = obj.gameObject;
     }
+
+    [ClientRpc]
+    void SpawnItemClientRpc(int itemId)
+    {
+        _haveItem = (ItemType)itemId;
+    }
     void SetHaveItem()
     {
+        if (!IsServer) return;
         _haveItem = (ItemType)Random.Range((int)ItemType.Bomb, (int)ItemType.Max);
         //_haveItem = ItemType.Bomb;
         AnimItemServerRpc(true);
 
         //プレイヤーにアイテムを持たせる
         SpawnItemServerRpc((int)_haveItem, _haveTrans.position, _haveTrans.rotation);
-
-
-        //アイテムプール内で更新をかけて、非アクティブオブジェクトが不足しているときに新規作成
-
     }
 
     //あべこべ移動速度を逆転させる（何秒後にリセットするか）
@@ -390,7 +409,8 @@ public class MovePlayerKey : NetworkBehaviour
         //Debug.Log("受けうつけないお");
         _canNotInputKey = true;
         AnimDyingServerRpc(true);
-		NetworkEffectSpawner.Instance.PlayEffect(_hitDyingEffectId, transform.position, Quaternion.identity);
+        _dyingParticleSystem.Play();
+        //NetworkEffectSpawner.Instance.PlayEffect(_hitDyingEffectId, transform.position, Quaternion.identity);
 
 		Invoke(nameof(UnlockStun), delay);
     }
@@ -562,15 +582,34 @@ public class MovePlayerKey : NetworkBehaviour
     //    Collider col = _item.GetComponent<Collider>();
     //    col.enabled = true;
     //}
+    [ClientRpc]
+    void ItemTargetClientRpc()
+    {
+        _target = GetComponent<UICursorToWorld>().CurrentTargetPos;
+        ItemTargetServerRpc(_target);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void ItemTargetServerRpc(Vector3 pos)
+    {
+        Debug.Log("OwnerClientId :"+(int)OwnerClientId + "_playerNumber: " + (int)_playerNumber + "ItemTargetServerRpc pos : " + pos);
+        _target = pos;
+    }
+
+
     void UseItem()
     {
         if (_InputUseItem)
         {
-            if (!_target || !_item) return;
+            //ItemTargetClientRpc();
+            //_target.position = GetComponent<UICursorToWorld>().CurrentTargetPos;
+            Debug.Log("_target : " + _target);
+            if (_target == Vector3.zero || !_item) return;
             if (_item.GetComponent<Rigidbody>() != null)
             {//投げる系のアイテムはこっち
                 // 初速度を計算して付与
-                Vector3 velocity = CalculateVelocity(_target.position, _item.transform.position, _itemFlightTime);
+                Debug.Log("_itemtrans : " + _item.transform.position);
+                Vector3 velocity = CalculateVelocity(_target, _item.transform.position, _itemFlightTime);
 
                 Debug.Log($"velocity{velocity}");
                 _item.GetComponent<Item>().ThrowServerRpc(velocity);
@@ -597,8 +636,10 @@ public class MovePlayerKey : NetworkBehaviour
                     Invoke("UnlockStar", _itemStarDelay);
                 }
             }
+            Debug.Log("UseItem : " + _item);
 
-                _haveItem = ItemType.None;
+            _haveItem = ItemType.None;
+            SpawnItemClientRpc((int)_haveItem);
             AnimItemServerRpc(false);
             _item = null;
         }
@@ -726,6 +767,14 @@ public class MovePlayerKey : NetworkBehaviour
 
 
         return hasInput;
+    }
+
+    [ServerRpc]
+    void SendInputServerRpc(Vector2 move, bool punch, bool useItem)
+    {
+        _InputMove = move;
+        _InputPunch = punch;
+        _InputUseItem = useItem;
     }
 
 }
