@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Unity.AI.Navigation;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using static UnityEngine.GraphicsBuffer;
@@ -331,8 +330,9 @@ public class Jibaku : NetworkBehaviour
 	{
 		if (other.transform.GetComponent<Punch>() != null)
 		{
-			//ActiveFalse();
-			_state = State.Death;
+			if(_state == State.Death) return;
+            //ActiveFalse();
+            _state = State.Death;
 			_animBlend = (float)_state;
 			_anim.Play(_anim.GetCurrentAnimatorStateInfo(0).fullPathHash, 0, 0f);
 			_isTimerOn = false;

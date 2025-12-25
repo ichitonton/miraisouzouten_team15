@@ -5,7 +5,6 @@ using System.Drawing;
 using Unity.Burst.CompilerServices;
 using Unity.Netcode;
 using Unity.Netcode.Components;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
