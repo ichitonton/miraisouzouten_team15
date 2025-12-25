@@ -226,11 +226,11 @@ public class GoalToUI : NetworkBehaviour
 			transform.rotation
 		);
 
-		// 和菓子縮小（即座に消さない）
+		// 和菓子縮小（即座に消します）
 		foreach (var go in list)
 		{
-			if (go != null)
-				go.transform.localScale = Vector3.zero;
+            if (go != null && go.GetComponent<PooledNetworkObject>() != null)
+                go.GetComponent<PooledNetworkObject>().DestroySelf();
 		}
 
 		// 演出時間待つ

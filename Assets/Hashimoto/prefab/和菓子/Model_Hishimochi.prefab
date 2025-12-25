@@ -116,6 +116,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d7edb3ca2f17ee747bdd02a70179276e, type: 3}
       insertIndex: -1
       addedObject: {fileID: -3414914483567695871}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d7edb3ca2f17ee747bdd02a70179276e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6930012086932733231}
   m_SourcePrefab: {fileID: 100100000, guid: d7edb3ca2f17ee747bdd02a70179276e, type: 3}
 --- !u!4 &1172679812892529979 stripped
 Transform:
@@ -274,3 +277,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MapIconTarget
   overrideName: 
   useIcon: 1
+--- !u!114 &6930012086932733231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949463524628189057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b4e3481e2b83fd44b7ce6912b504db8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PooledNetworkObject
+  ShowTopMostFoldoutHeaderGroup: 1
