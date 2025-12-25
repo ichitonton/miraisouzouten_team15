@@ -72,7 +72,35 @@ public class GameManager : NetworkBehaviour
         }
         Application.targetFrameRate = 60;
     }
-    
+
+    [ClientRpc]
+    void PlayMovieClientRpc()
+    { 
+
+    var movie = Object.FindFirstObjectByType<GameStartMovie>(FindObjectsInactive.Include);
+
+    if (movie == null)
+    {
+        Debug.LogError("GameStartMovie が見つからない");
+        return;
+    }
+
+movie.gameObject.SetActive(true);
+movie.Play();
+    }
+    void TeleportPlayer()
+    {
+        if (!_IsLanModeActive) return;
+
+        for (int i = 0; i < 3; i++)
+        {
+            if (_pivot[i] == null) continue;
+            PlayerTeleportAndConnect(_pivot[i].position, (ulong)i);
+            //ふわふわBGMを全Clientで流す&ループあり
+            NetworkSoundManager.Instance.PlayBgm("FuwaFuwa", NetworkSoundManager.SoundScope.AllClients, true);
+            _isStart = true;
+        }
+    }
 
     private void OnGUI()
     {
@@ -82,16 +110,9 @@ public class GameManager : NetworkBehaviour
 
         if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 100, 120, 30), "ゲームスタート"))
         {
-            if (!_IsLanModeActive) return;
-
-            for(int i = 0;i < 3;i++)
-            {
-                if (_pivot[i] == null) continue;   
-                PlayerTeleportAndConnect(_pivot[i].position, (ulong)i);
-                //ふわふわBGMを全Clientで流す&ループあり
-                NetworkSoundManager.Instance.PlayBgm("FuwaFuwa", NetworkSoundManager.SoundScope.AllClients, true);
-                _isStart = true;
-            }
+            PlayMovieClientRpc();
+            StartCoroutine("TeleportPlayer", 0.3f);
+            //TeleportPlayer();
 
         }
 
