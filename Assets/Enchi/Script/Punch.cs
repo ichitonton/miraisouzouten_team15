@@ -34,7 +34,7 @@ public class Punch : MonoBehaviour
 		}
 	}
 
-	void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
 	{
 		MovePlayerKey otherPlayer = other.GetComponentInParent<MovePlayerKey>();
 
@@ -70,6 +70,7 @@ public class Punch : MonoBehaviour
             Debug.LogWarning($"[Punch EFFECT] Player HIT → {otherPlayer.name}");
 			otherPlayer.ToGetPunch(_punchDamage, _stunTime);
 
+			//NetworkEffectSpawner.Instance._otherRoot = transform;
 			NetworkEffectSpawner.Instance.PlayEffect(_hitDmgEffectId, transform.position, Quaternion.identity);
 			NetworkEffectSpawner.Instance.PlayEffect(_hitEffectId, transform.position, Quaternion.identity);
 		}

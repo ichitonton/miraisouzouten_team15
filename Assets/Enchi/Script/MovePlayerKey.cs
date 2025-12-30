@@ -557,11 +557,16 @@ public class MovePlayerKey : NetworkBehaviour
             {
                 Vector3 effectPos = transform.position + new Vector3(0f, 0.5f, 0f);
 
-                NetworkEffectSpawner.Instance.PlayEffect(
-                    _punchStartEffectId,
-                    effectPos,
-                    _headPoint.rotation
-                );
+
+                NetworkEffectSpawner.Instance.PlayEffectAttached(_punchStartEffectId, GetComponent<NetworkObject>(), effectPos, _headPoint.rotation);
+
+                //NetworkEffectSpawner.Instance.PlayEffect(
+                //    _punchStartEffectId,
+                //    effectPos,
+                //    _headPoint.rotation
+                //);
+                //•Ï‚¦‚½Œã‚Í–ß‚·
+                //NetworkEffectSpawner.Instance._otherRoot = null;
             }
 
             ToggleColliderServerRpc(true);
@@ -592,7 +597,7 @@ public class MovePlayerKey : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void ItemTargetServerRpc(Vector3 pos)
     {
-        Debug.Log("OwnerClientId :"+(int)OwnerClientId + "_playerNumber: " + (int)_playerNumber + "ItemTargetServerRpc pos : " + pos);
+        //Debug.Log("OwnerClientId :"+(int)OwnerClientId + "_playerNumber: " + (int)_playerNumber + "ItemTargetServerRpc pos : " + pos);
         _target = pos;
     }
 

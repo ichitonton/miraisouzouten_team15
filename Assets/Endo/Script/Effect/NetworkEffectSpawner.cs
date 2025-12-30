@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -11,13 +11,11 @@ public class NetworkEffectSpawner : NetworkBehaviour
     [SerializeField] private EffectDatabase _effectDatabase;
 
     [Header("Pooling")]
-    [SerializeField] private Transform _poolRoot;   // 空でOK（空なら自分のtransform配下にする）
+    [SerializeField] private Transform _poolRoot;                 // 返却先（空なら自分）
     [SerializeField] private int _prewarmPerEffect = 0;
 
     // effectId -> inactive instances
     private readonly Dictionary<int, Queue<GameObject>> _pool = new();
-    // instance -> effectId
-    private readonly Dictionary<GameObject, int> _instanceToId = new();
 
     private void Awake()
     {
@@ -35,7 +33,7 @@ public class NetworkEffectSpawner : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        // 任意：プリウォーム
+
         if (_prewarmPerEffect > 0 && _effectDatabase != null)
         {
             foreach (var e in _effectDatabase.Effects)
@@ -46,22 +44,25 @@ public class NetworkEffectSpawner : NetworkBehaviour
         }
     }
 
+    // =============================
+    // Public API
+    // =============================
+
+    /// <summary>
+    /// ただのワールド再生（親なし）
+    /// </summary>
     public void PlayEffect(int effectId, Vector3 position, Quaternion rotation)
     {
         if (!NetworkManager.Singleton || !NetworkManager.Singleton.IsListening)
         {
-            SpawnEffectLocal(effectId, position, rotation);
+            SpawnEffectLocal(effectId, position, rotation, parent: null);
             return;
         }
 
         if (IsServer)
-        {
             PlayEffectClientRpc(effectId, position, rotation);
-        }
         else
-        {
             RequestPlayEffectServerRpc(effectId, position, rotation);
-        }
     }
 
     public void PlayEffect(string effectKey, Vector3 position, Quaternion rotation)
@@ -71,7 +72,37 @@ public class NetworkEffectSpawner : NetworkBehaviour
         PlayEffect(effectId, position, rotation);
     }
 
-    private void SpawnEffectLocal(int effectId, Vector3 position, Quaternion rotation)
+    /// <summary>
+    /// 親(NetworkObject)に追従させたい場合（全クライアントで同じ親になる）
+    /// localOffset は親のローカル座標系
+    /// </summary>
+    public void PlayEffectAttached(int effectId, NetworkObject parent, Vector3 localOffset, Quaternion localRotation)
+    {
+        if (!NetworkManager.Singleton || !NetworkManager.Singleton.IsListening)
+        {
+            // オフラインなら親のTransformをそのまま使う
+            var p = parent != null ? parent.transform : null;
+            Vector3 pos = (p != null) ? p.TransformPoint(localOffset) : localOffset;
+            Quaternion rot = (p != null) ? (p.rotation * localRotation) : localRotation;
+            SpawnEffectLocal(effectId, pos, rot, p);
+            return;
+        }
+
+        NetworkObjectReference parentRef = default;
+        if (parent != null)
+            parentRef = new NetworkObjectReference(parent);
+
+        if (IsServer)
+            PlayEffectAttachedClientRpc(effectId, parentRef, localOffset, localRotation);
+        else
+            RequestPlayEffectAttachedServerRpc(effectId, parentRef, localOffset, localRotation);
+    }
+
+    // =============================
+    // Local Spawn
+    // =============================
+
+    private void SpawnEffectLocal(int effectId, Vector3 position, Quaternion rotation, Transform parent)
     {
         if (_effectDatabase == null)
         {
@@ -83,23 +114,32 @@ public class NetworkEffectSpawner : NetworkBehaviour
         if (prefab == null) return;
 
         var go = Rent(effectId, prefab);
+
+        // ★毎回親を確定（プール再利用でも正しくなる）
+        go.transform.SetParent(parent != null ? parent : _poolRoot, false);
+
         go.transform.SetPositionAndRotation(position, rotation);
-        go.SetActive(true); // ここで PooledEffect の OnEnable が走って自己返却が始まる
+        go.SetActive(true);
     }
 
-    // --- Pool API ---
+    // =============================
+    // Pool
+    // =============================
+
     private GameObject Rent(int effectId, GameObject prefab)
     {
-        if (_pool.TryGetValue(effectId, out var q) && q.Count > 0)
+        if (_pool.TryGetValue(effectId, out var q))
         {
-            var go = q.Dequeue();
-            // 念のため null 混入時の保険
-            if (go != null) return go;
+            while (q.Count > 0)
+            {
+                var go = q.Dequeue();
+                if (go != null) return go;
+            }
         }
 
+        // 新規生成は一旦 poolRoot 配下で作る（親はSpawn時に付け替える）
         var inst = Instantiate(prefab, _poolRoot);
         inst.name = $"{prefab.name} (Pooled:{effectId})";
-        _instanceToId[inst] = effectId;
 
         var pe = inst.GetComponent<PooledEffect>();
         if (pe == null) pe = inst.AddComponent<PooledEffect>();
@@ -113,7 +153,6 @@ public class NetworkEffectSpawner : NetworkBehaviour
     {
         if (go == null) return;
 
-        // Stopしてから返す（残り粒子が次回に残るのを避けたいなら）
         foreach (var ps in go.GetComponentsInChildren<ParticleSystem>(true))
             ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
@@ -133,23 +172,45 @@ public class NetworkEffectSpawner : NetworkBehaviour
         for (int i = 0; i < count; i++)
         {
             var go = Rent(effectId, prefab);
-            // Rentは非アクティブで返すので、そのままプールに積む
             ReturnToPool(go, effectId);
         }
     }
 
+    // =============================
+    // RPC
+    // =============================
+
     [ServerRpc(RequireOwnership = false)]
-    private void RequestPlayEffectServerRpc(int effectId, Vector3 position, Quaternion rotation,
-        ServerRpcParams rpcParams = default)
+    private void RequestPlayEffectServerRpc(int effectId, Vector3 position, Quaternion rotation)
     {
         if (!NetworkManager.Singleton.IsServer) return;
         PlayEffectClientRpc(effectId, position, rotation);
     }
 
     [ClientRpc]
-    private void PlayEffectClientRpc(int effectId, Vector3 position, Quaternion rotation,
-        ClientRpcParams clientRpcParams = default)
+    private void PlayEffectClientRpc(int effectId, Vector3 position, Quaternion rotation)
     {
-        SpawnEffectLocal(effectId, position, rotation);
+        SpawnEffectLocal(effectId, position, rotation, parent: null);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestPlayEffectAttachedServerRpc(int effectId, NetworkObjectReference parentRef, Vector3 localOffset, Quaternion localRot)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+        PlayEffectAttachedClientRpc(effectId, parentRef, localOffset, localRot);
+    }
+
+    [ClientRpc]
+    private void PlayEffectAttachedClientRpc(int effectId, NetworkObjectReference parentRef, Vector3 localOffset, Quaternion localRot)
+    {
+        Transform parent = null;
+        if (parentRef.TryGet(out var netObj) && netObj != null)
+            parent = netObj.transform;
+
+        // 親のローカル空間で位置/回転を決める
+        //Vector3 pos = parent != null ? parent.TransformPoint(localOffset) : localOffset;
+        //Quaternion rot = parent != null ? (parent.rotation * localRot) : localRot;
+
+        SpawnEffectLocal(effectId, localOffset, localRot, parent);
     }
 }

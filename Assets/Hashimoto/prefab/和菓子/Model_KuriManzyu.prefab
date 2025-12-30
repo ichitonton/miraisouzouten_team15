@@ -116,6 +116,18 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a852eac619c99794cac5f3519c345927, type: 3}
       insertIndex: -1
       addedObject: {fileID: -2835619341182203325}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a852eac619c99794cac5f3519c345927, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -5236435181988030860}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a852eac619c99794cac5f3519c345927, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -3929356305158825898}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a852eac619c99794cac5f3519c345927, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -7260102711917348555}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a852eac619c99794cac5f3519c345927, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -5591560564054896610}
   m_SourcePrefab: {fileID: 100100000, guid: a852eac619c99794cac5f3519c345927, type: 3}
 --- !u!1 &8160404072800314456 stripped
 GameObject:
@@ -131,7 +143,7 @@ Rigidbody:
   m_GameObject: {fileID: 8160404072800314456}
   serializedVersion: 5
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 0.5
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -147,7 +159,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!114 &6507601863001847592
 MonoBehaviour:
@@ -270,6 +282,77 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MapIconTarget
   overrideName: 
   useIcon: 1
+--- !u!114 &-5236435181988030860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8160404072800314456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0161846458bae114f9f8b125a00da43e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WagashiRuntime
+  preset: {fileID: 0}
+  currentColor: {r: 0, g: 0, b: 0, a: 0}
+  currentMass: 0
+  currentBounciness: 0
+  currentStretchFactor: 0
+  currentDynamicFriction: 0
+  currentStaticFriction: 0
+--- !u!114 &-3929356305158825898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8160404072800314456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c12e0eb3d842b4a478a2e1e7d0ef59ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WagashiMochiMochiDeformer
+  _minImpactVelocity: 0.1
+  _maxImpactVelocity: 4
+  _baseSquishAmount: 0.2
+  _verticalSquishMultiplier: 0.7
+  _horizontalSquishMultiplier: 0.9
+  _axisBlendSharpness: 3.5
+  _returnSpeed: 4
+  _minAxisScale: 0.4
+--- !u!114 &-7260102711917348555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8160404072800314456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0161846458bae114f9f8b125a00da43e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WagashiRuntime
+  preset: {fileID: 0}
+  currentColor: {r: 0, g: 0, b: 0, a: 0}
+  currentMass: 0
+  currentBounciness: 0
+  currentStretchFactor: 0
+  currentDynamicFriction: 0
+  currentStaticFriction: 0
+--- !u!114 &-5591560564054896610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8160404072800314456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2b2048a814c06f4c8bb8944c06fe640, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WagashiRandomizer
+  preset: {fileID: 11400000, guid: 57bdb351cd5b3244494ac4022ef35ec4, type: 2}
 --- !u!4 &8823753333758607074 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a852eac619c99794cac5f3519c345927, type: 3}

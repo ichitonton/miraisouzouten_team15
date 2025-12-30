@@ -294,9 +294,18 @@ public class MapColorManager : MonoBehaviour
         var prevRT = RenderTexture.active;
         RenderTexture.active = mapTexture;
 
+        // RT基準のサイズ
+        float rtAspect = (float)mapTexture.width / mapTexture.height;
+
         GL.Clear(true, true, new Color(0, 0, 0, 0));
 
         GL.invertCulling = true;
+
+        //Camera.projectionMatrix は camera.aspect の影響を受ける。
+        //でも aspect は、TargetTextureを刺していないと GameView/ Screen側の比率に寄ることがある。
+        //行列を取得する直前に、RT基準でaspectを強制してから projectionMatrix を取る。
+        mapCamera.aspect = rtAspect;
+        mapCamera.ResetProjectionMatrix();
 
         // ========= 行列設定 =========
         GL.PushMatrix();
@@ -343,7 +352,7 @@ public class MapColorManager : MonoBehaviour
             drawMat.SetInt("_TagId", tagId);
             drawMat.SetPass(0);
 
-            Debug.Log("結合オブジェクト描画");
+            //Debug.Log("結合オブジェクト描画");
 
             Graphics.DrawMeshNow(mf.sharedMesh, go.transform.localToWorldMatrix);
         }

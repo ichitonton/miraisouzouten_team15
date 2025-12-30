@@ -116,6 +116,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d7edb3ca2f17ee747bdd02a70179276e, type: 3}
       insertIndex: -1
       addedObject: {fileID: -3414914483567695871}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d7edb3ca2f17ee747bdd02a70179276e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -6615867202573399013}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d7edb3ca2f17ee747bdd02a70179276e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5751414044140915132}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d7edb3ca2f17ee747bdd02a70179276e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8009221949194781722}
   m_SourcePrefab: {fileID: 100100000, guid: d7edb3ca2f17ee747bdd02a70179276e, type: 3}
 --- !u!4 &1172679812892529979 stripped
 Transform:
@@ -173,7 +182,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!114 &5557194498003825472
 MonoBehaviour:
@@ -274,3 +283,55 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MapIconTarget
   overrideName: 
   useIcon: 1
+--- !u!114 &-6615867202573399013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949463524628189057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2b2048a814c06f4c8bb8944c06fe640, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WagashiRandomizer
+  preset: {fileID: 11400000, guid: 266f558b0975d774b85adc33c14783a4, type: 2}
+--- !u!114 &5751414044140915132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949463524628189057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0161846458bae114f9f8b125a00da43e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WagashiRuntime
+  preset: {fileID: 0}
+  currentColor: {r: 0, g: 0, b: 0, a: 0}
+  currentMass: 0
+  currentBounciness: 0
+  currentStretchFactor: 0
+  currentDynamicFriction: 0
+  currentStaticFriction: 0
+--- !u!114 &8009221949194781722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949463524628189057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c12e0eb3d842b4a478a2e1e7d0ef59ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WagashiMochiMochiDeformer
+  _minImpactVelocity: 0.1
+  _maxImpactVelocity: 4
+  _baseSquishAmount: 0.4
+  _verticalSquishMultiplier: 0.5
+  _horizontalSquishMultiplier: 0.9
+  _axisBlendSharpness: 3.5
+  _returnSpeed: 4
+  _minAxisScale: 0.7
