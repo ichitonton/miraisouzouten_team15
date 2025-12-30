@@ -8,11 +8,12 @@ public class JapaneseSweets_Manager : MonoBehaviour
 
     [SerializeField] private float weight = 0.0f;               // オブジェクトの重さ
 
+	PooledNetworkObject pooledNetworkObject;
 
-	private void Start()
+    private void Start()
 	{
-	
-	}
+        pooledNetworkObject = GetComponent<PooledNetworkObject>();
+    }
 
 	public float GetWeight() {
         return weight;
@@ -20,8 +21,8 @@ public class JapaneseSweets_Manager : MonoBehaviour
 
 	public void SetReset()
 	{
-		Destroy(this.gameObject);
-	}
+        pooledNetworkObject.DestroySelf();
+    }
 
 
 }

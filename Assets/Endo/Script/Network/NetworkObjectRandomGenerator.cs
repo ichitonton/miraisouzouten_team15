@@ -256,24 +256,29 @@ public class NetworkObjectRandomGenerator : NetworkBehaviour
             var prefab = candidates[UnityEngine.Random.Range(0, candidates.Count)];
             if (prefab == null) continue;
 
-            var go = Instantiate(prefab, pos, Quaternion.identity);
+            //生成
+            NetworkObject obj = NetworkObjectPool.Instance.Get(prefab.GetComponent<NetworkObject>(), transform.position, Quaternion.identity);
+            obj.Spawn(true);
+            obj.GetComponent<PooledNetworkObject>().SetPrefab(prefab.GetComponent<NetworkObject>());
 
-            var netObj = go.GetComponent<NetworkObject>();
-            if (netObj == null)
-            {
-                Debug.LogError($"[RandomGenerator] Prefab '{prefab.name}' に NetworkObject が付いていません。");
-                Destroy(go);
-                return false;
-            }
+            //var go = Instantiate(prefab, pos, Quaternion.identity);
+
+            //var netObj = go.GetComponent<NetworkObject>();
+            //if (netObj == null)
+            //{
+            //    Debug.LogError($"[RandomGenerator] Prefab '{prefab.name}' に NetworkObject が付いていません。");
+            //    Destroy(go);
+            //    return false;
+            //}
 
             // 追跡用コンポーネントを付与（Despawnでaliveから外す）
-            var tracker = go.GetComponent<RandomSpawnTracker>();
-            if (tracker == null) tracker = go.AddComponent<RandomSpawnTracker>();
-            tracker.Init(this);
+            //var tracker = go.GetComponent<RandomSpawnTracker>();
+            //if (tracker == null) tracker = go.AddComponent<RandomSpawnTracker>();
+            //tracker.Init(this);
 
-            netObj.Spawn();
+            //netObj.Spawn();
 
-            _aliveObjects.Add(netObj);
+            //_aliveObjects.Add(netObj);
             MarkOccupied(pos);
 
             // このバースト内で使ったpivotとして記録（必ず別pivot）

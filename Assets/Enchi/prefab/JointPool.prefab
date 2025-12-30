@@ -74,9 +74,9 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _joint: {fileID: 6651513632882123144, guid: 5b42010e8a6b5014e8a4b3e7cb500cb8, type: 3}
   _jointCount: 30
-  _upperSpring: 1000
+  _upperSpring: 900
   _upperDamper: 100
-  _lowerSpring: 1500
+  _lowerSpring: 1600
   _lowerDamper: 150
   halfHeight: 0.5
 --- !u!114 &-6506176431917602089
