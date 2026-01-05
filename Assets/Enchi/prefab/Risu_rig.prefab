@@ -3255,6 +3255,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   itemTarget: {fileID: 3966227638361369922, guid: 2f78ca4fa4ae40b43a36dab265e8dcf3, type: 3}
+  maxDistance: 12
 --- !u!114 &607975850266814620
 MonoBehaviour:
   m_ObjectHideFlags: 0
