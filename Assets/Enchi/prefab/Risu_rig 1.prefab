@@ -3272,7 +3272,7 @@ MonoBehaviour:
   _right: 108
   _jump: 32
   _punchKey: 0
-  _useItemKey: 0
+  _useItemKey: 112
   _moveSpeed: 7.5
   _jumpForce: 7
   _punchDuration: 0.5
@@ -4030,6 +4030,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7838561722115832706}
     m_Modifications:
+    - target: {fileID: -6887110895280672237, guid: 023271473a99d564d8db894f141a8cd9, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5504552693071014041, guid: 023271473a99d564d8db894f141a8cd9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4082,7 +4086,8 @@ PrefabInstance:
       propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -6887110895280672237, guid: 023271473a99d564d8db894f141a8cd9, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
