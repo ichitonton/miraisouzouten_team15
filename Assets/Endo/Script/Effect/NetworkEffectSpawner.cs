@@ -55,14 +55,28 @@ public class NetworkEffectSpawner : NetworkBehaviour
     {
         if (!NetworkManager.Singleton || !NetworkManager.Singleton.IsListening)
         {
-            SpawnEffectLocal(effectId, position, rotation, parent: null);
+            SpawnEffectLocal(effectId, position, rotation, parent: null, Vector3.zero);
             return;
         }
 
         if (IsServer)
-            PlayEffectClientRpc(effectId, position, rotation);
+            PlayEffectClientRpc(effectId, position, rotation,new Vector3(1f,1f,1f));
         else
-            RequestPlayEffectServerRpc(effectId, position, rotation);
+            RequestPlayEffectServerRpc(effectId, position, rotation,new Vector3(1f, 1f, 1f));
+    }
+
+    public void PlayEffect(int effectId, Vector3 position, Quaternion rotation,Vector3 scale)
+    {
+        if (!NetworkManager.Singleton || !NetworkManager.Singleton.IsListening)
+        {
+            SpawnEffectLocal(effectId, position, rotation, parent: null,scale);
+            return;
+        }
+
+        if (IsServer)
+            PlayEffectClientRpc(effectId, position, rotation,scale);
+        else
+            RequestPlayEffectServerRpc(effectId, position, rotation,scale);
     }
 
     public void PlayEffect(string effectKey, Vector3 position, Quaternion rotation)
@@ -84,7 +98,7 @@ public class NetworkEffectSpawner : NetworkBehaviour
             var p = parent != null ? parent.transform : null;
             Vector3 pos = (p != null) ? p.TransformPoint(localOffset) : localOffset;
             Quaternion rot = (p != null) ? (p.rotation * localRotation) : localRotation;
-            SpawnEffectLocal(effectId, pos, rot, p);
+            SpawnEffectLocal(effectId, pos, rot, p, Vector3.zero);
             return;
         }
 
@@ -102,7 +116,7 @@ public class NetworkEffectSpawner : NetworkBehaviour
     // Local Spawn
     // =============================
 
-    private void SpawnEffectLocal(int effectId, Vector3 position, Quaternion rotation, Transform parent)
+    private void SpawnEffectLocal(int effectId, Vector3 position, Quaternion rotation, Transform parent,Vector3 scale)
     {
         if (_effectDatabase == null)
         {
@@ -116,6 +130,14 @@ public class NetworkEffectSpawner : NetworkBehaviour
         var go = Rent(effectId, prefab);
 
         // ★毎回親を確定（プール再利用でも正しくなる）
+        if (scale != Vector3.zero)
+        {
+            go.transform.localScale = scale;
+            foreach(var g in go.GetComponentsInChildren<Transform>(true))
+            {
+                g.localScale = scale;
+            }
+        }
         go.transform.SetParent(parent != null ? parent : _poolRoot, false);
 
         go.transform.SetPositionAndRotation(position, rotation);
@@ -181,16 +203,16 @@ public class NetworkEffectSpawner : NetworkBehaviour
     // =============================
 
     [ServerRpc(RequireOwnership = false)]
-    private void RequestPlayEffectServerRpc(int effectId, Vector3 position, Quaternion rotation)
+    private void RequestPlayEffectServerRpc(int effectId, Vector3 position, Quaternion rotation,Vector3 scale)
     {
         if (!NetworkManager.Singleton.IsServer) return;
-        PlayEffectClientRpc(effectId, position, rotation);
+        PlayEffectClientRpc(effectId, position, rotation,scale);
     }
 
     [ClientRpc]
-    private void PlayEffectClientRpc(int effectId, Vector3 position, Quaternion rotation)
+    private void PlayEffectClientRpc(int effectId, Vector3 position, Quaternion rotation,Vector3 scale)
     {
-        SpawnEffectLocal(effectId, position, rotation, parent: null);
+        SpawnEffectLocal(effectId, position, rotation, parent: null,scale);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -211,6 +233,6 @@ public class NetworkEffectSpawner : NetworkBehaviour
         //Vector3 pos = parent != null ? parent.TransformPoint(localOffset) : localOffset;
         //Quaternion rot = parent != null ? (parent.rotation * localRot) : localRot;
 
-        SpawnEffectLocal(effectId, localOffset, localRot, parent);
+        SpawnEffectLocal(effectId, localOffset, localRot, parent, Vector3.zero);
     }
 }
