@@ -1,6 +1,5 @@
 using UnityEngine;
 using Unity.Netcode;
-using UnityEditor.Rendering;
 
 public class MeteorManager : NetworkBehaviour
 {
@@ -132,8 +131,19 @@ public class MeteorManager : NetworkBehaviour
             Vector3 spawnPos = origin + offset;
             Quaternion rot = Random.rotation;
 
-            var obj = Instantiate(prefab, spawnPos, rot);
+            //var obj = Instantiate(prefab, spawnPos, rot);
+            //obj.Spawn(true);
+
+            NetworkObjectPool _ObjectPool = NetworkObjectPool.Instance;
+            if (_ObjectPool == null)
+            {
+                Debug.LogError("NetworkObjectPool: prefab is NULL");
+                return;
+            }
+            NetworkObject obj = _ObjectPool.Get(prefab.GetComponent<NetworkObject>(), spawnPos, rot);
             obj.Spawn(true);
+            obj.GetComponent<PooledNetworkObject>().SetPrefab(prefab.GetComponent<NetworkObject>());
+            //GetComponent<PooledNetworkObject>().DestroySelf();
 
             // 弾けさせる（サーバーで）
             if (obj.TryGetComponent<Rigidbody>(out var rb))

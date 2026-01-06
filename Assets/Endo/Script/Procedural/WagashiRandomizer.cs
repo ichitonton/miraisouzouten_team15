@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+
 public class WagashiRandomizer : MonoBehaviour
 {
     [Header("この和菓子のプリセット")]
@@ -25,7 +25,11 @@ public class WagashiRandomizer : MonoBehaviour
     private void Awake()
     {
         _renderers = GetComponentsInChildren<Renderer>();
+        
         _rb = GetComponent<Rigidbody>();
+        if (_rb == null) _rb = GetComponentInParent<Rigidbody>();
+        
+
         _col = GetComponent<Collider>();
 
         _runtime = GetComponent<WagashiRuntime>();

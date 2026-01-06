@@ -352,14 +352,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c12e0eb3d842b4a478a2e1e7d0ef59ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WagashiMochiMochiDeformer
-  _minImpactVelocity: 0.01
-  _maxImpactVelocity: 3.5
-  _baseSquishAmount: 0.45
-  _verticalSquishMultiplier: 0.7
-  _horizontalSquishMultiplier: 1
-  _axisBlendSharpness: 4.5
-  _returnSpeed: 3
-  _minAxisScale: 0.35
+  deformTarget: {fileID: 0}
+  collisionPartRoot: {fileID: 0}
+  minImpactVelocity: 0.1
+  maxImpactVelocity: 4
+  baseSquishAmount: 0.4
+  verticalSquishMultiplier: 0.7
+  horizontalSquishMultiplier: 1
+  axisBlendSharpness: 3.5
+  returnSpeed: 3
+  minAxisScale: 0.45
 --- !u!114 &-2755895012215338003
 MonoBehaviour:
   m_ObjectHideFlags: 0

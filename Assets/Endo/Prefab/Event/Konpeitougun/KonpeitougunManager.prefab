@@ -87,8 +87,8 @@ MonoBehaviour:
   - {fileID: 815011463385374253, guid: abee96be26cdd1142b5c9b48550ec554, type: 3}
   - {fileID: 6188212326822016374, guid: f41acadb7ed4be04ba1f776db92804df, type: 3}
   - {fileID: 3324507162435628113, guid: b737a242d902d1e45b532dc8b7a67e31, type: 3}
-  meteorsPerEvent: 100
-  interval: 2
+  meteorsPerEvent: 30
+  interval: 3
   markerLeadTime: 3.2
   flightTime: 3
   arcHeight: 3

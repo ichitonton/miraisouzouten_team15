@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_Konpeitou01 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3e4f1ad7010ecd549ae907160056d477, type: 3}
+      propertyPath: m_TagString
+      value: Sweets
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -63,9 +67,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3e4f1ad7010ecd549ae907160056d477, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6015935622298685966}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3e4f1ad7010ecd549ae907160056d477, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: -4098235422505062101}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3e4f1ad7010ecd549ae907160056d477, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5479592097797769802}
@@ -87,6 +88,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3e4f1ad7010ecd549ae907160056d477, type: 3}
       insertIndex: -1
       addedObject: {fileID: -2923166718091659373}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3e4f1ad7010ecd549ae907160056d477, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3416645954195729882}
   m_SourcePrefab: {fileID: 100100000, guid: 3e4f1ad7010ecd549ae907160056d477, type: 3}
 --- !u!1 &8348838024218248421 stripped
 GameObject:
@@ -107,28 +111,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpawnManager: {fileID: 0}
   weight: 100
---- !u!64 &-4098235422505062101
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8348838024218248421}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -5715583617964748106, guid: 3e4f1ad7010ecd549ae907160056d477, type: 3}
 --- !u!54 &5479592097797769802
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -140,17 +122,17 @@ Rigidbody:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_CenterOfMass: {x: 0, y: -0.45, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_InertiaRotation: {x: 0.045437235, y: 0.041635554, z: 0.041635554, w: 0.99723035}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
+  m_ImplicitCom: 0
+  m_ImplicitTensor: 0
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -285,3 +267,24 @@ MonoBehaviour:
   UseRigidBodyForMotion: 0
   AutoUpdateKinematicState: 1
   AutoSetKinematicOnDespawn: 1
+--- !u!135 &3416645954195729882
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8348838024218248421}
+  m_Material: {fileID: 13400000, guid: 3ff60a8d1c9a87b4691c38cb10e076c3, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.53117406
+  m_Center: {x: 0.0025547445, y: -0.0099401325, z: 0.0028018653}
