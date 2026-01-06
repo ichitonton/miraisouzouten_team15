@@ -6,8 +6,9 @@ using UnityEngine;
 [Serializable]
 public class EventPrefabEntry
 {
-    public string eventId;
-    public GameObject prefab;
+    public string eventId = null;
+    public GameObject prefab = null;
+    public string message = null;
 }
 
 [CreateAssetMenu(fileName = "EventDatabase", menuName = "Scriptable Objects/EventDatabase")]
@@ -36,12 +37,29 @@ public class EventDatabase : ScriptableObject
         return _cache.TryGetValue(eventId, out prefab) && prefab != null;
     }
 
+    public bool TryGetMessage(string eventId, out string message)
+    {
+        message = null;
+        if (string.IsNullOrWhiteSpace(eventId))
+            return false;
+
+        message = _entries.Find(e => e.eventId == eventId).message;
+
+        GameObject prefab = null;
+
+        return _cache.TryGetValue(eventId, out prefab) && prefab != null; ;
+    }
     /// <summary>
     /// eventId ‚©‚ç Prefab ‚ğæ“¾‚·‚éiŒ©‚Â‚©‚ç‚È‚¢‚Æ—áŠO‚Ì‘ã‚í‚è‚É nullj
     /// </summary>
     public GameObject GetPrefabOrNull(string eventId)
     {
         return TryGetPrefab(eventId, out var prefab) ? prefab : null;
+    }
+
+    public string GetMessage(string eventId)
+    {
+        return TryGetMessage(eventId,out var message) ? message : null;
     }
 
     private void BuildCacheIfNeeded()

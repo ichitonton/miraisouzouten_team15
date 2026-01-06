@@ -45,7 +45,7 @@ MonoBehaviour:
   useBucketForPhysicsMaterial: 0
   bucketDivisions: 5
   mochiStretchFactor:
-    min: 0.1
+    min: 0.15
     max: 0.25
   prupru:
     minImpactVelocity:

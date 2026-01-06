@@ -308,11 +308,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WagashiRuntime
   preset: {fileID: 0}
   currentColor: {r: 0, g: 0, b: 0, a: 0}
+  currentScale: {x: 0, y: 0, z: 0}
   currentMass: 0
+  currentLinearDamping: 0
+  currentAngularDamping: 0
   currentBounciness: 0
-  currentStretchFactor: 0
   currentDynamicFriction: 0
   currentStaticFriction: 0
+  currentStretchFactor: 0
+  prupruMinImpactVelocity: 0
+  prupruMaxImpactVelocity: 0
+  prupruFrequencyHz: 0
+  prupruDamping: 0
+  prupruImpulse: 0
+  prupruMaxTiltDeg: 0
+  prupruNormalInfluence: 0
+  prupruVerticalResponse: 0
+  prupruExtraDecay: 0
 --- !u!114 &-8587280016358220939
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -326,6 +338,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WagashiRandomizer
   preset: {fileID: 11400000, guid: f87852ed412787440be4eb286173717b, type: 2}
+  autoApplyOnStart: 1
+  disableUnusedDeformers: 1
 --- !u!114 &-7163848880423723563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -338,7 +352,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c12e0eb3d842b4a478a2e1e7d0ef59ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WagashiMochiMochiDeformer
-  _minImpactVelocity: 0.1
+  _minImpactVelocity: 0.01
   _maxImpactVelocity: 3.5
   _baseSquishAmount: 0.45
   _verticalSquishMultiplier: 0.7
