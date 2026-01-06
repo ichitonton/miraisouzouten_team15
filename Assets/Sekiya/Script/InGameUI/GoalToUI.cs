@@ -86,7 +86,7 @@ public class GoalToUI : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (IsServer)
+        //if (IsServer)
         {
             netScoreTotal.OnValueChanged += (prev, curr) =>
             {

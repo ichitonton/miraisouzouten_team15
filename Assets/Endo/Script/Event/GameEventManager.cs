@@ -14,6 +14,21 @@ public class GameEventManager : NetworkBehaviour
 
     public static GameEventManager Instance { get; private set; }
 
+    private void Awake()
+    {
+        //シングルトンのインスタンス生成
+        if (Instance == null)
+        {
+            Instance = this;
+            //シーンの切り替えで消えない
+            //DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void OnGUI()
     {
        
@@ -106,6 +121,7 @@ public class GameEventManager : NetworkBehaviour
             if (!IsServer) return;
         }
 
+       
         Vector3 pos = _spawnPoint != null ? _spawnPoint.position : Vector3.zero;
         Quaternion rot = _spawnPoint != null ? _spawnPoint.rotation : Quaternion.identity;
 
@@ -124,6 +140,12 @@ public class GameEventManager : NetworkBehaviour
         {
             Debug.Log($"[GameEventManager] Spawned '{id}' -> {instance.name}. Calling TryEvent()...");
             ev.TryEvent();
+
+            //メッセージを送信
+            var message = _eventDatabase.GetMessage(id);
+
+            UIEventManager.Instance.Play(message);
+            
         }
         else
         {

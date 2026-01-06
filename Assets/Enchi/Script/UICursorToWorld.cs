@@ -11,8 +11,16 @@ public class UICursorToWorld : MonoBehaviour
     private Canvas canvas;          // Canvas
     private Camera uiCamera;        // Canvas用カメラ
     private Transform worldTarget;  // 反映先3Dオブジェクト
+    private Vector3 _lastValidTargetPos;
+    private bool _hasLastValidPos = false; 
+    private Vector2 _prevScreenPos;
+    Vector2 center;   // プレイヤー位置（スクリーン座標）
+    float radius;    // 操作可能半径
+
+
     [SerializeField] private LayerMask groundLayer;  // 地面レイヤー
     [SerializeField] private GameObject itemTarget;
+    [SerializeField] private float maxDistance = 12f; // 最大距離
 
     public Vector3 CurrentTargetPos { get; private set; }
 
@@ -79,9 +87,29 @@ public class UICursorToWorld : MonoBehaviour
             {
                 gamepad = pads[playerNum - 1];
 
-                Vector2 move = gamepad.rightStick.ReadValue();
+                Vector2 move = gamepad.rightStick.ReadValue(); 
+                
+                Vector2 input = move * 10f;
+                Vector2 next = screenPos + input;
 
-                screenPos += move * 10f;
+                // X方向の制限
+                if (next.x < 0f || next.x > Screen.width)
+                {
+                    input.x = 0f; // はみ出す成分だけ無効化
+                }
+
+                // Y方向の制限
+                if (next.y < 0f || next.y > Screen.height)
+                {
+                    input.y = 0f;
+                }
+
+                // 最終適用
+                screenPos += input;
+
+                // 念のためClamp（保険）
+                screenPos.x = Mathf.Clamp(screenPos.x, 0f, Screen.width);
+                screenPos.y = Mathf.Clamp(screenPos.y, 0f, Screen.height);
 
             }
         }
@@ -100,15 +128,36 @@ public class UICursorToWorld : MonoBehaviour
 
         // 2. スクリーン座標を元にレイを飛ばす
         Ray ray = uiCamera.ScreenPointToRay(screenPos);
-
-        // 3. レイキャスト（地面レイヤーのみ）
-        if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundLayer))
+        if (Physics.SphereCast(ray, 0.1f, out RaycastHit hit, 1000f, groundLayer))
         {
-            //Debug.Log("hit: " + hit.point);
+            Vector3 targetPos = hit.point + hit.normal * 0.1f;
 
-            worldTarget.position = hit.point + Vector3.up * 0.01f;
-            CurrentTargetPos = worldTarget.position;
+            Vector3 offset = targetPos - transform.position;
+
+            if (offset.magnitude > maxDistance)
+            {
+                offset = offset.normalized * maxDistance;
+                targetPos = transform.position + offset;
+                float minY = hit.collider.bounds.max.y + 0.05f;
+                targetPos.y = Mathf.Max(targetPos.y, minY);
+            }
+
+            worldTarget.position = targetPos;
+            CurrentTargetPos = targetPos;
+
+            // ★保存
+            _lastValidTargetPos = targetPos;
+            _hasLastValidPos = true;
         }
+        else
+        {
+            if (_hasLastValidPos)
+            {
+                worldTarget.position = _lastValidTargetPos;
+                CurrentTargetPos = _lastValidTargetPos;
+            }
+        }
+
     }
 
     public Transform GetItemTargetTransform()
