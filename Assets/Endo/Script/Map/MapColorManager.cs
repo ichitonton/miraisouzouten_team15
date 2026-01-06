@@ -400,7 +400,7 @@ public class MapColorManager : MonoBehaviour
         int count = _playerList.Count;
 
 
-        Debug.Log("プレイヤーの数" + count);
+        //Debug.Log("プレイヤーの数" + count);
         if (count == 0)
             return; // いないなら終了
 
