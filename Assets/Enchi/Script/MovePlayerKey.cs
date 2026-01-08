@@ -152,6 +152,11 @@ public class MovePlayerKey : NetworkBehaviour
         if (IsServer)
         {
             Invoke("SetRigidFalse", 0.1f);
+            _ranking = FindFirstObjectByType<Ranking>();
+            if (_ranking == null)
+            {
+                Debug.LogError("Ranking not found in scene");
+            }
         }
         else
         {
@@ -231,7 +236,7 @@ public class MovePlayerKey : NetworkBehaviour
                 }
         if (Input.GetKeyDown(KeyCode.Q))
         {
-                    UseThunderServerRpc();
+                    LotteryHaveItem(0);
         }
             }
         }
@@ -293,6 +298,32 @@ public class MovePlayerKey : NetworkBehaviour
     //
     //ゲッター
     //
+    int GetMyTeamId()
+    {
+        if (!IsServer)
+        {
+            Debug.LogError("GetMyTeamId called on client!");
+            return -1;
+        }
+
+        return TeamManager.Instance.GetTeamIdByClientId(OwnerClientId);
+    }
+    int GetMyRank()
+    {
+        if (!IsServer)
+            return -1;
+
+        if (Ranking.Instance == null)
+        {
+            Debug.LogError("Ranking.Instance is null");
+            return -1;
+        }
+
+        int teamId = TeamManager.Instance.GetTeamIdByClientId(OwnerClientId);
+        return Ranking.Instance.GetRankByTeamId(teamId);
+    }
+
+
     public bool GetUseStar()
     {
         return _itemStarUse;
@@ -337,7 +368,12 @@ public class MovePlayerKey : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void SpawnItemServerRpc(int itemId, Vector3 pos, Quaternion rot)
     {
-        GameObject _prefab = null;
+        GameObject _prefab = null; 
+        if (_haveItem == ItemType.None || _haveItem == ItemType.Max)
+        {
+            Debug.LogError($"Invalid item type: {_haveItem}");
+            return;
+        }
         _prefab = itemDictionary[(ulong)_haveItem].gameObject;
 
         NetworkObject obj = _ObjectPool.Get(_prefab.GetComponent<NetworkObject>(), pos, rot);
@@ -361,13 +397,41 @@ public class MovePlayerKey : NetworkBehaviour
     void SetHaveItem()
     {
         if (!IsServer) return;
-        _haveItem = (ItemType)Random.Range((int)ItemType.Bomb, (int)ItemType.Max);
-        //_haveItem = ItemType.Bomb;
-        AnimItemServerRpc(true);
 
-        //プレイヤーにアイテムを持たせる
+        int rank = GetMyRank();
+        Debug.Log($"[Lottery] Client={OwnerClientId} Rank={rank}");
+
+        if (rank <= 0)
+        {
+            Debug.LogError("Invalid Rank, abort lottery");
+            return;
+        }
+
+        _haveItem = LotteryByRank(rank);
         SpawnItemServerRpc((int)_haveItem, _haveTrans.position, _haveTrans.rotation);
     }
+
+    ItemType LotteryByRank(int rank)
+    {
+        int r = Random.Range(0, 100);
+
+        Debug.Log($"[Lottery] Rank={rank} Random={r}");
+        if (rank == 1)
+        {
+            //if (r < 70) return ItemType.None;
+            return ItemType.Star;
+        }
+        else if (rank == 2)
+        {
+            return ItemType.Bomb;
+        }
+        else // 3位
+        {
+            return ItemType.Thunder;
+        }
+    }
+
+
 
     //あべこべ移動速度を逆転させる（何秒後にリセットするか）
     public void MoveSpeedAbekobe(float delay)

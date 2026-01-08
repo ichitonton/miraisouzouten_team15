@@ -3,6 +3,8 @@ using UnityEngine;
 [System.Serializable]
 public class TeamData
 {
+
+    public int teamId;          // š’Ç‰Ái0,1,2cj
     public string teamName;
     public Sprite teamIcon;
 
