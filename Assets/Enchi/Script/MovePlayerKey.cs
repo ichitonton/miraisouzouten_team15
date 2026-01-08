@@ -40,12 +40,22 @@ public class MovePlayerKey : NetworkBehaviour
     [SerializeField] private float _itemStarDelay = 7.0f;
     [SerializeField] private float _itemStarChangeSpeed = 1.3f;
     private bool _itemStarUse = false;
+
+    [SerializeField] private GameObject _itemThunder;
+    [SerializeField] float _thunderDuration = 10.0f; 
+    [SerializeField] float _thunderStunTime = 5.0f;
+    private int _abekobe = 1; //移動速度あべこべ用
+
+    Ranking _ranking;
+
     [SerializeField] float _itemFlightTime = 2.0f; // 投げるオブジェクトがターゲットに到達するまでの時間
 
     [SerializeField]ParticleSystem _dashParticleSystem;
     [SerializeField]ParticleSystem _mutekiParticleSystem;
     [SerializeField]ParticleSystem _shoeseParticleSystem;
-    [SerializeField]ParticleSystem _dyingParticleSystem;
+    [SerializeField] ParticleSystem _dyingParticleSystem;
+    [SerializeField] ParticleSystem _thunderParticleSystem;
+
 
     //エフェクト関連
     [SerializeField] Transform _headPoint; //頭の位置
@@ -96,6 +106,7 @@ public class MovePlayerKey : NetworkBehaviour
         BlackHole,
         Shoese,
         Star,
+        Thunder,
         Max
     }
 
@@ -116,7 +127,8 @@ public class MovePlayerKey : NetworkBehaviour
         { (ulong)ItemType.Bomb, _itemBomb.GetComponent<NetworkObject>() },
         { (ulong)ItemType.BlackHole, _itemBlackHole.GetComponent<NetworkObject>() },
         { (ulong)ItemType.Shoese, _itemShouse.GetComponent<NetworkObject>() },
-        { (ulong)ItemType.Star, _itemStar.GetComponent<NetworkObject>() }
+        { (ulong)ItemType.Star, _itemStar.GetComponent<NetworkObject>() },
+        { (ulong)ItemType.Thunder, _itemThunder.GetComponent<NetworkObject>() }
     };
     }
 
@@ -219,7 +231,7 @@ public class MovePlayerKey : NetworkBehaviour
                 }
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            LotteryHaveItem(0.5f);
+                    UseThunderServerRpc();
         }
             }
         }
@@ -264,16 +276,19 @@ public class MovePlayerKey : NetworkBehaviour
             {
                // ps.Play();
                 _dashParticleSystem.Play();
-            }
+            PlayEffectDashParticleClientRpc();
+        }
             //else if (!isMoving && ps.isPlaying)
             else if (!isMoving && _dashParticleSystem.isPlaying)
             {
                 //ps.Stop();
-                _dashParticleSystem.Stop();
-            }
+                _dashParticleSystem.Stop(); 
+            StopEffectDashParticleClientRpc();
+        }
        // }
     }
-
+    [ClientRpc] void PlayEffectDashParticleClientRpc() { _dashParticleSystem.Play(); }
+    [ClientRpc] void StopEffectDashParticleClientRpc() { _dashParticleSystem.Stop(); }
 
     //
     //ゲッター
@@ -357,7 +372,7 @@ public class MovePlayerKey : NetworkBehaviour
     //あべこべ移動速度を逆転させる（何秒後にリセットするか）
     public void MoveSpeedAbekobe(float delay)
     {
-        _moveSpeed *= -1;
+        _abekobe = -1;
         Invoke("ResetMoveSpeed", delay);
     }
 
@@ -378,6 +393,7 @@ public class MovePlayerKey : NetworkBehaviour
     //移動速度を初期値に戻す
     public void ResetMoveSpeed()
     {
+        _abekobe = 1;
         //まだ使用中ならリセットしない
         if (_itemShoeseUse || _itemStarUse) return;
         _moveSpeed = _moveSpeedInitial;
@@ -396,8 +412,8 @@ public class MovePlayerKey : NetworkBehaviour
     //パンチを受ける(ダメージ, パンチをスタン時間)
     public void ToGetPunch(int damage, float stunTime)
     {
-        Stun(stunTime);
-        AddDamage(damage);
+        //Stun(stunTime);
+        AddDamage(damage, stunTime);
 		
 	}
 
@@ -410,35 +426,79 @@ public class MovePlayerKey : NetworkBehaviour
         _canNotInputKey = true;
         AnimDyingServerRpc(true);
         _dyingParticleSystem.Play();
+        PlayDyingEffectClientRpc();
         //NetworkEffectSpawner.Instance.PlayEffect(_hitDyingEffectId, transform.position, Quaternion.identity);
 
-		Invoke(nameof(UnlockStun), delay);
+        Invoke(nameof(UnlockStun), delay);
     }
+    [ClientRpc] 
+    void PlayDyingEffectClientRpc() { _dyingParticleSystem.Play(); }
     //スタン解除
     void UnlockStun()
     {
-        _canNotInputKey = false;
+        _canNotInputKey = false; 
+        _currentHp = _MaxHp;
 
         AnimDyingServerRpc(false);
+        StopDyingEffectClientRpc();
     }
+
+    [ClientRpc]
+    void StopDyingEffectClientRpc() 
+    { _dyingParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); }
 
     void UnlockStar()
     {
         _mutekiParticleSystem.Stop();
+        StopMutekiEffectClientRpc();
         _itemStarUse = false;
     }
+    [ClientRpc]
+    void StopMutekiEffectClientRpc()
+    { _mutekiParticleSystem.Stop(); }
 
     void UnlockShoese()
     {
-        _shoeseParticleSystem.Stop();
+        _shoeseParticleSystem.Stop(); 
+        StopShooseEffectClientRpc();
         _itemShoeseUse = false;
     }
+    [ClientRpc]
+    void StopShooseEffectClientRpc()
+    { _shoeseParticleSystem.Stop(); }
+
+    [ServerRpc(RequireOwnership = false)]
+    void UseThunderServerRpc()
+    {
+        foreach (var player in FindObjectsByType<MovePlayerKey>(FindObjectsSortMode.None))
+        {
+            // 自分以外
+            if (player.OwnerClientId == OwnerClientId) continue;
+            // 雷エフェクト（全クライアント）
+            PlayThunderEffectClientRpc(player.GetComponent<NetworkObject>());
+            // 移動反転
+            player.Stun(_thunderStunTime); 
+            player.MoveSpeedAbekobe(_thunderDuration);
+        }
+    }
+    [ClientRpc]
+    void PlayThunderEffectClientRpc(NetworkObjectReference targetRef) 
+    {
+        if (!targetRef.TryGet(out NetworkObject target))
+            return;
+        var player = target.GetComponent<MovePlayerKey>();
+        if (player == null) 
+            return;
+        player._thunderParticleSystem.Play(); 
+    }
+
     //ダメージ（受けるダメージ）
-    void AddDamage(int damage)
+    void AddDamage(int damage, float stunTime)
     {
         _currentHp -= damage;
         if (_currentHp <= 0)
         {
+            Stun(stunTime);
             Debug.Log(this.gameObject.name + " is dead.");
         }
     }
@@ -514,6 +574,7 @@ public class MovePlayerKey : NetworkBehaviour
 
     void Move()
     {
+        _InputMove *= _abekobe;
         LinerVelocityServerRpc(_InputMove);
         Vector3 _moveVector = Vector3.zero;
         _moveVector = new Vector3(_InputMove.x, 0, _InputMove.y);
@@ -628,6 +689,7 @@ public class MovePlayerKey : NetworkBehaviour
                     _shoeseParticleSystem.Play();
                     MoveSpeedChange(_itemShoeseChangeSpeed, _itemShoeseDelay);
                     _itemShoeseUse = true;
+                    PlayShoeseEffectClientRpc();
 
                     Invoke("UnlockShoese", _itemShoeseDelay);
                 }
@@ -637,8 +699,13 @@ public class MovePlayerKey : NetworkBehaviour
                     _mutekiParticleSystem.Play();
                     MoveSpeedChange(_itemStarChangeSpeed, _itemStarDelay);
                     _itemStarUse = true;
+                    PlayMutekiEffectClientRpc();
                     //一定時間後にスター効果解除
                     Invoke("UnlockStar", _itemStarDelay);
+                }
+                else if (_haveItem == ItemType.Thunder)
+                {
+                    UseThunderServerRpc(); 
                 }
             }
             Debug.Log("UseItem : " + _item);
@@ -649,6 +716,8 @@ public class MovePlayerKey : NetworkBehaviour
             _item = null;
         }
     }
+    [ClientRpc] void PlayMutekiEffectClientRpc() { _mutekiParticleSystem.Play(); }
+    [ClientRpc] void PlayShoeseEffectClientRpc() { _shoeseParticleSystem.Play(); }
 
     /// target に time 秒で到達するための初速度を計算
     Vector3 CalculateVelocity(Vector3 target, Vector3 origin, float time)
