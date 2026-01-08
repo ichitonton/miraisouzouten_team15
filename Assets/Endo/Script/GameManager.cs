@@ -132,14 +132,14 @@ movie.Play();
         }*/
 
         //生成
-        /*if (GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height / 2, 100, 30), "Test生成"))
+        if (GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height / 2, 100, 30), "Test生成"))
         {
             if (!_IsLanModeActive) return;
 
-            //NetworkObjectSpawner.Instance.RequestSpawnObject("KintaroAme", new Vector3(0f,10f,0f),Quaternion.identity, NetworkObjectSpawner.OwnerMode.Host);
-            NetworkEffectSpawner.Instance.PlayEffect(0, new Vector3(0f, 5f, 0f), Quaternion.identity);
+            NetworkObjectSpawner.Instance.RequestSpawnObjectRandomInRange2D("Daifuku",new Vector3(715f,8f,12f),5f,8f,Quaternion.identity,NetworkObjectSpawner.OwnerMode.Host);
+            //NetworkEffectSpawner.Instance.PlayEffect(0, new Vector3(0f, 5f, 0f), Quaternion.identity);
 
-        }*/
+        }
 
         //生成
         /*if (GUI.Button(new Rect(1000f, 100f, 100, 30), "マップ表示"))

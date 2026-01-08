@@ -204,6 +204,19 @@ public class MeteorManager : NetworkBehaviour
                 knockbackUpward,
                 ForceMode.Impulse
             );
+
+            //プレイヤーはスタンさせる
+            if (hits[i].gameObject.CompareTag("Player"))
+            {
+                if(hits[i].gameObject.GetComponent<MovePlayerKey>() != null)
+                {
+                    //スタンさせる
+                    hits[i].gameObject.GetComponent<MovePlayerKey>().Stun(2f);
+                    hits[i].gameObject.GetComponent<MovePlayerKey>().PlayCameraShake();
+                }
+                
+            }
+
         }
     }
 

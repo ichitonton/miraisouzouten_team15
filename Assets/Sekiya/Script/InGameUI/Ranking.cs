@@ -1,9 +1,12 @@
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
+using UnityEngine;
 
-public class Ranking : MonoBehaviour
+public class Ranking : NetworkBehaviour
 {
+    public static Ranking Instance { get; private set; }
+
     // ★内部の TeamData 定義は削除！既存の Exp_TeamData を使う
     [Header("チームデータ（Red, Blue, Yellowの順）")]
     [SerializeField] private List<TeamData> allTeamsData;
@@ -19,6 +22,15 @@ public class Ranking : MonoBehaviour
     // ゴールへの参照リスト（SetupGoalsで受け取る）
     private List<GoalToUI> _goalScripts = new List<GoalToUI>();
 
+    void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
     // 親（UICanvasController）からゴールを受け取る関数
     public void SetupGoals(GoalToUI red, GoalToUI blue, GoalToUI white)
     {
@@ -71,7 +83,54 @@ public class Ranking : MonoBehaviour
             }
         }
     }
+    public int GetRankByTeamId(int teamId)
+    {
+        // スコア降順
+        var sorted = allTeamsData
+            .OrderByDescending(t => t.score)
+            .ToList();
 
+        // 該当チーム
+        TeamData me = sorted.FirstOrDefault(t => t.teamId == teamId);
+        if (me == null)
+        {
+            Debug.LogError($"TeamId {teamId} が Ranking に存在しない");
+            return -1;
+        }
+
+        float topScore = sorted[0].score;
+
+        // 1位が複数いるか？
+        bool isTopTie = sorted.Count(t => t.score == topScore) > 1;
+
+        // 自分が1位グループ
+        if (me.score == topScore)
+        {
+            return isTopTie ? 3 : 1; // 同率1位は全員3位扱い
+        }
+
+        // 2位候補のスコア
+        float secondScore = sorted
+            .Where(t => t.score < topScore)
+            .Select(t => t.score)
+            .FirstOrDefault();
+
+        // 2位が存在しない（全員同点など）
+        if (secondScore == 0 && sorted.All(t => t.score == topScore))
+        {
+            return 3;
+        }
+
+        bool isSecondTie = sorted.Count(t => t.score == secondScore) > 1;
+
+        if (me.score == secondScore)
+        {
+            return isSecondTie ? 3 : 2;
+        }
+
+        // それ以外は最下位
+        return 3;
+    }
 
     //　Rankingをアタッチ後スクリプト名右クリから自動セットアップが可能
     [ContextMenu("Auto Setup Slots")] // ← これを書くとInspectorのメニューに出る！
@@ -108,3 +167,6 @@ public class Ranking : MonoBehaviour
         Debug.Log($"自動設定完了！ {rankingSlots.Count} 個のスロットを登録したよ！");
     }
 }
+
+
+

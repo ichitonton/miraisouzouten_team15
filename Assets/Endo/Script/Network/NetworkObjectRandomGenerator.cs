@@ -257,7 +257,7 @@ public class NetworkObjectRandomGenerator : NetworkBehaviour
             if (prefab == null) continue;
 
             //ê∂ê¨
-            NetworkObject obj = NetworkObjectPool.Instance.Get(prefab.GetComponent<NetworkObject>(), transform.position, Quaternion.identity);
+            NetworkObject obj = NetworkObjectPool.Instance.Get(prefab.GetComponent<NetworkObject>(), pos, Quaternion.identity);
             obj.Spawn(true);
             obj.GetComponent<PooledNetworkObject>().SetPrefab(prefab.GetComponent<NetworkObject>());
 

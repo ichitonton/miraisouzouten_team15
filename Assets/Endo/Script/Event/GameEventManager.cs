@@ -144,7 +144,9 @@ public class GameEventManager : NetworkBehaviour
             //メッセージを送信
             var message = _eventDatabase.GetMessage(id);
 
-            UIEventManager.Instance.Play(message);
+            //ネットワークでもUIを再生
+            NetworkUIEventRelay.Instance.TriggerUI(message);
+            //UIEventManager.Instance.Play(message);
             
         }
         else

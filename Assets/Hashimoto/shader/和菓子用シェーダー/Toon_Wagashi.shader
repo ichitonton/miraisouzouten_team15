@@ -479,4 +479,4 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
         }
     }
     FallBack Off
-}
+}

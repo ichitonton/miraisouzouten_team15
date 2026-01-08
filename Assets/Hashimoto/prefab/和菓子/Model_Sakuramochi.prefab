@@ -140,6 +140,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: df73b441b9cd71246b8b607f13314ff1, type: 3}
       insertIndex: -1
       addedObject: {fileID: -6183055065389068271}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: df73b441b9cd71246b8b607f13314ff1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -1432886358210860397}
   m_SourcePrefab: {fileID: 100100000, guid: df73b441b9cd71246b8b607f13314ff1, type: 3}
 --- !u!1 &4951464363076143965 stripped
 GameObject:
@@ -171,7 +174,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &6445116033146916715
 MonoBehaviour:
@@ -376,6 +379,21 @@ MonoBehaviour:
   axisBlendSharpness: 3.5
   returnSpeed: 4
   minAxisScale: 0.45
+--- !u!114 &-1432886358210860397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4951464363076143965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c2e69cf704c5d246bcb3bb0f0f7439c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FrozenWagashi
+  ShowTopMostFoldoutHeaderGroup: 1
+  disableColliderWhileFrozen: 0
+  makeRigidbodyKinematicWhileFrozen: 0
 --- !u!4 &5763747937768739303 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: df73b441b9cd71246b8b607f13314ff1, type: 3}
