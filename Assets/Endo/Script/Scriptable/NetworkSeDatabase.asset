@@ -49,7 +49,7 @@ MonoBehaviour:
     spatialBlend: 1
     minDistance: 1
     maxDistance: 10
-    cooldownSeconds: 0
+    cooldownSeconds: 0.2
     maxSimultaneous: 0
     outputMixerGroup: {fileID: 0}
   - tag: 

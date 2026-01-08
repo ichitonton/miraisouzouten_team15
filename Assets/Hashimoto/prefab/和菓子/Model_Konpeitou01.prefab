@@ -87,6 +87,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3e4f1ad7010ecd549ae907160056d477, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8070015548159616194}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3e4f1ad7010ecd549ae907160056d477, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -3051053096043830732}
   m_SourcePrefab: {fileID: 100100000, guid: 3e4f1ad7010ecd549ae907160056d477, type: 3}
 --- !u!1 &8248769996146562837 stripped
 GameObject:
@@ -284,3 +287,24 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.53117406
   m_Center: {x: 0.0025547445, y: -0.0099401325, z: 0.0028018653}
+--- !u!114 &-3051053096043830732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8248769996146562837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b856da2283f2cd849a8c2d0e4bcaa3d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KonpeitouAutoVanish
+  ShowTopMostFoldoutHeaderGroup: 1
+  lifeSeconds: 30
+  blinkBeforeSeconds: 10
+  blinkHzStart: 0.5
+  blinkHzEnd: 2
+  minAlpha: 0.15
+  alsoFadeOutToZeroAtEnd: 1
+  finalFadeSeconds: 0.3
+  targetRenderers: []

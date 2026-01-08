@@ -46,3 +46,6 @@ MonoBehaviour:
   - effectId: 10
     label: player_Dying
     prefab: {fileID: 7859407524413696225, guid: 023271473a99d564d8db894f141a8cd9, type: 3}
+  - effectId: 11
+    label: Ice
+    prefab: {fileID: 8592064777803723872, guid: 05079516d0ba9ef439448f025ee6d5b3, type: 3}

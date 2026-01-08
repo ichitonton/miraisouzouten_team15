@@ -20,11 +20,7 @@ public class PooledNetworkObject : NetworkBehaviour
         GetComponent<Rigidbody>().linearVelocity = dir;
     }
 
-    //private void OnCollisionEnter(Collision col)
-    //{
-    //    DestroySelf();
-    //}
-
+    //再利用可能の状態にする(ゲーム上からは消える)
     public void DestroySelf()
     {
         //リクエスト

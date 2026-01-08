@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NetworkPrefabDatabase
   _entries:
   - _id: Daifuku
-    _prefab: {fileID: 3786234121961396847, guid: 5740713c0d207944bb3e6c019f659492, type: 3}
+    _prefab: {fileID: 2801467627326373979, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
     _rarityEnum: 1
   - _id: KintaroAme
     _prefab: {fileID: 4229715837851546189, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
@@ -22,8 +22,8 @@ MonoBehaviour:
   - _id: Dorayaki
     _prefab: {fileID: 6845853872365190221, guid: b9abccb11b995ec48a57cd8230f15b8b, type: 3}
     _rarityEnum: 1
-  - _id: Daihuku
-    _prefab: {fileID: 2801467627326373979, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
+  - _id: IchigoDaifuku
+    _prefab: {fileID: 8621529653698071139, guid: 62cf487abf119a24bb04a908692fe43e, type: 3}
     _rarityEnum: 2
   - _id: Imoyoukan
     _prefab: {fileID: 4179413458884221484, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
@@ -44,5 +44,5 @@ MonoBehaviour:
     _prefab: {fileID: 4951464363076143965, guid: 66dc2d0ba71baae4998ef22fc2315c2a, type: 3}
     _rarityEnum: 2
   - _id: SansyokuDango
-    _prefab: {fileID: 5483395256311698979, guid: f3e266d1925bd9e46ad610895be20fa1, type: 3}
+    _prefab: {fileID: 374521452363014917, guid: dd5469db6e1c1f24bb4dafcd49db29cf, type: 3}
     _rarityEnum: 1
