@@ -6,12 +6,6 @@
 //  ・MochiSSSStrength でモチモチ簡易SSS
 //  ・Specular(Blinn-Phong)でメタリック/濡れツヤ追加
 //  + Fresnel / Bloom(擬似) 追加
-//
-//  ★改良点（透明点滅対応）
-//   - _BaseColor.a を “透明度” として扱う（RGBのトゥーン計算はそのまま）
-//   - Transparent描画に変更（Blend / ZWrite Off / Queue=Transparent）
-//   - ShadowCaster / Outline も _BaseColor.a に追従
-//
 //  Tested: Unity 6000系 / URP 14+
 // ============================================================================
 
@@ -20,7 +14,7 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
     Properties
     {
         _BaseMap      ("ベーステクスチャ（アルベド）", 2D) = "white" {}
-        _BaseColor    ("ベースカラー（明部）(A=透明度)", Color) = (1,1,1,1)   // ★A=透明度に使う
+        _BaseColor    ("ベースカラー（明部）", Color) = (1,1,1,1)
         _MidColor     ("中間影カラー（Aで濃さ）",   Color) = (0.85,0.85,0.85,0.6)
         _ShadowColor  ("濃い影カラー（Aで濃さ）", Color) = (0.55,0.55,0.55,1)
         _Threshold1   ("閾値1：明→中", Range(0,1)) = 0.45
@@ -36,6 +30,7 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
         _HighlightSmooth   ("ハイライトぼかし幅",       Range(0,0.5)) = 0.03
         _HighlightStrength ("ハイライト強さ",           Range(0,2))   = 1
 
+        // --- 追加：本物ツヤ用スペキュラ ---
         _SpecColor    ("スペキュラカラー", Color) = (1,1,1,1)
         _SpecPower    ("スペキュラの鋭さ", Range(1,256)) = 64
         _SpecStrength ("スペキュラ強さ",   Range(0,3))   = 1
@@ -46,11 +41,13 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
         [Toggle(_ALPHATEST_ON)] _AlphaClip ("アルファカット有効", Float) = 0
         _Cutoff ("カットオフ閾値", Range(0,1)) = 0.5
 
+        // --- 質感マスク ---
         _MaskMap ("質感マスク (R=粉 G=濡れ B=モチ)", 2D) = "white" {}
         _PowderHighlightReduce ("粉: ハイライト減少量", Range(0,1)) = 0.8
         _WetHighlightBoost     ("濡れ: ハイライト増加量", Range(0,2)) = 1.0
         _MochiSSSStrength      ("モチ: 影を明るくする強さ", Range(0,1)) = 0.4
 
+        // --- Konpeito: Purity / Internal Scatter (擬似) ---
         _Purity            ("純度(1=透明寄り,0=白濁)", Range(0,1)) = 0.8
         _PurityVariance    ("純度ムラ(ノイズの効き)", Range(0,1)) = 0.5
         _NoiseScale        ("ノイズスケール(WS)", Range(0.1,50)) = 8
@@ -61,10 +58,12 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
         _BackScatter       ("裏からの透け(擬似SSS)", Range(0,3)) = 0.6
         _Thickness         ("厚み(擬似)", Range(0.01,3)) = 1.0
 
+        // --- Fresnel ---
         _FresnelColor     ("フレネルカラー", Color) = (1,1,1,1)
         _FresnelPower     ("フレネルの鋭さ", Range(0.1,8)) = 2
         _FresnelStrength  ("フレネル強さ", Range(0,3)) = 0
 
+        // --- Bloom(擬似発光) ---
         [HDR] _BloomColor     ("ブルーム用発光カラー", Color) = (1,1,1,1)
         _BloomStrength        ("ブルーム強さ", Range(0,5)) = 0
         _BloomThreshold       ("ブルーム開始閾値", Range(0,1)) = 0.85
@@ -73,19 +72,13 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
 
     SubShader
     {
-        // ★Transparent化
-        Tags { "RenderPipeline"="UniversalPipeline" "RenderType"="Transparent" "Queue"="Transparent" }
+        Tags { "RenderPipeline"="UniversalPipeline" "RenderType"="Opaque" "Queue"="Geometry" }
         LOD 200
 
         Pass
         {
             Name "ForwardLitToon"
             Tags { "LightMode"="UniversalForward" }
-
-            // ★透明ブレンド
-            Blend SrcAlpha OneMinusSrcAlpha
-            ZWrite Off
-            Cull Back
 
             HLSLPROGRAM
             #pragma vertex   vert
@@ -115,7 +108,7 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
             float4 _MaskMap_ST;
 
             CBUFFER_START(UnityPerMaterial)
-                half4 _BaseColor;    // ★A=透明度として使う
+                half4 _BaseColor;
                 half4 _MidColor;
                 half4 _ShadowColor;
                 half  _Threshold1, _Threshold2;
@@ -277,18 +270,16 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
 
             half4 frag(Varyings IN) : SV_Target
             {
-                // ★透明度（スクリプトが _BaseColor.a を振る）
-                half alphaTex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv).a;
-                half alphaOut = saturate(alphaTex * _BaseColor.a);
-
                 #ifdef _ALPHATEST_ON
-                    clip(alphaOut - _Cutoff);
+                half alphaSample = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv).a * _BaseColor.a;
+                clip(alphaSample - _Cutoff);
                 #endif
 
                 half3 tex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv).rgb;
                 half3 nWS = normalize(IN.normalWS);
                 half  v   = ToonLightFactor(IN.posWS, nWS, IN.shadowCoord);
 
+                // 質感マスク
                 float2 maskUV = TRANSFORM_TEX(IN.uv, _MaskMap);
                 half3 maskSample = SAMPLE_TEXTURE2D(_MaskMap, sampler_MaskMap, maskUV).rgb;
                 half  maskPowder = maskSample.r;
@@ -304,9 +295,12 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
 
                 half3 col = wL * baseTone + wM * midTone + wS * shadowTone;
 
+                // main light 1回だけ
                 Light mainLight = GetMainLight(IN.shadowCoord);
 
-                // 内部散乱（擬似）
+                // -------------------------
+                // Konpeito: 内部散乱（擬似）
+                // -------------------------
                 float noiseV = ValueNoise3D(IN.posWS * _NoiseScale) * _NoiseStrength;
                 half purityLocal = saturate(_Purity + (noiseV - 0.5h) * 2.0h * _PurityVariance);
                 half impurity = 1.0h - purityLocal;
@@ -323,7 +317,9 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
 
                 col += _ScatterColor.rgb * scatter * _ScatterColor.a;
 
-                // ハイライト
+                // -------------------------
+                // ハイライト（粉・濡れ反映）
+                // -------------------------
                 {
                     half t  = _HighlightThreshold;
                     half s  = saturate(_HighlightSmooth);
@@ -338,7 +334,9 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
                     col = lerp(col, highlightBase, hMask * highlightStrength);
                 }
 
-                // スペキュラ
+                // -------------------------
+                // スペキュラ（Blinn-Phong）
+                // -------------------------
                 {
                     float3 viewDir  = normalize(_WorldSpaceCameraPos - IN.posWS);
                     float3 lightDir = mainLight.direction;
@@ -361,20 +359,25 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
                     col += _SpecColor.rgb * spec * _SpecColor.a;
                 }
 
-                // モチモチ補正
+                // -------------------------
+                // モチモチ補正（簡易SSS）
+                // -------------------------
                 {
                     half shadowFactor = 1.0h - v;
                     half mochiFactor  = maskMochi * _MochiSSSStrength * shadowFactor;
                     col = lerp(col, baseTone, mochiFactor);
                 }
 
-                // Fresnel
+                // -------------------------
+                // Fresnel（リムライト）
+                // -------------------------
                 {
                     float3 viewDir = normalize(_WorldSpaceCameraPos - IN.posWS);
                     half ndv  = saturate(dot(nWS, viewDir));
                     half fres = pow(1.0h - ndv, _FresnelPower);
                     fres *= _FresnelStrength;
 
+                    // ちょい濡れで強く、粉で弱く（好み）
                     half powderFactor = 1.0h - maskPowder * _PowderHighlightReduce;
                     half wetFactor    = 1.0h + maskWet * (_WetHighlightBoost * 0.5h);
                     fres *= powderFactor * wetFactor;
@@ -382,12 +385,18 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
                     col += _FresnelColor.rgb * fres * _FresnelColor.a;
                 }
 
-                // Bloom(擬似)
+                // -------------------------
+                // Bloom(擬似発光)
+                //  ※これは「発光値を足すだけ」なので、実際にBloomで滲ませるには
+                //    URP側でBloomポストプロセスが有効＆HDR出力が必要
+                // -------------------------
                 {
+                    // “明部ほど光る” + 閾値/ぼかし
                     half soft = max(_BloomSoftness, 1e-4h);
                     half bloomMask = smoothstep(_BloomThreshold - soft, _BloomThreshold + soft, saturate(v));
                     half bloom = bloomMask * _BloomStrength;
 
+                    // 濡れで強く、粉で弱く
                     half powderFactor = 1.0h - maskPowder * _PowderHighlightReduce;
                     half wetFactor    = 1.0h + maskWet * _WetHighlightBoost;
                     bloom *= powderFactor * wetFactor;
@@ -396,12 +405,11 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
                 }
 
                 col = MixFog(col, IN.fogCoord);
-                return half4(col, alphaOut);
+                return half4(col, 1);
             }
             ENDHLSL
         }
 
-        // ★ShadowCaster：_BaseColor.a が clip / 透明に追従するように
         Pass
         {
             Name "ShadowCaster"
@@ -421,24 +429,18 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
             TEXTURE2D(_BaseMap);
             SAMPLER(sampler_BaseMap);
             float4 _BaseMap_ST;
-            half4  _BaseColor;  // ★A=透明度
+            half4  _BaseColor;
             half   _Cutoff;
-
-            // URP標準のShadowCasterPassは _BaseColor.a を参照するので、
-            // ここは宣言だけで OK（_BaseColor.a をスクリプトで振れば影も追従）
             ENDHLSL
         }
 
-        // ★Outlineも透明追従
         Pass
         {
             Name "Outline"
             Tags { "LightMode"="SRPDefaultUnlit" }
-
             Cull Front
-            ZWrite Off
+            ZWrite On
             ZTest LEqual
-            Blend SrcAlpha OneMinusSrcAlpha
 
             HLSLPROGRAM
             #pragma vertex   vertOL
@@ -447,11 +449,11 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonMaterial.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
                 half4 _OutlineColor;
                 half  _OutlineWidth;
-                half4 _BaseColor; // ★A=透明度
             CBUFFER_END
 
             struct Attributes { float4 positionOS:POSITION; float3 normalOS:NORMAL; };
@@ -471,14 +473,10 @@ Shader "Universal Render Pipeline/Toon/Toon_Wagashi"
             {
                 half3 rgb = _OutlineColor.rgb;
                 rgb = MixFog(rgb, IN.fogCoord);
-
-                // ★アウトラインも本体の透明度に追従
-                half a = _OutlineColor.a * saturate(_BaseColor.a);
-                return half4(rgb, a);
+                return half4(rgb, _OutlineColor.a);
             }
             ENDHLSL
         }
     }
-
     FallBack Off
-}
+}
