@@ -16,9 +16,10 @@ GameObject:
   - component: {fileID: -4113366123521398308}
   - component: {fileID: 3256870506098259823}
   - component: {fileID: 3653327294415239110}
+  - component: {fileID: 849438790370771158}
   m_Layer: 0
   m_Name: SansyokuDango_01
-  m_TagString: Untagged
+  m_TagString: Sweets
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -194,8 +195,23 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &849438790370771158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 374521452363014917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c2e69cf704c5d246bcb3bb0f0f7439c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FrozenWagashi
+  ShowTopMostFoldoutHeaderGroup: 1
+  disableColliderWhileFrozen: 0
+  makeRigidbodyKinematicWhileFrozen: 0
 --- !u!1001 &627446220093260754
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -264,6 +280,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_SansyokuDango_03
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4cf36e34913c20f45a4e4be5e4ea73d2, type: 3}
+      propertyPath: m_TagString
+      value: Sweets
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -271,6 +291,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4cf36e34913c20f45a4e4be5e4ea73d2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8208284571087375396}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4cf36e34913c20f45a4e4be5e4ea73d2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5296666956459966156}
   m_SourcePrefab: {fileID: 100100000, guid: 4cf36e34913c20f45a4e4be5e4ea73d2, type: 3}
 --- !u!1 &320963742145658499 stripped
 GameObject:
@@ -298,6 +321,52 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5296666956459966156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 320963742145658499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkTransform
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!4 &1098766700979905593 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4cf36e34913c20f45a4e4be5e4ea73d2, type: 3}
@@ -371,6 +440,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_SansyokuDango_01
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b2823729c0eb4444dbf7704b26ff7b3c, type: 3}
+      propertyPath: m_TagString
+      value: Sweets
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -378,6 +451,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b2823729c0eb4444dbf7704b26ff7b3c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7385686351600457421}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b2823729c0eb4444dbf7704b26ff7b3c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3035926445911215160}
   m_SourcePrefab: {fileID: 100100000, guid: b2823729c0eb4444dbf7704b26ff7b3c, type: 3}
 --- !u!1 &2852184070846722832 stripped
 GameObject:
@@ -405,6 +481,52 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1
   m_Center: {x: 0.00000014901161, y: 0, z: 0}
+--- !u!114 &3035926445911215160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2852184070846722832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkTransform
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!4 &3233354603834173866 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b2823729c0eb4444dbf7704b26ff7b3c, type: 3}
@@ -478,6 +600,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_SansyokuDango_02
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 836131d192d03914f8f2ebdf7c653347, type: 3}
+      propertyPath: m_TagString
+      value: Sweets
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -485,6 +611,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 836131d192d03914f8f2ebdf7c653347, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7099919367140597357}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 836131d192d03914f8f2ebdf7c653347, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4347482612441049564}
   m_SourcePrefab: {fileID: 100100000, guid: 836131d192d03914f8f2ebdf7c653347, type: 3}
 --- !u!1 &7242995221575143746 stripped
 GameObject:
@@ -512,6 +641,52 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1
   m_Center: {x: 0.0025980175, y: 0, z: 0}
+--- !u!114 &4347482612441049564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7242995221575143746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkTransform
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!4 &8056826947279703032 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 836131d192d03914f8f2ebdf7c653347, type: 3}
@@ -585,6 +760,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model_SansyokuDango_04
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f6da16ca137b7bc4ab793d5df765e53d, type: 3}
+      propertyPath: m_TagString
+      value: Sweets
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -592,6 +771,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f6da16ca137b7bc4ab793d5df765e53d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3096068226966398783}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f6da16ca137b7bc4ab793d5df765e53d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9153542380864785066}
   m_SourcePrefab: {fileID: 100100000, guid: f6da16ca137b7bc4ab793d5df765e53d, type: 3}
 --- !u!1 &8605990468006931876 stripped
 GameObject:
@@ -621,6 +803,52 @@ CapsuleCollider:
   m_Height: 5.46
   m_Direction: 0
   m_Center: {x: -2.33, y: 0, z: 0}
+--- !u!114 &9153542380864785066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8605990468006931876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkTransform
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!4 &8945642097332139806 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f6da16ca137b7bc4ab793d5df765e53d, type: 3}

@@ -119,6 +119,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d7edb3ca2f17ee747bdd02a70179276e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6930012086932733231}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d7edb3ca2f17ee747bdd02a70179276e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -6063112233014545449}
   m_SourcePrefab: {fileID: 100100000, guid: d7edb3ca2f17ee747bdd02a70179276e, type: 3}
 --- !u!4 &1172679812892529979 stripped
 Transform:
@@ -290,3 +293,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PooledNetworkObject
   ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &-6063112233014545449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949463524628189057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c2e69cf704c5d246bcb3bb0f0f7439c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FrozenWagashi
+  ShowTopMostFoldoutHeaderGroup: 1
+  disableColliderWhileFrozen: 0
+  makeRigidbodyKinematicWhileFrozen: 0

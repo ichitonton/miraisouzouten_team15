@@ -43,7 +43,7 @@ public class NetworkObjectPool : MonoBehaviour
         }
         else
         {
-            obj = Instantiate(prefab);
+            obj = Instantiate(prefab,pos,rot);
         }
 
         obj.transform.SetPositionAndRotation(pos, rot);
