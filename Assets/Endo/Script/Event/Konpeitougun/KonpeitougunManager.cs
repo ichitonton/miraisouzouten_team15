@@ -34,6 +34,7 @@ public class KonpeitougunManager : NetworkBehaviour
     [SerializeField] private float arcHeight = 12f;       // 山なり
     [SerializeField] private float lateralOffset = 6f;    // 斜め感（横ズレ）
 
+    public KonpeitougunEvent _konpeitougun = null;
 
     private NightController _N_controller;
 
@@ -59,6 +60,8 @@ public class KonpeitougunManager : NetworkBehaviour
         //夜へチェンジ
         _N_controller = GetComponent<NightController>();
         _N_controller.SetNightServerRpc(true);
+
+        _konpeitougun._eventTime = (meteorsPerEvent * interval) + 2f;
 
     }
 
