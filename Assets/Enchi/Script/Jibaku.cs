@@ -75,11 +75,12 @@ public class Jibaku : NetworkBehaviour
 			_state = State.Idol;
 			_animBlend = (float)_state;
 		}
-		else if (IsClient)
+		else
 		{
 			_animInfo = _anim.GetCurrentAnimatorStateInfo(0);
 			GetComponent<Rigidbody>().isKinematic = true;
-			GetComponent<NavMeshAgent>().enabled = false;
+			GetComponent<Collider>().enabled = false;
+            GetComponent<NavMeshAgent>().enabled = false;
 		}
 	}
 
@@ -330,13 +331,14 @@ public class Jibaku : NetworkBehaviour
 	{
 		if (other.transform.GetComponent<Punch>() != null)
 		{
+			if(IsServer)_agent.speed = 0.0f;
+
 			if(_state == State.Death) return;
             //ActiveFalse();
             _state = State.Death;
 			_animBlend = (float)_state;
 			_anim.Play(_anim.GetCurrentAnimatorStateInfo(0).fullPathHash, 0, 0f);
 			_isTimerOn = false;
-			_agent.speed = 0.0f;
 			CancelInvoke("DespawnServerRpc");
 			Invoke("DespawnServerRpc", _blastTimerTouchPunch);
 		}
