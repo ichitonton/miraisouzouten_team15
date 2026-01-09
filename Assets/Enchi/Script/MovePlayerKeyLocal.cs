@@ -350,13 +350,13 @@ public class MovePlayerKeyLocal : MonoBehaviour
 
     void Jump()
     {
-        if (_FootCollider.GetCanJump())
-        {
-            if (Input.GetKeyDown(_jump))
-            {
-                _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
-            }
-        }
+        //if (_FootCollider.GetCanJump())
+        //{
+        //    if (Input.GetKeyDown(_jump))
+        //    {
+        //        _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+        //    }
+        //}
     }
     void Move()
     {

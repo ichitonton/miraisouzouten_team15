@@ -68,10 +68,11 @@ public class Punch : MonoBehaviour
 			if (otherPlayer.GetUseStar()) return;
 
             Debug.LogWarning($"[Punch EFFECT] Player HIT → {otherPlayer.name}");
-			otherPlayer.ToGetPunch(_punchDamage, _stunTime);
+			if(otherPlayer.ToGetPunch(_punchDamage, _stunTime))
+                KnockBack(rb);
 
-			//NetworkEffectSpawner.Instance._otherRoot = transform;
-			NetworkEffectSpawner.Instance.PlayEffect(_hitDmgEffectId, transform.position, Quaternion.identity);
+            //NetworkEffectSpawner.Instance._otherRoot = transform;
+            NetworkEffectSpawner.Instance.PlayEffect(_hitDmgEffectId, transform.position, Quaternion.identity);
 			NetworkEffectSpawner.Instance.PlayEffect(_hitEffectId, transform.position, Quaternion.identity);
 		}
 

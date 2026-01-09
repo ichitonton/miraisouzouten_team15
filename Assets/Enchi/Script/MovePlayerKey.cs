@@ -87,8 +87,6 @@ public class MovePlayerKey : NetworkBehaviour
 
     Vector3 _lookVector = Vector3.zero;//向いている方向
 
-    [SerializeField] CanJump _FootCollider;
-
     Animator _anim;
 
     //入力受付フラグ
@@ -176,6 +174,8 @@ public class MovePlayerKey : NetworkBehaviour
         rb.isKinematic = false; // クライアントでは物理演算しない
     }
 
+    bool _fly = false;
+    [SerializeField]GroundCheck3D _groundCheck;
     void FixedUpdate()
     {
         if (IsOwner)
@@ -194,10 +194,20 @@ public class MovePlayerKey : NetworkBehaviour
             if (!_canNotInputKey)
             {
                 Move();
+
             }
+            AnimDyingFly(!_groundCheck.CheckGroundStatus());
             //移動モーション
             AnimBlendServerRpc(_animBlend);
         }
+    }
+
+    void AnimDyingFly(bool fly)
+    {
+        Debug.Log("fly : " + fly);  
+        if (_fly == fly) return;
+        AnimDyingFlyServerRpc(fly);
+        _fly = fly;
     }
 
     void Update()
@@ -259,6 +269,11 @@ public class MovePlayerKey : NetworkBehaviour
     void AnimDyingServerRpc(bool Dying)
     {
         _anim.SetBool("Dying", Dying);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    void AnimDyingFlyServerRpc(bool Dying)
+    {
+        _anim.SetBool("Fly", Dying);
     }
     [ServerRpc(RequireOwnership = false)]
     void AnimPunchServerRpc()
@@ -474,10 +489,10 @@ public class MovePlayerKey : NetworkBehaviour
     }
 
     //パンチを受ける(ダメージ, パンチをスタン時間)
-    public void ToGetPunch(int damage, float stunTime)
+    public bool ToGetPunch(int damage, float stunTime)
     {
         //Stun(stunTime);
-        AddDamage(damage, stunTime);
+        return AddDamage(damage, stunTime);
 		
 	}
 
@@ -557,14 +572,17 @@ public class MovePlayerKey : NetworkBehaviour
     }
 
     //ダメージ（受けるダメージ）
-    void AddDamage(int damage, float stunTime)
+    bool AddDamage(int damage, float stunTime)
     {
         _currentHp -= damage;
         if (_currentHp <= 0)
         {
             Stun(stunTime);
             Debug.Log(this.gameObject.name + " is dead.");
+            //死んでいたら
+            return true;
         }
+        return false;
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -627,13 +645,13 @@ public class MovePlayerKey : NetworkBehaviour
     //
     void Jump()
     {
-        if (_FootCollider.GetCanJump())
-        {
-            if (Input.GetKeyDown(_jump))
-            {
-                _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
-            }
-        }
+        //if (_FootCollider.GetCanJump())
+        //{
+        //    if (Input.GetKeyDown(_jump))
+        //    {
+        //        _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+        //    }
+        //}
     }
 
     void Move()
