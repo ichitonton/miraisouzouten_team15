@@ -35,6 +35,8 @@ public class KonpeitougunManager : NetworkBehaviour
     [SerializeField] private float lateralOffset = 6f;    // 斜め感（横ズレ）
 
 
+    private NightController _N_controller;
+
     private bool _running;
 
     private int _dropSeq = 0;
@@ -53,6 +55,11 @@ public class KonpeitougunManager : NetworkBehaviour
         if (markerLeadTime < flightTime)
             markerLeadTime = flightTime + 0.2f;
         StartCoroutine(ServerRoutine());
+
+        //夜へチェンジ
+        _N_controller = GetComponent<NightController>();
+        _N_controller.SetNightServerRpc(true);
+
     }
 
     private IEnumerator ServerRoutine()
@@ -95,7 +102,14 @@ public class KonpeitougunManager : NetworkBehaviour
             meteor.GetComponent<MeteorManager>().ServerSetupPath(p0, p1, p2, startAt, flightTime);
 
             yield return new WaitForSeconds(interval);
+
+            if(i == meteorsPerEvent - 1)
+            {
+                _N_controller.SetNightServerRpc(false);
+            }
         }
+
+
 
         _running = false;
     }
