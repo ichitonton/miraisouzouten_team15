@@ -15,4 +15,9 @@ public class IcePillarEvent : EventBasic
         //イベントを開始
         instance.GetComponent<IcePillarManager>().StartEvent_Server();
     }
+
+    public override void Destroy()
+    {
+        
+    }
 }

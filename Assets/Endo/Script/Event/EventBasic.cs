@@ -8,6 +8,7 @@ public abstract class EventBasic : NetworkBehaviour
     [SerializeField] protected bool isEvent = true;
 
     [SerializeField] protected string _eventName = "EventId";
+    public float _eventTime = 0f;
     public float _waitTime = 0.0f;
     /// <summary>
     /// 外部参照用（読み取りだけにするのがおすすめ）
@@ -19,6 +20,7 @@ public abstract class EventBasic : NetworkBehaviour
     /// イベント本体（派生クラスで必ず実装する）
     /// </summary>
     public abstract void Event();
+    public abstract void Destroy();
 
     /// <summary>
     /// Manager 側から安全に呼び出すための入口（isEventチェック込み）

@@ -26115,7 +26115,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6062687166195725737, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
       propertyPath: _colorSettings.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6062687166195725737, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
       propertyPath: _colorSettings.Array.data[0]._color.b
@@ -26168,6 +26168,26 @@ PrefabInstance:
     - target: {fileID: 6062687166195725737, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
       propertyPath: _colorSettings.Array.data[2]._tagName
       value: Tetrapod
+      objectReference: {fileID: 0}
+    - target: {fileID: 6062687166195725737, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
+      propertyPath: _colorSettings.Array.data[3]._color.a
+      value: 0.75686276
+      objectReference: {fileID: 0}
+    - target: {fileID: 6062687166195725737, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
+      propertyPath: _colorSettings.Array.data[3]._color.b
+      value: 0.90188676
+      objectReference: {fileID: 0}
+    - target: {fileID: 6062687166195725737, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
+      propertyPath: _colorSettings.Array.data[3]._color.g
+      value: 0.8863815
+      objectReference: {fileID: 0}
+    - target: {fileID: 6062687166195725737, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
+      propertyPath: _colorSettings.Array.data[3]._color.r
+      value: 0.15485224
+      objectReference: {fileID: 0}
+    - target: {fileID: 6062687166195725737, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
+      propertyPath: _colorSettings.Array.data[3]._tagName
+      value: Ice
       objectReference: {fileID: 0}
     - target: {fileID: 8333864430798299636, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
       propertyPath: _mapRect

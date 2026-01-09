@@ -93,7 +93,7 @@ public class MapColorManager : MonoBehaviour
     //MapTextureに描くオブジェクトがあるなら一つもメッシュにする
     private Mesh _combinedMesh;
 
-
+    public static MapColorManager Instance { get; private set; }
 
     public enum ViewMode
     {
@@ -106,6 +106,8 @@ public class MapColorManager : MonoBehaviour
 
     private void Awake()
     {
+
+        Instance = this;
 
         _mpb = new();
 
@@ -386,6 +388,8 @@ public class MapColorManager : MonoBehaviour
             Graphics.DrawMeshNow(mf.sharedMesh, go.transform.localToWorldMatrix);
         }
 
+        Debug.Log("動的オブジェクトの数" + _dynamicObjects.Count);
+
         GL.PopMatrix();
         RenderTexture.active = prevRT;
         GL.invertCulling = false;
@@ -458,14 +462,32 @@ public class MapColorManager : MonoBehaviour
     {
         if (obj == null) return;
 
-        //親オブジェクトの設定
-        _stageRoot.Add(obj);
+        // 親（ステージroot）登録：重複防止
+        if (!_stageRoot.Contains(obj))
+            _stageRoot.Add(obj);
 
         foreach (var r in obj.GetComponentsInChildren<Renderer>(true))
         {
             var target = r.gameObject;
+
+            // 追跡用（Unregisterのため）
             if (!_registeredObjects.Contains(target))
                 _registeredObjects.Add(target);
+
+            // ここが本題：static結合しないなら Dynamic に直入れ
+            // MapObject が無い場合は今まで通り（static扱い）にしておく
+            var mapObj = target.GetComponent<MapObject>();
+            if (mapObj != null && !mapObj.CombineToStatic)
+            {
+                // Instance がまだ無い（Awake前）なら、StartのCombineMeshesで拾われるので何もしない
+                var inst = Instance;
+                if (inst != null)
+                {
+                    // 重複防止
+                    if (!inst._dynamicObjects.Contains(target))
+                        inst._dynamicObjects.Add(target);
+                }
+            }
         }
     }
 
