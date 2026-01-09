@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Unity.Netcode;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class PlayerMapIconManager : MonoBehaviour
 {
 
@@ -16,6 +16,8 @@ public class PlayerMapIconManager : MonoBehaviour
 
     [Header("位置更新の間隔（秒） 0なら毎フレーム")]
     [SerializeField] private float _updateInterval = 0.1f;
+
+    [SerializeField] private Sprite[] iconSprites = null; 
 
     // ==== static 管理（プレイヤーから Register/Unregister される） ====
     private static PlayerMapIconManager _instance;
@@ -179,13 +181,35 @@ public class PlayerMapIconManager : MonoBehaviour
         if (_iconInstances.ContainsKey(target)) return;
         if (_playerIconPrefab == null || _mapRect == null) return;
 
-        var iconGO = Instantiate(_playerIconPrefab, _mapRect);
+       
+        GameObject iconGO = Instantiate(_playerIconPrefab, _mapRect);
+
+        Sprite iconSprite = null;
+
+        if(target._id == 1)
+        {
+            iconSprite = iconSprites[0];
+
+        }
+        else if (target._id == 2)
+        {
+            iconSprite = iconSprites[1];
+        }
+
+
         var rect = iconGO.GetComponent<RectTransform>();
         if (rect == null)
         {
             Debug.LogWarning("[PlayerMapIconManager] プレイヤーアイコンPrefabに RectTransform が付いていません");
             Destroy(iconGO);
             return;
+        }
+
+        var img = iconGO.GetComponent<Image>();
+
+        if (img != null)
+        {
+            img.sprite = iconSprite;
         }
 
         rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);

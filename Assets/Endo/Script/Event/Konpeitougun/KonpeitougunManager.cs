@@ -19,9 +19,6 @@ public class KonpeitougunManager : NetworkBehaviour
     [Header("Explosion Hook (Optional)")]
     [SerializeField] private bool playExplosionHere = false;
 
-    [Header("Konpeito Network Prefabs (NetworkObject•t‚«)")]
-    [SerializeField] private GameObject[] konpeitoPrefabs;
-
     [Header("Event Settings")]
     [SerializeField] private int meteorsPerEvent = 10;
     [SerializeField] private float interval = 0.35f;

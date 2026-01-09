@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3402078089
+  GlobalObjectIdHash: 1713691472
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -73,6 +73,6 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   isEvent: 0
   _eventName: EventId
-  _eventTime: 0
+  _eventTime: 20
   _waitTime: 3
   _Icepillar: {fileID: 1511536919086545546, guid: 6e9d7d67d40c75248a902fabac87bb3f, type: 3}

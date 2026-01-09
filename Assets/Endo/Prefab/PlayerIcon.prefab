@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 5212138821171911413}
   - component: {fileID: 7968623606385974078}
   - component: {fileID: 3331606457544423275}
-  - component: {fileID: 3962040767516255900}
   m_Layer: 3
   m_Name: PlayerIcon
   m_TagString: Untagged
@@ -36,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 47.6638, y: 13.2484}
-  m_SizeDelta: {x: 17, y: 17}
+  m_SizeDelta: {x: 40, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7968623606385974078
 CanvasRenderer:
@@ -66,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a05791c665efbe74dbc1a5a788642878, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b0f1f571bf5105e43a64d102cf9098b5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -76,19 +75,3 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3962040767516255900
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7304870777409046639}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bac4f518469936546b0b711c706e46c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MapIcon
-  _mapCamera: {fileID: 0}
-  _mapRect: {fileID: 0}
-  _playerIcon: {fileID: 5212138821171911413}
-  _player: {fileID: 0}

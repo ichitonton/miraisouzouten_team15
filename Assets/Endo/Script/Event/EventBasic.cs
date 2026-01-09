@@ -8,7 +8,7 @@ public abstract class EventBasic : NetworkBehaviour
     [SerializeField] protected bool isEvent = true;
 
     [SerializeField] protected string _eventName = "EventId";
-    public float _eventTime = 0f;
+    public float _eventTime = 5f;
     public float _waitTime = 0.0f;
     /// <summary>
     /// 外部参照用（読み取りだけにするのがおすすめ）

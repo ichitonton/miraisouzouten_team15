@@ -3154,6 +3154,7 @@ GameObject:
   - component: {fileID: -2356800231678809462}
   - component: {fileID: -6520160973488650656}
   - component: {fileID: 2191849881936588458}
+  - component: {fileID: -7677063516064561475}
   m_Layer: 0
   m_Name: Risu_rig
   m_TagString: Player
@@ -3478,6 +3479,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PooledNetworkObject
   ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &-7677063516064561475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7459081349001929016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9e0acc1f91b50c46accd44529afdb23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMapIconTarget
+  _iconTarget: {fileID: 0}
+  _onlyLocalInLan: 1
+  _id: 1
+  _registerWhenNoNetwork: 1
 --- !u!1 &7481435165760361928
 GameObject:
   m_ObjectHideFlags: 0

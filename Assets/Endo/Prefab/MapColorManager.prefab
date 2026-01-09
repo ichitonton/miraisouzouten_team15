@@ -52,7 +52,8 @@ MonoBehaviour:
   _mapCamera: {fileID: 0}
   mapRoot: {fileID: 0}
   blurBG: {fileID: 0}
-  _otherUI: {fileID: 0}
+  _otherUI:
+  - {fileID: 0}
   toggleKey: 9
 --- !u!114 &6062687166195725737
 MonoBehaviour:
@@ -83,7 +84,7 @@ MonoBehaviour:
   _pointSensitivity: 0.3
   _PointMinBrightness: 0.8
   _PointMaxBrightness: 1.2
-  _pointRadius: 1.5
+  _pointRadius: 4
   _globalHeightRef: 10
   _globalHeightSensitivity: 0.01
   _globalMinScale: 0.9
@@ -123,5 +124,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMapIconManager
   _mapCamera: {fileID: 0}
   _mapRect: {fileID: 0}
-  _playerIconPrefab: {fileID: 0}
+  _playerIconPrefab: {fileID: 7304870777409046639, guid: db83deb176c9b69428290e5cbe07bb31, type: 3}
   _updateInterval: 0.1
+  iconSprites:
+  - {fileID: 21300000, guid: b0f1f571bf5105e43a64d102cf9098b5, type: 3}
+  - {fileID: 21300000, guid: 7bb73dbd9254cef48920a830d58e06b4, type: 3}

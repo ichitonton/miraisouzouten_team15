@@ -8,7 +8,7 @@ public class EventPrefabEntry
 {
     public string eventId = null;
     public GameObject prefab = null;
-    public string message = null;
+    public string message = "";
 }
 
 [CreateAssetMenu(fileName = "EventDatabase", menuName = "Scriptable Objects/EventDatabase")]

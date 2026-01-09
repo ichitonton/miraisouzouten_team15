@@ -457,36 +457,44 @@ public class MapColorManager : MonoBehaviour
     }
 
 
-    // ───────── 登録制（バグ修正済み）─────────
+    /// <summary>
+    /// MapObject.OnEnable から呼ばれる想定
+    /// - obj(ルート)の MapObject.CombineToStatic を基本設定として
+    /// - 子に MapObject があれば子の設定を優先
+    /// - CombineToStatic=false のものは dynamic に直入れ
+    /// </summary>
     public static void Register(GameObject obj)
     {
         if (obj == null) return;
 
-        // 親（ステージroot）登録：重複防止
-        if (!_stageRoot.Contains(obj))
-            _stageRoot.Add(obj);
+        // ルートの設定（無い場合は「静的結合したい」扱いに寄せる）
+        bool rootCombineToStatic = true;
+        if (obj.TryGetComponent<MapObject>(out var rootMapObj))
+            rootCombineToStatic = rootMapObj.CombineToStatic;
 
+        var inst = Instance; // Awake前ならnullの可能性あり（その場合は後でCombineMeshes側で拾う）
+
+        // ルート配下の Renderer 全部を登録
         foreach (var r in obj.GetComponentsInChildren<Renderer>(true))
         {
+            if (r == null) continue;
             var target = r.gameObject;
+            if (target == null) continue;
 
-            // 追跡用（Unregisterのため）
+            // 追跡用（Unregisterで消すため）
             if (!_registeredObjects.Contains(target))
                 _registeredObjects.Add(target);
 
-            // ここが本題：static結合しないなら Dynamic に直入れ
-            // MapObject が無い場合は今まで通り（static扱い）にしておく
-            var mapObj = target.GetComponent<MapObject>();
-            if (mapObj != null && !mapObj.CombineToStatic)
+            // 子に MapObject があればそっちを優先、無ければルートの設定を継承
+            bool combineToStatic = rootCombineToStatic;
+            if (target.TryGetComponent<MapObject>(out var childMapObj))
+                combineToStatic = childMapObj.CombineToStatic;
+
+            // ★ staticにしないなら dynamic に直入れ（いま欲しい挙動）
+            if (!combineToStatic && inst != null)
             {
-                // Instance がまだ無い（Awake前）なら、StartのCombineMeshesで拾われるので何もしない
-                var inst = Instance;
-                if (inst != null)
-                {
-                    // 重複防止
-                    if (!inst._dynamicObjects.Contains(target))
-                        inst._dynamicObjects.Add(target);
-                }
+                if (!inst._dynamicObjects.Contains(target))
+                    inst._dynamicObjects.Add(target);
             }
         }
     }
@@ -494,10 +502,20 @@ public class MapColorManager : MonoBehaviour
     public static void Unregister(GameObject obj)
     {
         if (obj == null) return;
+
+        var inst = Instance;
+
         foreach (var r in obj.GetComponentsInChildren<Renderer>(true))
         {
+            if (r == null) continue;
             var target = r.gameObject;
+            if (target == null) continue;
+
             _registeredObjects.Remove(target);
+
+            // ★ dynamic直入れした分を確実に抜く（残像防止）
+            if (inst != null)
+                inst._dynamicObjects.Remove(target);
         }
     }
 

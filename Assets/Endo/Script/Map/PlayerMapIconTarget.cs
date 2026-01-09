@@ -15,6 +15,8 @@ public class PlayerMapIconTarget : MonoBehaviour
     [Tooltip("LANモード時、ローカルプレイヤーだけ表示するか")]
     [SerializeField] private bool _onlyLocalInLan = true;
 
+    [SerializeField] public int _id = 0;
+
     // Netcode使ってないなら消してOK
     //private NetworkObject _networkObject;
 
