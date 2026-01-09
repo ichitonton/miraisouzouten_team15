@@ -3393,14 +3393,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09611de206532bb43b01ff38a9550145, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Exp_Ranking_UI
+  ShowTopMostFoldoutHeaderGroup: 1
   allTeamsData:
-  - teamName: Red
+  - teamId: 0
+    teamName: Red
     teamIcon: {fileID: 21300000, guid: fa5acffaa97a6af4ba11402cce89903d, type: 3}
     score: 0
-  - teamName: Blue
+  - teamId: 1
+    teamName: Blue
     teamIcon: {fileID: 21300000, guid: 444dc980a45dcd64eb608d4adefc0672, type: 3}
     score: 0
-  - teamName: Purple
+  - teamId: 2
+    teamName: Purple
     teamIcon: {fileID: 21300000, guid: 9fd87fcbf5709084db3c9cb142b69ac4, type: 3}
     score: 0
   rankingSlots:

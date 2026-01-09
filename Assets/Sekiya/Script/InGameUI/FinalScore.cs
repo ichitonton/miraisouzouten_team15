@@ -5,6 +5,7 @@ public static class FinalScore
     public static float ScoreTeam0; // 赤？
     public static float ScoreTeam1; // 青？
     public static float ScoreTeam2; // 白？
+    public static ulong MyPlayerID;
 
     // データをリセットする便利関数
     public static void Reset()
@@ -12,5 +13,6 @@ public static class FinalScore
         ScoreTeam0 = 0;
         ScoreTeam1 = 0;
         ScoreTeam2 = 0;
+        MyPlayerID = 0;
     }
 }

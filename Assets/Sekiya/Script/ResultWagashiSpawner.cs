@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ResultWagashiSpawner : MonoBehaviour
 {
@@ -25,6 +26,9 @@ public class ResultWagashiSpawner : MonoBehaviour
     [Tooltip("生成を続ける時間（秒）。0にするとずっと止まりません")]
     [SerializeField] private float activeDuration = 10.0f;
 
+    [Header("全て出し切った時に起こすアクション")]
+    public UnityEvent OnComplete; // ここにUIを動かす命令を登録します
+
     // 重複して実行されないようにするためのフラグ
     private bool isRunning = false;
 
@@ -48,6 +52,7 @@ public class ResultWagashiSpawner : MonoBehaviour
     {
         StopAllCoroutines();
         isRunning = false;
+        OnComplete.Invoke();
     }
 
     private IEnumerator SpawnLoop()
@@ -69,7 +74,7 @@ public class ResultWagashiSpawner : MonoBehaviour
             {
                 Debug.Log("指定時間が経過したため終了します。");
                 isRunning = false;
-                yield break;
+                break;
             }
 
             // 生成処理
@@ -81,6 +86,9 @@ public class ResultWagashiSpawner : MonoBehaviour
             yield return new WaitForSeconds(spawnInterval);
             timer += spawnInterval;
         }
+
+        OnComplete.Invoke();
+        yield break;
     }
 
     private void SpawnObject()
