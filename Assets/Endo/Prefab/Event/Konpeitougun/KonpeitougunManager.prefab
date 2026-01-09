@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6921852241815585621}
   - component: {fileID: 5199147987320568266}
   - component: {fileID: -8559824455993873175}
+  - component: {fileID: -8758188105892588313}
   m_Layer: 0
   m_Name: KonpeitougunManager
   m_TagString: Untagged
@@ -87,9 +88,31 @@ MonoBehaviour:
   - {fileID: 815011463385374253, guid: abee96be26cdd1142b5c9b48550ec554, type: 3}
   - {fileID: 6188212326822016374, guid: f41acadb7ed4be04ba1f776db92804df, type: 3}
   - {fileID: 3324507162435628113, guid: b737a242d902d1e45b532dc8b7a67e31, type: 3}
-  meteorsPerEvent: 30
+  meteorsPerEvent: 10
   interval: 3
   markerLeadTime: 3.2
   flightTime: 3
   arcHeight: 3
   lateralOffset: 6
+--- !u!114 &-8758188105892588313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1102212766679816489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6688c6c63bfd56046b84973bf613fcb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NightController
+  ShowTopMostFoldoutHeaderGroup: 1
+  autoFindSunLight: 1
+  autoFindGlobalVolume: 1
+  sunLightTag: 
+  globalVolumeTag: 
+  nightSunIntensity: 0.15
+  nightSunColor: {r: 0.55, g: 0.65, b: 1, a: 1}
+  transitionSeconds: 1.2
+  nightProfile: {fileID: 0}
+  dayProfile: {fileID: 0}
