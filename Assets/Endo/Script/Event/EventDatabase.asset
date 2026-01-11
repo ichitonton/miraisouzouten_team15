@@ -19,3 +19,9 @@ MonoBehaviour:
   - eventId: IcePillar
     prefab: {fileID: 8922736455750103273, guid: 4c891ae676559974ca897cc280da5d7d, type: 3}
     message: "\u6C37\u67F1\u767A\u751F\u4E2D\uFF01\uFF01"
+  - eventId: GoldenWagashi
+    prefab: {fileID: 8586976036803425878, guid: 26a82ac4cd2cdb4458cc21c53ecaa40b, type: 3}
+    message: "\u91D1\u8272\u548C\u83D3\u5B50\u51FA\u73FE\uFF01\uFF01"
+  - eventId: HanayoriDango
+    prefab: {fileID: 4491971440301168270, guid: 97ea93a36d3c74247a7b190a82c4bcdf, type: 3}
+    message: "\u82B1\u3088\u308A\u56E3\u5B50\uFF01\uFF01"
