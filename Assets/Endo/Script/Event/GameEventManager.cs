@@ -27,10 +27,12 @@ public class GameEventManager : NetworkBehaviour
     [Tooltip("イベント終了後に必ず入れるクールダウン（秒）")]
     [SerializeField, Min(0.01f)] private float _cooldownMaxSec = 15f;
 
+    [SerializeField] private string _eventID = "none";
+
     public static GameEventManager Instance { get; private set; }
 
     private Coroutine _autoRoutine;
-    private bool _isEventRunning; // ★イベント重複防止
+    private bool _isEventRunning = false; // ★イベント重複防止
 
     private void Awake()
     {
@@ -40,14 +42,15 @@ public class GameEventManager : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        base.OnNetworkSpawn();
-        TryStartAutoLoop();
+        //ンっとワーク上に生成したら
+        //base.OnNetworkSpawn();
+        //TryStartAutoLoop();
     }
 
     private void Start()
     {
         // 非LANでも動作させたい場合の保険
-        TryStartAutoLoop();
+        //TryStartAutoLoop();
     }
 
     private void OnDisable()
@@ -122,7 +125,7 @@ public class GameEventManager : NetworkBehaviour
         var x = Screen.width / 2 - w / 2;
         var y = (Screen.height / 2) - 100;
 
-        if (GUI.Button(new Rect(x, y, w, h), "イベントスタート(即時)"))
+        if (GUI.Button(new Rect(x, y, w, h), "イベントスタート(ランダム)"))
         {
             // 即時も重複禁止（イベント中は無視）
             if (!_isEventRunning)
@@ -131,7 +134,12 @@ public class GameEventManager : NetworkBehaviour
                 Debug.Log("[GameEventManager] Event is running. Skip.");
         }
 
-        if (GUI.Button(new Rect(x, y + 40, w, h), _autoRoutine == null ? "自動イベント ON" : "自動イベント OFF"))
+        if (GUI.Button(new Rect(x, y + 40, w, h), "イベントスタート(デバッグ用)"))
+        {
+            StartCoroutine(DebugEvent_BlockByEventTime(_eventID));
+        }
+
+        if (GUI.Button(new Rect(x, y + 80, w, h), _autoRoutine == null ? "自動イベント ON" : "自動イベント OFF"))
         {
             if (_autoRoutine == null)
             {
@@ -144,6 +152,7 @@ public class GameEventManager : NetworkBehaviour
                 StopAutoLoop();
             }
         }
+
     }
 
     private IEnumerator SpawnRandomEventAndFire_BlockByEventTime()
@@ -220,7 +229,7 @@ public class GameEventManager : NetworkBehaviour
 
             // UI (LANならサーバーからRelay)
             if (GameManager.Instance != null && GameManager.Instance._IsLanModeActive)
-                NetworkUIEventRelay.Instance?.TriggerUI(chosen.message);
+                NetworkUIEventRelay.Instance.TriggerUIByEventId(chosen.eventId);
 
             // ★イベント占有時間だけブロック
             float t = Mathf.Max(0f, ev._eventTime);
@@ -232,4 +241,84 @@ public class GameEventManager : NetworkBehaviour
             _isEventRunning = false;
         }
     }
+
+    private bool IsServerAuthorityOK()
+    {
+        // LAN時はサーバーだけがイベントを決める
+        if (!GameManager.Instance._IsLanModeActive && !IsServer) return false;
+        return true;
+    }
+
+    // =========================
+    // Debug Spawn by ID (元の発想：IDで引いて生成してTryEvent)
+    // =========================
+
+    private IEnumerator DebugEvent_BlockByEventTime(string id)
+    {
+        if (!IsServerAuthorityOK()) yield break;
+        if (_isEventRunning) yield break;
+
+        _isEventRunning = true;
+        try
+        {
+            if (_eventDatabase == null)
+            {
+                Debug.LogWarning("[GameEventManager] EventDatabase is NULL.");
+                yield break;
+            }
+
+            var prefab = _eventDatabase.GetPrefabOrNull(id);
+            if (prefab == null)
+            {
+                Debug.LogWarning($"[GameEventManager] Prefab not found for id='{id}'");
+                yield break;
+            }
+
+            Vector3 pos = _spawnPoint != null ? _spawnPoint.position : Vector3.zero;
+            Quaternion rot = _spawnPoint != null ? _spawnPoint.rotation : Quaternion.identity;
+            Transform parent = (_spawnAsChild && _spawnPoint != null) ? _spawnPoint : null;
+
+            GameObject instance = Instantiate(prefab, pos, rot, parent);
+
+            // LANなら NetworkObject.Spawn（Serverのみ）
+            if (IsServer)
+            {
+                var no = instance.GetComponent<NetworkObject>();
+                if (no == null)
+                {
+                    Debug.LogError($"[GameEventManager] Prefab has no NetworkObject in LAN mode: {prefab.name}");
+                    Destroy(instance);
+                    yield break;
+                }
+                no.Spawn();
+            }
+
+            if (instance.TryGetComponent<EventBasic>(out var ev))
+            {
+                Debug.Log($"[GameEventManager] Spawned '{id}' -> {instance.name}. Calling TryEvent()...");
+                ev.TryEvent();
+
+                // メッセージ取得
+                var message = _eventDatabase.GetMessage(id);
+
+                // ネットワークでもUIを再生（LANならServerからRelay）
+                if (IsServer)
+                    NetworkUIEventRelay.Instance.TriggerUIByEventId(id);
+
+                // ★eventTimeだけブロック
+                float t = Mathf.Max(0f, ev._eventTime);
+                if (t > 0f) yield return new WaitForSeconds(t);
+            }
+            else
+            {
+                Debug.LogWarning($"[GameEventManager] Spawned prefab has no EventBasic: {instance.name}");
+            }
+        }
+        finally
+        {
+            _isEventRunning = false;
+        }
+    }
+
+
 }

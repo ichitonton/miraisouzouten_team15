@@ -9,7 +9,26 @@ public class EventPrefabEntry
     public string eventId = null;
     public GameObject prefab = null;
     public string message = "";
+
+    // ★追加1：中央ワーニング用（例：! のアイコン）
+    public Sprite warningIcon;
+
+    // ★追加2：画面フラッシュ用
+    public ScreenFlashSetting flash;
+
 }
+
+[System.Serializable]
+public class ScreenFlashSetting
+{
+    public Color flashColor = Color.red;
+
+    [Range(0f, 1f)] public float maxAlpha = 0.6f;
+    
+    // 画像で点滅させたい場合（任意）
+    public Sprite overlaySprite;
+}
+
 
 [CreateAssetMenu(fileName = "EventDatabase", menuName = "Scriptable Objects/EventDatabase")]
 public class EventDatabase : ScriptableObject
@@ -61,6 +80,33 @@ public class EventDatabase : ScriptableObject
     {
         return TryGetMessage(eventId,out var message) ? message : null;
     }
+
+    public bool TryGetEntry(string id, out EventPrefabEntry entry)
+    {
+        entry = null;
+        if (string.IsNullOrWhiteSpace(id)) return false;
+
+        foreach (var e in _entries)
+        {
+            if (e != null && e.eventId == id)
+            {
+                entry = e;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Sprite GetWarningIcon(string id)
+    {
+        return TryGetEntry(id, out var e) ? e.warningIcon : null;
+    }
+
+    public ScreenFlashSetting GetFlash(string id)
+    {
+        return TryGetEntry(id, out var e) ? e.flash : null;
+    }
+
 
     private void BuildCacheIfNeeded()
     {

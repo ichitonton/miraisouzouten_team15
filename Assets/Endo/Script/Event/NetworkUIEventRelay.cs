@@ -6,6 +6,9 @@ public class NetworkUIEventRelay : NetworkBehaviour
 {
     public static NetworkUIEventRelay Instance { get; private set; }
 
+    [Header("Database (All clients must have same asset)")]
+    [SerializeField] private EventDatabase _eventDatabase;
+
     // 連続発火のガード（任意）
     [SerializeField] private float serverCooldown = 0.15f;
     private float _nextServerAllowedTime = 0f;
@@ -21,55 +24,72 @@ public class NetworkUIEventRelay : NetworkBehaviour
     }
 
     /// <summary>
-    /// どこから呼んでもOK。ClientならServerに依頼、Serverなら即配信。
+    /// どこから呼んでもOK。
+    /// ネット無し: ローカル再生
+    /// ネット有り: ClientならServerへ依頼、Serverなら即配信
     /// </summary>
-    public void TriggerUI(string message)
+    public void TriggerUIByEventId(string eventId)
     {
+        if (string.IsNullOrWhiteSpace(eventId)) return;
+
+        // ネットワーク無し（ローカルデバッグ）
         if (!NetworkManager.Singleton || !NetworkManager.Singleton.IsListening)
         {
-            // ネットワーク無し（ローカルデバッグ）
-            UIEventManager.Instance?.Play(message);
+            PlayLocal(eventId);
             return;
         }
 
         if (IsServer)
         {
-            TriggerOnServer(message);
+            TriggerOnServer(eventId);
         }
         else
         {
-            // Serverに「これを全員に出して」と依頼
-            RequestTriggerServerRpc(new FixedString128Bytes(message));
+            RequestTriggerServerRpc(new FixedString64Bytes(eventId));
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void RequestTriggerServerRpc(FixedString128Bytes message, ServerRpcParams rpcParams = default)
+    private void RequestTriggerServerRpc(FixedString64Bytes eventId, ServerRpcParams rpcParams = default)
     {
-        TriggerOnServer(message.ToString());
+        TriggerOnServer(eventId.ToString());
     }
 
-    private void TriggerOnServer(string message)
+    private void TriggerOnServer(string eventId)
     {
         if (!IsServer) return;
 
         if (Time.unscaledTime < _nextServerAllowedTime) return;
         _nextServerAllowedTime = Time.unscaledTime + serverCooldown;
 
-        BroadcastClientRpc(new FixedString128Bytes(message));
+        BroadcastClientRpc(new FixedString64Bytes(eventId));
     }
 
     [ClientRpc]
-    private void BroadcastClientRpc(FixedString128Bytes message, ClientRpcParams rpcParams = default)
+    private void BroadcastClientRpc(FixedString64Bytes eventId, ClientRpcParams rpcParams = default)
     {
-        // 各クライアントのローカルCanvasで演出再生
-        if (UIEventManager.Instance != null)
+        PlayLocal(eventId.ToString());
+    }
+
+    private void PlayLocal(string eventId)
+    {
+        if (_eventDatabase == null)
         {
-            UIEventManager.Instance.Play(message.ToString());
+            Debug.LogWarning($"[NetworkUIEventRelay] EventDatabaseが未設定です: {eventId}");
+            return;
         }
-        else
+
+        if (UIEventManager.Instance == null)
         {
-            Debug.LogWarning($"[NetworkUIEventRelay] UIEventManagerが見つからないため表示できません: {message}");
+            Debug.LogWarning($"[NetworkUIEventRelay] UIEventManagerが見つからないため表示できません: {eventId}");
+            return;
         }
+
+        // DBからUI演出情報を引く（SpriteなどはRPCで送らない！）
+        var message = _eventDatabase.GetMessage(eventId);
+        var icon = _eventDatabase.GetWarningIcon(eventId);
+        var flash = _eventDatabase.GetFlash(eventId);
+
+        UIEventManager.Instance.Play(message, icon, flash);
     }
 }
