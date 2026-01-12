@@ -3285,6 +3285,33 @@ MonoBehaviour:
   _punchForce: 10
   _stunTime: 1
   _haveTrans: {fileID: 4406414796707556517}
+  _rankLotteryTables:
+  - rank: 1
+    items:
+    - item: 3
+      weight: 40
+    - item: 1
+      weight: 60
+  - rank: 2
+    items:
+    - item: 2
+      weight: 10
+    - item: 1
+      weight: 20
+    - item: 4
+      weight: 20
+    - item: 3
+      weight: 20
+  - rank: 3
+    items:
+    - item: 2
+      weight: 30
+    - item: 5
+      weight: 20
+    - item: 1
+      weight: 30
+    - item: 4
+      weight: 30
   _itemBomb: {fileID: 5829897982676275080, guid: 8b04250a52ccfdb47b90f1726a8e4259, type: 3}
   _itemBlackHole: {fileID: 5829897982676275080, guid: bcbc9ec3f4a24f647951f6a4a44e0f69, type: 3}
   _itemShouse: {fileID: 7378108386830483345, guid: 300e19193fcbcbf40bb398a530904e3f, type: 3}
@@ -3304,7 +3331,6 @@ MonoBehaviour:
   _thunderParticleSystem: {fileID: 6148854594273898444}
   _headPoint: {fileID: 84731178285349141}
   _playerNumber: 2
-  _FootCollider: {fileID: 7817851643849097461, guid: dcc2768956dba9e4fa941751b7eac6c3, type: 3}
   _groundCheck: {fileID: 4693011718261107481}
 --- !u!54 &4346886339305241986
 Rigidbody:

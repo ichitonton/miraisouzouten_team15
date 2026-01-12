@@ -3227,7 +3227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3519466044
+  GlobalObjectIdHash: 3014565496
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -3287,6 +3287,33 @@ MonoBehaviour:
   _punchForce: 10
   _stunTime: 1
   _haveTrans: {fileID: 7533343180309272194}
+  _rankLotteryTables:
+  - rank: 1
+    items:
+    - item: 3
+      weight: 40
+    - item: 1
+      weight: 60
+  - rank: 2
+    items:
+    - item: 2
+      weight: 10
+    - item: 1
+      weight: 20
+    - item: 4
+      weight: 20
+    - item: 3
+      weight: 20
+  - rank: 3
+    items:
+    - item: 2
+      weight: 30
+    - item: 5
+      weight: 20
+    - item: 1
+      weight: 30
+    - item: 4
+      weight: 30
   _itemBomb: {fileID: 5829897982676275080, guid: 8b04250a52ccfdb47b90f1726a8e4259, type: 3}
   _itemBlackHole: {fileID: 5829897982676275080, guid: bcbc9ec3f4a24f647951f6a4a44e0f69, type: 3}
   _itemShouse: {fileID: 7378108386830483345, guid: 300e19193fcbcbf40bb398a530904e3f, type: 3}
