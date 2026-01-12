@@ -14,6 +14,7 @@ public class RopeSpawner : NetworkBehaviour
     [SerializeField] private Transform _pivotId2;
     private Transform _pivot;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
         _playerNetworkConnect = GetComponent<PlayerNetworkConnect>();

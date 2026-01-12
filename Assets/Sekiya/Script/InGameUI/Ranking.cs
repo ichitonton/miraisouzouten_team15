@@ -106,7 +106,7 @@ public class Ranking : NetworkBehaviour
         // 自分が1位グループ
         if (me.score == topScore)
         {
-            return isTopTie ? 3 : 1; // 同率1位は全員3位扱い
+            return isTopTie ? 2 : 1; // 同率1位は全員2位扱い
         }
 
         // 2位候補のスコア
@@ -118,7 +118,7 @@ public class Ranking : NetworkBehaviour
         // 2位が存在しない（全員同点など）
         if (secondScore == 0 && sorted.All(t => t.score == topScore))
         {
-            return 3;
+            return 2;
         }
 
         bool isSecondTie = sorted.Count(t => t.score == secondScore) > 1;

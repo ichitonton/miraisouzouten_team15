@@ -29,6 +29,25 @@ public class MovePlayerKey : NetworkBehaviour
     [SerializeField] float _stunTime = 1.0f;//パンチした時のスタン時間
     [SerializeField] Transform _haveTrans;//持ってるアイテム
     Vector3 _target;
+
+    [System.Serializable]
+    public class ItemLotteryEntry
+    {
+        public ItemType item;
+        [Range(0, 100)]
+        public int weight; // 抽選の重み
+    }
+
+    [System.Serializable]
+    public class RankLotteryTable
+    {
+        public int rank;
+        public List<ItemLotteryEntry> items;
+    }
+
+    [SerializeField]
+    private List<RankLotteryTable> _rankLotteryTables;
+
     [SerializeField] private GameObject _itemBomb;
     [SerializeField] private GameObject _itemBlackHole;
     [SerializeField] private GameObject _itemShouse;
@@ -42,7 +61,7 @@ public class MovePlayerKey : NetworkBehaviour
     private bool _itemStarUse = false;
 
     [SerializeField] private GameObject _itemThunder;
-    [SerializeField] float _thunderDuration = 10.0f; 
+    [SerializeField] float _thunderDuration = 10.0f;
     [SerializeField] float _thunderStunTime = 5.0f;
     private int _abekobe = 1; //移動速度あべこべ用
 
@@ -50,9 +69,9 @@ public class MovePlayerKey : NetworkBehaviour
 
     [SerializeField] float _itemFlightTime = 2.0f; // 投げるオブジェクトがターゲットに到達するまでの時間
 
-    [SerializeField]ParticleSystem _dashParticleSystem;
-    [SerializeField]ParticleSystem _mutekiParticleSystem;
-    [SerializeField]ParticleSystem _shoeseParticleSystem;
+    [SerializeField] ParticleSystem _dashParticleSystem;
+    [SerializeField] ParticleSystem _mutekiParticleSystem;
+    [SerializeField] ParticleSystem _shoeseParticleSystem;
     [SerializeField] ParticleSystem _dyingParticleSystem;
     [SerializeField] ParticleSystem _thunderParticleSystem;
 
@@ -60,10 +79,10 @@ public class MovePlayerKey : NetworkBehaviour
     //エフェクト関連
     [SerializeField] Transform _headPoint; //頭の位置
     private int _punchStartEffectId = 3;   //頭のエフェクト
-	private int _hitDyingEffectId = 10; // スタンエフェクト
+    private int _hitDyingEffectId = 10; // スタンエフェクト
 
-	//そのPCの中でのプレイヤー番号
-	[SerializeField] PlayerNumber _playerNumber = PlayerNumber.None;
+    //そのPCの中でのプレイヤー番号
+    [SerializeField] PlayerNumber _playerNumber = PlayerNumber.None;
 
     GameObject _effDash2Instance;
     ParticleSystem _effDash2Ps;
@@ -87,15 +106,17 @@ public class MovePlayerKey : NetworkBehaviour
 
     Vector3 _lookVector = Vector3.zero;//向いている方向
 
-    [SerializeField] CanJump _FootCollider;
-
     Animator _anim;
 
     //入力受付フラグ
     Vector2 _InputMove = Vector2.zero;
     bool _InputUseItem = false;
     bool _InputPunch = false;
+    bool _InputEmote1, _InputEmote2, _InputEmote3, _InputEmote4 = false;
+    bool _isEmote = false;
 
+    bool _fly = false;
+    [SerializeField] GroundCheck3D _groundCheck;
 
     private Dictionary<ulong, NetworkObject> itemDictionary;
 
@@ -146,7 +167,7 @@ public class MovePlayerKey : NetworkBehaviour
         _ObjectPool = NetworkObjectPool.Instance;
 
         _dashParticleSystem.Stop();
-        _mutekiParticleSystem.Stop(); 
+        _mutekiParticleSystem.Stop();
         _shoeseParticleSystem.Stop();
 
         if (IsServer)
@@ -184,20 +205,48 @@ public class MovePlayerKey : NetworkBehaviour
         }
         if (IsServer)
         {
-            //アイテムを持ってるとき
-            if (_haveItem != ItemType.None && _haveItem != ItemType.Max)
+            if (_isEmote)
             {
-                UseItem();
+                _InputMove = Vector2.zero;
+                _InputPunch = false;
+                _InputUseItem = false;
             }
-            Jump();
-            Punch();
-            if (!_canNotInputKey)
+            else
             {
-                Move();
+                AnimatorStateInfo state = _anim.GetCurrentAnimatorStateInfo(0);
+                if (_InputMove != Vector2.zero || _InputPunch == true || _InputUseItem == true ||
+                    state.IsName("emote1") && state.normalizedTime >= 1.0f ||
+                    state.IsName("emote2") && state.normalizedTime >= 1.0f ||
+                    state.IsName("emote3") && state.normalizedTime >= 1.0f ||
+                    state.IsName("emote4") && state.normalizedTime >= 1.0f)
+                {
+                    EmoteEnd();
+                }
+                //アイテムを持ってるとき
+                if (_haveItem != ItemType.None && _haveItem != ItemType.Max)
+                {
+                    UseItem();
+                }
+                Jump();
+                Punch();
+                if (!_canNotInputKey)
+                {
+                    Move();
+                    Emote();
+                }
             }
-            //移動モーション
-            AnimBlendServerRpc(_animBlend);
+             AnimDyingFly(!_groundCheck.CheckGroundStatus());
+             //移動モーション
+             AnimBlendServerRpc(_animBlend);
         }
+    }
+
+    void AnimDyingFly(bool fly)
+    {
+        Debug.Log("fly : " + fly);
+        if (_fly == fly) return;
+        AnimDyingFlyServerRpc(fly);
+        _fly = fly;
     }
 
     void Update()
@@ -223,21 +272,17 @@ public class MovePlayerKey : NetworkBehaviour
             //Debug.Log("_target.position : " + _target.position);
             if (!_canNotInputKey)
             {
-            //パッド入力
+                //パッド入力
                 if (!InputGamePad())
                 {
-                //キーボード入力
+                    //キーボード入力
                     InputKeyboard();
                 }
-                SendInputServerRpc(_InputMove, _InputPunch, _InputUseItem);
-                //アイテムターゲット位置更新
-                if (_InputUseItem)
+                SendInputServerRpc(_InputMove, _InputPunch, _InputUseItem, _InputEmote1,_InputEmote2, _InputEmote3, _InputEmote4);
+                if (Input.GetKeyDown(KeyCode.Q))
                 {
-                }
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
                     LotteryHaveItem(0);
-        }
+                }
             }
         }
 
@@ -261,6 +306,32 @@ public class MovePlayerKey : NetworkBehaviour
         _anim.SetBool("Dying", Dying);
     }
     [ServerRpc(RequireOwnership = false)]
+    void AnimDyingFlyServerRpc(bool Dying)
+    {
+        _anim.SetBool("Fly", Dying);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    void AnimEmote1ServerRpc(bool Do)
+    {
+        _anim.SetBool("Emote1", Do);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    void AnimEmote2ServerRpc(bool Do)
+    {
+        _anim.SetBool("Emote2", Do);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    void AnimEmote3ServerRpc(bool Do)
+    {
+        _anim.SetBool("Emote3", Do);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    void AnimEmote4ServerRpc(bool Do)
+    {
+        _anim.SetBool("Emote4", Do);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
     void AnimPunchServerRpc()
     {
         _anim.SetTrigger("Punch");
@@ -271,26 +342,26 @@ public class MovePlayerKey : NetworkBehaviour
         float speed = new Vector3(_rb.linearVelocity.x, 0, _rb.linearVelocity.z).magnitude;
         bool isMoving = speed > 1.0f;
 
-       // foreach (var ps in GetComponentsInChildren<ParticleSystem>())
+        // foreach (var ps in GetComponentsInChildren<ParticleSystem>())
         //{
-            var em = _dashParticleSystem.emission;
-            em.enabled = isMoving;
+        var em = _dashParticleSystem.emission;
+        em.enabled = isMoving;
 
-            //if (isMoving && !ps.isPlaying)
-            if (isMoving && !_dashParticleSystem.isPlaying)
-            {
-               // ps.Play();
-                _dashParticleSystem.Play();
+        //if (isMoving && !ps.isPlaying)
+        if (isMoving && !_dashParticleSystem.isPlaying)
+        {
+            // ps.Play();
+            _dashParticleSystem.Play();
             PlayEffectDashParticleClientRpc();
         }
-            //else if (!isMoving && ps.isPlaying)
-            else if (!isMoving && _dashParticleSystem.isPlaying)
-            {
-                //ps.Stop();
-                _dashParticleSystem.Stop(); 
+        //else if (!isMoving && ps.isPlaying)
+        else if (!isMoving && _dashParticleSystem.isPlaying)
+        {
+            //ps.Stop();
+            _dashParticleSystem.Stop();
             StopEffectDashParticleClientRpc();
         }
-       // }
+        // }
     }
     [ClientRpc] void PlayEffectDashParticleClientRpc() { _dashParticleSystem.Play(); }
     [ClientRpc] void StopEffectDashParticleClientRpc() { _dashParticleSystem.Stop(); }
@@ -368,7 +439,7 @@ public class MovePlayerKey : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void SpawnItemServerRpc(int itemId, Vector3 pos, Quaternion rot)
     {
-        GameObject _prefab = null; 
+        GameObject _prefab = null;
         if (_haveItem == ItemType.None || _haveItem == ItemType.Max)
         {
             Debug.LogError($"Invalid item type: {_haveItem}");
@@ -377,11 +448,11 @@ public class MovePlayerKey : NetworkBehaviour
         _prefab = itemDictionary[(ulong)_haveItem].gameObject;
 
         NetworkObject obj = _ObjectPool.Get(_prefab.GetComponent<NetworkObject>(), pos, rot);
-        obj.Spawn(true); 
+        obj.Spawn(true);
         obj.GetComponent<PooledNetworkObject>().SetPrefab(_prefab.GetComponent<NetworkObject>());
 
-        if(_prefab.GetComponent<Collider>() != null)
-        _prefab.GetComponent<Collider>().isTrigger = true;
+        if (_prefab.GetComponent<Collider>() != null)
+            _prefab.GetComponent<Collider>().isTrigger = true;
         if (_prefab.GetComponent<Rigidbody>() != null)
             _prefab.GetComponent<Rigidbody>().isKinematic = true;
         SpawnItemClientRpc(itemId);
@@ -409,26 +480,36 @@ public class MovePlayerKey : NetworkBehaviour
 
         _haveItem = LotteryByRank(rank);
         SpawnItemServerRpc((int)_haveItem, _haveTrans.position, _haveTrans.rotation);
+        AnimItemServerRpc(true);
     }
-
     ItemType LotteryByRank(int rank)
     {
-        int r = Random.Range(0, 100);
+        RankLotteryTable table = _rankLotteryTables.Find(t => t.rank == rank);
+        if (table == null || table.items.Count == 0)
+        {
+            Debug.LogError($"Lottery table not found for rank {rank}");
+            return ItemType.None;
+        }
 
-        Debug.Log($"[Lottery] Rank={rank} Random={r}");
-        if (rank == 1)
+        int totalWeight = 0;
+        foreach (var item in table.items)
         {
-            //if (r < 70) return ItemType.None;
-            return ItemType.Star;
+            totalWeight += item.weight;
         }
-        else if (rank == 2)
+
+        int rand = Random.Range(0, totalWeight);
+        int current = 0;
+
+        foreach (var item in table.items)
         {
-            return ItemType.Bomb;
+            current += item.weight;
+            if (rand < current)
+            {
+                return item.item;
+            }
         }
-        else // 3位
-        {
-            return ItemType.Thunder;
-        }
+
+        return ItemType.None;
     }
 
 
@@ -436,6 +517,8 @@ public class MovePlayerKey : NetworkBehaviour
     //あべこべ移動速度を逆転させる（何秒後にリセットするか）
     public void MoveSpeedAbekobe(float delay)
     {
+        //スター効果中は変更しない　靴が優先
+        if (_itemStarUse) return;
         _abekobe = -1;
         Invoke("ResetMoveSpeed", delay);
     }
@@ -474,15 +557,15 @@ public class MovePlayerKey : NetworkBehaviour
     }
 
     //パンチを受ける(ダメージ, パンチをスタン時間)
-    public void ToGetPunch(int damage, float stunTime)
+    public bool ToGetPunch(int damage, float stunTime)
     {
         //Stun(stunTime);
-        AddDamage(damage, stunTime);
-		
-	}
+        return AddDamage(damage, stunTime);
 
-	//スタン（効果時間）
-	public void Stun(float delay)
+    }
+
+    //スタン（効果時間）
+    public void Stun(float delay)
     {
         //スター状態だったら無効
         if (_itemStarUse) return;
@@ -495,12 +578,12 @@ public class MovePlayerKey : NetworkBehaviour
 
         Invoke(nameof(UnlockStun), delay);
     }
-    [ClientRpc] 
+    [ClientRpc]
     void PlayDyingEffectClientRpc() { _dyingParticleSystem.Play(); }
     //スタン解除
     void UnlockStun()
     {
-        _canNotInputKey = false; 
+        _canNotInputKey = false;
         _currentHp = _MaxHp;
 
         AnimDyingServerRpc(false);
@@ -508,7 +591,7 @@ public class MovePlayerKey : NetworkBehaviour
     }
 
     [ClientRpc]
-    void StopDyingEffectClientRpc() 
+    void StopDyingEffectClientRpc()
     { _dyingParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); }
 
     void UnlockStar()
@@ -523,7 +606,7 @@ public class MovePlayerKey : NetworkBehaviour
 
     void UnlockShoese()
     {
-        _shoeseParticleSystem.Stop(); 
+        _shoeseParticleSystem.Stop();
         StopShooseEffectClientRpc();
         _itemShoeseUse = false;
     }
@@ -541,30 +624,33 @@ public class MovePlayerKey : NetworkBehaviour
             // 雷エフェクト（全クライアント）
             PlayThunderEffectClientRpc(player.GetComponent<NetworkObject>());
             // 移動反転
-            player.Stun(_thunderStunTime); 
+            player.Stun(_thunderStunTime);
             player.MoveSpeedAbekobe(_thunderDuration);
         }
     }
     [ClientRpc]
-    void PlayThunderEffectClientRpc(NetworkObjectReference targetRef) 
+    void PlayThunderEffectClientRpc(NetworkObjectReference targetRef)
     {
         if (!targetRef.TryGet(out NetworkObject target))
             return;
         var player = target.GetComponent<MovePlayerKey>();
-        if (player == null) 
+        if (player == null)
             return;
-        player._thunderParticleSystem.Play(); 
+        player._thunderParticleSystem.Play();
     }
 
     //ダメージ（受けるダメージ）
-    void AddDamage(int damage, float stunTime)
+    bool AddDamage(int damage, float stunTime)
     {
         _currentHp -= damage;
         if (_currentHp <= 0)
         {
             Stun(stunTime);
             Debug.Log(this.gameObject.name + " is dead.");
+            //死んでいたら
+            return true;
         }
+        return false;
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -627,13 +713,13 @@ public class MovePlayerKey : NetworkBehaviour
     //
     void Jump()
     {
-        if (_FootCollider.GetCanJump())
-        {
-            if (Input.GetKeyDown(_jump))
-            {
-                _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
-            }
-        }
+        //if (_FootCollider.GetCanJump())
+        //{
+        //    if (Input.GetKeyDown(_jump))
+        //    {
+        //        _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+        //    }
+        //}
     }
 
     void Move()
@@ -769,7 +855,7 @@ public class MovePlayerKey : NetworkBehaviour
                 }
                 else if (_haveItem == ItemType.Thunder)
                 {
-                    UseThunderServerRpc(); 
+                    UseThunderServerRpc();
                 }
             }
             Debug.Log("UseItem : " + _item);
@@ -796,6 +882,29 @@ public class MovePlayerKey : NetworkBehaviour
         result.y = sy / time - 0.5f * Physics.gravity.y * time;
 
         return result;
+    }
+
+    void Emote()
+    {
+        if (_InputEmote1)
+        {
+            _isEmote = true;
+            Invoke("IsEmoteFinish", 1.0f);
+            AnimEmote1ServerRpc(true);
+        }
+    }
+
+    void IsEmoteFinish()
+    {
+        _isEmote = false;
+    }
+
+    void EmoteEnd()
+    {
+        AnimEmote1ServerRpc(false);
+        AnimEmote2ServerRpc(false);
+        AnimEmote3ServerRpc(false);
+        AnimEmote4ServerRpc(false);
     }
 
     //カメラシェイク用
@@ -861,6 +970,10 @@ public class MovePlayerKey : NetworkBehaviour
         _InputMove = Vector2.zero;
         _InputUseItem = false;
         _InputPunch = false;
+        _InputEmote1 = false;
+        _InputEmote2 = false;
+        _InputEmote3 = false;
+        _InputEmote4 = false;
 
         var pads = Gamepad.all;
         //自分の番号のパッドを取得
@@ -880,14 +993,14 @@ public class MovePlayerKey : NetworkBehaviour
             }
         }
         if (gamepad == null)
-        { 
+        {
             return hasInput;
         }
 
         _InputMove = gamepad.leftStick.ReadValue();
-        if(_InputMove != Vector2.zero)
+        if (_InputMove != Vector2.zero)
         {
-              hasInput = true;
+            hasInput = true;
         }
         //Debug.Log("Left Stick: " + stick);
         if (gamepad.buttonSouth.wasPressedThisFrame)//A
@@ -897,9 +1010,34 @@ public class MovePlayerKey : NetworkBehaviour
         }
         if (gamepad.buttonEast.wasPressedThisFrame)//B
         {
-            _InputPunch =true;
+            _InputPunch = true;
             hasInput = true;
         }
+        if (gamepad.dpad.up.isPressed)
+        {
+            Debug.Log("Dpad Up pressed");
+            _InputEmote1 = true;
+            hasInput = true;
+        }
+        if (gamepad.dpad.down.isPressed)
+        {
+            Debug.Log("Dpad Down pressed");
+            _InputEmote2 = true;
+            hasInput = true;
+        }
+        if (gamepad.dpad.left.isPressed)
+        {
+            Debug.Log("Dpad Left pressed");
+            _InputEmote3 = true;
+            hasInput = true;
+        }
+        if (gamepad.dpad.right.isPressed)
+        {
+            Debug.Log("Dpad Right pressed");
+            _InputEmote4 = true;
+            hasInput = true;
+        }
+
 
 
 
@@ -908,11 +1046,16 @@ public class MovePlayerKey : NetworkBehaviour
     }
 
     [ServerRpc]
-    void SendInputServerRpc(Vector2 move, bool punch, bool useItem)
+    void SendInputServerRpc(Vector2 move, bool punch, bool useItem, bool emote1, bool emote2, bool emote3, bool emote4)
     {
+
         _InputMove = move;
         _InputPunch = punch;
         _InputUseItem = useItem;
+        _InputEmote1 = emote1;
+        _InputEmote2 = emote2;
+        _InputEmote3 = emote3;
+        _InputEmote4 = emote4;
     }
 
 }
