@@ -2,26 +2,25 @@ using UnityEngine;
 
 public class CanJump : MonoBehaviour
 {
-    public bool _canJump = false;
-    void OnTriggerStay(Collider collider)
+    [SerializeField] private LayerMask groundLayer;  // 地面レイヤー
+    private int groundCount = 0;
+
+    public bool CanJumpNow => groundCount > 0; // 自動判定
+
+    void OnTriggerEnter(Collider collider)
     {
-        _canJump = false;
-        if (collider.gameObject.tag == "Field")
+        if (((1 << collider.gameObject.layer) & groundLayer.value) != 0)
         {
-            _canJump = true;
+            groundCount++;
         }
     }
+
     void OnTriggerExit(Collider collider)
     {
-        if (collider.gameObject.tag == "Field")
+        if (((1 << collider.gameObject.layer) & groundLayer.value) != 0)
         {
-            _canJump = false;
+            groundCount--;
+            if (groundCount < 0) groundCount = 0; // 安全策
         }
     }
-
-    public bool GetCanJump()
-    {
-        return _canJump;
-    }
-
 }

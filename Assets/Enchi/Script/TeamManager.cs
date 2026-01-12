@@ -5,6 +5,7 @@ using UnityEngine;
 public class TeamManager : NetworkBehaviour
 {
     public static TeamManager Instance { get; private set; }
+    [SerializeField] YajirushiToGoal _yajirushi;
 
     // ClientId → TeamId
     private Dictionary<ulong, int> clientToTeam = new();
@@ -25,16 +26,27 @@ public class TeamManager : NetworkBehaviour
 
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
-    }
 
+        _yajirushi.SetTargetGoal(OwnerClientId);
+    }
     void OnClientConnected(ulong clientId)
     {
-        // 仮：接続順でチーム割り当て（あとで自由に変えられる）
-        int teamId = clientToTeam.Count % 3; // 3チーム想定
+        int teamId = clientToTeam.Count % 3;
         clientToTeam[clientId] = teamId;
 
-        Debug.Log($"[TeamManager] ClientId={clientId} → TeamId={teamId}");
+        SetGoalClientRpc(clientId, teamId);
     }
+
+    [ClientRpc]
+    void SetGoalClientRpc(ulong clientId, int teamId)
+    {
+        if (NetworkManager.Singleton.LocalClientId != clientId)
+            return;
+
+        var yajirushi = FindFirstObjectByType<YajirushiToGoal>();
+        yajirushi.SetTargetGoal((ulong)teamId);
+    }
+
 
     void OnClientDisconnected(ulong clientId)
     {

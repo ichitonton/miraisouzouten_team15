@@ -73,10 +73,10 @@ public class UICursorToWorld : MonoBehaviour
         for (int i = 0; i < pads.Count; i++)
         {
             Gamepad pad = pads[i];
-            if (pad.buttonSouth.wasPressedThisFrame)
-            {
-                Debug.Log($"Player {i + 1} : A button pressed!");
-            }
+            //if (pad.buttonSouth.wasPressedThisFrame)
+            //{
+            //    Debug.Log($"Player {i + 1} : A button pressed!");
+            //}
         }
 
         int playerNum = (int)GetComponent<MovePlayerKey>().GetPlayerNumber();

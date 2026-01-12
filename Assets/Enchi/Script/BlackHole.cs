@@ -66,7 +66,7 @@ public class BlackHole : NetworkBehaviour
     void OnTriggerStay (Collider other)
     {
         if (!IsServer) return; // Å© Ç±ÇÍÇ™ïKê{
-        if (other.GetComponent<Joint>() != null) return;
+        if (other.GetComponent<JointLiner>() != null) return;
         if (other.transform.GetComponent<Rigidbody>() != null && _isAction)
         {
             if (other.transform.GetComponent<MovePlayerKey>() != null)
