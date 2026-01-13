@@ -81,19 +81,13 @@ MonoBehaviour:
   markerPrefab: {fileID: 8713781882788260469, guid: 0cd4f264ddae60545aa9557d36b7625e, type: 3}
   meteorPrefab: {fileID: 4380261648293951024, guid: af0a86198553ea8488b09321c8ec2a48, type: 3}
   playExplosionHere: 1
-  konpeitoPrefabs:
-  - {fileID: 8248769996146562837, guid: 4b0801507ce49e24580fbe5016c8c318, type: 3}
-  - {fileID: 8695999205951964949, guid: 995a820217f21a1458931d0ecbcc8421, type: 3}
-  - {fileID: 8348838024218248421, guid: 999d4e7e038ad124190c45cde60310c9, type: 3}
-  - {fileID: 815011463385374253, guid: abee96be26cdd1142b5c9b48550ec554, type: 3}
-  - {fileID: 6188212326822016374, guid: f41acadb7ed4be04ba1f776db92804df, type: 3}
-  - {fileID: 3324507162435628113, guid: b737a242d902d1e45b532dc8b7a67e31, type: 3}
-  meteorsPerEvent: 10
-  interval: 3
+  meteorsPerEvent: 60
+  interval: 0.5
   markerLeadTime: 3.2
   flightTime: 3
   arcHeight: 3
   lateralOffset: 6
+  _konpeitougun: {fileID: 0}
 --- !u!114 &-8758188105892588313
 MonoBehaviour:
   m_ObjectHideFlags: 0

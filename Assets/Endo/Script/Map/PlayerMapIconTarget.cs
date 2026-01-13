@@ -85,8 +85,14 @@ public class PlayerMapIconTarget : MonoBehaviour
             // ここで IsLocalPlayer / IsOwner を見る
             // Host でも LocalClientId を持っているので true になるはず
             var net = GetComponent<NetworkObject>();
-            Debug.Log("オーなプレイヤーですか" + net.IsLocalPlayer);
-            return net.IsLocalPlayer;      // か、必要なら IsLocalPlayer でもOK
+            
+            Debug.Log("ID = " + net.OwnerClientId);
+
+            if (net.OwnerClientId != NetworkManager.Singleton.LocalClientId)
+            {
+                return false;
+            }
+
         }
 
         // GameManager がいない or 無効 → 全員登録（オフライン/メニュー用）

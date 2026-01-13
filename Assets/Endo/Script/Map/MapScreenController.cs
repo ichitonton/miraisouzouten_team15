@@ -47,7 +47,7 @@ public class MapScreenController : MonoBehaviour
 
         // 最初は非表示
         if (mapRoot != null) mapRoot.SetActive(false);
-        if (blurBG != null) blurBG.gameObject.SetActive(false);
+        //if (blurBG != null) blurBG.gameObject.SetActive(false);
 
         // カメラは常にONでRTを更新し続ける
         if (_snapshotCamera != null)
@@ -60,15 +60,15 @@ public class MapScreenController : MonoBehaviour
         _iconManager = GetComponent<MapIconManager>();
         _playerMapIconManager = GetComponent<PlayerMapIconManager>();
 
-        StartCoroutine(SystemOff());
+        //StartCoroutine(SystemOff());
 
     }
 
     // Update is called once per frame
     void Update()
     {
-
-
+        //ゲームに入ってないならリターン
+        if (!GameManager.Instance.InGame) return;
 
         if (Input.GetKeyDown(toggleKey))
         {

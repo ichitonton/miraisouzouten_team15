@@ -59,14 +59,17 @@ public class EventDatabase : ScriptableObject
     public bool TryGetMessage(string eventId, out string message)
     {
         message = null;
-        if (string.IsNullOrWhiteSpace(eventId))
-            return false;
+        if (string.IsNullOrWhiteSpace(eventId)) return false;
 
-        message = _entries.Find(e => e.eventId == eventId).message;
-
-        GameObject prefab = null;
-
-        return _cache.TryGetValue(eventId, out prefab) && prefab != null; ;
+        foreach (var e in _entries)
+        {
+            if (e != null && e.eventId == eventId)
+            {
+                message = e.message;
+                return true;
+            }
+        }
+        return false;
     }
     /// <summary>
     /// eventId ‚©‚ç Prefab ‚ğæ“¾‚·‚éiŒ©‚Â‚©‚ç‚È‚¢‚Æ—áŠO‚Ì‘ã‚í‚è‚É nullj

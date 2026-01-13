@@ -74,4 +74,46 @@ public class NetworkSceneManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// コードから使う用：SceneId を渡してシーン遷移
+    /// </summary>
+    public void LoadSceneRequest(string sceneName)
+    {
+
+        if (sceneDatabase == null)
+        {
+            Debug.LogError("SceneDatabase が設定されていません");
+            return;
+        }
+
+       
+        // Netcode を使っている場合は、サーバー(Host)だけがシーン遷移を命令する
+        var nm = NetworkManager.Singleton;
+
+        if (nm != null && nm.IsServer)
+        {
+            //ネットワークがつながってるときはクライアントも一緒にシーンが変わる
+            nm.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+        }
+        else if (nm == null)
+        {
+            // オフライン / 非ネットワーク時は通常のシーンロード
+            SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+        }
+        else
+        {
+            // クライアント側から直接呼ばれた場合
+            Debug.LogWarning("Clientごときがシーン変えようとしてんじゃねーよ");
+            // 必要ならここから ServerRpc を飛ばしてサーバー側で ChangeScene を呼ぶ形にしても良い
+        }
+    }
+
+    // NetworkSceneManager.cs に追加
+    public bool TryResolveSceneName(SceneId sceneId, out string sceneName)
+    {
+        sceneName = null;
+        if (sceneDatabase == null) return false;
+        return sceneDatabase.TryGetSceneName(sceneId, out sceneName);
+    }
+
 }
