@@ -94,14 +94,25 @@ public class YajirushiToGoal : MonoBehaviour
         );
 
         bool hitGround = Physics.Raycast(ray, out RaycastHit hit, rayLength, groundLayer);
-
+        // 地面ヒット後
         if (hitGround)
         {
-            yajirushiInstance.transform.position =
-                hit.point + hit.normal * groundOffset;
+            Vector3 arrowPos = hit.point + hit.normal * groundOffset;
+            yajirushiInstance.transform.position = arrowPos;
+
+            // ★ 向きを「矢印位置 → ゴール」にする
+            Vector3 lookDir = goal.position - arrowPos;
+            lookDir.y = 0f;
+
+            if (lookDir.sqrMagnitude > 0.001f)
+            {
+                yajirushiInstance.transform.rotation =
+                    Quaternion.LookRotation(lookDir.normalized, Vector3.up);
+            }
 
             SetVisible(true);
         }
+
         else
         {
             SetVisible(false);

@@ -532,8 +532,9 @@ public class MovePlayerKey : NetworkBehaviour
     public void MoveSpeedChange(float dampValue, float delay)
     {
         //スター効果中は変更しない　靴が優先
-        if (_itemShoeseUse) return;
-        _moveSpeed = _moveSpeedInitial * dampValue;
+        //if (_itemShoeseUse) return;
+
+        _moveSpeed = Mathf.Max(_moveSpeed, _moveSpeedInitial * dampValue);
         Invoke("ResetMoveSpeed", delay);
     }
 
@@ -542,8 +543,9 @@ public class MovePlayerKey : NetworkBehaviour
     {
         _abekobe = 1;
         //まだ使用中ならリセットしない
-        if (_itemShoeseUse || _itemStarUse) return;
-        _moveSpeed = _moveSpeedInitial;
+        if (_itemShoeseUse) return;
+        if (_itemStarUse) _moveSpeed = _moveSpeed * _itemStarChangeSpeed;
+        else _moveSpeed = _moveSpeedInitial;
     }
     //パンチオブジェクト非アクティブ化
     void PunchActiveFalse()
@@ -837,21 +839,20 @@ public class MovePlayerKey : NetworkBehaviour
                 if (_haveItem == ItemType.Shoese)
                 {
                     _shoeseParticleSystem.Play();
+                    PlayShoeseEffectClientRpc();
+                    Invoke("UnlockShoese", _itemShoeseDelay);
                     MoveSpeedChange(_itemShoeseChangeSpeed, _itemShoeseDelay);
                     _itemShoeseUse = true;
-                    PlayShoeseEffectClientRpc();
-
-                    Invoke("UnlockShoese", _itemShoeseDelay);
                 }
                 //星の硬貨の効果
                 else if (_haveItem == ItemType.Star)
                 {
                     _mutekiParticleSystem.Play();
-                    MoveSpeedChange(_itemStarChangeSpeed, _itemStarDelay);
-                    _itemStarUse = true;
                     PlayMutekiEffectClientRpc();
                     //一定時間後にスター効果解除
                     Invoke("UnlockStar", _itemStarDelay);
+                    MoveSpeedChange(_itemStarChangeSpeed, _itemStarDelay);
+                    _itemStarUse = true;
                 }
                 else if (_haveItem == ItemType.Thunder)
                 {
@@ -891,6 +892,24 @@ public class MovePlayerKey : NetworkBehaviour
             _isEmote = true;
             Invoke("IsEmoteFinish", 1.0f);
             AnimEmote1ServerRpc(true);
+        }
+        if (_InputEmote2)
+        {
+            _isEmote = true;
+            Invoke("IsEmoteFinish", 1.0f);
+            AnimEmote2ServerRpc(true);
+        }
+        if (_InputEmote3)
+        {
+            _isEmote = true;
+            Invoke("IsEmoteFinish", 1.0f);
+            AnimEmote3ServerRpc(true);
+        }
+        if (_InputEmote4)
+        {
+            _isEmote = true;
+            Invoke("IsEmoteFinish", 1.0f);
+            AnimEmote4ServerRpc(true);
         }
     }
 

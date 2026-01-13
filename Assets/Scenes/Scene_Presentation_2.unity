@@ -91096,6 +91096,10 @@ PrefabInstance:
       propertyPath: targetCamera
       value: 
       objectReference: {fileID: 1280625606}
+    - target: {fileID: 4074006494878870922, guid: c32657a4456d3d54d95c6f4cc74ca941, type: 3}
+      propertyPath: yajirushiPrefab
+      value: 
+      objectReference: {fileID: 5232040211584729951, guid: c24f428fb83c05f40acde157e84310f6, type: 3}
     - target: {fileID: 5118463408021899204, guid: c32657a4456d3d54d95c6f4cc74ca941, type: 3}
       propertyPath: m_LocalPosition.x
       value: -7.81145
