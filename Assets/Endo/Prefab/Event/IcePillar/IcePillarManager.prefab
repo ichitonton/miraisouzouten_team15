@@ -73,7 +73,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   areaCenter: {fileID: 1164645422880640573}
   spawnRadius: 50
-  pillarCount: 5
+  pillarCount: 10
   minDistanceBetweenPillars: 2.5
   groundMask:
     serializedVersion: 2

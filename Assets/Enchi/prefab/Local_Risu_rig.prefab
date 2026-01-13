@@ -3083,6 +3083,8 @@ GameObject:
   - component: {fileID: 4346886339305241986}
   - component: {fileID: 8427100980178498739}
   - component: {fileID: 6247177730764413894}
+  - component: {fileID: -8972434550875661234}
+  - component: {fileID: 3410822810928870007}
   m_Layer: 0
   m_Name: Local_Risu_rig
   m_TagString: Player
@@ -3223,7 +3225,34 @@ MonoBehaviour:
   _eff_HitPunch: {fileID: 7155706149333254684, guid: a786b69b36d65074288da092aa9f581b, type: 3}
   _headPoint: {fileID: 3520387096421248167}
   _playerNumber: 1
+  _assignedDeviceId: -1
   _FootCollider: {fileID: 7834988206752535424}
+--- !u!114 &-8972434550875661234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7459081349001929016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63d0487ea26814a428433764f80cc991, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerControlGate
+  locked: 0
+  disableOnLock: []
+--- !u!114 &3410822810928870007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7459081349001929016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44d6d22fc03669c49a136c8344093f7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerPadBinding
 --- !u!1 &7481435165760361928
 GameObject:
   m_ObjectHideFlags: 0

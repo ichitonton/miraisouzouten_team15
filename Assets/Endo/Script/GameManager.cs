@@ -1,19 +1,20 @@
+#if UNITY_EDITOR
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
+#endif
+
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework.Interfaces;
 using Unity.Netcode.Components;
-
+using UnityEngine.InputSystem;
+using Unity.VisualScripting;
 
 public class GameManager : NetworkBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-
-    [SerializeField] private GameObject _ropeObject;
-    [SerializeField] private GameObject _ui;
     [Header("ローカル内で動くやつだからNetworkObjectついてないプレイヤー入れてね")]
     [SerializeField] private GameObject _player1;
     [SerializeField] private GameObject _player2;
@@ -22,26 +23,37 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private Transform _spawnPos;
     [Header("StartPosition")]
     [SerializeField] private Transform[] _pivot;
-       
+
+    // （残すだけ：UI/Pad制御は LocalPadSession 側へ）
+    [Header("Connection UI (moved to LocalPadSession)")]
+    [SerializeField] private GameObject blurUI;
+    [SerializeField] private GameObject connectUI;
+    [SerializeField] private GameObject gamepadUI1;
+    [SerializeField] private GameObject gamepadUI2;
+
+    [Header("Gameplay UI (moved to LocalPadSession)")]
+    [SerializeField] private List<GameObject> gameplayUIs = new List<GameObject>();
+
+    [Header("Start Condition (moved to LocalPadSession)")]
+    [SerializeField] private int requiredGamepads = 2;
+    [SerializeField] private bool useDpadDownToStart = true;
+
+    [Header("State")]
+    public bool InGame { get; private set; } = false;
+
+    // ローカル生成プレイヤー（オフライン専用）
+    private GameObject _p1;
+    private GameObject _p2;
+
     private GameObject[] _players;
     private GameObject _networkUi;
 
-    public bool _IsLanModeActive => NetworkManager.Singleton.IsListening;
+    public bool _IsLanModeActive => NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening;
 
-    // シングルトンのグローバルなアクセスポイント (public static)
     public static GameManager Instance { get; private set; }
 
-    public enum Mode
-    {
-        Keyboard,
-        Gamepad
-    }
-
-    public enum OnlineMode
-    {
-        OnePC,
-        MoreTowPC
-    }
+    public enum Mode { Keyboard, Gamepad }
+    public enum OnlineMode { OnePC, MoreTowPC }
 
     [Header("操作モード設定")]
     public Mode _controlMode = Mode.Keyboard;
@@ -51,214 +63,192 @@ public class GameManager : NetworkBehaviour
 
     public List<GameObject> _objectList = new List<GameObject>();
 
-
-    //ネットワークオブジェクトのリスト
     public NetworkList<NetworkObjectReference> _networkObjectList = new NetworkList<NetworkObjectReference>();
 
-    //ゲームスタートしたかどうか
     private bool _isStart = false;
+
     private void Awake()
     {
-        //シングルトンのインスタンス生成
         if (Instance == null)
         {
             Instance = this;
-            //シーンの切り替えで消えない
             DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
+            return;
         }
+
         Application.targetFrameRate = 60;
+    }
+
+    // ==========================================================
+    // ★LocalPadSession から呼ぶ入口
+    // ==========================================================
+    public void StartLocalGameRequest()
+    {
+        //if (_isStart) return;
+
+        // LAN中：ローカルプレイヤーは作らない（絶対）
+        if (_IsLanModeActive)
+        {
+            // ホストだけが開始演出＆ネットワーク開始を指揮
+            if (NetworkManager.Singleton.IsServer)
+            {
+                StartGameAsHostNetwork();
+            }
+            else
+            {
+                Debug.Log("[GameManager] Clientから開始要求。ホスト主導運用なら何もしない。");
+                // 「クライアントから開始依頼したい」なら ServerRpc をここで実装する
+            }
+            return;
+        }
+
+        // オフライン：ここでだけローカルプレイヤー生成
+        StartGameOfflineLocal();
+    }
+
+    // ==========================================================
+    // ★LAN（ネットワーク）開始：ローカルプレイヤー生成はしない
+    // ==========================================================
+    private void StartGameAsHostNetwork()
+    {
+        PlayMovieClientRpc();
+        StartCoroutine("TeleportPlayer", 0.3f);
+
+        //if (GameEventManager.Instance != null) GameEventManager.Instance.TryStartAutoLoop();
+
+        _isStart = true;
+        InGame = true;
+
+        Debug.Log("[GameManager] Network Start (Host) done. (No local player spawn)");
+    }
+
+    // ==========================================================
+    // ★オフライン開始：ローカルプレイヤーを生成するのはここだけ
+    // ==========================================================
+    private void StartGameOfflineLocal()
+    {
+        if (_player1 == null || _player2 == null)
+        {
+            Debug.LogError("[GameManager] _player1 / _player2 が設定されていません");
+            return;
+        }
+
+        if (_spawnPos == null)
+        {
+            Debug.LogError("[GameManager] _spawnPos が設定されていません");
+            return;
+        }
+
+        // 二重生成防止
+        if (_p1 != null || _p2 != null)
+        {
+            Debug.LogWarning("[GameManager] Offline players already spawned.");
+            return;
+        }
+
+        // ★Transform自体は動かさず、位置ベクトルだけずらす（元コードの副作用防止）
+        Vector3 basePos = _spawnPos.position;
+        Vector3 p1Pos = basePos + Vector3.right * 1f;
+        Vector3 p2Pos = basePos + Vector3.left * 1f;
+        Quaternion rot = _spawnPos.rotation;
+
+        _p1 = Instantiate(_player1, p1Pos, rot);
+        _p2 = Instantiate(_player2, p2Pos, rot);
+
+        // ここで LocalPadSession に登録
+        if (LocalPadSession.Instance != null)
+        {
+            LocalPadSession.Instance.RegisterPlayers(_p1, _p2);
+        }
+
+        _isStart = true;
+        InGame = true;
+
+        Debug.Log("[GameManager] Offline Start done. (Local players spawned)");
     }
 
     [ClientRpc]
     void PlayMovieClientRpc()
-    { 
-
-    var movie = Object.FindFirstObjectByType<GameStartMovie>(FindObjectsInactive.Include);
-
-    if (movie == null)
     {
-        Debug.LogError("GameStartMovie が見つからない");
-        return;
+        var movie = Object.FindFirstObjectByType<GameStartMovie>(FindObjectsInactive.Include);
+
+        if (movie == null)
+        {
+            Debug.LogError("GameStartMovie が見つからない");
+            return;
+        }
+
+        movie.gameObject.SetActive(true);
+        movie.Play();
     }
 
-movie.gameObject.SetActive(true);
-movie.Play();
-    }
     void TeleportPlayer()
     {
         if (!_IsLanModeActive) return;
 
         for (int i = 0; i < 3; i++)
         {
+            if (_pivot == null || _pivot.Length <= i) continue;
             if (_pivot[i] == null) continue;
+
             PlayerTeleportAndConnect(_pivot[i].position, (ulong)i);
-            //ふわふわBGMを全Clientで流す&ループあり
-            NetworkSoundManager.Instance.PlayBgm("FuwaFuwa", NetworkSoundManager.SoundScope.AllClients, true);
+
+            if (NetworkSoundManager.Instance != null)
+                NetworkSoundManager.Instance.PlayBgm("FuwaFuwa", NetworkSoundManager.SoundScope.AllClients, true);
+
             _isStart = true;
         }
     }
 
     private void OnGUI()
     {
-        if (_isStart) return;
-        if (NetworkManager.Singleton == null) return; 
+        // 既存デバッグGUIは残す（LAN中ホストのみ）
+        if (!InGame) return;
+        if (NetworkManager.Singleton == null) return;
         if (!NetworkManager.Singleton.IsServer) return;
 
         if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 100, 120, 30), "ゲームスタート"))
         {
-            PlayMovieClientRpc();
-            StartCoroutine("TeleportPlayer", 0.3f);
-            //TeleportPlayer();
-
+            // LAN中：ホスト開始だけ実行（ローカル生成しない）
+            StartLocalGameRequest();
         }
 
-        //ホストとして入る
-        /*if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 50, 120, 30), "プレイヤー2生成"))
-        {
-            List<GameObject> players = _objectList.FindAll(obj => obj.CompareTag("Player"));
-
-            if (players.Count >= 2)
-            {
-                Debug.Log("プレイヤー二人もういますけど");
-                return;
-            }
-
-            GameObject player = Instantiate(_player2, _pivot.position, Quaternion.identity);
-            _objectList.Add(player);
-        }*/
-
-        //生成
         if (GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height / 2, 100, 30), "Test生成"))
         {
             if (!_IsLanModeActive) return;
 
-            NetworkObjectSpawner.Instance.RequestSpawnObjectRandomInRange2D("Daifuku",new Vector3(715f,8f,12f),5f,8f,Quaternion.identity,NetworkObjectSpawner.OwnerMode.Host);
-            //NetworkEffectSpawner.Instance.PlayEffect(0, new Vector3(0f, 5f, 0f), Quaternion.identity);
-
+            NetworkObjectSpawner.Instance.RequestSpawnObjectRandomInRange2D(
+                "Daifuku", new Vector3(715f, 8f, 12f), 5f, 8f, Quaternion.identity, NetworkObjectSpawner.OwnerMode.Host);
         }
-
-        //生成
-        /*if (GUI.Button(new Rect(1000f, 100f, 100, 30), "マップ表示"))
-        {
-
-            bool active = !_ui.gameObject.activeSelf;
-           _ui.gameObject.SetActive(active);
-
-        }*/
-
     }
-    // Update is called once per frame
+
     void LateUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            List<GameObject> players = _objectList.FindAll(obj => obj.CompareTag("Player"));
-
-            if (players.Count >= 2)
-            {
-                Debug.Log("プレイヤー二人もういますけど");
-                return;
-            }
-
-            GameObject player = Instantiate(_player1, _spawnPos.position, Quaternion.identity);
-            Debug.Log("わいた");
-            _objectList.Add(player);
-
-        }
-
-        else if(Input.GetKeyDown(KeyCode.RightShift))
-        {
-            List<GameObject> players = _objectList.FindAll(obj => obj.CompareTag("Player"));
-
-            if (players.Count >= 2)
-            {
-                Debug.Log("プレイヤー二人もういますけど");
-                return;
-            }
-
-            GameObject player = Instantiate(_player2, _spawnPos.position, Quaternion.identity);
-            _objectList.Add(player);
-        }
+        // Pad開始やUI切替は LocalPadSession 側でやる
     }
 
-    private void OnClientDisconnected(ulong clientId)
+    private void PlayerTeleportAndConnect(Vector3 pos, ulong id)
     {
-        Debug.Log($"Client Connected: {clientId}");
-    }
-    private void OnClientConnected(ulong clientId)
-    {
-        Debug.Log($"Client Connected: {clientId}");
-        
-        // ここで「プレイヤーが二人になった瞬間」に処理を入れられる
-        if (NetworkManager.Singleton.ConnectedClients.Count == 2)
-        {
-            Debug.Log("2人そろった！");
-
-            if (_ui != null)
-            {
-                //UIを出す
-                if (_ui.activeSelf == true)
-                {
-                    _ui.SetActive(false);
-                }
-            }
-            if (_ui != null)
-            {
-                if(_networkUi.activeSelf == false)
-                {
-                    _networkUi.SetActive(true);
-                }
-            }
-               
-        }
-    }
-
-    private void RegisterNetworkConnectEvent(Scene scene, LoadSceneMode mode)
-    {
-
-        if(NetworkManager.Singleton != null)
-        {
-            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-            NetworkManager.Singleton.OnClientConnectedCallback += OnClientDisconnected;
-        }
-        
-    }
-
-    private void PlayerTeleportAndConnect(Vector3 pos,ulong id)
-    {
-
         List<GameObject> players = new List<GameObject>();
 
         foreach (var playerRef in GameManager.Instance._networkObjectList)
         {
-            //これで「実際に存在するネットワークオブジェクトを取り出す」処理。
-            //成功した場合 playerObj に GameObject が入る。
             if (playerRef.TryGet(out var playerObj))
             {
-                //プレイヤーのタグを持っているかつ所有権があるなら
                 if (playerObj.gameObject.CompareTag("Player") && playerObj.OwnerClientId == id)
                 {
-                    Debug.Log("所有権を持ったプレイヤーです");
                     players.Add(playerObj.gameObject);
                 }
             }
-
-
         }
 
-        Debug.Log("テレポートするプレイヤーの数" + players.Count);
+        if (players.Count <= 0) return;
 
-        if (players.Count <= 0)
-        {
-            Debug.Log("テレポートさせるプレイヤーがいませんでした");
-            return;
-        }
-
-        for(int i = 0; i < players.Count; i++)
+        for (int i = 0; i < players.Count; i++)
         {
             Vector3 newPos = pos;
             newPos.z = newPos.z + (i * -1f);
@@ -266,30 +256,17 @@ movie.Play();
             netTrans.Teleport(newPos, netTrans.gameObject.transform.rotation, netTrans.gameObject.transform.localScale);
         }
 
-
-        //プレイヤーが二人いなかったらロープをつながない
-        if (players.Count <= 1)
-        {
-            Debug.Log("ボッチやぞ");
-            return;
-        }
+        if (players.Count <= 1) return;
 
         foreach (var ropeRef in GameManager.Instance._networkObjectList)
         {
-            //これで「実際に存在するネットワークオブジェクトを取り出す」処理。
-            //成功した場合 playerObj に GameObject が入る。
             if (ropeRef.TryGet(out var ropeObj))
             {
-                //プレイヤーのタグを持っているかつ所有権があるなら
                 if (ropeObj.gameObject.CompareTag("Rope") && ropeObj.OwnerClientId == id)
                 {
-                    Debug.Log("所有権のあるあみです");
-                    //少し待ってからロープでつなぐ
                     StartCoroutine(ropeObj.gameObject.GetComponent<PlayerJoint>().DelayConnect());
                 }
             }
         }
-
     }
-
 }

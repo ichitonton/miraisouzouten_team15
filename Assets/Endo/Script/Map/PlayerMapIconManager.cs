@@ -155,6 +155,7 @@ public class PlayerMapIconManager : MonoBehaviour
         if (_instance != null)
         {
             _instance.EnsureIconForTarget(target);
+            Debug.Log("プレイヤーのアイコンを登録しました");
         }
         else
         {
@@ -183,6 +184,8 @@ public class PlayerMapIconManager : MonoBehaviour
 
        
         GameObject iconGO = Instantiate(_playerIconPrefab, _mapRect);
+
+        Debug.Log("プレイヤーのアイコンを生成しました");
 
         Sprite iconSprite = null;
 

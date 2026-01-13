@@ -58,7 +58,7 @@ public class GameEventManager : NetworkBehaviour
         StopAutoLoop();
     }
 
-    private void TryStartAutoLoop()
+    public void TryStartAutoLoop()
     {
         if (!_autoRandomEvent) return;
 

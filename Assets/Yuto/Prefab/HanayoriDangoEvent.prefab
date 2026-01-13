@@ -79,9 +79,10 @@ MonoBehaviour:
   _targetCenter: {x: 0, y: 10, z: 0}
   _radius: 15
   _derayTime: 0.5
-  _dangoCount: 20
+  _dangoCount: 40
   _prefbId:
   - SansyokuDango_Event
   - SansyokuDango_Red
   - SansyokuDango_Green
   - SansyokuDango_White
+  - Bakudan
