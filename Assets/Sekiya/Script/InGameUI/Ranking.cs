@@ -30,6 +30,7 @@ public class Ranking : NetworkBehaviour
             return;
         }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
     // 親（UICanvasController）からゴールを受け取る関数
     public void SetupGoals(GoalToUI red, GoalToUI blue, GoalToUI white)
@@ -165,6 +166,11 @@ public class Ranking : NetworkBehaviour
         }
 
         Debug.Log($"自動設定完了！ {rankingSlots.Count} 個のスロットを登録したよ！");
+    }
+
+    public List<TeamData> GetAllTeamsData()
+    {
+        return allTeamsData;
     }
 }
 

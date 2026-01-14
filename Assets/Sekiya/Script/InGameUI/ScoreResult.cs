@@ -37,6 +37,20 @@ public class ScoreResult : MonoBehaviour
 
     private void ShowResult()
     {
+        List<TeamData> allTeamsData = Ranking.Instance.GetAllTeamsData();
+
+        // ƒXƒRƒA‚ð teamInfos ‚É”½‰f
+        foreach (var teamData in allTeamsData)
+        {
+            var targetTeam = teamInfos.Find(t => t.teamId == teamData.teamId);
+            if (targetTeam != null)
+            {
+                targetTeam.finalScore = teamData.score;
+            }
+        }   
+
+
+
         foreach (var team in teamInfos)
         {
             if (team.teamId == 0) team.finalScore = FinalScore.ScoreTeam0;

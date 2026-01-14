@@ -74,6 +74,8 @@ public class MovePlayerKey : NetworkBehaviour
     [SerializeField] ParticleSystem _shoeseParticleSystem;
     [SerializeField] ParticleSystem _dyingParticleSystem;
     [SerializeField] ParticleSystem _thunderParticleSystem;
+    [SerializeField] ParticleSystem _thunderHitParticleSystem;
+    [SerializeField] ParticleSystem _thunderPiripiriParticleSystem;
 
 
     //エフェクト関連
@@ -229,6 +231,7 @@ public class MovePlayerKey : NetworkBehaviour
                 }
                 Jump();
                 Punch();
+
                 if (!_canNotInputKey)
                 {
                     Move();
@@ -278,10 +281,10 @@ public class MovePlayerKey : NetworkBehaviour
                     //キーボード入力
                     InputKeyboard();
                 }
-                SendInputServerRpc(_InputMove, _InputPunch, _InputUseItem, _InputEmote1,_InputEmote2, _InputEmote3, _InputEmote4);
+
+                SendInputServerRpc(_InputMove, _InputPunch, _InputUseItem, _InputEmote1, _InputEmote2, _InputEmote3, _InputEmote4);
                 if (Input.GetKeyDown(KeyCode.Q))
                 {
-                    LotteryHaveItem(0);
                 }
             }
         }
@@ -304,6 +307,7 @@ public class MovePlayerKey : NetworkBehaviour
     void AnimDyingServerRpc(bool Dying)
     {
         _anim.SetBool("Dying", Dying);
+        _anim.SetBool("Fly", Dying); 
     }
     [ServerRpc(RequireOwnership = false)]
     void AnimDyingFlyServerRpc(bool Dying)
@@ -546,7 +550,17 @@ public class MovePlayerKey : NetworkBehaviour
         if (_itemShoeseUse) return;
         if (_itemStarUse) _moveSpeed = _moveSpeed * _itemStarChangeSpeed;
         else _moveSpeed = _moveSpeedInitial;
+        StopThunderEffectClientRpc();
     }
+
+    [ClientRpc]
+    void StopThunderEffectClientRpc()
+    {
+        _thunderHitParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        _thunderPiripiriParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+    }
+
+
     //パンチオブジェクト非アクティブ化
     void PunchActiveFalse()
     {
@@ -623,11 +637,29 @@ public class MovePlayerKey : NetworkBehaviour
         {
             // 自分以外
             if (player.OwnerClientId == OwnerClientId) continue;
+            // 移動反転
+            player.MoveSpeedAbekobe(_thunderDuration);
+            player.AbekobeClientRpc();
+            player.Stun(_thunderStunTime);
+        }
+    }
+
+    [ClientRpc]
+    void AbekobeClientRpc()
+    {
+        MoveSpeedAbekobe(_thunderDuration); 
+        _thunderPiripiriParticleSystem.Play();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void UseThunderEffectServerRpc()
+    {
+        foreach (var player in FindObjectsByType<MovePlayerKey>(FindObjectsSortMode.None))
+        {
+            // 自分以外
+            if (player.OwnerClientId == OwnerClientId) continue;
             // 雷エフェクト（全クライアント）
             PlayThunderEffectClientRpc(player.GetComponent<NetworkObject>());
-            // 移動反転
-            player.Stun(_thunderStunTime);
-            player.MoveSpeedAbekobe(_thunderDuration);
         }
     }
     [ClientRpc]
@@ -639,6 +671,7 @@ public class MovePlayerKey : NetworkBehaviour
         if (player == null)
             return;
         player._thunderParticleSystem.Play();
+        player._thunderHitParticleSystem.Play();
     }
 
     //ダメージ（受けるダメージ）
@@ -726,11 +759,11 @@ public class MovePlayerKey : NetworkBehaviour
 
     void Move()
     {
-        _InputMove *= _abekobe;
+        //_InputMove *= _abekobe;
         LinerVelocityServerRpc(_InputMove);
         Vector3 _moveVector = Vector3.zero;
         _moveVector = new Vector3(_InputMove.x, 0, _InputMove.y);
-        _lookVector = new Vector3(_moveVector.x, 0.0f, _moveVector.z);
+        _lookVector = new Vector3(_InputMove.x, 0.0f, _InputMove.y);
 
         //向き変更
         RotateToMoveDirectionServerRpc(_lookVector);
@@ -856,7 +889,8 @@ public class MovePlayerKey : NetworkBehaviour
                 }
                 else if (_haveItem == ItemType.Thunder)
                 {
-                    UseThunderServerRpc();
+                    UseThunderEffectServerRpc();
+                    Invoke("UseThunderServerRpc", 0.3f);
                 }
             }
             Debug.Log("UseItem : " + _item);
@@ -1068,7 +1102,7 @@ public class MovePlayerKey : NetworkBehaviour
     void SendInputServerRpc(Vector2 move, bool punch, bool useItem, bool emote1, bool emote2, bool emote3, bool emote4)
     {
 
-        _InputMove = move;
+        _InputMove = move * _abekobe;
         _InputPunch = punch;
         _InputUseItem = useItem;
         _InputEmote1 = emote1;

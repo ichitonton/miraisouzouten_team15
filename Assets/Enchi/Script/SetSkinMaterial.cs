@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class SetSkinMaterial : NetworkBehaviour
 {
-    [SerializeField] Renderer playerSkin;
+    [SerializeField] Renderer playerSkinHead;
+    [SerializeField] Renderer playerSkinarm;
     [SerializeField] Material skinMaterial1;
     [SerializeField] Material skinMaterial2;
     [SerializeField] Material skinMaterial3;
@@ -17,15 +18,18 @@ public class SetSkinMaterial : NetworkBehaviour
         {
             if (OwnerClientId == 0)
             {
-                playerSkin.material = skinMaterial1;
+                playerSkinHead.material = skinMaterial1;
+                playerSkinarm.material = skinMaterial1;
             }
             if (OwnerClientId == 1)
             {
-                playerSkin.material = skinMaterial2;
+                playerSkinHead.material = skinMaterial2;
+                playerSkinarm.material = skinMaterial2;
             }
             if (OwnerClientId == 2)
             {
-                playerSkin.material = skinMaterial3;
+                playerSkinHead.material = skinMaterial3;
+                playerSkinarm.material = skinMaterial3;
             }
         }
     }

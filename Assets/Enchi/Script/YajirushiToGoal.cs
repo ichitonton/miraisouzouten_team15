@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -45,6 +46,8 @@ public class YajirushiToGoal : MonoBehaviour
             goal = goalId2;
         else if (clientId == 2)
             goal = goalId3;
+
+        goal.transform.position = new Vector3(goal.transform.position.x, 0.0f, goal.transform.position.z);
     }
 
     void LateUpdate()
