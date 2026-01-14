@@ -49,6 +49,7 @@ GameObject:
   - component: {fileID: 1420255091226490962}
   - component: {fileID: 1691683178253690037}
   - component: {fileID: -2515991672934481101}
+  - component: {fileID: 4907382337291235593}
   m_Layer: 0
   m_Name: IcePillar
   m_TagString: Ice
@@ -253,6 +254,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapObject
   _combineToStatic: 0
+--- !u!114 &4907382337291235593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4626324179615048775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63e13c63b4c5d3842a35ef5824101858, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraObstacleFader
+  _fadeOutValue: 0.3
+  _fadeSpeed: 4
 --- !u!1 &5558777521987454886
 GameObject:
   m_ObjectHideFlags: 0
