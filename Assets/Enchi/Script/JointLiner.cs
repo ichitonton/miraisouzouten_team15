@@ -24,12 +24,11 @@ public class JointLiner : NetworkBehaviour
         }
         else
         {
-
             Rigidbody rb = GetComponent<Rigidbody>();
             rb.isKinematic = true; // クライアントでは物理演算しない
+            Collider col = GetComponent<Collider>();
+            col.enabled = false; // クライアントでは当たり判定しない
         }
-
-
     }
 
     void SetRigidFalse()

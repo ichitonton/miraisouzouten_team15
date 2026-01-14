@@ -21,6 +21,9 @@ public class Blast : NetworkBehaviour
     }
     public override void OnNetworkSpawn()
     {
+        //”š”­‚ÌSEÄ¶A‘SClient‚Å3D‹óŠÔ‚Å—¬‚·
+        NetworkSoundManager.Instance.PlaySfx("Explosion", NetworkSoundManager.SoundScope.AllClients, true, transform.position);
+
         //Debug.Log("Spawn ‚³‚ê‚½‚æI");
         Collider col = GetComponent<Collider>();
         col.isTrigger = true;
