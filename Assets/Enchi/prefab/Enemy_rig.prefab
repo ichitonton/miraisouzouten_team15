@@ -1,5 +1,71 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4204391715543250262
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4323687241795984470}
+  - component: {fileID: 9067132992776808065}
+  - component: {fileID: 2897832004195420663}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4323687241795984470
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4204391715543250262}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.882, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8292005193482844685}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &9067132992776808065
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4204391715543250262}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2897832004195420663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4204391715543250262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e418df1e44d37404c926077f1e8113ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &8464662087375838224
 GameObject:
   m_ObjectHideFlags: 0
@@ -9,11 +75,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3185939452506819950}
-  - component: {fileID: 4636814492075013468}
   - component: {fileID: 6009029739629666943}
   m_Layer: 0
   m_Name: Censour
-  m_TagString: Untagged
+  m_TagString: EnemyCensour
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -33,27 +98,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8292005193482844685}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &4636814492075013468
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8464662087375838224}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &6009029739629666943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66,6 +110,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 867c9e9ae7f2172458e38a3f1f688cfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sensour
+  ShowTopMostFoldoutHeaderGroup: 1
+  detectRadius: 15
+  detectInterval: 0.2
 --- !u!1001 &8401930984785731046
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -122,6 +169,14 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: b06462680d2353548a462c29146407ed, type: 2}
+    - target: {fileID: -644967731239837832, guid: 3df1b798a0348da45a51d612537341bc, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.058
+      objectReference: {fileID: 0}
+    - target: {fileID: -644967731239837832, guid: 3df1b798a0348da45a51d612537341bc, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.013
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 3df1b798a0348da45a51d612537341bc, type: 3}
       propertyPath: m_Name
       value: Enemy_rig
@@ -132,6 +187,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3df1b798a0348da45a51d612537341bc, type: 3}
       insertIndex: 0
       addedObject: {fileID: 3185939452506819950}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3df1b798a0348da45a51d612537341bc, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 4323687241795984470}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3df1b798a0348da45a51d612537341bc, type: 3}
       insertIndex: -1
@@ -180,7 +238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3315792555
+  GlobalObjectIdHash: 2483766192
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -257,6 +315,7 @@ MonoBehaviour:
   _blast: {fileID: 8000710731528051159, guid: c0ae90c3517c73c4591b28c1f9b53ff2, type: 3}
   _blastTimerTouchPlayer: 1
   _blastTimerTouchPunch: 2
+  _parentCollider: {fileID: 530244229902123557}
 --- !u!95 &5365119963423340437
 Animator:
   serializedVersion: 7
@@ -345,7 +404,7 @@ SphereCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Radius: 0.9
   m_Center: {x: 0, y: 0.9, z: 0.1}

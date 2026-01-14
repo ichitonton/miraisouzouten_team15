@@ -13,9 +13,10 @@ public class Jibaku : NetworkBehaviour
 	[SerializeField] float _moveSpeed = 3.0f;
 	[SerializeField] GameObject _blast;
 	[SerializeField] float _blastTimerTouchPlayer = 1.0f;
-	[SerializeField] float _blastTimerTouchPunch = 2.0f;
+	[SerializeField] float _blastTimerTouchPunch = 2.0f; 
+	 [SerializeField] private Collider _parentCollider;
 
-	NetworkObject _spawnerObj;
+    NetworkObject _spawnerObj;
 	EnemySpawner _spawner;
 
 	List<Transform> _players;
@@ -327,20 +328,38 @@ public class Jibaku : NetworkBehaviour
 
 	}
 
-	private void OnTriggerEnter(Collider other)
+	public void Punch()
 	{
-		if (other.transform.GetComponent<Punch>() != null)
-		{
-			if(IsServer)_agent.speed = 0.0f;
 
-			if(_state == State.Death) return;
-            //ActiveFalse();
-            _state = State.Death;
-			_animBlend = (float)_state;
-			_anim.Play(_anim.GetCurrentAnimatorStateInfo(0).fullPathHash, 0, 0f);
-			_isTimerOn = false;
-			CancelInvoke("DespawnServerRpc");
-			Invoke("DespawnServerRpc", _blastTimerTouchPunch);
-		}
+		if (IsServer) _agent.speed = 0.0f;
+
+
+		if (_state == State.Death) return;
+		//ActiveFalse();
+		_state = State.Death;
+		_animBlend = (float)_state;
+		_anim.Play(_anim.GetCurrentAnimatorStateInfo(0).fullPathHash, 0, 0f);
+		_isTimerOn = false;
+		CancelInvoke("DespawnServerRpc");
+		Invoke("DespawnServerRpc", _blastTimerTouchPunch);
+
 	}
+
+    public void OnHitByPunch(Collider other)
+    {
+        if (!IsServer) return;
+
+        if (_state == State.Death)
+            return;
+
+        _agent.speed = 0.0f;
+
+        _state = State.Death;
+        _animBlend = (float)_state;
+        _anim.Play(_anim.GetCurrentAnimatorStateInfo(0).fullPathHash, 0, 0f);
+
+        _isTimerOn = false;
+        CancelInvoke(nameof(DespawnServerRpc));
+        Invoke(nameof(DespawnServerRpc), _blastTimerTouchPunch);
+    }
 }

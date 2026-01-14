@@ -53,9 +53,14 @@ public class Punch : MonoBehaviour
 			return;
 		}
 
-		// Rigidbody探索（階層OK）
+		//エネミーのセンサー内なら無視
+		if (other.GetComponent<HitTrigger>() != null)
+		{
+			other.GetComponent<HitTrigger>().HitPunch();
+        }
+        // Rigidbody取得
 		Rigidbody rb = other.GetComponentInParent<Rigidbody>();
-		if (rb == null)
+        if (rb == null)
 		{
 			Debug.LogWarning($"[Punch IGNORE] Rigidbodyなし → 無視 ({other.name})");
 			return;
@@ -83,7 +88,9 @@ public class Punch : MonoBehaviour
 			NetworkEffectSpawner.Instance.PlayEffect(_hitEffectId, transform.position, Quaternion.identity);
 		}
 
+
 		// ノックバック
+		Debug.Log("ノックバック" + other);
 		KnockBack(rb);
 		NetworkSoundManager.Instance.PlaySfx("Punch", NetworkSoundManager.SoundScope.LocalOnly,false);
 	}
