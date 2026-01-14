@@ -39,8 +39,6 @@ public class MeteorManager : NetworkBehaviour
     private Vector3 _prevPos;
 
     
-
-
     public void ServerSetupPath(Vector3 p0, Vector3 p1, Vector3 p2, double startTime, float duration)
     {
         if (!IsServer) return;
@@ -186,16 +184,7 @@ public class MeteorManager : NetworkBehaviour
             Rigidbody rb = col.attachedRigidbody;
             if (rb == null)
                 continue;
-
-            // 金平糖も巻き込みたくないなら除外（任意）
-            if (!affectKonpeitoToo)
-            {
-                // NetworkObjectが付いてて、かつ konpeitoPrefabs の見た目に該当するなら除外…は重いので、
-                // 代わりに Tag / Layer で弾くのがおすすめ。
-                // ここではシンプルに "Konpeito" タグを想定。
-                //if (rb.CompareTag("Konpeito")) continue;
-            }
-            Debug.Log("吹っ飛ば子や↓");
+    
             // 爆発力で吹っ飛ばす（ForceMode.Impulse相当の方が派手なら AddForce でも可）
             rb.AddExplosionForce(
                 knockbackForce,
@@ -204,6 +193,22 @@ public class MeteorManager : NetworkBehaviour
                 knockbackUpward,
                 ForceMode.Impulse
             );
+
+            var ice = hits[i].GetComponent<IcePillar>();
+
+            //氷柱にダメージを与える
+            if(ice != null)
+            {
+
+                Vector3 hitPoint = Vector3.zero;
+                Vector3 hitDir = Vector3.zero;
+
+                hitPoint = hits[i].ClosestPoint(transform.position);
+                hitDir = (hits[i].transform.position - transform.position).normalized;
+                if (hitDir.sqrMagnitude < 0.001f) hitDir = Vector3.up;
+
+                ice.ApplyDamageServer(OwnerClientId, hitPoint, hitDir, false, 9f);
+            }
 
             //プレイヤーはスタンさせる
             if (hits[i].gameObject.CompareTag("Player"))

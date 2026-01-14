@@ -8,7 +8,7 @@ public class HanayoriDangoEvent : EventBasic
 
     [SerializeField] private Vector3 _targetCenter = Vector3.zero;
     [SerializeField] private float _radius = 1f;
-    [SerializeField] private float _derayTime = 0f;
+    [SerializeField] private float _delayTime = 0f;
     [SerializeField] private int _dangoCount = 20;
     [SerializeField] private List<string> _prefbId = new List<string>();
 
@@ -31,7 +31,7 @@ public class HanayoriDangoEvent : EventBasic
             NetworkObjectSpawner.Instance.RequestSpawnObjectRandomInRange2D(
                 _prefbId[Random.Range(0, _prefbId.Count)], _targetCenter, _radius, _targetCenter.y, Quaternion.identity, NetworkObjectSpawner.OwnerMode.Host);
             count++;
-            yield return new WaitForSeconds(_derayTime);
+            yield return new WaitForSeconds(_delayTime);
         }
 
     }

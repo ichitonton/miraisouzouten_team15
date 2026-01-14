@@ -85,7 +85,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1283185608
+  GlobalObjectIdHash: 380386612
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -221,7 +221,7 @@ MonoBehaviour:
   iceVisualObject: {fileID: 90068318272495272}
   collidersToDisableOnBreak: []
   attachVolume: {fileID: 2337106031459983889}
-  prefabDatabase: {fileID: 11400000, guid: a480dd88622b4ab49a612da3b759a321, type: 2}
+  prefabDatabase: {fileID: 11400000, guid: 2eb662b3fd540e443acfe817ad2e073d, type: 2}
   wagashiCountRange: {x: 10, y: 12}
   wagashiReleaseImpulse: 2
   hpStageModels:
@@ -232,6 +232,14 @@ MonoBehaviour:
   - 0.66
   - 0.33
   - 0.1
+  iceBlockPrefab: {fileID: 4108568799730573538, guid: f9e569b15a0a8c44b87043b4efa399a1, type: 3}
+  iceBlockCountRange: {x: 5, y: 6}
+  iceBlockSpawnRadius: 0.6
+  iceBlockImpulseMin: 2
+  iceBlockImpulseMax: 4
+  iceBlockUpBias: 0.8
+  iceBlockRandomTorque: 12
+  iceBlockLifeSeconds: 4
 --- !u!114 &-2515991672934481101
 MonoBehaviour:
   m_ObjectHideFlags: 0

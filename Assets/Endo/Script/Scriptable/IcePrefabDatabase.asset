@@ -10,15 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a8e6e508089d00d4dab58df8b707b408, type: 3}
-  m_Name: NetworkPrefabDatabase
+  m_Name: IcePrefabDatabase
   m_EditorClassIdentifier: Assembly-CSharp::NetworkPrefabDatabase
   _entries:
   - _id: Daifuku
     _prefab: {fileID: 2801467627326373979, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
     _rarityEnum: 1
-  - _id: KintaroAme
-    _prefab: {fileID: 4229715837851546189, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
-    _rarityEnum: 2
   - _id: Dorayaki
     _prefab: {fileID: 6845853872365190221, guid: b9abccb11b995ec48a57cd8230f15b8b, type: 3}
     _rarityEnum: 1
@@ -45,22 +42,4 @@ MonoBehaviour:
     _rarityEnum: 2
   - _id: SansyokuDango
     _prefab: {fileID: 374521452363014917, guid: dd5469db6e1c1f24bb4dafcd49db29cf, type: 3}
-    _rarityEnum: 1
-  - _id: SansyokuDango_Red
-    _prefab: {fileID: 2801467627326373979, guid: 94bfefc129d8c454ba7d50f4f9616bb0, type: 3}
-    _rarityEnum: 1
-  - _id: SansyokuDango_Green
-    _prefab: {fileID: 2801467627326373979, guid: 7cb3bf820b8fd93409558f10f7eeb6ac, type: 3}
-    _rarityEnum: 1
-  - _id: SansyokuDango_White
-    _prefab: {fileID: 2801467627326373979, guid: 76af42f4115e84340a11e81b272a2ad0, type: 3}
-    _rarityEnum: 1
-  - _id: SansyokuDango_Event
-    _prefab: {fileID: 374521452363014917, guid: 71f3cfcc8c9baaa4abc8f096e4aa9332, type: 3}
-    _rarityEnum: 1
-  - _id: GoldenWagashi
-    _prefab: {fileID: 7287193858212175528, guid: bc187eddd3c89f04dad65074c9cbbe20, type: 3}
-    _rarityEnum: 1
-  - _id: Bakudan
-    _prefab: {fileID: 2395781141977073395, guid: 2a695767fbf9acd4bbc7566a279c78a9, type: 3}
     _rarityEnum: 1

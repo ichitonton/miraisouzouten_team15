@@ -118,7 +118,7 @@ public class GameManager : NetworkBehaviour
         PlayMovieClientRpc();
         StartCoroutine("TeleportPlayer", 0.3f);
 
-        //if (GameEventManager.Instance != null) GameEventManager.Instance.TryStartAutoLoop();
+        if (GameEventManager.Instance != null) GameEventManager.Instance.TryStartAutoLoop();
 
         _isStart = true;
         InGame = true;

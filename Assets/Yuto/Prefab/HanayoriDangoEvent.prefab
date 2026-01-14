@@ -77,9 +77,9 @@ MonoBehaviour:
   _waitTime: 3
   _networkPrefabDatabase: {fileID: 11400000, guid: a480dd88622b4ab49a612da3b759a321, type: 2}
   _targetCenter: {x: 0, y: 10, z: 0}
-  _radius: 15
-  _derayTime: 0.5
-  _dangoCount: 40
+  _radius: 12
+  _delayTime: 0.1
+  _dangoCount: 100
   _prefbId:
   - SansyokuDango_Event
   - SansyokuDango_Red

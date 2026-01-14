@@ -79,7 +79,7 @@ public class KonpeitouAutoVanish : NetworkBehaviour
             ApplyAlpha(1f); // ”O‚Ì‚½‚ß–ß‚·
 
             if (IsServer && NetworkObject != null && NetworkObject.IsSpawned)
-                NetworkObject.Despawn(true);
+                gameObject.GetComponent<PooledNetworkObject>().DestroySelf();
 
             return;
         }

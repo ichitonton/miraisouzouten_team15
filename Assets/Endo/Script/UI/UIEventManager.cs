@@ -8,13 +8,12 @@ using UnityEngine.UI;
 /// - 中央の「!」＋（任意で）中央ワーニングアイコンを表示
 /// - その点滅（Sin/Cos）に同期して、画面全体のフラッシュも点滅させる（任意）
 /// - 最後に上からメッセージバナーをスライド表示
+/// - ★同時イベント対応：ワーニングアイコンを2つ表示（左右にずらす）＋メッセージ結合
 ///
 /// 設計方針（バグ予防）
-/// - “表示/非表示”は基本 CanvasGroup.alpha と enabled で制御
-/// - ResetUI() では StopFlash() を呼ばない（以前のバグ：起動直後に消える）
+/// - “表示/非表示”は基本 CanvasGroup.alpha と Image.enabled / SetActive で制御
+/// - ResetUI() では StopFlash() を呼ばない（Sequence開始時にだけ StopFlash）
 /// - Play() は常に1本だけ（コルーチン重複を止める）
-///
-/// ※ ScreenFlashSetting は EventDatabase から渡される設定（色/画像/maxAlpha など）
 /// </summary>
 public class UIEventManager : MonoBehaviour
 {
@@ -27,59 +26,60 @@ public class UIEventManager : MonoBehaviour
     [SerializeField] private CanvasGroup exclamationGroup;    // 「!」のa制御用
 
     [Header("Center Warning Icon (optional)")]
-    [SerializeField] private Image warningIconImage;          // 中央ワーニング画像（任意）
-    [SerializeField] private CanvasGroup warningIconGroup;    // あるとα制御が安定（任意）
+    [SerializeField] private Image warningIconImage;          // ワーニングアイコン(左/単体用)
+    [SerializeField] private CanvasGroup warningIconGroup;    // α制御(任意)
+
+    [Header("Center Warning Icon #2 (optional / Double)")]
+    [SerializeField] private Image warningIconImage2;         // ★同時用（右側）
+    [SerializeField] private CanvasGroup warningIconGroup2;   // ★同時用 α制御(任意)
+    [SerializeField, Min(0f)] private float warningOffsetX = 60f; // 左右にずらす距離（anchored）
 
     [Header("上から出るテキスト")]
-    [SerializeField] private RectTransform bannerRoot;        // バナーのルート
-    [SerializeField] private CanvasGroup bannerGroup;         // バナーのα制御用
-    [SerializeField] private TMP_Text bannerText;             // バナーのテキスト
+    [SerializeField] private RectTransform bannerRoot;
+    [SerializeField] private CanvasGroup bannerGroup;
+    [SerializeField] private TMP_Text bannerText;
 
     [Header("Screen Flash Overlay (optional)")]
-    [SerializeField] private Image flashOverlayImage;         // 画面全体のオーバーレイImage（任意）
-    [SerializeField] private CanvasGroup flashOverlayGroup;   // あるとα制御が安定（任意）
+    [SerializeField] private Image flashOverlayImage;
+    [SerializeField] private CanvasGroup flashOverlayGroup;
 
     // ================================
     // Timing settings
     // ================================
 
     [Header("Timing")]
-    [SerializeField] private float exclamationFadeIn = 0.35f;        // 「!」のフェードイン時間
-    [SerializeField] private float exclamationBlinkDuration = 1.2f;  // 点滅する合計時間
-    [SerializeField] private float exclamationBlinkSpeed = 2.0f;     // 点滅速度（周波数）
-    [SerializeField] private float exclamationFadeOut = 0.25f;       // 「!」のフェードアウト時間
+    [SerializeField] private float exclamationFadeIn = 0.35f;
+    [SerializeField] private float exclamationBlinkDuration = 1.2f;
+    [SerializeField] private float exclamationBlinkSpeed = 2.0f;
+    [SerializeField] private float exclamationFadeOut = 0.25f;
 
-    [SerializeField] private float bannerSlideIn = 0.35f;            // バナー出現スライド時間
-    [SerializeField] private float bannerHold = 1.2f;                // バナー表示維持時間
-    [SerializeField] private float bannerSlideOut = 0.25f;           // バナー退場スライド時間
+    [SerializeField] private float bannerSlideIn = 0.35f;
+    [SerializeField] private float bannerHold = 1.2f;
+    [SerializeField] private float bannerSlideOut = 0.25f;
 
     [Header("Banner positions (anchored)")]
-    [SerializeField] private Vector2 bannerHiddenPos = new Vector2(0, 140); // 画面上に隠す位置
-    [SerializeField] private Vector2 bannerShownPos = new Vector2(0, 40);  // 表示位置
+    [SerializeField] private Vector2 bannerHiddenPos = new Vector2(0, 140);
+    [SerializeField] private Vector2 bannerShownPos = new Vector2(0, 40);
 
     // ================================
     // Runtime state
     // ================================
 
-    // フラッシュ同期用の設定を保持（点滅ループ内で参照してa更新する）
     private ScreenFlashSetting _activeFlash;
     private bool _flashActive;
 
-    // 実行中演出のコルーチン（常に1本にする）
     private Coroutine _running;
 
-    // Singleton（既存設計に合わせている）
     public static UIEventManager Instance { get; private set; }
 
     private void Awake()
     {
-        // 既存のシングルトンパターン
         if (Instance == null) Instance = this;
         else { Destroy(gameObject); return; }
 
-        // 初期状態は確実に非表示にする
+        // 起動直後は確実に「何も出ない」状態に固定する
         ResetUI();
-        StopFlash(); // ResetUIに入れない（過去に“開始直後に消える”原因になった）
+        StopFlash();
     }
 
     // -------------------------------
@@ -87,82 +87,123 @@ public class UIEventManager : MonoBehaviour
     // -------------------------------
 
     /// <summary>
-    /// 互換用：メッセージだけ再生（アイコン/フラッシュなし）
+    /// 互換：メッセージだけ
     /// </summary>
     public void Play(string message) => Play(message, null, null);
 
     /// <summary>
-    /// メッセージ＋中央アイコン＋画面フラッシュを含めて演出再生する
-    /// - warningIcon: 中央に出す画像（任意）
-    /// - flash: 画面フラッシュ設定（任意）
+    /// 単発：メッセージ＋アイコン1つ＋フラッシュ
     /// </summary>
     public void Play(string message, Sprite warningIcon, ScreenFlashSetting flash)
     {
-        Debug.Log($"[UIEventManager] Play frame={Time.frameCount} msg={message}");
-        // 重複事故防止：常に前の演出を止めてから新しい演出を開始する
         if (_running != null) StopCoroutine(_running);
-        _running = StartCoroutine(Sequence(message, warningIcon, flash));
+        _running = StartCoroutine(SequenceSingle(message, warningIcon, flash));
+    }
+
+    /// <summary>
+    /// ★同時：メッセージ（結合済み）＋アイコン2つ＋フラッシュ（合成済み）
+    /// </summary>
+    public void PlayDouble(string messageCombined, Sprite iconA, Sprite iconB, ScreenFlashSetting flashCombined)
+    {
+        if (_running != null) StopCoroutine(_running);
+        _running = StartCoroutine(SequenceDouble(messageCombined, iconA, iconB, flashCombined));
     }
 
     // -------------------------------
-    // Main sequence
+    // Main sequences
     // -------------------------------
 
     /// <summary>
-    /// UI演出のメインシーケンス
-    /// 1) 中央「!」フェードイン
-    /// 2) 点滅（アイコン＆フラッシュも同期）
-    /// 3) フェードアウト
-    /// 4) メッセージバナーをスライド表示 →  → 退場
+    /// 単発シーケンス
     /// </summary>
-    private IEnumerator Sequence(string message, Sprite warningIcon, ScreenFlashSetting flash)
+    private IEnumerator SequenceSingle(string message, Sprite warningIcon, ScreenFlashSetting flash)
     {
-        // シーケンス開始時にUIを初期化
-        // ※ここで StopFlash も呼んで、前回のフラッシュ残りを消す（状態もリセット）
         ResetUI();
         StopFlash();
 
-        // ---------------------------
-        // 1) セットアップ
-        // ---------------------------
-        // 中央アイコン準備（指定がある場合だけ表示する）
-        SetupWarningIcon(warningIcon);
-
-        // フラッシュ準備（指定がある場合だけ enabled=true になる）
+        // まず「表示対象を確定して透明」にする（初フレームのポップ予防）
+        SetupWarningIconSingle(warningIcon);
+        SetupWarningIconDouble(null, null); // 2個目側は必ず消す
         SetupFlash(flash);
 
-        // ---------------------------
-        // 2) 点滅（完全同期）
-        // ---------------------------
-        // cos方式にすることで、t=0の時に s=0 から始まる（初フレームの“ポップ”を抑える）
+        // ここで「!」も先に表示状態へ（alphaはこの時点で0）
+        SetExclamationVisible(true);
+
+        // 点滅ループ（cosで0スタート）
+        yield return StartCoroutine(BlinkCoreRoutine());
+
+        // バナー
+        yield return StartCoroutine(BannerRoutine(message));
+
+        _running = null;
+    }
+
+    /// <summary>
+    /// ★同時シーケンス（アイコン2つ表示）
+    /// </summary>
+    private IEnumerator SequenceDouble(string messageCombined, Sprite iconA, Sprite iconB, ScreenFlashSetting flashCombined)
+    {
+        ResetUI();
+        StopFlash();
+
+        // まず「2つのアイコンを表示対象として確定→透明」にする（初フレームのポップ予防）
+        SetupWarningIconSingle(null);              // 単発側は使わない（消す）
+        SetupWarningIconDouble(iconA, iconB);      // 2つ表示
+        SetupFlash(flashCombined);
+
+        // 「!」表示（alphaは0）
+        SetExclamationVisible(true);
+
+        // 点滅ループ（!・2アイコン・フラッシュが完全同期）
+        yield return StartCoroutine(BlinkCoreRoutine());
+
+        // バナー（結合済み文字列）
+        yield return StartCoroutine(BannerRoutine(messageCombined));
+
+        _running = null;
+    }
+
+    // -------------------------------
+    // Core routines
+    // -------------------------------
+
+    /// <summary>
+    /// 「!」/アイコン/フラッシュの点滅シーケンス（完全同期）
+    /// - フェードイン → 点滅 → フェードアウト までをまとめて処理
+    /// - Single/Double どちらでも共通に使える
+    /// </summary>
+    private IEnumerator BlinkCoreRoutine()
+    {
+        //// 1) 「!」フェードイン（存在する場合）
+        //if (exclamationGroup != null)
+        //    yield return Fade(exclamationGroup, 0f, 1f, exclamationFadeIn);
+
+        //// ★ワーニングアイコンも“同じタイミング”でフェードインしておくと初動が綺麗
+        //// （表示対象だけをフェードする）
+        //if (IsIconActive(warningIconImage))
+        //    yield return FadeIconTo(warningIconImage, warningIconGroup, 1f, exclamationFadeIn);
+
+        //if (IsIconActive(warningIconImage2))
+        //    yield return FadeIconTo(warningIconImage2, warningIconGroup2, 1f, exclamationFadeIn);
+
+        // 2) 点滅（cosで0スタート）
         float t = 0f;
         float w = exclamationBlinkSpeed * Mathf.PI * 2f;
 
         while (t < exclamationBlinkDuration)
         {
-            // 0..1。t=0で0スタート
-            float s = (1f - Mathf.Cos(t * w)) * 0.5f;
-
-            // 次フレームへ
+            float s = (1f - Mathf.Cos(t * w)) * 0.5f; // 0..1, t=0で0
             t += Time.unscaledDeltaTime;
 
-            // 「!」とアイコンのa（0.35 - 1.0を往復）
+            // ! / icon の点滅α
             float warnA = Mathf.Lerp(0.35f, 1f, s);
 
-            if (exclamationGroup) exclamationGroup.alpha = warnA;
+            if (exclamationGroup != null) exclamationGroup.alpha = warnA;
 
-            // アイコン側（CanvasGroupがあればそっち、なければImageのαを直接いじる）
-            if (warningIconGroup != null)
-            {
-                warningIconGroup.alpha = warnA;
-            }
-            else if (warningIconImage && warningIconImage.gameObject.activeSelf)
-            {
-                SetWarningIconAlpha(warnA);
-            }
+            ApplyIconAlpha(warningIconImage, warningIconGroup, warnA);
+            ApplyIconAlpha(warningIconImage2, warningIconGroup2, warnA);
 
-            // 画面フラッシュ（ワーニング点滅と完全同期）
-            // - 0..maxAlpha を往復
+            // フラッシュ同期（0..maxAlpha）
             if (_flashActive && _activeFlash != null)
             {
                 float flashA = Mathf.Lerp(0f, Mathf.Clamp01(_activeFlash.maxAlpha), s);
@@ -172,31 +213,31 @@ public class UIEventManager : MonoBehaviour
             yield return null;
         }
 
-        // ---------------------------
-        // 3) フェードアウト
-        // ---------------------------
-        if (exclamationGroup) yield return Fade(exclamationGroup, exclamationGroup.alpha, 0f, exclamationFadeOut);
+        // 3) フェードアウト（! / icon）
+        if (exclamationGroup != null)
+            yield return Fade(exclamationGroup, exclamationGroup.alpha, 0f, exclamationFadeOut);
 
-        if (warningIconGroup != null)
-        {
-            yield return Fade(warningIconGroup, warningIconGroup.alpha, 0f, exclamationFadeOut);
-        }
-        else if (warningIconImage && warningIconImage.gameObject.activeSelf)
-        {
-            SetWarningIconAlpha(0f);
-        }
+        // アイコンは「表示しているものだけ」落とす
+        if (IsIconActive(warningIconImage))
+            yield return FadeIconTo(warningIconImage, warningIconGroup, 0f, exclamationFadeOut);
+        if (IsIconActive(warningIconImage2))
+            yield return FadeIconTo(warningIconImage2, warningIconGroup2, 0f, exclamationFadeOut);
 
-        // フラッシュも確実に停止（enabled=false + 状態リセット）
+        // フラッシュは確実に停止
         StopFlash();
 
-        // ルートを非アクティブ化
-        if (exclamationRoot) exclamationRoot.gameObject.SetActive(false);
-        if (warningIconImage) warningIconImage.gameObject.SetActive(false);
+        // ルートを非表示
+        SetExclamationVisible(false);
+        SetIconVisible(warningIconImage, warningIconGroup, false);
+        SetIconVisible(warningIconImage2, warningIconGroup2, false);
+    }
 
-        // ---------------------------
-        // 4) バナー表示
-        // ---------------------------
-        if (bannerText) bannerText.text = message;
+    /// <summary>
+    /// バナー（上からスライドして表示→待機→戻す）
+    /// </summary>
+    private IEnumerator BannerRoutine(string message)
+    {
+        if (bannerText) bannerText.text = message ?? "";
 
         if (bannerRoot) bannerRoot.gameObject.SetActive(true);
         if (bannerRoot) bannerRoot.anchoredPosition = bannerHiddenPos;
@@ -212,9 +253,6 @@ public class UIEventManager : MonoBehaviour
         yield return SlideAndFade(bannerRoot, bannerGroup, bannerShownPos, bannerHiddenPos, 1f, 0f, bannerSlideOut);
 
         if (bannerRoot) bannerRoot.gameObject.SetActive(false);
-
-        // 終了
-        _running = null;
     }
 
     // -------------------------------
@@ -222,9 +260,79 @@ public class UIEventManager : MonoBehaviour
     // -------------------------------
 
     /// <summary>
-    /// フラッシュの見た目をセットし、同期点滅の“準備”だけする
-    /// - ここでは enabled=true にして、αは0にしておく
-    /// - 点滅は Sequence 内の while で同期更新する
+    /// 単発アイコンの準備
+    /// - iconがnullなら確実に消す
+    /// - iconがあるなら表示してalpha=0に固定
+    /// </summary>
+    private void SetupWarningIconSingle(Sprite icon)
+    {
+        if (warningIconImage == null) return;
+
+        if (icon == null)
+        {
+            SetIconVisible(warningIconImage, warningIconGroup, false);
+            return;
+        }
+
+        warningIconImage.sprite = icon;
+        SetIconVisible(warningIconImage, warningIconGroup, true);
+
+        // 初期αは0固定（初フレームの“チラ見え”を潰す）
+        ApplyIconAlpha(warningIconImage, warningIconGroup, 0f);
+    }
+
+    /// <summary>
+    /// ★同時アイコンの準備（2つ）
+    /// - 片方がnullならその側は出さない
+    /// - 出す場合は左右に少しずらす
+    /// - alpha=0固定
+    /// </summary>
+    private void SetupWarningIconDouble(Sprite iconA, Sprite iconB)
+    {
+        // 2個目用が未設定なら何もしない（安全）
+        // ※同時演出を使うなら Inspector で warningIconImage2 を必ず入れるの推奨
+        if (warningIconImage2 == null)
+        {
+            // 片側しか出せないので、Aだけ単発側に出す（保険）
+            SetupWarningIconSingle(iconA);
+            return;
+        }
+
+        // 左（warningIconImage）をAに、右（warningIconImage2）をBに割り当てる
+        SetupIconAt(warningIconImage, warningIconGroup, iconA, -warningOffsetX);
+        SetupIconAt(warningIconImage2, warningIconGroup2, iconB, +warningOffsetX);
+    }
+
+    /// <summary>
+    /// 指定したImageにアイコンをセットして表示/非表示・位置・alphaを初期化
+    /// </summary>
+    private void SetupIconAt(Image img, CanvasGroup cg, Sprite icon, float offsetX)
+    {
+        if (img == null) return;
+
+        if (icon == null)
+        {
+            SetIconVisible(img, cg, false);
+            return;
+        }
+
+        img.sprite = icon;
+        SetIconVisible(img, cg, true);
+
+        // anchoredPositionを左右にずらす（RectTransformがある前提）
+        if (img.rectTransform != null)
+        {
+            var p = img.rectTransform.anchoredPosition;
+            p.x = offsetX;
+            img.rectTransform.anchoredPosition = p;
+        }
+
+        // 初期α0（初フレームのチラ見え防止）
+        ApplyIconAlpha(img, cg, 0f);
+    }
+
+    /// <summary>
+    /// フラッシュ準備（enabled=true、alpha=0にして点滅はBlinkで同期）
     /// </summary>
     private void SetupFlash(ScreenFlashSetting s)
     {
@@ -233,15 +341,13 @@ public class UIEventManager : MonoBehaviour
 
         if (!_flashActive) return;
 
-        // 画面フラッシュを表示可能状態にする
         flashOverlayImage.enabled = true;
 
-        // 画像があれば画像、なければ色
-        // ※ αは SetFlashAlpha で制御するのでここではベースカラーだけ
+        // overlaySpriteがあれば画像、なければ色
         if (s.overlaySprite != null)
         {
             flashOverlayImage.sprite = s.overlaySprite;
-            flashOverlayImage.color = Color.white;
+            flashOverlayImage.color = Color.white; // αはSetFlashAlphaで
         }
         else
         {
@@ -249,42 +355,13 @@ public class UIEventManager : MonoBehaviour
             flashOverlayImage.color = s.flashColor;
         }
 
-        // 開始時は透明（ここから点滅ループで上げる）
         SetFlashAlpha(0f);
     }
 
-    /// <summary>
-    /// 中央ワーニングアイコンのセットアップ
-    /// - icon が null なら非表示
-    /// - icon があるなら sprite を設定して表示（αは0から開始）
-    /// </summary>
-    private void SetupWarningIcon(Sprite icon)
-    {
-        if (warningIconImage == null) return;
-
-        if (icon == null)
-        {
-            warningIconImage.gameObject.SetActive(false);
-            return;
-        }
-
-        warningIconImage.sprite = icon;
-        warningIconImage.gameObject.SetActive(true);
-
-        // 開始時は透明
-        if (warningIconGroup != null) warningIconGroup.alpha = 0f;
-        else SetWarningIconAlpha(0f);
-    }
-
     // -------------------------------
-    // Stop / Apply helpers
+    // Apply / Stop helpers
     // -------------------------------
 
-    /// <summary>
-    /// フラッシュ停止（必ず状態もリセットする）
-    /// - enabled=false にして描画を止める
-    /// - CanvasGroupがあればαも0に戻す
-    /// </summary>
     private void StopFlash()
     {
         _activeFlash = null;
@@ -294,9 +371,6 @@ public class UIEventManager : MonoBehaviour
         if (flashOverlayImage != null) flashOverlayImage.enabled = false;
     }
 
-    /// <summary>
-    /// フラッシュのαを適用する（CanvasGroup優先）
-    /// </summary>
     private void SetFlashAlpha(float a)
     {
         if (flashOverlayGroup != null)
@@ -311,42 +385,105 @@ public class UIEventManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 中央アイコンのαを適用する（CanvasGroupが無い場合に使用）
-    /// </summary>
-    private void SetWarningIconAlpha(float a)
+    private void SetExclamationVisible(bool on)
     {
-        if (warningIconImage == null) return;
-        var c = warningIconImage.color;
-        c.a = a;
-        warningIconImage.color = c;
+        if (exclamationRoot != null) exclamationRoot.gameObject.SetActive(on);
+        if (exclamationGroup != null && !on) exclamationGroup.alpha = 0f;
+        if (exclamationGroup != null && on) exclamationGroup.alpha = 0f; // 表示開始は必ず0から
+    }
+
+    private static bool IsIconActive(Image img)
+    {
+        return img != null && img.gameObject.activeSelf;
+    }
+
+    private void SetIconVisible(Image img, CanvasGroup cg, bool on)
+    {
+        if (img == null) return;
+
+        img.gameObject.SetActive(on);
+
+        if (cg != null)
+        {
+            cg.alpha = on ? 0f : 0f; // onでもまず0固定
+        }
+        else
+        {
+            // CanvasGroupが無い場合はImageのαを直接操作
+            var c = img.color;
+            c.a = 0f;
+            img.color = c;
+        }
+    }
+
+    /// <summary>
+    /// アイコンαを適用（CanvasGroup優先）
+    /// </summary>
+    private void ApplyIconAlpha(Image img, CanvasGroup cg, float a)
+    {
+        if (img == null) return;
+        if (!img.gameObject.activeSelf) return;
+
+        if (cg != null)
+        {
+            cg.alpha = a;
+        }
+        else
+        {
+            var c = img.color;
+            c.a = a;
+            img.color = c;
+        }
+    }
+
+    /// <summary>
+    /// アイコンを指定αまでフェード（CanvasGroupが無い場合は即反映）
+    /// </summary>
+    private IEnumerator FadeIconTo(Image img, CanvasGroup cg, float to, float dur)
+    {
+        if (img == null || !img.gameObject.activeSelf) yield break;
+
+        if (cg != null)
+        {
+            yield return Fade(cg, cg.alpha, to, dur);
+        }
+        else
+        {
+            // CanvasGroupが無いなら即反映（シンプルにする）
+            ApplyIconAlpha(img, null, to);
+            yield break;
+        }
     }
 
     /// <summary>
     /// UIを初期状態に戻す
-    /// - SetActive/alpha/位置などを初期化する
-    /// - StopFlashは呼ばない（Sequence開始時にだけStopFlashする）
+    /// - StopFlashは呼ばない（Sequence開始時にだけStopFlash）
     /// </summary>
     private void ResetUI()
     {
+        // 非表示
         if (exclamationRoot) exclamationRoot.gameObject.SetActive(false);
         if (bannerRoot) bannerRoot.gameObject.SetActive(false);
-        if (warningIconImage) warningIconImage.gameObject.SetActive(false);
 
+        if (warningIconImage) warningIconImage.gameObject.SetActive(false);
+        if (warningIconImage2) warningIconImage2.gameObject.SetActive(false);
+
+        // α初期化
         if (exclamationGroup) exclamationGroup.alpha = 0f;
         if (bannerGroup) bannerGroup.alpha = 0f;
         if (warningIconGroup) warningIconGroup.alpha = 0f;
+        if (warningIconGroup2) warningIconGroup2.alpha = 0f;
 
+        // 位置初期化
         if (bannerRoot) bannerRoot.anchoredPosition = bannerHiddenPos;
+
+        // アイコンの位置は SetupIconAt で入れるのでここでは触らない
     }
 
     // -------------------------------
     // Coroutine utilities
     // -------------------------------
 
-    /// <summary>
-    /// CanvasGroupのフェード
-    /// </summary>
     private static IEnumerator Fade(CanvasGroup g, float from, float to, float dur)
     {
         if (g == null) yield break;
@@ -366,9 +503,6 @@ public class UIEventManager : MonoBehaviour
         g.alpha = to;
     }
 
-    /// <summary>
-    /// RectTransformのスライド＋CanvasGroupのフェードを同時に行う
-    /// </summary>
     private static IEnumerator SlideAndFade(
         RectTransform rt, CanvasGroup g,
         Vector2 posFrom, Vector2 posTo,
@@ -393,8 +527,7 @@ public class UIEventManager : MonoBehaviour
             t += Time.unscaledDeltaTime;
             float x = Mathf.Clamp01(t / dur);
 
-            // SmoothStepのイージング（少し気持ちいい動き）
-            float e = x * x * (3f - 2f * x);
+            float e = x * x * (3f - 2f * x); // SmoothStep
 
             rt.anchoredPosition = Vector2.Lerp(posFrom, posTo, e);
             g.alpha = Mathf.Lerp(aFrom, aTo, e);
@@ -406,9 +539,6 @@ public class UIEventManager : MonoBehaviour
         g.alpha = aTo;
     }
 
-    /// <summary>
-    /// unscaled時間で待つ（ポーズ中でも演出を動かしたい時に使う）
-    /// </summary>
     private static IEnumerator WaitUnscaled(float seconds)
     {
         float t = 0f;

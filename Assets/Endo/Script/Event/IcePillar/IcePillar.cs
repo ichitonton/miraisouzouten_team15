@@ -59,6 +59,18 @@ public class IcePillar : NetworkBehaviour
     [Tooltip("HP割合で段階が落ちる境界（例：0.66,0.33,0.10）。モデル数-1個を推奨")]
     [SerializeField] private float[] hpStageThresholds = new float[] { 0.66f, 0.33f, 0.10f };
 
+
+    [Header("Ice Debris (IceBlock)")]
+    [SerializeField] private NetworkObject iceBlockPrefab;              // IceBlock の NetworkObject付きPrefab
+    [SerializeField] private Vector2Int iceBlockCountRange = new(5, 6);  // 生成数
+    [SerializeField, Min(0f)] private float iceBlockSpawnRadius = 0.6f;  // 生成位置の散らばり半径
+    [SerializeField, Min(0f)] private float iceBlockImpulseMin = 2.0f;   // 飛ばす力（最小）
+    [SerializeField, Min(0f)] private float iceBlockImpulseMax = 4.0f;   // 飛ばす力（最大）
+    [SerializeField, Min(0f)] private float iceBlockUpBias = 0.8f;       // 上方向に少し持ち上げる
+    [SerializeField, Min(0f)] private float iceBlockRandomTorque = 12f;  // 回転力
+    [SerializeField, Min(0f)] private float iceBlockLifeSeconds = 4.0f;  // 何秒後に消す（0なら消さない）
+
+
     // 壊れたかどうかは全員で共有
     private readonly NetworkVariable<bool> _broken = new(
         false,
@@ -305,7 +317,9 @@ public class IcePillar : NetworkBehaviour
 
         Vector3 hitPoint = collision.GetContact(0).point;
 
-        HandlePunchHit(col, hitPoint, hitDir);
+        bool star = collision.gameObject.GetComponentInParent<MovePlayerKey>().GetUseStar();
+
+        HandlePunchHit(col, hitPoint, hitDir, star);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -314,26 +328,34 @@ public class IcePillar : NetworkBehaviour
 
         if (!IsPunchHit(other)) return;
 
-        Vector3 hitPoint = other.ClosestPoint(transform.position);
-        Vector3 hitDir = (other.transform.position - transform.position).normalized;
+        Vector3 hitPoint = Vector3.zero;
+        Vector3 hitDir = Vector3.zero;
+        
+        
+
+        hitPoint = other.ClosestPoint(transform.position);
+        hitDir = (other.transform.position - transform.position).normalized;
         if (hitDir.sqrMagnitude < 0.001f) hitDir = Vector3.up;
 
-        HandlePunchHit(other, hitPoint, hitDir);
+
+        bool star = other.gameObject.GetComponentInParent<MovePlayerKey>().GetUseStar();
+
+        HandlePunchHit(other, hitPoint, hitDir, star);
     }
 
-    private void HandlePunchHit(Collider punchCollider, Vector3 hitPoint, Vector3 hitDir)
+    private void HandlePunchHit(Collider punchCollider, Vector3 hitPoint, Vector3 hitDir,bool star)
     {
         // クライアントは「自分の拳」だけ報告（他人の拳で送らない）
         if (!IsServer)
         {
             if (!IsLocalPlayersPunch(punchCollider)) return;
-            ReportPunchHitServerRpc(hitPoint, hitDir);
+            ReportPunchHitServerRpc(hitPoint, hitDir, star);
             return;
         }
 
         // サーバーは直接確定
         ulong attackerId = GetOwnerClientIdFromPunch(punchCollider);
-        ApplyDamageServer(attackerId, hitPoint, hitDir);
+        ApplyDamageServer(attackerId, hitPoint, hitDir,star, 0.0f);
     }
 
     private bool IsPunchHit(Collider col)
@@ -370,15 +392,15 @@ public class IcePillar : NetworkBehaviour
     // サーバー確定処理
     // -------------------------
     [ServerRpc(RequireOwnership = false)]
-    private void ReportPunchHitServerRpc(Vector3 hitPoint, Vector3 hitDir, ServerRpcParams rpcParams = default)
+    private void ReportPunchHitServerRpc(Vector3 hitPoint, Vector3 hitDir,bool star, ServerRpcParams rpcParams = default)
     {
         if (_broken.Value) return;
 
         ulong attackerId = rpcParams.Receive.SenderClientId;
-        ApplyDamageServer(attackerId, hitPoint, hitDir);
+        ApplyDamageServer(attackerId, hitPoint, hitDir,star,0.0f);
     }
 
-    private void ApplyDamageServer(ulong attackerClientId, Vector3 hitPoint, Vector3 hitDir)
+    public void ApplyDamageServer(ulong attackerClientId, Vector3 hitPoint, Vector3 hitDir,bool star,float dmg)
     {
         if (!IsServer) return;
         if (_broken.Value) return;
@@ -391,8 +413,19 @@ public class IcePillar : NetworkBehaviour
         }
         _lastHitTime[attackerClientId] = now;
 
+        float damage = 0.0f;
         // ランダムダメージ（サーバーで決定）
-        float damage = Random.Range(damageMin, damageMax);
+        if (dmg == 0.0f)
+        {
+            damage = Random.Range(damageMin, damageMax);
+        }
+        else damage = dmg;
+        
+
+        if(star)
+        {
+            damage = maxHP;
+        }
 
         // ダメージに応じて揺れ強さも少し変える（任意）
         float amp = Mathf.Lerp(0.06f, 0.14f, Mathf.InverseLerp(damageMin, damageMax, damage));
@@ -448,8 +481,11 @@ public class IcePillar : NetworkBehaviour
 
         _broken.Value = true;
 
-        // 和菓子解放
+        // ★追加：氷の欠片を生成して飛ばす
+        SpawnIceBlocksServer(hitDir);
+
         ReleaseWagashiServer(hitDir);
+
 
         //氷柱が壊れたエフェクトを出す
         Vector3 pos = transform.position;
@@ -495,4 +531,64 @@ public class IcePillar : NetworkBehaviour
             NetworkObject.Despawn(true);
         }
     }
+
+    private void SpawnIceBlocksServer(Vector3 hitDir)
+    {
+        if (!IsServer) return;
+        if (iceBlockPrefab == null) return;
+
+        int count = Random.Range(iceBlockCountRange.x, iceBlockCountRange.y + 1);
+
+        // 飛び散る基準位置（柱の中心あたり）
+        Vector3 center = (visualRoot != null) ? visualRoot.position : transform.position;
+
+        for (int i = 0; i < count; i++)
+        {
+            // 生成位置：中心からランダムに少し散らす
+            Vector3 rand = Random.insideUnitSphere * iceBlockSpawnRadius;
+            rand.y = Mathf.Abs(rand.y); // 下に潜らないように
+            Vector3 spawnPos = center + rand;
+
+            Quaternion spawnRot = Random.rotation;
+
+            var debris = Instantiate(iceBlockPrefab, spawnPos, spawnRot);
+            debris.Spawn(true);
+
+            // Rigidbodyがあるなら飛ばす（Serverが物理を駆動）
+            var rb = debris.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                // 基本方向：ヒット方向 + ランダム + 上方向バイアス
+                Vector3 dir = (hitDir.sqrMagnitude > 0.001f ? hitDir.normalized : Vector3.forward);
+                dir += Random.onUnitSphere * 0.45f;
+                dir.y = Mathf.Abs(dir.y) + iceBlockUpBias;
+                dir.Normalize();
+
+                float impulse = Random.Range(iceBlockImpulseMin, iceBlockImpulseMax);
+                rb.AddForce(dir * impulse, ForceMode.Impulse);
+
+                // ランダム回転
+                Vector3 torque = Random.onUnitSphere * iceBlockRandomTorque;
+                rb.AddTorque(torque, ForceMode.Impulse);
+            }
+
+            // 一定時間後に消す（任意）
+            if (iceBlockLifeSeconds > 0.01f)
+            {
+                StartCoroutine(DespawnAfterSecondsServer(debris, iceBlockLifeSeconds));
+            }
+        }
+    }
+
+    private IEnumerator DespawnAfterSecondsServer(NetworkObject target, float sec)
+    {
+        yield return new WaitForSeconds(sec);
+
+        if (!IsServer) yield break;
+        if (target == null) yield break;
+
+        if (target.IsSpawned)
+            target.Despawn(true);
+    }
+
 }
