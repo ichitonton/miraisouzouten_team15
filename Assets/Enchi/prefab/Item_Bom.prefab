@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: cd28b6a34c960604fa09e7bedf2ee0ba, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.5
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: cd28b6a34c960604fa09e7bedf2ee0ba, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.5
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: cd28b6a34c960604fa09e7bedf2ee0ba, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.5
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: cd28b6a34c960604fa09e7bedf2ee0ba, type: 3}
       propertyPath: m_LocalPosition.x
@@ -67,11 +67,11 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: cd28b6a34c960604fa09e7bedf2ee0ba, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 1f9242549fb46094d9f741ef9c642e98, type: 2}
+      objectReference: {fileID: 2100000, guid: 22905aaae14b56f49adfecbabd49e7a4, type: 2}
     - target: {fileID: -5754084199372789682, guid: cd28b6a34c960604fa09e7bedf2ee0ba, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 2540817853737639666, guid: f1b585597c59ee74f90ae4831cb0f46e, type: 3}
+      objectReference: {fileID: 2540817853737639666, guid: cd28b6a34c960604fa09e7bedf2ee0ba, type: 3}
     - target: {fileID: 919132149155446097, guid: cd28b6a34c960604fa09e7bedf2ee0ba, type: 3}
       propertyPath: m_Name
       value: Item_Bom
@@ -123,7 +123,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7806896105312345136
 MonoBehaviour:
