@@ -31,10 +31,9 @@ public class NetworkStartUI : MonoBehaviour
     [SerializeField] private bool allowManualKeyStart = true;
 
     [Header("UI References")]
-    [SerializeField] private Toggle hostToggle;
-    [SerializeField] private Toggle clientToggle;
-    [SerializeField] private Toggle autoStartToggle; // Ç¢ÇÁÇ»ÇØÇÍÇŒñ¢ê›íËÇ≈OK
-    [SerializeField] private TMP_Text statusText;    // Ç¢ÇÁÇ»ÇØÇÍÇŒñ¢ê›íËÇ≈OK
+    [SerializeField] private GameObject hostToggle;
+    [SerializeField] private GameObject clientToggle;
+    
 
     // é©ìÆéÊìæÇ∑ÇÈéQè∆
     private LanHost _lanHost;
@@ -91,37 +90,41 @@ public class NetworkStartUI : MonoBehaviour
     // =========================
     // UI Bind (Toggle -> Enum)
     // =========================
-    private void BindUI()
-    {
-        if (hostToggle != null)
-        {
-            hostToggle.onValueChanged.AddListener(isOn =>
-            {
-                if (isOn) startMode = StartMode.Host;
-            });
-        }
+    //private void BindUI()
+    //{
+    //    if (hostToggle != null)
+    //    {
+    //        hostToggle.onValueChanged.AddListener(isOn =>
+    //        {
+    //            if (isOn) startMode = StartMode.Host;
+    //        });
+    //    }
 
-        if (clientToggle != null)
-        {
-            clientToggle.onValueChanged.AddListener(isOn =>
-            {
-                if (isOn) startMode = StartMode.Client;
-            });
-        }
+    //    if (clientToggle != null)
+    //    {
+    //        clientToggle.onValueChanged.AddListener(isOn =>
+    //        {
+    //            if (isOn) startMode = StartMode.Client;
+    //        });
+    //    }
 
-    }
+    //}
 
     private void ApplyModeToUI(StartMode mode)
     {
         // UIÇÃèâä˙èÛë‘ÇêÆÇ¶ÇÈ
-        if (hostToggle != null) hostToggle.isOn = (mode == StartMode.Host);
-        if (clientToggle != null) clientToggle.isOn = (mode == StartMode.Client);
+        if (hostToggle == null) return;
+        if (clientToggle == null) return;
+
+        if (hostToggle.activeSelf == true) startMode = StartMode.Host;
+        if (clientToggle.activeSelf == true) startMode = StartMode.Client;
     }
 
     private void Update()
     {
 
-        BindUI();
+        //BindUI();
+        ApplyModeToUI(startMode);
 
         if (NetworkManager.Singleton == null) return;
 

@@ -11,5 +11,4 @@ public class TitleManager : MonoBehaviour
         FadeManager.Instance.PlayToScene(SceneName, FadeManager.FadeScope.LocalOnly);
     }
 
-    
 }
