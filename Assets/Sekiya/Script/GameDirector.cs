@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro; // TextMeshPro用
+// using TMPro; // TextMeshProは使わなくなるので削除またはコメントアウト
 using UnityEngine.SceneManagement;
 using Unity.Netcode;
 
@@ -23,10 +23,19 @@ public class GameDirector : MonoBehaviour
     // 2. 勝敗判定と表示の設定
     // ==========================================
     [Header("【第2フェーズ】判定と表示設定")]
-    [SerializeField] private TextMeshProUGUI resultText;
-    [SerializeField] private GameObject resultTextParent;
-    [SerializeField] private Color winColor = Color.yellow;
-    [SerializeField] private Color loseColor = Color.blue;
+    // --- 変更点開始 ---
+    // TextMeshPro関連は削除し、画像用GameObjectに変更
+    // [SerializeField] private TextMeshProUGUI resultText; // 削除
+    [Tooltip("WIN時に表示する画像オブジェクト")]
+    [SerializeField] private GameObject winImageObject;   // 追加
+    [Tooltip("LOSE時に表示する画像オブジェクト")]
+    [SerializeField] private GameObject loseImageObject;  // 追加
+
+    [SerializeField] private GameObject resultTextParent; // ※これは「結果表示全体の親」としてそのまま利用します
+    // [SerializeField] private Color winColor = Color.yellow; // 削除
+    // [SerializeField] private Color loseColor = Color.blue; // 削除
+    // --- 変更点終了 ---
+
     [SerializeField] private float afterResultWaitTime = 2.0f;
 
     // ==========================================
@@ -74,6 +83,12 @@ public class GameDirector : MonoBehaviour
         if (resultTextParent != null) resultTextParent.SetActive(false);
         if (thankYouObject != null) thankYouObject.SetActive(false);
 
+        // --- 変更点開始 ---
+        // 個別の画像も念のため非表示にしておく
+        if (winImageObject != null) winImageObject.SetActive(false);
+        if (loseImageObject != null) loseImageObject.SetActive(false);
+        // --- 変更点終了 ---
+
         // --- フェーズ0: 開始待ち ---
         yield return new WaitForSeconds(startDelay);
 
@@ -98,6 +113,12 @@ public class GameDirector : MonoBehaviour
         {
             resultTextParent.SetActive(false);
         }
+        // --- 変更点開始 ---
+        // 親を非表示にするので必須ではないですが、安全のため個別画像も非表示に戻す
+        if (winImageObject != null) winImageObject.SetActive(false);
+        if (loseImageObject != null) loseImageObject.SetActive(false);
+        // --- 変更点終了 ---
+
 
         // --- フェーズ3: カメラとUI移動 ---
         Debug.Log("カメラとUI移動開始！");
@@ -144,6 +165,7 @@ public class GameDirector : MonoBehaviour
 
     private void CheckAndShowResult()
     {
+        // ※ FinalScoreクラスの定義が不明なため、ここは元のコードが正しい前提で進めます
         ulong myId = FinalScore.MyPlayerID;
         int s0 = (int)FinalScore.ScoreTeam0;
         int s1 = (int)FinalScore.ScoreTeam1;
@@ -159,6 +181,9 @@ public class GameDirector : MonoBehaviour
         int maxScore = Mathf.Max(s0, s1, s2);
         bool isWin = (myScore == maxScore);
 
+        // --- 変更点開始 ---
+        // テキスト設定処理を削除し、画像の表示切替処理に変更
+        /* 以前のコード
         if (resultText != null)
         {
             if (isWin)
@@ -172,6 +197,27 @@ public class GameDirector : MonoBehaviour
                 resultText.color = loseColor;
             }
         }
+        */
+
+        // 新しいコード：どちらの画像を表示するか選ぶ
+        if (winImageObject != null && loseImageObject != null)
+        {
+            if (isWin)
+            {
+                // 勝った場合：Win画像を表示、Lose画像を非表示
+                winImageObject.SetActive(true);
+                loseImageObject.SetActive(false);
+            }
+            else
+            {
+                // 負けた場合：Win画像を非表示、Lose画像を表示
+                winImageObject.SetActive(false);
+                loseImageObject.SetActive(true);
+            }
+        }
+        // --- 変更点終了 ---
+
+        // 最後に親オブジェクトを表示して、選択された画像が画面に出るようにする
         if (resultTextParent != null) resultTextParent.SetActive(true);
     }
 }
