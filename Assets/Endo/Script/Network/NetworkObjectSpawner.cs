@@ -30,7 +30,7 @@ public class NetworkObjectSpawner : NetworkBehaviour
         Instance = this;
 
         // ƒV[ƒ“Ø‚è‘Ö‚¦‚ÅÁ‚¦‚È‚¢‚æ‚¤‚É‚·‚é
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
     }
 
 

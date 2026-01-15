@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System;
 using System.Runtime.InteropServices;
+using UnityEngine.SceneManagement;
 
 
 
@@ -26,30 +27,138 @@ public class PlayerNetworkConnect : NetworkBehaviour
 
     private bool _didReplace = false;
 
-    private void Start()
+    [Tooltip("このシーン名になったときに InGame を監視する")]
+    [SerializeField] private string gameSceneName = "GameScene";
+
+    private bool _hooked = false;
+
+    //private void Start()
+    //{
+
+    //    var active = SceneManager.GetActiveScene();
+    //    if (!active.IsValid()) return;
+
+    //    // Scene名が一致しているか？
+    //    if (!string.Equals(active.name, gameSceneName)) return;
+
+    //    var nm = NetworkManager.Singleton;
+
+
+
+    //    nm.OnServerStarted += OnHostStarted;
+    //    nm.OnClientConnectedCallback += OnClientConnected;
+
+    //    if (nm.IsServer && !GetComponent<NetworkObject>().IsSpawned)
+    //    {
+    //        GetComponent<NetworkObject>().Spawn(true);
+    //        Debug.Log("[Host] PlayerNetworkConnect Spawned on Network");
+    //    }
+    //}
+
+
+
+    private void OnEnable()
     {
+        SceneManager.activeSceneChanged += OnActiveSceneChanged;
+        EvaluateAndHook(SceneManager.GetActiveScene());
+        //DontDestroyOnLoad(gameObject);
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+        Unhook();
+        Debug.Log("コネクト、死んだん？");
+        if (SceneManager.GetActiveScene().name == gameSceneName)
+        {
+            List<GameObject> players = new List<GameObject>();
+
+            foreach (var playerRef in GameManager.Instance._networkObjectList)
+            {
+                if (playerRef.TryGet(out var playerObj))
+                {
+                    if (playerObj.OwnerClientId == NetworkManager.Singleton.LocalClientId)
+                    {
+                        players.Add(playerObj.gameObject);
+                    }
+                }
+            }
+
+            foreach (var player in players)
+            {
+
+                Debug.Log(player.name);
+
+                player.gameObject.GetComponent<NetworkObject>().Despawn(true);
+                Destroy(player.gameObject);
+            }
+
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // 念のため保険（OnDisableが呼ばれない状況もある）
+        Unhook();
+    }
+
+    private void OnActiveSceneChanged(Scene prev, Scene next)
+    {
+        EvaluateAndHook(next);
+
+        Debug.Log($"Scene Changed: {prev.name} -> {next.name}");
+
+    }
+
+    private void EvaluateAndHook(Scene active)
+    {
+        if (!active.IsValid()) return;
+
+        //  対象シーンじゃないなら解除
+        if (!string.Equals(active.name, gameSceneName))
+        {
+            Unhook();
+            return;
+        }
+
+        //  対象シーンなら購読
+        HookOnce();
+
+        //  HostならここでSpawn（必要なら）
         var nm = NetworkManager.Singleton;
-
-        
-
-        nm.OnServerStarted += OnHostStarted;
-        nm.OnClientConnectedCallback += OnClientConnected;
-
-        if (nm.IsServer && !GetComponent<NetworkObject>().IsSpawned)
+        if (nm != null && nm.IsServer && !GetComponent<NetworkObject>().IsSpawned)
         {
             GetComponent<NetworkObject>().Spawn(true);
             Debug.Log("[Host] PlayerNetworkConnect Spawned on Network");
         }
     }
 
-    private void  OnDestroy()
+    private void HookOnce()
     {
-        if (NetworkManager.Singleton != null)
-        {
-            NetworkManager.Singleton.OnServerStarted -= OnHostStarted;
-            //Hostは新しいClientが自分のところに接続したときに呼ばれ、ClientはHostに接続できたときに呼ばれる
-            NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
-        }
+        if (_hooked) return;
+
+        var nm = NetworkManager.Singleton;
+        if (nm == null) return;
+
+        nm.OnServerStarted += OnHostStarted;
+        nm.OnClientConnectedCallback += OnClientConnected;
+        _hooked = true;
+
+        Debug.Log("[PlayerNetworkConnect] Hooked callbacks");
+    }
+
+    private void Unhook()
+    {
+        if (!_hooked) return;
+
+        var nm = NetworkManager.Singleton;
+        if (nm == null) { _hooked = false; return; }
+
+        nm.OnServerStarted -= OnHostStarted;
+        nm.OnClientConnectedCallback -= OnClientConnected;
+        _hooked = false;
+
+        Debug.Log("[PlayerNetworkConnect] Unhooked callbacks");
     }
 
     /// <summary>

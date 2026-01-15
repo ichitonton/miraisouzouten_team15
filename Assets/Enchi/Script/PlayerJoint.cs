@@ -179,6 +179,8 @@ public class PlayerJoint : NetworkBehaviour
 
                 netObj.Spawn();
 
+                GameManager.Instance._networkObjectList.Add(netObj);
+
                 //ReturnOwnerServerRpc(netObj.NetworkObjectId, OwnerClientId);
 
             }

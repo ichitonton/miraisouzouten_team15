@@ -72,7 +72,7 @@ public class GameManager : NetworkBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -244,7 +244,7 @@ public class GameManager : NetworkBehaviour
     {
         List<GameObject> players = new List<GameObject>();
 
-        foreach (var playerRef in GameManager.Instance._networkObjectList)
+        foreach (var playerRef in _networkObjectList)
         {
             if (playerRef.TryGet(out var playerObj))
             {
