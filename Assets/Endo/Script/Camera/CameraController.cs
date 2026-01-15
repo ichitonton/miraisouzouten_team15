@@ -83,6 +83,7 @@ public class CameraController : MonoBehaviour
         HandleZoomInput();
 
         if (NetworkManager.Singleton == null) return;
+        if(GameManager.Instance == null) return;
 
         if (GameManager.Instance._IsLanModeActive == true)
         {
@@ -94,7 +95,10 @@ public class CameraController : MonoBehaviour
             }*/
             var players = GameManager.Instance._networkObjectList;
 
-            Debug.Log("ネットワークオブジェクトの数 = " + players.Count);
+            if(players.Count > 0) 
+            {
+                    Debug.Log("ネットワークオブジェクトの数 = " + players.Count);
+            }
             //Debug.Log(_players.Count);
 
         }

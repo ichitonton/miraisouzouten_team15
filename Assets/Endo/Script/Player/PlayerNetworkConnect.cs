@@ -35,24 +35,8 @@ public class PlayerNetworkConnect : NetworkBehaviour
     //private void Start()
     //{
 
-    //    var active = SceneManager.GetActiveScene();
-    //    if (!active.IsValid()) return;
-
-    //    // SceneñºÇ™àÍívÇµÇƒÇ¢ÇÈÇ©ÅH
-    //    if (!string.Equals(active.name, gameSceneName)) return;
-
-    //    var nm = NetworkManager.Singleton;
-
-
-
-    //    nm.OnServerStarted += OnHostStarted;
-    //    nm.OnClientConnectedCallback += OnClientConnected;
-
-    //    if (nm.IsServer && !GetComponent<NetworkObject>().IsSpawned)
-    //    {
-    //        GetComponent<NetworkObject>().Spawn(true);
-    //        Debug.Log("[Host] PlayerNetworkConnect Spawned on Network");
-    //    }
+    //    SceneManager.activeSceneChanged += OnActiveSceneChanged;
+    //    EvaluateAndHook(SceneManager.GetActiveScene());
     //}
 
 

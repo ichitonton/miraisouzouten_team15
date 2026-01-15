@@ -525,6 +525,8 @@ public class MapColorManager : MonoBehaviour
     /// </summary>
     private void CleanupPlayers()
     {
+        if (GameManager.Instance == null) return;
+
         _playerList.Clear();
 
         //ネットワークマネージャーなかったら処理しない
