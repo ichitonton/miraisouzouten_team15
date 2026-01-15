@@ -54,7 +54,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 9af7e94988b6e634faffa21daebc07a7, type: 2}
     - target: {fileID: 919132149155446097, guid: 3e4f1ad7010ecd549ae907160056d477, type: 3}
       propertyPath: m_Name
-      value: Model_Konpeitou01 (4)
+      value: Model_Konpeitou_05
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 3e4f1ad7010ecd549ae907160056d477, type: 3}
       propertyPath: m_TagString
@@ -277,7 +277,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6188212326822016374}
-  m_Material: {fileID: 13400000, guid: 3ff60a8d1c9a87b4691c38cb10e076c3, type: 2}
+  m_Material: {fileID: 13400000, guid: b40d4f93fe0f42a4ca9c1eff31a8d4f9, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

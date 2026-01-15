@@ -21,24 +21,24 @@ MonoBehaviour:
   minScale: {x: 0.95, y: 0.95, z: 0.95}
   maxScale: {x: 1.1, y: 1.1, z: 1.1}
   mass:
-    min: 0.8
-    max: 1
+    min: 3
+    max: 4
   linearDamping:
-    min: 1
-    max: 1
+    min: 0.1
+    max: 0.1
   angularDamping:
-    min: 1
-    max: 2
+    min: 0.4
+    max: 0.6
   bounciness:
     min: 0.15
     max: 0.3
   dynamicFriction:
-    min: 0.7
-    max: 1.2
+    min: 0.3
+    max: 0.5
   staticFriction:
-    min: 0.9
-    max: 1.4
-  frictionCombine: 3
+    min: 0.4
+    max: 0.6
+  frictionCombine: 2
   bounceCombine: 3
   useBucketForPhysicsMaterial: 0
   bucketDivisions: 10
