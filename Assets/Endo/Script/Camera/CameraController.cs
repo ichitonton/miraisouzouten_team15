@@ -7,7 +7,6 @@ using System.Collections.Generic;
 public class CameraController : MonoBehaviour
 {
 
-    [SerializeField] private GameObject _GameManager;
     private GameObject _player1;
     private GameObject _player2;
 
@@ -60,7 +59,7 @@ public class CameraController : MonoBehaviour
 	private RaycastHit[] _obstacleHits;
 
     [Header("Delay")]
-    private float _delayTime = 0.5f;
+    [SerializeField]private float _delayTime = 0.5f;
 
 	private void Start()
     {
@@ -310,7 +309,7 @@ public class CameraController : MonoBehaviour
             if (playerRef.TryGet(out var playerObj))
             {
                 //プレイヤーのタグを持っているかつ所有権があるなら
-                if(playerObj.gameObject.CompareTag("Player") && playerObj.IsOwner)
+                if(playerObj.gameObject.CompareTag("Player") && playerObj.OwnerClientId == NetworkManager.Singleton.LocalClientId)
                 {
                     Debug.Log("所有権を持ったプレイヤーです");
                     _players.Add(playerObj.gameObject);
