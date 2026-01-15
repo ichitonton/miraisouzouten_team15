@@ -150,17 +150,18 @@ public class GoalToUI : NetworkBehaviour
         if (!IsServer) return;
         if (!other.CompareTag(TagSweets) && !other.CompareTag(TagObstacles)) return;
 
-        var go = other.gameObject;
+        // ★子Colliderでも、親Rootを追跡対象にする
+        var root = ResolveRootObject(other.gameObject);
+        if (root == null) return;
 
-        // すでに中にいるなら重複加算しない
-        if (_inside.ContainsKey(go)) return;
+        // すでに入ってるなら無視（重複加算防止）
+        if (_inside.ContainsKey(root)) return;
 
-        // 寄与分を計算
-        if (!TryBuildEntry(go, out var entry)) return;
+        // 寄与分を計算（Rootで取る）
+        if (!TryBuildEntry(root, out var entry)) return;
 
-        _inside.Add(go, entry);
+        _inside.Add(root, entry);
 
-        // 加算
         netCount.Value += entry.countDelta;
         netScoreNow.Value += entry.scoreDelta;
     }
@@ -168,18 +169,16 @@ public class GoalToUI : NetworkBehaviour
     private void OnTriggerExit(Collider other)
     {
         if (!IsServer) return;
-        if (_isProcessingShipment) return; // 出荷中はExitを無視（演出で消えるので）
+        if (_isProcessingShipment) return;
 
-        var go = other.gameObject;
+        var root = ResolveRootObject(other.gameObject);
+        if (root == null) return;
 
-        if (_inside.TryGetValue(go, out var entry))
+        if (_inside.TryGetValue(root, out var entry))
         {
-            _inside.Remove(go);
+            _inside.Remove(root);
 
-            // 減算
             netCount.Value = Mathf.Max(0, netCount.Value - entry.countDelta);
-
-            // 障害物（scoreDeltaが負）にも対応： -scoreDelta で元に戻る
             netScoreNow.Value = Mathf.Max(0f, netScoreNow.Value - entry.scoreDelta);
         }
     }
@@ -255,10 +254,8 @@ public class GoalToUI : NetworkBehaviour
     // -----------------------------
     private IEnumerator HandleShipment()
     {
-        // 出荷開始時点の値を確定（演出中に中身が消えても壊れない）
         float shippedScore = netScoreNow.Value;
 
-        // 出荷エフェクト
         if (NetworkEffectSpawner.Instance != null)
         {
             NetworkEffectSpawner.Instance.PlayEffect(
@@ -268,40 +265,66 @@ public class GoalToUI : NetworkBehaviour
             );
         }
 
-        // ゴール内の対象を消す（演出）
-        // ※ここでSetActive(false)/DestroySelfされてもExitは来ないので、出荷中はCleanup/Exit無視している
-        foreach (var kv in _inside)
-        {
-            var go = kv.Key;
-            if (go == null) continue;
+        // ★辞書キーをコピーしてから壊す（安全）
+        _tmpKeys.Clear();
+        _tmpKeys.AddRange(_inside.Keys);
 
-            if (go.TryGetComponent<PooledNetworkObject>(out var pooled))
+        for (int i = 0; i < _tmpKeys.Count; i++)
+        {
+            var root = _tmpKeys[i];
+            if (root == null) continue;
+
+            // RootにPooledがいるなら確実にDestroySelf
+            var pooled = root.GetComponent<PooledNetworkObject>();
+            if (pooled != null)
             {
                 pooled.DestroySelf();
+                continue;
             }
-            else
+
+            // Pooledが無いなら NetworkObject をDespawn（必要なら）
+            var netObj = root.GetComponent<NetworkObject>();
+            if (netObj != null && netObj.IsSpawned)
             {
-                // NetworkObjectや普通のGameObjectの場合は必要に応じて処理を追加
-                // Debug.LogWarning($"No PooledNetworkObject on {go.name}");
+                netObj.Despawn(true);
+                continue;
             }
+
+            // 最後の保険（普通のGameObject）
+            Destroy(root);
         }
 
-        // 演出時間待つ
         yield return new WaitForSeconds(shrinkDelay);
 
-        // スコア確定
         netScoreTotal.Value += shippedScore;
 
-        // リセット
         netCount.Value = 0;
         netScoreNow.Value = 0f;
         netTimeUp.Value = 0f;
 
-        // 追跡もクリア（次のカウントへ）
         _inside.Clear();
 
-        // フラグ戻す
         _hasTeleportEffectPlayed = false;
         _isProcessingShipment = false;
     }
+
+    private GameObject ResolveRootObject(GameObject hit)
+    {
+        if (hit == null) return null;
+
+        // PooledNetworkObjectが親にいるなら、そこが「破壊すべき本体」
+        var pooled = hit.GetComponentInParent<PooledNetworkObject>(true);
+        if (pooled != null) return pooled.gameObject;
+
+        // Pooledが無いなら、スイーツ本体（親）を拾う
+        var sweet = hit.GetComponentInParent<JapaneseSweets_Manager>(true);
+        if (sweet != null) return sweet.gameObject;
+
+        var obs = hit.GetComponentInParent<obstacles_Manager>(true);
+        if (obs != null) return obs.gameObject;
+
+        // それも無いなら当たった物を返す（保険）
+        return hit;
+    }
+
 }

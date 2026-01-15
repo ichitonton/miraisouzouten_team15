@@ -128,7 +128,7 @@ public class IcePillar : NetworkBehaviour
             _hp = maxHP;
 
             // ★初期段階を配信
-            UpdateHpStageServer();
+            UpdateHpStageServer(Vector3.zero);
 
             StartCoroutine(RiseRoutineServer());
 
@@ -152,7 +152,10 @@ public class IcePillar : NetworkBehaviour
         _hpStage.OnValueChanged -= OnHpStageChanged;
     }
 
-    private void OnHpStageChanged(int prev, int next) => ApplyHpStage(next);
+    private void OnHpStageChanged(int prev, int next)
+    {
+        ApplyHpStage(next);
+    }
 
     private void ApplyHpStage(int stage)
     {
@@ -168,7 +171,7 @@ public class IcePillar : NetworkBehaviour
         }
     }
 
-    private void UpdateHpStageServer()
+    private void UpdateHpStageServer(Vector3 hitDir)
     {
         if (!IsServer) return;
         if (hpStageModels == null || hpStageModels.Length == 0) return;
@@ -188,7 +191,10 @@ public class IcePillar : NetworkBehaviour
         stage = Mathf.Clamp(stage, 0, hpStageModels.Length - 1);
 
         if (_hpStage.Value != stage)
+        {
             _hpStage.Value = stage;
+            SpawnIceBlocksServer(hitDir);
+        }
     }
 
     private void OnBrokenChanged(bool prev, bool next)
@@ -447,7 +453,7 @@ public class IcePillar : NetworkBehaviour
         if (_hp < 0f) _hp = 0f;
 
         // ★HP段階更新（見た目切替）
-        UpdateHpStageServer();
+        UpdateHpStageServer(hitDir);
 
         float t = Mathf.InverseLerp(damageMin, damageMax, Mathf.Clamp(damage, damageMin, damageMax));
         float ampPos = Mathf.Lerp(hitShakePosAmp * 0.7f, hitShakePosAmp * 1.4f, t);
