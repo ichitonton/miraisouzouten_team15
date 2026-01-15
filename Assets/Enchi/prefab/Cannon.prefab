@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -3986561082421325321}
   - component: {fileID: 1447279098542405471}
   - component: {fileID: 6012352138678728008}
-  - component: {fileID: 2001777900650240280}
+  - component: {fileID: 7153159608430417591}
   m_Layer: 0
   m_Name: Cannon
   m_TagString: Untagged
@@ -107,7 +107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2445308879
+  GlobalObjectIdHash: 2121082705
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -182,8 +182,8 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
---- !u!65 &2001777900650240280
-BoxCollider:
+--- !u!135 &7153159608430417591
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -201,8 +201,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.19, y: 2, z: 3}
-  m_Center: {x: -0.37, y: -0.3, z: 0.7}
+  m_Radius: 2
+  m_Center: {x: -0.35, y: -1, z: 0.66}
 --- !u!1 &8838097114850360759
 GameObject:
   m_ObjectHideFlags: 0

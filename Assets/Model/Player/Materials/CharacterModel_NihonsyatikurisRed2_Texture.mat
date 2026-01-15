@@ -97,27 +97,27 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _Fade1: 0.03
+    - _Fade1: 0
     - _Fade2: 0.03
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _LightContrast: 1
+    - _LightContrast: 4
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _OutlineWidth: 0.02
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _ShadowOffset: -0.294
+    - _ShadowOffset: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
-    - _Threshold1: 0.45
-    - _Threshold2: 0.2
+    - _Threshold1: 0
+    - _Threshold2: 0
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1

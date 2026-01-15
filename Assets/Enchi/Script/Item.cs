@@ -62,7 +62,7 @@ public class Item : NetworkBehaviour
         if (!IsServer) return; // Å© Ç±ÇÍÇ™ïKê{
         if (!_isTimerOn)
         {
-            if (other.gameObject.tag == "Field" || other.gameObject.GetComponent<MovePlayerKey>())
+            if (other.gameObject.tag == "Field" || other.gameObject.GetComponent<Collider>().isTrigger == false)
             {
                 BlastGenerateServerRpc();
                 //Invoke("BlastGenerateServerRpc", _blastTimer);
