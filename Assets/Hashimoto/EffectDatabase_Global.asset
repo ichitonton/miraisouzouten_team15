@@ -50,5 +50,5 @@ MonoBehaviour:
     label: Ice
     prefab: {fileID: 8592064777803723872, guid: 05079516d0ba9ef439448f025ee6d5b3, type: 3}
   - effectId: 12
-    label: dust
-    prefab: {fileID: 3791465365429400299, guid: 125b5417abe1c4148951efce4e6aba07, type: 3}
+    label: ice_pillar
+    prefab: {fileID: 8592064777803723872, guid: bf25d46a02fc7894992085278a32b615, type: 3}

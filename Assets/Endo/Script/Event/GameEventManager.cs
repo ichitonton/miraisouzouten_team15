@@ -168,32 +168,32 @@ public class GameEventManager : NetworkBehaviour
         var x = Screen.width / 2 - w / 2;
         var y = (Screen.height / 2) - 100;
 
-        if (GUI.Button(new Rect(x, y, w, h), "イベントスタート(ランダム)"))
-        {
-            if (!_isEventRunning)
-                StartCoroutine(SpawnRandomEventAndFire_BlockByEventTime());
-            else
-                Debug.Log("[GameEventManager] Event is running. Skip.");
-        }
+        //if (GUI.Button(new Rect(x, y, w, h), "イベントスタート(ランダム)"))
+        //{
+        //    if (!_isEventRunning)
+        //        StartCoroutine(SpawnRandomEventAndFire_BlockByEventTime());
+        //    else
+        //        Debug.Log("[GameEventManager] Event is running. Skip.");
+        //}
 
-        if (GUI.Button(new Rect(x, y + 40, w, h), "イベントスタート(デバッグ用)"))
+        if (GUI.Button(new Rect(x + 300, y + 300, w, h), "イベントスタート(デバッグ用)"))
         {
             StartCoroutine(DebugEvent_BlockByEventTime(_eventID));
         }
 
-        if (GUI.Button(new Rect(x, y + 80, w, h), _autoRoutine == null ? "自動イベント ON" : "自動イベント OFF"))
-        {
-            if (_autoRoutine == null)
-            {
-                _autoRandomEvent = true;
-                TryStartAutoLoop();
-            }
-            else
-            {
-                _autoRandomEvent = false;
-                StopAutoLoop();
-            }
-        }
+        //if (GUI.Button(new Rect(x, y + 80, w, h), _autoRoutine == null ? "自動イベント ON" : "自動イベント OFF"))
+        //{
+        //    if (_autoRoutine == null)
+        //    {
+        //        _autoRandomEvent = true;
+        //        TryStartAutoLoop();
+        //    }
+        //    else
+        //    {
+        //        _autoRandomEvent = false;
+        //        StopAutoLoop();
+        //    }
+        //}
     }
 
     // =========================================================

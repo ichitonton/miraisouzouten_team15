@@ -4955,8 +4955,8 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 1.3
-      minScalar: 1
+      scalar: 2
+      minScalar: 1.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -5820,7 +5820,7 @@ ParticleSystem:
         serializedVersion: 2
         minMaxState: 3
         scalar: 15
-        minScalar: 10
+        minScalar: 15
         maxCurve:
           serializedVersion: 2
           m_Curve:
@@ -9762,7 +9762,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &314434683126706071
 Transform:
   m_ObjectHideFlags: 0
@@ -14663,7 +14663,7 @@ GameObject:
   - component: {fileID: 4914645501118920985}
   - component: {fileID: 1956476546604808048}
   m_Layer: 0
-  m_Name: eff_iceShard_Player
+  m_Name: eff_iceShard_Player_Pillar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19505,7 +19505,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3703139724168665825
 Transform:
   m_ObjectHideFlags: 0

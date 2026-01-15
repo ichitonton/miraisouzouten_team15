@@ -319,5 +319,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FrozenWagashi
   ShowTopMostFoldoutHeaderGroup: 1
+  startFrozen: 0
   disableColliderWhileFrozen: 0
-  makeRigidbodyKinematicWhileFrozen: 0
+  frozenScaleMultiplier: 1
