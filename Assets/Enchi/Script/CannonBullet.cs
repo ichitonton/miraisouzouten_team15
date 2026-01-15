@@ -81,11 +81,13 @@ public class CannonBullet : NetworkBehaviour
         if (other == null) return;
         if (!IsServer) return; // ← これが必
         if (other.GetComponent<Cannon>() != null) return;
-        if (other.GetComponent<MeshRenderer>() == null) return;
-        BlastGenerateServerRpc();
-        //爆発のSE再生、全Clientで3D空間で流す
-        NetworkSoundManager.Instance.PlaySfx("Explosion", NetworkSoundManager.SoundScope.AllClients, true, transform.position);
-        Debug.Log("爆発音を再生");
-        //ActiveFalseServerRpc();
+        if (other.GetComponent<Collider>().isTrigger == false)
+        {
+            BlastGenerateServerRpc();
+            //爆発のSE再生、全Clientで3D空間で流す
+            NetworkSoundManager.Instance.PlaySfx("Explosion", NetworkSoundManager.SoundScope.AllClients, true, transform.position);
+            Debug.Log("爆発音を再生");
+            //ActiveFalseServerRpc();
+        }
     }
 }

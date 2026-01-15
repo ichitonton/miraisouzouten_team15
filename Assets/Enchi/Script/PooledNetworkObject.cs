@@ -7,9 +7,9 @@ public class PooledNetworkObject : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        SetPrefab(NetworkObject);
 
-        if (!IsServer)
+        if (IsServer) SetPrefab(NetworkObject);
+        else if (!IsServer)
         {
             if (GetComponent<Rigidbody>() != null)
             {
