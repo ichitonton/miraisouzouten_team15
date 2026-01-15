@@ -88214,7 +88214,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7542135841941183071, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7542135841941183071, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -88261,8 +88261,12 @@ PrefabInstance:
       value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 8937094665437567331, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
+      propertyPath: nextSceneName
+      value: Result_2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8937094665437567331, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: _count.m_InternalValue
-      value: 300
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 9011111834402605567, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -93622,7 +93626,7 @@ PrefabInstance:
       objectReference: {fileID: 1289540963}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: IsDebug
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: connectUI
