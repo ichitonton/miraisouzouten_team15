@@ -47,7 +47,7 @@ public class NetworkSoundManager : NetworkBehaviour
         {
             Instance = this;
             //ƒV[ƒ“‚ÌØ‚è‘Ö‚¦‚ÅÁ‚¦‚È‚¢
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
