@@ -1,46 +1,37 @@
+using System.Collections.Generic;
 using Unity.Netcode;
-using Unity.Netcode.Components;
 using UnityEngine;
 
 /// <summary>
-/// 和菓子の Frozen 状態を NetworkVariable で同期し、
-/// - Frozen中：NetworkTransform を止めて各端末で pillar 追従（LateUpdate）
-/// - Frozen解除：現在の追従位置を確定してから NetworkTransform を復帰（スナップ抑制）
+/// FrozenWagashi
+/// - Frozen中：柱(NetworkObject)に親子付けして固定（NetworkTransformは切らない）
+/// - 重要：子にRigidbodyがあると親移動に追従しないため、Frozen中は全RigidbodyをKinematic化する
+/// - スケール：lossyScale補正で「親のスケール継承」を打ち消す
 /// </summary>
 public class FrozenWagashi : NetworkBehaviour
 {
+    [Header("Start State")]
+    [SerializeField] private bool startFrozen = false;
+
     [Header("Frozen Behavior")]
     [SerializeField] private bool disableColliderWhileFrozen = true;
-    [SerializeField] private bool makeRigidbodyKinematicWhileFrozen = true;
 
-    [Header("Network Components")]
-    [SerializeField] private NetworkTransform netTransform; // Frozen中OFF, 解除でON
-
-    [Header("Snap Fix (Optional)")]
-    [Tooltip("Frozen解除時、サーバーがTeleportで一度だけ確定姿勢を配信してスナップを抑える")]
-    [SerializeField] private bool serverTeleportOnUnfreeze = true;
+    [Header("Scale Fix")]
+    [SerializeField, Min(0.01f)] private float frozenScaleMultiplier = 1.0f;
 
     private readonly NetworkVariable<bool> _frozen = new(
-        true,
+        false,
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server
     );
 
-    // 追従先（ローカル参照）
-    private Transform _followTarget;
-    private Vector3 _followLocalPos;
-    private Quaternion _followLocalRot;
-
-    // 「解除した瞬間に1回だけ」使うためのフラグ
-    private bool _justUnfrozen;
-
-    private void Awake()
-    {
-        if (netTransform == null) netTransform = GetComponent<NetworkTransform>();
-    }
+    // 子Rigidbody問題対策：元のKinematic状態を保存
+    private readonly Dictionary<Rigidbody, bool> _rbOriginalKinematic = new();
 
     public override void OnNetworkSpawn()
     {
+        if (IsServer) _frozen.Value = startFrozen;
+
         _frozen.OnValueChanged += OnFrozenChanged;
         ApplyFrozenState(_frozen.Value);
     }
@@ -50,74 +41,37 @@ public class FrozenWagashi : NetworkBehaviour
         _frozen.OnValueChanged -= OnFrozenChanged;
     }
 
-    private void LateUpdate()
-    {
-        // Frozen中だけ追従（NetworkTransformは止まっている前提）
-        if (_frozen.Value && _followTarget != null)
-        {
-            var p = _followTarget.TransformPoint(_followLocalPos);
-            var r = _followTarget.rotation * _followLocalRot;
-
-            transform.SetPositionAndRotation(p, r);
-        }
-
-        // Frozen解除直後に、追従位置を1回だけ確定してから NetworkTransform を復帰
-        if (_justUnfrozen)
-        {
-            _justUnfrozen = false;
-
-            // 追従ターゲットが残っているなら「その位置」を最終確定
-            if (_followTarget != null)
-            {
-                var p = _followTarget.TransformPoint(_followLocalPos);
-                var r = _followTarget.rotation * _followLocalRot;
-                transform.SetPositionAndRotation(p, r);
-            }
-
-            // 追従はここで切る（以後はネット同期/物理に任せる）
-            _followTarget = null;
-
-            // NetworkTransform を復帰（全端末で実行される）
-            if (netTransform != null) netTransform.enabled = true;
-
-            // 任意：サーバーは1回だけTeleportで確定姿勢を配信して、
-            // クライアント側の補間ズレによるスナップをさらに減らす
-            if (serverTeleportOnUnfreeze && IsServer && netTransform != null)
-            {
-                netTransform.Teleport(transform.position, transform.rotation, transform.localScale);
-            }
-        }
-    }
-
-    public void OnFrozenChanged(bool prev, bool next)
+    private void OnFrozenChanged(bool prev, bool next)
     {
         ApplyFrozenState(next);
-
-        // true -> false に変わった瞬間（解除）をマーク
-        if (prev && !next)
-        {
-            // 解除の処理は LateUpdate でまとめて行う（見た目の最終確定が安定）
-            _justUnfrozen = true;
-        }
-
-        // false -> true（凍結開始）時は特に何もしない（追従情報は AttachFollowClientRpc で入る）
     }
 
     private void ApplyFrozenState(bool frozen)
     {
-        // Frozen中は NetworkTransform を止める（全端末で効く）
-        if (netTransform != null)
-            netTransform.enabled = !frozen;
-
-        // Rigidbody
-        var rb = GetComponent<Rigidbody>();
-        if (rb != null && makeRigidbodyKinematicWhileFrozen)
+        // Collider
+        if (disableColliderWhileFrozen)
         {
-            rb.isKinematic = frozen;
-            rb.useGravity = !frozen;
+            var cols = GetComponentsInChildren<Collider>(true);
+            foreach (var c in cols) c.enabled = !frozen;
+        }
 
-            if (frozen)
+        // Rigidbody（重要：子も含めて全部）
+        var rbs = GetComponentsInChildren<Rigidbody>(true);
+
+        if (frozen)
+        {
+            _rbOriginalKinematic.Clear();
+
+            foreach (var rb in rbs)
             {
+                if (rb == null) continue;
+
+                // 元状態保存
+                _rbOriginalKinematic[rb] = rb.isKinematic;
+
+                rb.isKinematic = true;
+                rb.useGravity = false;
+
 #if UNITY_6000_0_OR_NEWER
                 rb.linearVelocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
@@ -127,51 +81,83 @@ public class FrozenWagashi : NetworkBehaviour
 #endif
             }
         }
-
-        // Collider
-        if (disableColliderWhileFrozen)
+        else
         {
-            var cols = GetComponentsInChildren<Collider>(true);
-            foreach (var c in cols) c.enabled = !frozen;
+            // 元に戻す（保存がないRbは触らない）
+            foreach (var rb in rbs)
+            {
+                if (rb == null) continue;
+
+                if (_rbOriginalKinematic.TryGetValue(rb, out var wasKinematic))
+                {
+                    rb.isKinematic = wasKinematic;
+                    rb.useGravity = !wasKinematic;
+                }
+            }
         }
     }
 
     /// <summary>
-    /// サーバーから呼ぶ：追従ターゲットとローカルオフセットを全クライアントに配布
+    /// 柱へ固定（サーバー）
+    /// localPos/localRot は柱Root基準
     /// </summary>
-    public void AttachFollowServer(Transform pillarRoot, Vector3 localPos, Quaternion localRot)
+    public void AttachToPillarServer(NetworkObject pillarRootNO, Vector3 localPos, Quaternion localRot)
     {
         if (!IsServer) return;
+        if (pillarRootNO == null) return;
 
-        var pillarNO = pillarRoot.GetComponent<NetworkObject>();
-        if (pillarNO == null)
+        // 見た目サイズを維持するために、親子付け前の見た目スケールを保持
+        Vector3 desiredWorldScale = transform.lossyScale;
+
+        _frozen.Value = true; // ← 先にFrozenにして物理を止める
+
+        // 親子付け（ここが失敗すると絶対くっつかない）
+        bool ok = NetworkObject.TrySetParent(pillarRootNO, true);
+        if (!ok)
         {
-            Debug.LogWarning("[FrozenWagashi] pillarRoot に NetworkObject がありません");
+            Debug.LogWarning($"[FrozenWagashi] TrySetParent failed. pillar={pillarRootNO.name}", this);
             return;
         }
 
-        AttachFollowClientRpc(pillarNO.NetworkObjectId, localPos, localRot);
-    }
+        // 位置・回転をローカルで固定
+        transform.localPosition = localPos;
+        transform.localRotation = localRot;
 
-    [ClientRpc]
-    private void AttachFollowClientRpc(ulong pillarNetworkObjectId, Vector3 localPos, Quaternion localRot)
-    {
-        if (NetworkManager.Singleton == null) return;
-
-        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(pillarNetworkObjectId, out var pillarNo))
-        {
-            _followTarget = pillarNo.transform;
-            _followLocalPos = localPos;
-            _followLocalRot = localRot;
-        }
+        // 親の見た目スケールを打ち消して、和菓子の見た目サイズを維持
+        Vector3 parentWorldScale = pillarRootNO.transform.lossyScale;
+        transform.localScale = SafeDivide(desiredWorldScale, parentWorldScale) * frozenScaleMultiplier;
     }
 
     /// <summary>
-    /// サーバーから凍結状態を変更（クライアントへ同期される）
+    /// 解放（サーバー）
     /// </summary>
+    public void DetachServer()
+    {
+        if (!IsServer) return;
+
+        // 解除前の見た目サイズを保持
+        Vector3 desiredWorldScale = transform.lossyScale;
+
+        NetworkObject.TryRemoveParent(true);
+
+        // 親が外れるので、そのまま見た目サイズに合わせる
+        transform.localScale = desiredWorldScale;
+
+        _frozen.Value = false;
+    }
+
     public void SetFrozenServer(bool frozen)
     {
         if (!IsServer) return;
         _frozen.Value = frozen;
+    }
+
+    private static Vector3 SafeDivide(Vector3 a, Vector3 b)
+    {
+        return new Vector3(
+            b.x != 0f ? a.x / b.x : a.x,
+            b.y != 0f ? a.y / b.y : a.y,
+            b.z != 0f ? a.z / b.z : a.z
+        );
     }
 }

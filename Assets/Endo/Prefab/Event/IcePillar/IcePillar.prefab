@@ -67,7 +67,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 6.28, y: 6.28, z: 6.28}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3301115685292656429}
@@ -211,7 +211,9 @@ MonoBehaviour:
   riseHeight: 0
   riseDuration: 4.39
   visualRoot: {fileID: 7578791041076438372}
-  hitShakeAmplitude: 0.1
+  iceVisualObject: {fileID: 90068318272495272}
+  hitShakePosAmp: 0.08
+  hitShakeRotAmp: 6
   hitShakeDuration: 0.1
   hitShakeFrequency: 22
   maxHP: 12
@@ -219,20 +221,12 @@ MonoBehaviour:
   damageMax: 1.25
   hitCooldown: 0.08
   punchTag: 
-  iceVisualObject: {fileID: 90068318272495272}
-  collidersToDisableOnBreak: []
   attachVolume: {fileID: 2337106031459983889}
   prefabDatabase: {fileID: 11400000, guid: 2eb662b3fd540e443acfe817ad2e073d, type: 2}
   wagashiCountRange: {x: 10, y: 12}
+  wagashiMinSeparation: 0.25
+  wagashiPlacementTries: 20
   wagashiReleaseImpulse: 2
-  hpStageModels:
-  - {fileID: 2250010901277454208}
-  - {fileID: 4558198556363036381}
-  - {fileID: 8845037440624091060}
-  hpStageThresholds:
-  - 0.66
-  - 0.33
-  - 0.1
   iceBlockPrefab: {fileID: 4108568799730573538, guid: f9e569b15a0a8c44b87043b4efa399a1, type: 3}
   iceBlockCountRange: {x: 5, y: 6}
   iceBlockSpawnRadius: 0.6
@@ -241,6 +235,21 @@ MonoBehaviour:
   iceBlockUpBias: 0.8
   iceBlockRandomTorque: 12
   iceBlockLifeSeconds: 4
+  collidersToDisableOnBreak: []
+  despawnDelay: 0.1
+  enableLoopEffect: 1
+  loopEffectId: 12
+  _interval: 1
+  loopEffectOffset: {x: 0, y: 2, z: 0}
+  loopEffectScale: {x: 1.8, y: 1.8, z: 1.8}
+  hpStageModels:
+  - {fileID: 2250010901277454208}
+  - {fileID: 4558198556363036381}
+  - {fileID: 8845037440624091060}
+  hpStageThresholds:
+  - 0.66
+  - 0.33
+  - 0.1
 --- !u!114 &-2515991672934481101
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -105,8 +105,11 @@ MonoBehaviour:
   autoFindGlobalVolume: 1
   sunLightTag: 
   globalVolumeTag: 
+  useManualDayValues: 1
+  daySunIntensity: 1.8
+  daySunColor: {r: 1, g: 0.76862746, b: 0, a: 1}
   nightSunIntensity: 0.15
   nightSunColor: {r: 0.55, g: 0.65, b: 1, a: 1}
   transitionSeconds: 1.2
-  nightProfile: {fileID: 0}
-  dayProfile: {fileID: 0}
+  enforceDayForShortTime: 1
+  enforceDaySeconds: 0.6

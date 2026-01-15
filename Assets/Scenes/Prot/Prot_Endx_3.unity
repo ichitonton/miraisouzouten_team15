@@ -1430,7 +1430,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 11
   m_Type: 1
-  m_Color: {r: 1, g: 0.76744187, b: 0, a: 1}
+  m_Color: {r: 1, g: 0.76862746, b: 0, a: 1}
   m_Intensity: 1.8
   m_Range: 10
   m_SpotAngle: 30
@@ -31076,6 +31076,10 @@ PrefabInstance:
       propertyPath: _net
       value: 
       objectReference: {fileID: 273703533}
+    - target: {fileID: 6280504052251466273, guid: fded7fdc3d848e446b54781a8caec72b, type: 3}
+      propertyPath: gameSceneName
+      value: Prot_Endx_3
+      objectReference: {fileID: 0}
     - target: {fileID: 7836367788181001228, guid: fded7fdc3d848e446b54781a8caec72b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 41.68832

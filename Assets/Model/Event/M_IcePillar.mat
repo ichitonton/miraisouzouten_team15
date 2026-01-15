@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_Ice_Block
-  m_Shader: {fileID: 4800000, guid: dbf5efdb7917a414caa130ded7f44fe0, type: 3}
+  m_Name: M_IcePillar
+  m_Shader: {fileID: -6465566751694194690, guid: 98a2a316975cfb44784491fd2398233c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -91,7 +91,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _AddPrecomputedVelocity: 0
-    - _Alpha: 1
+    - _Alpha: 0.836
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _BackScatter: 0.6
@@ -153,14 +153,14 @@ Material:
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
-    - _metallic: 0
-    - _smoothness: 0.5
+    - _metallic: 0.453
+    - _smoothness: 1
     m_Colors:
     - _BaseColor: {r: 0.37647057, g: 0.6590005, b: 1, a: 1}
     - _BloomColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.10291912, g: 0.1442579, b: 0.9245283, a: 1}
+    - _Color: {r: 0, g: 0.013540023, b: 0.7660377, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.98966146, g: 3.380992, b: 5.0924344, a: 1}
+    - _FresnelColor: {r: 0.49483073, g: 1.690496, b: 2.5462172, a: 1}
     - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}
     - _IceTiling: {r: 1, g: 1, b: 0, a: 0}
     - _MidColor: {r: 0, g: 0.6769446, b: 0.93207544, a: 0.6}
