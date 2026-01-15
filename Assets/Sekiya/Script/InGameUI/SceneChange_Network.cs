@@ -33,8 +33,8 @@ public class SceneChangerNetwork : NetworkBehaviour
         // ※この命令はネットを通して全プレイヤーのPCで実行されます
         SaveDataAndSceneChangeClientRpc(s0, s1, s2);
 
-        // 3. シーン遷移を実行（Netcodeの機能で全員移動します）
-        NetworkManager.Singleton.SceneManager.LoadScene(nextSceneName, LoadSceneMode.Single);
+        // 3. シーン遷移を実行
+        FadeManager.Instance.PlayToScene(nextSceneName, FadeManager.FadeScope.LocalOnly);
     }
 
     // ▼▼ ここが重要：全員のPCで実行される処理 ▼▼

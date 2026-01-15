@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class TitleManager : MonoBehaviour
@@ -11,4 +12,18 @@ public class TitleManager : MonoBehaviour
         FadeManager.Instance.PlayToScene(SceneName, FadeManager.FadeScope.LocalOnly);
     }
 
+    private void Update()
+    {
+        if (Gamepad.all.Count >= 0)
+        {
+            foreach (var gamepad in Gamepad.all)
+            {
+                if (gamepad.rightShoulder.wasPressedThisFrame && gamepad.leftShoulder.wasPressedThisFrame)
+                {
+                    StartGame();
+                }
+            }
+        }
+    }
 }
+

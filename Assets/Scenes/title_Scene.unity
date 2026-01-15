@@ -478,6 +478,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1183637855713305413, guid: 4d06c555e20cd3f4985c7de1552b1fb8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 889226788}
+    - targetCorrespondingSourceObject: {fileID: 1183637855713305413, guid: 4d06c555e20cd3f4985c7de1552b1fb8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 889226789}
   m_SourcePrefab: {fileID: 100100000, guid: 4d06c555e20cd3f4985c7de1552b1fb8, type: 3}
 --- !u!1 &889226787 stripped
 GameObject:
@@ -498,6 +501,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChangePlayMode
   hostImage: {fileID: 1637002933}
   clientImage: {fileID: 1565064854}
+--- !u!114 &889226789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 889226787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f07954b23eff5b746a3c8645c81afecf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TitleManager
+  SceneName: Prot_Endx_3
 --- !u!1 &1173612853
 GameObject:
   m_ObjectHideFlags: 0
