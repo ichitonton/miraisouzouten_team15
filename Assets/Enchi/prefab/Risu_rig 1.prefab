@@ -351,7 +351,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 839e8c003caadda45825b3330e7545e5, type: 2}
+  - {fileID: 2100000, guid: 1330196967a88064fbb8d7e81173de4f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3446,7 +3446,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   playerSkinHead: {fileID: 6609132362112859094}
   playerSkinarm: {fileID: 3446463301028211675}
-  skinMaterial1: {fileID: 2100000, guid: a7b6fd7d2c9912e4f8e013eab85518c4, type: 2}
+  skinMaterial1: {fileID: 2100000, guid: 8a9b7f2274b38c248813540af8cdf4ad, type: 2}
   skinMaterial2: {fileID: 2100000, guid: c69ed89f96bae904b857d4b62efc62e9, type: 2}
   skinMaterial3: {fileID: 2100000, guid: c5d61619877e95143a5cca12fb3bd7b3, type: 2}
 --- !u!114 &5788659911372820208
@@ -3708,7 +3708,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 839e8c003caadda45825b3330e7545e5, type: 2}
+  - {fileID: 2100000, guid: 1330196967a88064fbb8d7e81173de4f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
