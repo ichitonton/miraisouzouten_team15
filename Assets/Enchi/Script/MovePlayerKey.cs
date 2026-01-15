@@ -1056,12 +1056,12 @@ public class MovePlayerKey : NetworkBehaviour
             hasInput = true;
         }
         //Debug.Log("Left Stick: " + stick);
-        if (gamepad.buttonSouth.wasPressedThisFrame)//A
+        if (gamepad.rightShoulder.isPressed || gamepad.rightTrigger.isPressed)//R
         {
             _InputUseItem = true;
             hasInput = true;
         }
-        if (gamepad.buttonEast.wasPressedThisFrame)//B
+        if (gamepad.aButton.isPressed || gamepad.bButton.isPressed)//
         {
             _InputPunch = true;
             hasInput = true;

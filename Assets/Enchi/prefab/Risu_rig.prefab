@@ -3293,19 +3293,23 @@ MonoBehaviour:
   - rank: 1
     items:
     - item: 3
-      weight: 40
+      weight: 30
     - item: 1
-      weight: 60
+      weight: 15
+    - item: 2
+      weight: 5
+    - item: 4
+      weight: 5
   - rank: 2
     items:
     - item: 2
-      weight: 0
+      weight: 10
     - item: 1
-      weight: 0
+      weight: 15
     - item: 4
-      weight: 0
+      weight: 5
     - item: 3
-      weight: 0
+      weight: 10
     - item: 5
       weight: 20
   - rank: 3
