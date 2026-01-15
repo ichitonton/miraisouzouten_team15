@@ -210,10 +210,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FrozenWagashi
   ShowTopMostFoldoutHeaderGroup: 1
+  startFrozen: 0
   disableColliderWhileFrozen: 0
-  makeRigidbodyKinematicWhileFrozen: 0
-  netTransform: {fileID: 0}
-  serverTeleportOnUnfreeze: 1
+  frozenScaleMultiplier: 1
 --- !u!1001 &627446220093260754
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -380,8 +380,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FrozenWagashi
   ShowTopMostFoldoutHeaderGroup: 1
+  startFrozen: 0
   disableColliderWhileFrozen: 0
-  makeRigidbodyKinematicWhileFrozen: 0
+  frozenScaleMultiplier: 1
 --- !u!4 &8823753333758607074 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a852eac619c99794cac5f3519c345927, type: 3}

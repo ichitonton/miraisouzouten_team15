@@ -117,8 +117,7 @@ public class GameManager : NetworkBehaviour
     {
         PlayMovieClientRpc();
         StartCoroutine("TeleportPlayer", 0.3f);
-
-        if (GameEventManager.Instance != null) GameEventManager.Instance.TryStartAutoLoop();
+        StartCoroutine(StartEvent());
 
         _isStart = true;
         InGame = true;
@@ -186,7 +185,7 @@ public class GameManager : NetworkBehaviour
         movie.Play();
     }
 
-    void TeleportPlayer()
+    private void TeleportPlayer()
     {
         if (!_IsLanModeActive) return;
 
@@ -204,6 +203,16 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    private IEnumerator StartEvent()
+    {
+
+        if (!_IsLanModeActive)   yield return 0;
+
+        yield return  new WaitForSeconds(30f);
+        //イベントを始めます
+        if (GameEventManager.Instance != null) GameEventManager.Instance.TryStartAutoLoop();
+    }
+
     private void OnGUI()
     {
         // 既存デバッグGUIは残す（LAN中ホストのみ）
@@ -217,13 +226,13 @@ public class GameManager : NetworkBehaviour
             StartLocalGameRequest();
         }
 
-        if (GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height / 2, 100, 30), "Test生成"))
-        {
-            if (!_IsLanModeActive) return;
+        //if (GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height / 2, 100, 30), "Test生成"))
+        //{
+        //    if (!_IsLanModeActive) return;
 
-            NetworkObjectSpawner.Instance.RequestSpawnObjectRandomInRange2D(
-                "Daifuku", new Vector3(715f, 8f, 12f), 5f, 8f, Quaternion.identity, NetworkObjectSpawner.OwnerMode.Host);
-        }
+        //    NetworkObjectSpawner.Instance.RequestSpawnObjectRandomInRange2D(
+        //        "Daifuku", new Vector3(715f, 8f, 12f), 5f, 8f, Quaternion.identity, NetworkObjectSpawner.OwnerMode.Host);
+        //}
     }
 
     void LateUpdate()
