@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 using UnityEngine.SceneManagement;
 
 
-
 public class PlayerNetworkConnect : NetworkBehaviour
 {
 
@@ -32,21 +31,22 @@ public class PlayerNetworkConnect : NetworkBehaviour
 
     private bool _hooked = false;
 
-    //private void Start()
-    //{
-
-    //    SceneManager.activeSceneChanged += OnActiveSceneChanged;
-    //    EvaluateAndHook(SceneManager.GetActiveScene());
-    //}
-
-
-
-    private void OnEnable()
+    private void Start()
     {
+
         SceneManager.activeSceneChanged += OnActiveSceneChanged;
         EvaluateAndHook(SceneManager.GetActiveScene());
-        //DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject);
     }
+
+
+
+    //private void OnEnable()
+    //{
+    //    SceneManager.activeSceneChanged += OnActiveSceneChanged;
+    //    EvaluateAndHook(SceneManager.GetActiveScene());
+    //    DontDestroyOnLoad(gameObject);
+    //}
 
     private void OnDisable()
     {
