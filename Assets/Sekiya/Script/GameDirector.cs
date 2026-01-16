@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-// using TMPro; // TextMeshProは使わなくなるので削除またはコメントアウト
 using UnityEngine.SceneManagement;
 using Unity.Netcode;
 
@@ -23,19 +22,14 @@ public class GameDirector : MonoBehaviour
     // 2. 勝敗判定と表示の設定
     // ==========================================
     [Header("【第2フェーズ】判定と表示設定")]
-    // --- 変更点開始 ---
-    // TextMeshPro関連は削除し、画像用GameObjectに変更
-    // [SerializeField] private TextMeshProUGUI resultText; // 削除
-    [Tooltip("WIN時に表示する画像オブジェクト")]
-    [SerializeField] private GameObject winImageObject;   // 追加
-    [Tooltip("LOSE時に表示する画像オブジェクト")]
-    [SerializeField] private GameObject loseImageObject;  // 追加
+    // ★変更: GameObjectではなく、アニメ制御スクリプトを参照
+    [Tooltip("WIN画像についているResultAnimController")]
+    [SerializeField] private ResultAnimController winAnimController;
 
-    [SerializeField] private GameObject resultTextParent; // ※これは「結果表示全体の親」としてそのまま利用します
-    // [SerializeField] private Color winColor = Color.yellow; // 削除
-    // [SerializeField] private Color loseColor = Color.blue; // 削除
-    // --- 変更点終了 ---
+    [Tooltip("LOSE画像についているResultAnimController")]
+    [SerializeField] private ResultAnimController loseAnimController;
 
+    [SerializeField] private GameObject resultTextParent; // 結果表示全体の親（もしあれば）
     [SerializeField] private float afterResultWaitTime = 2.0f;
 
     // ==========================================
@@ -79,15 +73,13 @@ public class GameDirector : MonoBehaviour
 
     private IEnumerator GameSequence()
     {
-        // 初期化
+        // --- 初期化: 全てのUIを隠す ---
         if (resultTextParent != null) resultTextParent.SetActive(false);
         if (thankYouObject != null) thankYouObject.SetActive(false);
 
-        // --- 変更点開始 ---
-        // 個別の画像も念のため非表示にしておく
-        if (winImageObject != null) winImageObject.SetActive(false);
-        if (loseImageObject != null) loseImageObject.SetActive(false);
-        // --- 変更点終了 ---
+        // ★アニメコントローラーを使って非表示にする
+        if (winAnimController != null) winAnimController.Hide();
+        if (loseAnimController != null) loseAnimController.Hide();
 
         // --- フェーズ0: 開始待ち ---
         yield return new WaitForSeconds(startDelay);
@@ -103,22 +95,13 @@ public class GameDirector : MonoBehaviour
 
         // --- フェーズ2: 勝敗判定 ---
         Debug.Log("タイムアップ！勝敗を判定します...");
-        CheckAndShowResult();
+        CheckAndShowResult(); // WIN/LOSEのアニメーション再生開始
 
-        // 余韻（Win/Loseが出ている時間）
+        // 余韻（Win/Loseが出ている状態で待機）
         yield return new WaitForSeconds(afterResultWaitTime);
 
-        // ★追加変更：カメラが動く前に Win/Lose を消す！
-        if (resultTextParent != null)
-        {
-            resultTextParent.SetActive(false);
-        }
-        // --- 変更点開始 ---
-        // 親を非表示にするので必須ではないですが、安全のため個別画像も非表示に戻す
-        if (winImageObject != null) winImageObject.SetActive(false);
-        if (loseImageObject != null) loseImageObject.SetActive(false);
-        // --- 変更点終了 ---
-
+        // ★修正点: ここでWin/Loseを消す処理を削除しました。
+        // 表示されたまま次のカメラ移動へ移行します。
 
         // --- フェーズ3: カメラとUI移動 ---
         Debug.Log("カメラとUI移動開始！");
@@ -165,7 +148,7 @@ public class GameDirector : MonoBehaviour
 
     private void CheckAndShowResult()
     {
-        // ※ FinalScoreクラスの定義が不明なため、ここは元のコードが正しい前提で進めます
+        // スコア取得ロジック（既存のまま）
         ulong myId = FinalScore.MyPlayerID;
         int s0 = (int)FinalScore.ScoreTeam0;
         int s1 = (int)FinalScore.ScoreTeam1;
@@ -181,43 +164,19 @@ public class GameDirector : MonoBehaviour
         int maxScore = Mathf.Max(s0, s1, s2);
         bool isWin = (myScore == maxScore);
 
-        // --- 変更点開始 ---
-        // テキスト設定処理を削除し、画像の表示切替処理に変更
-        /* 以前のコード
-        if (resultText != null)
+        // ★アニメーション再生処理
+        if (isWin)
         {
-            if (isWin)
-            {
-                resultText.text = "WIN!!";
-                resultText.color = winColor;
-            }
-            else
-            {
-                resultText.text = "LOSE...";
-                resultText.color = loseColor;
-            }
+            if (winAnimController != null) winAnimController.Show();
+            if (loseAnimController != null) loseAnimController.Hide();
         }
-        */
-
-        // 新しいコード：どちらの画像を表示するか選ぶ
-        if (winImageObject != null && loseImageObject != null)
+        else
         {
-            if (isWin)
-            {
-                // 勝った場合：Win画像を表示、Lose画像を非表示
-                winImageObject.SetActive(true);
-                loseImageObject.SetActive(false);
-            }
-            else
-            {
-                // 負けた場合：Win画像を非表示、Lose画像を表示
-                winImageObject.SetActive(false);
-                loseImageObject.SetActive(true);
-            }
+            if (winAnimController != null) winAnimController.Hide();
+            if (loseAnimController != null) loseAnimController.Show();
         }
-        // --- 変更点終了 ---
 
-        // 最後に親オブジェクトを表示して、選択された画像が画面に出るようにする
+        // 最後に親オブジェクトを表示（もし使っていれば）
         if (resultTextParent != null) resultTextParent.SetActive(true);
     }
 }
