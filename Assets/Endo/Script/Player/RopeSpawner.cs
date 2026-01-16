@@ -17,6 +17,8 @@ public class RopeSpawner : NetworkBehaviour
 
     void Start()
     {
+        if (!IsServer) return;
+
         _playerNetworkConnect = GetComponent<PlayerNetworkConnect>();
         NetworkManager.Singleton.OnServerStarted += OnHostStarted;
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
@@ -24,6 +26,8 @@ public class RopeSpawner : NetworkBehaviour
 
     private void OnDisable()
     {
+        if (!IsServer) return;
+
         var nm = NetworkManager.Singleton;
         if (nm != null)
         {
