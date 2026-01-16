@@ -19,6 +19,8 @@ GameObject:
   - component: {fileID: 546970859194657621}
   - component: {fileID: 2557600072764507866}
   - component: {fileID: 1789616683787185576}
+  - component: {fileID: -2935703033604779836}
+  - component: {fileID: 6100036057164362159}
   m_Layer: 0
   m_Name: NetworkConnectManager
   m_TagString: Untagged
@@ -353,3 +355,28 @@ MonoBehaviour:
   sfx2DSource: {fileID: 0}
   sfx3DSourcePrefab: {fileID: 6157686613291074379, guid: d48d1d52ac86a5947a29bd303b3276a1, type: 3}
   sfx3DPoolSize: 35
+--- !u!114 &-2935703033604779836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 042cea74219135546b45908bc598e193, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LanHost
+  _memo: 
+--- !u!114 &6100036057164362159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afe0b8fb4364c7f478e26872e8340e11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LanClient

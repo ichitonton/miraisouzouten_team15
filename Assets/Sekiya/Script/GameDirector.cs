@@ -72,10 +72,14 @@ public class GameDirector : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
+            //シャットダウン
+            NetworkShutdownRelay.Instance.ShutDown();
             StartCoroutine(TransitionSequence(gameSceneName));
         }
         if (Input.GetKeyDown(KeyCode.T))
         {
+            //シャットダウン
+            NetworkShutdownRelay.Instance.ShutDown();
             StartCoroutine(TransitionSequence(titleSceneName));
         }
     }

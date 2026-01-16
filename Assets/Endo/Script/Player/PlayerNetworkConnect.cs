@@ -36,7 +36,7 @@ public class PlayerNetworkConnect : NetworkBehaviour
 
         SceneManager.activeSceneChanged += OnActiveSceneChanged;
         EvaluateAndHook(SceneManager.GetActiveScene());
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
     }
 
 
@@ -52,32 +52,7 @@ public class PlayerNetworkConnect : NetworkBehaviour
     {
         SceneManager.activeSceneChanged -= OnActiveSceneChanged;
         Unhook();
-        Debug.Log("コネクト、死んだん？");
-        if (SceneManager.GetActiveScene().name == gameSceneName)
-        {
-            List<GameObject> players = new List<GameObject>();
 
-            foreach (var playerRef in GameManager.Instance._networkObjectList)
-            {
-                if (playerRef.TryGet(out var playerObj))
-                {
-                    if (playerObj.OwnerClientId == NetworkManager.Singleton.LocalClientId)
-                    {
-                        players.Add(playerObj.gameObject);
-                    }
-                }
-            }
-
-            foreach (var player in players)
-            {
-
-                Debug.Log(player.name);
-
-                player.gameObject.GetComponent<NetworkObject>().Despawn(true);
-                Destroy(player.gameObject);
-            }
-
-        }
     }
 
     private void OnDestroy()

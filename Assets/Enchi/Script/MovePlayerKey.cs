@@ -120,6 +120,9 @@ public class MovePlayerKey : NetworkBehaviour
     bool _fly = false;
     [SerializeField] GroundCheck3D _groundCheck;
 
+    public bool _stun = false;
+    public int _hitCount = 2;
+
     private Dictionary<ulong, NetworkObject> itemDictionary;
 
     public enum ItemType
@@ -601,6 +604,7 @@ public class MovePlayerKey : NetworkBehaviour
     {
         _canNotInputKey = false;
         _currentHp = _MaxHp;
+        _stun = false;
 
         AnimDyingServerRpc(false);
         StopDyingEffectClientRpc();

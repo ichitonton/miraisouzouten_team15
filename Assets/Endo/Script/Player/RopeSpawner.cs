@@ -22,6 +22,16 @@ public class RopeSpawner : NetworkBehaviour
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
     }
 
+    private void OnDisable()
+    {
+        var nm = NetworkManager.Singleton;
+        if (nm != null)
+        {
+            nm.OnServerStarted -= OnHostStarted;
+            nm.OnClientDisconnectCallback -= OnClientConnected;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
