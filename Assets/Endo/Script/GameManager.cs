@@ -93,14 +93,13 @@ public class GameManager : NetworkBehaviour
 
         List<GameObject> players = new List<GameObject>();
 
+        //ネットワークオブジェクトの破棄
         foreach (var playerRef in _networkObjectList)
         {
             if (playerRef.TryGet(out var playerObj))
             {
-                if (playerObj.OwnerClientId == NetworkManager.Singleton.LocalClientId)
-                {
-                    players.Add(playerObj.gameObject);
-                }
+               players.Add(playerObj.gameObject);
+                
             }
         }
 
@@ -255,12 +254,26 @@ public class GameManager : NetworkBehaviour
 
         FadeManager.Instance.PlayFadeOnly(FadeManager.FadeScope.AllClients);
 
-        //プレイヤーの移動
-        
+        //UIのスタート
+
+        StartCoroutine(PlayStartUI());
+
+    }
+
+    private IEnumerator PlayStartUI()
+    {
+
+        float wait = FadeManager.Instance.fadeInDuration + FadeManager.Instance.fadeOutDuration;
+
+        yield return new WaitForSeconds(wait);
+
+        //スタートUI
+        GameStartUIManager.Instance.Play();
         //イベントのスタート
         StartCoroutine(StartEvent());
 
     }
+
 
     [ClientRpc]
     void PlayMovieClientRpc()
