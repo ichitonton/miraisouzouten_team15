@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using Unity.Netcode.Components;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
+using UnityEditor.Experimental;
+using UnityEngine.Video;
 
 public class GameManager : NetworkBehaviour
 {
@@ -115,15 +117,44 @@ public class GameManager : NetworkBehaviour
     // ==========================================================
     private void StartGameAsHostNetwork()
     {
-        PlayMovieClientRpc();
-        StartCoroutine("TeleportPlayer", 0.3f);
-        StartCoroutine(StartEvent());
+        //フェードの秒数設定
+        FadeManager.Instance.fadeInDuration = 1.5f;
+        FadeManager.Instance.fadeOutDuration = 0.8f;
 
+
+        FadeManager.Instance.PlayFadeOnly(FadeManager.FadeScope.AllClients);
+
+        var players = GameObject.FindGameObjectsWithTag("Player");
+
+        //プレイヤー操作不能
+        foreach (var p in players)
+        {
+            
+        }
+
+        //ゲームスタート
+        StartCoroutine(StartGame());
+
+    }
+
+    private IEnumerator StartGame()
+    {
+
+        float time = FadeManager.Instance.fadeOutDuration;
+
+        yield return new WaitForSeconds(time);
+
+
+        //ムービーを流す
+        StartCoroutine(PlayMovie());
+        StartCoroutine("TeleportPlayer", 0.1f);
         _isStart = true;
         InGame = true;
 
         Debug.Log("[GameManager] Network Start (Host) done. (No local player spawn)");
+
     }
+
 
     // ==========================================================
     // ★オフライン開始：ローカルプレイヤーを生成するのはここだけ
@@ -170,6 +201,32 @@ public class GameManager : NetworkBehaviour
         Debug.Log("[GameManager] Offline Start done. (Local players spawned)");
     }
 
+
+    private IEnumerator PlayMovie()
+    {
+
+        var movie = Object.FindFirstObjectByType<GameStartMovie>(FindObjectsInactive.Include);
+
+        //全クライアントに流す
+        PlayMovieClientRpc();
+
+        var video = movie._videoPlayer;
+
+        float v_time = (float)video.length;
+
+        v_time -= FadeManager.Instance.fadeOutDuration * 0.5f;
+        //ムービーの時間待つ
+        yield return new WaitForSeconds(v_time);
+
+        FadeManager.Instance.PlayFadeOnly(FadeManager.FadeScope.AllClients);
+
+        //プレイヤーの移動
+        
+        //イベントのスタート
+        StartCoroutine(StartEvent());
+
+    }
+
     [ClientRpc]
     void PlayMovieClientRpc()
     {
@@ -183,6 +240,7 @@ public class GameManager : NetworkBehaviour
 
         movie.gameObject.SetActive(true);
         movie.Play();
+
     }
 
     private void TeleportPlayer()

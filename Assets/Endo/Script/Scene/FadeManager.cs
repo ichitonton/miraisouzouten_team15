@@ -20,8 +20,8 @@ public class FadeManager : MonoBehaviour
     [SerializeField] private NetworkFadeMessenger netFade;    // FadeSystemë§ÅiNamedMessageÇ≈çáê}Åj
 
     [Header("Durations")]
-    [SerializeField, Min(0f)] private float fadeOutDuration = 0.35f;
-    [SerializeField, Min(0f)] private float fadeInDuration = 0.35f;
+    [SerializeField, Min(0f)] public float fadeOutDuration = 0.35f;
+    [SerializeField, Min(0f)] public float fadeInDuration = 0.35f;
 
     [Header("FadeOnly")]
     [SerializeField, Min(0f)] private float holdBlackSeconds = 0.0f;

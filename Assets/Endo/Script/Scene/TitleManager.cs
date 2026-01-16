@@ -1,6 +1,8 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using static UnityEngine.EventSystems.StandaloneInputModule;
 
 public class TitleManager : MonoBehaviour
 {
@@ -14,6 +16,12 @@ public class TitleManager : MonoBehaviour
 
     private void Update()
     {
+
+        if (Input.GetKey(KeyCode.Return))
+        {
+            StartGame();
+        }
+
         if (Gamepad.all.Count >= 0)
         {
             foreach (var gamepad in Gamepad.all)
