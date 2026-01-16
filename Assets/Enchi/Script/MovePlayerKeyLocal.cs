@@ -54,6 +54,9 @@ public class MovePlayerKeyLocal : MonoBehaviour
 
     float _animBlend = 0.0f;
 
+    public bool _stun = false;
+    public int _hitCount = 2;
+
     // ★ここが変更ポイント：Gamepad.all で拾わない
     private Gamepad gamepad;
 

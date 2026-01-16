@@ -85,6 +85,41 @@ public class GameManager : NetworkBehaviour
         Application.targetFrameRate = 60;
     }
 
+    public override void OnNetworkDespawn()
+    {
+        if (!IsServer) return;
+
+        Debug.Log("コネクト、死んだん？");
+
+        List<GameObject> players = new List<GameObject>();
+
+        foreach (var playerRef in _networkObjectList)
+        {
+            if (playerRef.TryGet(out var playerObj))
+            {
+                if (playerObj.OwnerClientId == NetworkManager.Singleton.LocalClientId)
+                {
+                    players.Add(playerObj.gameObject);
+                }
+            }
+        }
+
+        foreach (var player in players)
+        {
+
+            Debug.Log(player.name);
+
+            player.gameObject.GetComponent<NetworkObject>().Despawn(true);
+            Destroy(player.gameObject);
+        }
+    }
+
+    private void OnDisable()
+    {
+        
+
+    }
+
     // ==========================================================
     // ★LocalPadSession から呼ぶ入口
     // ==========================================================
@@ -275,8 +310,11 @@ public class GameManager : NetworkBehaviour
     {
         // 既存デバッグGUIは残す（LAN中ホストのみ）
         if (!InGame) return;
+        Debug.Log("あ");
         if (NetworkManager.Singleton == null) return;
+        Debug.Log("い");
         if (!NetworkManager.Singleton.IsServer) return;
+        Debug.Log("う");
 
         if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 100, 120, 30), "ゲームスタート"))
         {

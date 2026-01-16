@@ -18,7 +18,28 @@ public class NetworkObjectPool : MonoBehaviour
 
         Instance = this;
 
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
+    }
+
+    private void OnDisable()
+    {
+        ClearAll();
+    }
+
+    //  これを呼ぶ：再接続 / リスタート時に必ず全破棄
+    public void ClearAll()
+    {
+        foreach (var kv in pool)
+        {
+            var q = kv.Value;
+            while (q.Count > 0)
+            {
+                var obj = q.Dequeue();
+                if (obj != null) Destroy(obj.gameObject);
+            }
+        }
+        pool.Clear();
+        Debug.Log("[NetworkObjectPool] Cleared");
     }
 
     // プレハブ別にプールを作成（一度だけ）
@@ -33,25 +54,28 @@ public class NetworkObjectPool : MonoBehaviour
     // ------------- Spawn（プールから取得 or 新規生成）-------------
     public NetworkObject Get(NetworkObject prefab, Vector3 pos, Quaternion rot)
     {
-        EnsurePoolExists(prefab);
+        if (prefab == null) return null;
 
-        NetworkObject obj;
-
-        if (pool[prefab].Count > 0)
+        if (pool.TryGetValue(prefab, out var q))
         {
-            obj = pool[prefab].Dequeue();
-        }
-        else
-        {
-            obj = Instantiate(prefab,pos,rot);
+            while (q.Count > 0)
+            {
+                var inst = q.Dequeue();
+
+                // Destroy済みは捨てる
+                if (inst == null || inst.gameObject == null)
+                    continue;
+
+                inst.transform.SetPositionAndRotation(pos, rot);
+                inst.gameObject.SetActive(true);
+                return inst;
+            }
         }
 
-        obj.transform.SetPositionAndRotation(pos, rot);
-        obj.gameObject.SetActive(true);
-
-        return obj;
+        // 無ければ生成（例）
+        var created = Instantiate(prefab, pos, rot);
+        return created;
     }
-
     // ------------- Despawn（破棄せずプールに戻す）-------------
     public void Return(NetworkObject prefab, NetworkObject obj)
     {

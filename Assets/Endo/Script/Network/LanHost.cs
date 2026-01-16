@@ -29,7 +29,7 @@ public class LanHost : MonoBehaviour
 
     private void Start()
     {
-        _transport = GetComponent<UnityTransport>();
+        _transport =NetworkManager.Singleton.gameObject.GetComponent<UnityTransport>();
     }
     private void OnDestroy()
     {

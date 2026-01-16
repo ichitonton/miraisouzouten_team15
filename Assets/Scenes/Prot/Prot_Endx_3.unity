@@ -36865,6 +36865,7 @@ GameObject:
   - component: {fileID: 714731008}
   - component: {fileID: 714731007}
   - component: {fileID: 714731006}
+  - component: {fileID: 714731010}
   m_Layer: 5
   m_Name: GameStartMovie
   m_TagString: Untagged
@@ -36975,6 +36976,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 714731004}
   m_CullTransparentMesh: 1
+--- !u!225 &714731010
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 714731004}
+  m_Enabled: 1
+  m_Alpha: 0.47
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &715202916
 PrefabInstance:
   m_ObjectHideFlags: 0

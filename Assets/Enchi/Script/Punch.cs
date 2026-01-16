@@ -4,7 +4,7 @@ using UnityEngine;
 public class Punch : MonoBehaviour
 {
 	float _punchForce = 10.0f;
-	float _stunTime = 1.0f;
+	[SerializeField] private float _stunTime = 1.0f;
 	int _punchDamage = 10;
 
 	MovePlayerKey _owner;
@@ -72,9 +72,30 @@ public class Punch : MonoBehaviour
 			//スター状態なら無効
 			if (otherPlayer.GetUseStar()) return;
 
-            Debug.LogWarning($"[Punch EFFECT] Player HIT → {otherPlayer.name}");
-			if(otherPlayer.ToGetPunch(_punchDamage, _stunTime))
-                KnockBack(rb);
+			if(otherPlayer._hitCount == 0)
+			{
+				otherPlayer._hitCount = 1;
+				return;
+			}
+			else if(otherPlayer._hitCount == 1)
+			{
+				otherPlayer._hitCount = 2;
+				otherPlayer.Stun(_stunTime);
+				otherPlayer._stun = true;
+				return;
+			}
+			else if(otherPlayer._hitCount == 2&&otherPlayer._stun)
+			{
+                Debug.LogWarning($"[Punch EFFECT] Player HIT → {otherPlayer.name}");
+                if (otherPlayer.ToGetPunch(_punchDamage, _stunTime))
+                    KnockBack(rb);
+
+				return;
+            }
+
+   //         Debug.LogWarning($"[Punch EFFECT] Player HIT → {otherPlayer.name}");
+			//if(otherPlayer.ToGetPunch(_punchDamage, _stunTime))
+   //             KnockBack(rb);
 
             //NetworkEffectSpawner.Instance._otherRoot = transform;
             NetworkEffectSpawner.Instance.PlayEffect(_hitDmgEffectId, transform.position, Quaternion.identity);

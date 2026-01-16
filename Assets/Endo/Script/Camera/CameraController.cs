@@ -74,6 +74,15 @@ public class CameraController : MonoBehaviour
         nm.OnClientConnectedCallback += OnClientConnected;
         
     }
+
+    private void OnDisable()
+    {
+        var nm = NetworkManager.Singleton;
+        if (nm != null)
+        {
+            nm.OnClientConnectedCallback -= OnClientConnected;
+        }
+    }
     // Update is called once per frame
     private void LateUpdate()
     {

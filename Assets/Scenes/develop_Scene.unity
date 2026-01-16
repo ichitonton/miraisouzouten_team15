@@ -2081,7 +2081,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8716380323742515706, guid: a17eb770de5cba846ad5aac15dbf7745, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13450,6 +13450,10 @@ PrefabInstance:
       propertyPath: _net
       value: 
       objectReference: {fileID: 94057360}
+    - target: {fileID: 6280504052251466273, guid: fded7fdc3d848e446b54781a8caec72b, type: 3}
+      propertyPath: startMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6280504052251466273, guid: fded7fdc3d848e446b54781a8caec72b, type: 3}
       propertyPath: gameSceneName
       value: develop_Scene
@@ -25319,7 +25323,7 @@ PrefabInstance:
       objectReference: {fileID: 929665137}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: IsDebug
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: connectUI
@@ -36274,7 +36278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8937094665437567331, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: _count.m_InternalValue
-      value: 200
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 9011111834402605567, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: m_StaticEditorFlags

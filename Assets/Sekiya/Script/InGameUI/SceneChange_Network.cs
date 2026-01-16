@@ -34,7 +34,7 @@ public class SceneChangerNetwork : NetworkBehaviour
         SaveDataAndSceneChangeClientRpc(s0, s1, s2);
 
         // 3. シーン遷移を実行
-        FadeManager.Instance.PlayToScene(nextSceneName, FadeManager.FadeScope.LocalOnly);
+        FadeManager.Instance.PlayToScene(nextSceneName, FadeManager.FadeScope.AllClients);
     }
 
     // ▼▼ ここが重要：全員のPCで実行される処理 ▼▼
