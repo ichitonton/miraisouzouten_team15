@@ -38,6 +38,9 @@ public class GameDirector : MonoBehaviour
 
     [SerializeField] private float afterResultWaitTime = 2.0f;
 
+    [SerializeField] Animator player1anim;
+    [SerializeField] Animator player2anim;
+
     // ==========================================
     // 3. 演出の設定
     // ==========================================
@@ -207,12 +210,33 @@ public class GameDirector : MonoBehaviour
                 // 勝った場合：Win画像を表示、Lose画像を非表示
                 winImageObject.SetActive(true);
                 loseImageObject.SetActive(false);
+
+                int rand = Random.Range(0, 1);
+
+                if (rand == 0)
+                {
+                    player1anim.SetTrigger("Win1");
+                    player2anim.SetTrigger("Win1");
+                }
+                else if (rand == 1)
+                {
+                    player1anim.SetTrigger("Win3L");
+                    player2anim.SetTrigger("Win3R");
+                }
+                else if (rand == 2)
+                {
+                    player1anim.SetTrigger("Win2L");
+                    player2anim.SetTrigger("Win2R");
+                }
             }
             else
             {
                 // 負けた場合：Win画像を非表示、Lose画像を表示
                 winImageObject.SetActive(false);
                 loseImageObject.SetActive(true);
+                player1anim.SetTrigger("Lose");
+                player2anim.SetTrigger("Lose");
+
             }
         }
         // --- 変更点終了 ---
