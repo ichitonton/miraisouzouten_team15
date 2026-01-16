@@ -122,6 +122,8 @@ public class MovePlayerKey : NetworkBehaviour
 
     private Dictionary<ulong, NetworkObject> itemDictionary;
 
+    SetSkinMaterial _setSkinMaterial;
+
     public enum ItemType
     {
         None,
@@ -171,6 +173,8 @@ public class MovePlayerKey : NetworkBehaviour
         _dashParticleSystem.Stop();
         _mutekiParticleSystem.Stop();
         _shoeseParticleSystem.Stop();
+
+        _setSkinMaterial = GetComponent<SetSkinMaterial>();
 
         if (IsServer)
         {
@@ -586,6 +590,7 @@ public class MovePlayerKey : NetworkBehaviour
         //ÉXÉ^Å[èÛë‘ÇæÇ¡ÇΩÇÁñ≥å¯
         if (_itemStarUse) return;
         //Debug.Log("éÛÇØÇ§Ç¬ÇØÇ»Ç¢Ç®");
+        _setSkinMaterial.RequestSetKanasimiMaterialServerRpc();
         _canNotInputKey = true;
         AnimDyingServerRpc(true);
         _dyingParticleSystem.Play();
@@ -601,7 +606,7 @@ public class MovePlayerKey : NetworkBehaviour
     {
         _canNotInputKey = false;
         _currentHp = _MaxHp;
-
+        _setSkinMaterial.RequestSetNormalMaterialServerRpc();
         AnimDyingServerRpc(false);
         StopDyingEffectClientRpc();
     }
