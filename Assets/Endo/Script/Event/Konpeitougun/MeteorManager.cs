@@ -1,11 +1,33 @@
 using UnityEngine;
 using Unity.Netcode;
+using System.Collections;
+using System.Collections.Generic;
+
 
 public class MeteorManager : NetworkBehaviour
 {
     [Header("Visual")]
     [SerializeField] private Transform visualRoot;
     [SerializeField] private float spinSpeed = 360f;
+
+
+    // ==============================
+    // ★追加：炎エフェクト（Attached）
+    // ==============================
+    [Header("Trail Fire Effect (Attached)")]
+    [SerializeField] private int[] fireEffectId;                 // 炎エフェクトID（例）
+                    // 炎エフェクトID（例）
+
+    [SerializeField] private Vector3 fireLocalOffset = Vector3.zero;
+    [SerializeField] private Vector3 fireAxisOffsetEuler = Vector3.zero; // 向き補正（逆なら Y=180 など）
+    [SerializeField] private bool fireFaceAgainstVelocity = true;  // 炎が後ろ向きなら true
+    [SerializeField] private float fireRotationSlerp = 25f;         // 回転追従速度（0なら即反映）
+
+    
+    private List<Transform> _fireEffectTransform = new List<Transform>();   // ★生成した炎のTransformを掴む
+    private bool _fireSpawnRequested = false; // ★二重生成防止
+
+    [SerializeField] private GameObject _fireSpawnPrefab = null;
 
     [Header("Konpeito Prefabs (NetworkObject付き)")]
     [SerializeField] private NetworkObject[] konpeitoPrefabs;
@@ -52,22 +74,76 @@ public class MeteorManager : NetworkBehaviour
         Started.Value = true;
         Impacted.Value = false;
 
-        // 初期位置はp0に固定
         transform.SetPositionAndRotation(p0, Quaternion.identity);
         _prevPos = p0;
+
+        // ★追加：炎エフェクトを「隕石にアタッチ生成」
+        ServerSpawnFireEffectOnce();
+    }
+
+    //エフェクト生成
+    private void ServerSpawnFireEffectOnce()
+    {
+        //if (!IsServer) return;
+        if (_fireSpawnRequested) return;
+        _fireSpawnRequested = true;
+
+        if (NetworkEffectSpawner.Instance == null)
+        {
+            Debug.LogWarning("[MeteorManager] NetworkEffectSpawner.Instance が null です");
+            return;
+        }
+
+        // parent直下に生成
+        NetworkEffectSpawner.Instance.PlayEffectAttached(
+            13,
+            GetComponent<NetworkObject>(),
+            transform.position,
+            transform.rotation// 初期回転（補正も込み）
+        );
+        //// parent直下に生成
+        //NetworkEffectSpawner.Instance.PlayEffectAttached(
+        //    15,
+        //    GetComponent<NetworkObject>(),
+        //    transform.position,
+        //    transform.rotation// 初期回転（補正も込み）
+        //);
+
+        // ★生成した実体Transformを掴みに行く（1フレ待ってから探す）
+        StartCoroutine(CoResolveFireEffectTransform());
+    }
+
+    private IEnumerator CoResolveFireEffectTransform()
+    {
+        // 生成直後だと子がまだ増えてないことがあるので1フレ待つ
+        yield return null;
+
+        // 目印（EffectIdMarker）を持つ子を探す
+        var markers = GetComponentsInChildren<EffectIdMarker>(true);
+        for (int i = 0; i < markers.Length; i++)
+        {
+            if (markers[i] != null && markers[i].effectId == fireEffectId[i])
+            {
+                _fireEffectTransform.Add(markers[i].transform);
+                break;
+            }
+        }
+
+        if (_fireEffectTransform == null)
+        {
+            Debug.LogWarning("[MeteorManager] 炎エフェクトのTransformが見つかりません（EffectIdMarkerをPrefabに付けてる？）");
+        }
     }
 
     private void Update()
     {
         if (!Started.Value) return;
 
-        // ServerTime基準で全員同じtになる
         double now = NetworkManager.Singleton.ServerTime.Time;
         float t = (float)((now - StartTime.Value) / Duration.Value);
 
         if (t <= 0f)
         {
-            // 開始前は起点で待機
             transform.position = P0.Value;
             _prevPos = transform.position;
             return;
@@ -78,15 +154,24 @@ public class MeteorManager : NetworkBehaviour
         transform.position = pos;
 
         Vector3 vel = pos - _prevPos;
+
+        // 隕石本体の向き
         if (vel.sqrMagnitude > 0.000001f)
             transform.rotation = Quaternion.LookRotation(vel.normalized, Vector3.up);
+
+        // ★追加：炎エフェクトを進行方向に向ける
+        UpdateFireFacing(vel);
+
+        
+        //Debug.Log(transform.rotation);
+       // _fireSpawnPrefab.transform.rotation = transform.rotation;
+        //Debug.Log(_fireSpawnPrefab.transform.rotation);
 
         if (visualRoot != null)
             visualRoot.Rotate(Vector3.forward, spinSpeed * Time.deltaTime, Space.Self);
 
         _prevPos = pos;
 
-        // 着弾（サーバーだけが処理）
         if (tt >= 1f && IsServer && !Impacted.Value)
         {
             Impacted.Value = true;
@@ -94,11 +179,54 @@ public class MeteorManager : NetworkBehaviour
         }
     }
 
+    // ============================
+    // ★追加：炎の回転制御（本体）
+    // ============================
+    private void UpdateFireFacing(Vector3 vel)
+    {
+        if (_fireEffectTransform == null) return;
+        if (vel.sqrMagnitude < 0.000001f) return;
+
+        Vector3 dir = vel.normalized;
+
+        // 炎は基本「移動方向の逆」を向けると自然（尾を引く）
+        if (fireFaceAgainstVelocity)
+            dir = -dir;
+
+        Quaternion look = Quaternion.LookRotation(dir, Vector3.up);
+
+        // 補正（必要なら）
+        Quaternion offset = Quaternion.Euler(fireAxisOffsetEuler);
+
+        Quaternion target = look * offset;
+
+        foreach (Transform t in _fireEffectTransform)
+        {
+
+            if (fireRotationSlerp <= 0f)
+            {
+                t.rotation = target;
+            }
+            else
+            {
+                t.rotation = Quaternion.Slerp(
+                    t.rotation,
+                    target,
+                    Time.deltaTime * fireRotationSlerp
+                );
+            }
+        }
+    }
+
+
+
     private void ServerOnImpact(Vector3 impactPoint)
     {
         
         //エフェクトの再生
-        NetworkEffectSpawner.Instance.PlayEffect(2,impactPoint,Quaternion.identity,new Vector3(knockbackRadius = 5f * 2f, knockbackRadius = 5f * 2f, knockbackRadius = 5f * 2f));
+        NetworkEffectSpawner.Instance.PlayEffect(14,impactPoint,Quaternion.identity,new Vector3(knockbackRadius, knockbackRadius, knockbackRadius));
+        //エフェクトの再生
+        //NetworkEffectSpawner.Instance.PlayEffect(2, impactPoint, Quaternion.identity, new Vector3(knockbackRadius * 2, knockbackRadius * 2, knockbackRadius * 2));
         //SEの再生
 
         //衝撃波を出す

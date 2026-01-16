@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 4380261648293951024}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.53001, y: 9.66, z: 3.61569}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -153,6 +153,12 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   visualRoot: {fileID: 1315546237702712547}
   spinSpeed: 360
+  fireEffectId: 0d0000000f000000
+  fireLocalOffset: {x: 0, y: 0, z: 0}
+  fireAxisOffsetEuler: {x: 0, y: 180, z: 0}
+  fireFaceAgainstVelocity: 1
+  fireRotationSlerp: 25
+  _fireSpawnPrefab: {fileID: 0}
   konpeitoPrefabs:
   - {fileID: -832289423128145431, guid: 4b0801507ce49e24580fbe5016c8c318, type: 3}
   - {fileID: 568780417854076101, guid: 995a820217f21a1458931d0ecbcc8421, type: 3}

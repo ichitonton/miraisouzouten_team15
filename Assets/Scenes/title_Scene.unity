@@ -287,7 +287,7 @@ PrefabInstance:
       objectReference: {fileID: 1565064854}
     - target: {fileID: 6280504052251466273, guid: fded7fdc3d848e446b54781a8caec72b, type: 3}
       propertyPath: gameSceneName
-      value: master_Scene
+      value: develop_Scene
       objectReference: {fileID: 0}
     - target: {fileID: 7836367788181001228, guid: fded7fdc3d848e446b54781a8caec72b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -513,7 +513,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f07954b23eff5b746a3c8645c81afecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TitleManager
-  SceneName: Prot_Endx_3
+  SceneName: develop_Scene
 --- !u!1 &1173612853
 GameObject:
   m_ObjectHideFlags: 0

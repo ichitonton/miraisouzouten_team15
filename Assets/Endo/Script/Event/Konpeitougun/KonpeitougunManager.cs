@@ -55,8 +55,8 @@ public class KonpeitougunManager : NetworkBehaviour
         StartCoroutine(ServerRoutine());
 
         //–é‚Öƒ`ƒFƒ“ƒW
-        _N_controller = GetComponent<NightController>();
-        _N_controller.SetNightServerRpc(true);
+        //_N_controller = GetComponent<NightController>();
+        //_N_controller.SetNightServerRpc(true);
 
         _konpeitougun._eventTime = (meteorsPerEvent * interval) + 2f;
 
@@ -105,7 +105,7 @@ public class KonpeitougunManager : NetworkBehaviour
 
             if(i == meteorsPerEvent - 1)
             {
-                _N_controller.SetNightServerRpc(false);
+                //_N_controller.SetNightServerRpc(false);
             }
         }
 
