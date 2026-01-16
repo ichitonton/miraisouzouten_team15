@@ -100,9 +100,6 @@ public class GameDirector : MonoBehaviour
         // 余韻（Win/Loseが出ている状態で待機）
         yield return new WaitForSeconds(afterResultWaitTime);
 
-        // ★修正点: ここでWin/Loseを消す処理を削除しました。
-        // 表示されたまま次のカメラ移動へ移行します。
-
         // --- フェーズ3: カメラとUI移動 ---
         Debug.Log("カメラとUI移動開始！");
         if (cameraMover != null) cameraMover.MoveCamera();
