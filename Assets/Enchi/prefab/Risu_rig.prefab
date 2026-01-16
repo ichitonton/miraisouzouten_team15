@@ -351,7 +351,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8a9b7f2274b38c248813540af8cdf4ad, type: 2}
+  - {fileID: 2100000, guid: 1330196967a88064fbb8d7e81173de4f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3229,7 +3229,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3014565496
+  GlobalObjectIdHash: 3519466044
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -3474,6 +3474,12 @@ MonoBehaviour:
   skinMaterial1: {fileID: 2100000, guid: 1330196967a88064fbb8d7e81173de4f, type: 2}
   skinMaterial2: {fileID: 2100000, guid: e0825b6a1b89c2e4f98c0f84be7ca21c, type: 2}
   skinMaterial3: {fileID: 2100000, guid: beff4b5cc558c974e8df9322ff84927e, type: 2}
+  skinMaterialKanasimi1: {fileID: 2100000, guid: 8119af36637583a40b4dbdd3848fb72e, type: 2}
+  skinMaterialKanasimi2: {fileID: 2100000, guid: 4cd3a74fd624c854293fcce7ba786bb5, type: 2}
+  skinMaterialKanasimi3: {fileID: 2100000, guid: b748029fce681ad4394e206e52317529, type: 2}
+  skinMaterialKizetu1: {fileID: 2100000, guid: 3c0bed4c43019bc47b78b2c59549236a, type: 2}
+  skinMaterialKizetu2: {fileID: 2100000, guid: abc356782a09d634daffcba5cb03857f, type: 2}
+  skinMaterialKizetu3: {fileID: 2100000, guid: e3c9ef0e4162aa9488de9abd3f26b92c, type: 2}
 --- !u!114 &-6520160973488650656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4626,7 +4632,7 @@ PrefabInstance:
     - target: {fileID: 1978969675246940706, guid: 6c9f275cb77ec86468363ebe2c633b17, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2100000, guid: 1330196967a88064fbb8d7e81173de4f, type: 2}
     - target: {fileID: 4197008459936029726, guid: 6c9f275cb77ec86468363ebe2c633b17, type: 3}
       propertyPath: playOnAwake
       value: 0
