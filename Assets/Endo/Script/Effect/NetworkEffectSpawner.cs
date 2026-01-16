@@ -125,8 +125,11 @@ public class NetworkEffectSpawner : NetworkBehaviour
         }
 
         var prefab = _effectDatabase.GetEffectPrefab(effectId);
-        if (prefab == null) return;
-
+        if (prefab == null)
+        {
+            Debug.Log("このエフェクトidに登録されてないで");
+            return;
+        }
         var go = Rent(effectId, prefab);
 
         // ★毎回親を確定（プール再利用でも正しくなる）

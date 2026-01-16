@@ -6,7 +6,7 @@ public class GameStartMovie : MonoBehaviour
 {
     public static GameStartMovie Instance { get; private set; }
 
-    private VideoPlayer _videoPlayer = null;
+    public VideoPlayer _videoPlayer = null;
 
     void Awake()
     {

@@ -560,6 +560,8 @@ public class IcePillar : NetworkBehaviour
         {
             Vector3 rand = Random.insideUnitSphere * iceBlockSpawnRadius;
             rand.y = Mathf.Abs(rand.y);
+
+            center.y += 3f;
             Vector3 spawnPos = center + rand;
 
             var debris = Instantiate(iceBlockPrefab, spawnPos, Random.rotation);
@@ -579,8 +581,8 @@ public class IcePillar : NetworkBehaviour
                 rb.AddTorque(Random.onUnitSphere * iceBlockRandomTorque, ForceMode.Impulse);
             }
 
-            if (iceBlockLifeSeconds > 0.01f)
-                StartCoroutine(DespawnAfterSecondsServer(debris, iceBlockLifeSeconds));
+            //if (iceBlockLifeSeconds > 0.01f)
+                //StartCoroutine(DespawnAfterSecondsServer(debris, iceBlockLifeSeconds));
         }
     }
 
