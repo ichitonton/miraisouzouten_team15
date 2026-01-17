@@ -2,6 +2,8 @@ using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
+
 
 public class GameStartUIManager : MonoBehaviour
 {
@@ -49,7 +51,10 @@ public class GameStartUIManager : MonoBehaviour
 
     [SerializeField] private NetworkGameStartMessenger messenger;
 
-    private bool _playing = false;
+	[SerializeField] private UnityEvent onStartSpriteShown;
+
+
+	private bool _playing = false;
 
     private bool HasNet => NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening;
     private bool IsServer => HasNet && NetworkManager.Singleton.IsServer;
@@ -160,7 +165,9 @@ public class GameStartUIManager : MonoBehaviour
         if (startImg != countdownImage)
             countdownImage.enabled = false;
 
-        yield return PlayOne(startImg, spriteStart, startStartScale, startEndScale);
+		onStartSpriteShown?.Invoke();
+
+		yield return PlayOne(startImg, spriteStart, startStartScale, startEndScale);
 
         if (startHoldSeconds > 0f)
             yield return new WaitForSecondsRealtime(startHoldSeconds);

@@ -1507,6 +1507,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89fc784e8066c7b45bdfe152007c4bca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  _stunTime: 1
 --- !u!1 &2680652928122817239
 GameObject:
   m_ObjectHideFlags: 0
@@ -3340,6 +3341,8 @@ MonoBehaviour:
   _headPoint: {fileID: 84731178285349141}
   _playerNumber: 2
   _groundCheck: {fileID: 4693011718261107481}
+  _stun: 0
+  _hitCount: 2
 --- !u!54 &4346886339305241986
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3459,6 +3462,15 @@ MonoBehaviour:
   skinMaterialKizetu1: {fileID: 2100000, guid: ff8965f40273fc644b9799d9b4bb9328, type: 2}
   skinMaterialKizetu2: {fileID: 2100000, guid: 7343a761ea2247740bb14e75d2dc6067, type: 2}
   skinMaterialKizetu3: {fileID: 2100000, guid: 6811b0e755033314eb2b904fe1e7097c, type: 2}
+  skinMaterialOkori1: {fileID: 2100000, guid: e80e78c58433f3540a7575e402bd4ef3, type: 2}
+  skinMaterialOkori2: {fileID: 2100000, guid: 5d13fb1cb8253e645a76343143a2986a, type: 2}
+  skinMaterialOkori3: {fileID: 2100000, guid: 8d96e7312e4f0b941af45e31823178c9, type: 2}
+  skinMaterialHappy1: {fileID: 2100000, guid: a63c4d530dea7a940b9cdb309c9e36aa, type: 2}
+  skinMaterialHappy2: {fileID: 2100000, guid: 7eff13c12c6d7b54f897fb22348b5b84, type: 2}
+  skinMaterialHappy3: {fileID: 2100000, guid: ac7eac56d5c2c8d4586ba228024e7c7b, type: 2}
+  skinMaterialAori1: {fileID: 2100000, guid: b940803f708167642a13e84c560c73fe, type: 2}
+  skinMaterialAori2: {fileID: 2100000, guid: f1f0ee15a12827c4b83649afe24f914d, type: 2}
+  skinMaterialAori3: {fileID: 2100000, guid: 34d3e46ca3abc0c47ac03e211cc73ac3, type: 2}
 --- !u!114 &5788659911372820208
 MonoBehaviour:
   m_ObjectHideFlags: 0

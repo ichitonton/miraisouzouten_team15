@@ -14,9 +14,15 @@ public class SetSkinMaterial : NetworkBehaviour
     [SerializeField] Material skinMaterialKizetu1;
     [SerializeField] Material skinMaterialKizetu2;
     [SerializeField] Material skinMaterialKizetu3;
-    //[SerializeField] Material skinMaterialOkori1;
-    //[SerializeField] Material skinMaterialOkori2;
-    //[SerializeField] Material skinMaterialOkori3;
+    [SerializeField] Material skinMaterialOkori1;
+    [SerializeField] Material skinMaterialOkori2;
+    [SerializeField] Material skinMaterialOkori3;
+    [SerializeField] Material skinMaterialHappy1;
+    [SerializeField] Material skinMaterialHappy2;
+    [SerializeField] Material skinMaterialHappy3;
+    [SerializeField] Material skinMaterialAori1;
+    [SerializeField] Material skinMaterialAori2;
+    [SerializeField] Material skinMaterialAori3;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -108,33 +114,92 @@ public class SetSkinMaterial : NetworkBehaviour
         }
     }
 
-    //[ServerRpc]
-    //public void RequestSetOkoriMaterialServerRpc()
-    //{
-    //    SetOkoriMaterialClientRpc();
-    //}
+    [ServerRpc]
+    public void RequestSetOkoriMaterialServerRpc()
+    {
+        SetOkoriMaterialClientRpc();
+    }
 
-    //[ClientRpc]
-    //void SetOkoriMaterialClientRpc()
-    //{
-    //    if (IsClient)
-    //    {
-    //        if (OwnerClientId == 0)
-    //        {
-    //            playerSkinHead.material = skinMaterialKizetu1;
-    //            playerSkinarm.material = skinMaterialKizetu1;
-    //        }
-    //        if (OwnerClientId == 1)
-    //        {
-    //            playerSkinHead.material = skinMaterialKizetu2;
-    //            playerSkinarm.material = skinMaterialKizetu2;
-    //        }
-    //        if (OwnerClientId == 2)
-    //        {
-    //            playerSkinHead.material = skinMaterialKizetu3;
-    //            playerSkinarm.material = skinMaterialKizetu3;
-    //        }
-    //    }
-    //}
+    [ClientRpc]
+    void SetOkoriMaterialClientRpc()
+    {
+        if (IsClient)
+        {
+            if (OwnerClientId == 0)
+            {
+                playerSkinHead.material = skinMaterialOkori1;
+                playerSkinarm.material = skinMaterialOkori1;
+            }
+            if (OwnerClientId == 1)
+            {
+                playerSkinHead.material = skinMaterialOkori2;
+                playerSkinarm.material = skinMaterialOkori2;
+            }
+            if (OwnerClientId == 2)
+            {
+                playerSkinHead.material = skinMaterialOkori3;
+                playerSkinarm.material = skinMaterialOkori3;
+            }
+        }
+    }
+
+
+    [ServerRpc]
+    public void RequestSetHappyMaterialServerRpc()
+    {
+        SetHappyMaterialClientRpc();
+    }
+
+    [ClientRpc]
+    void SetHappyMaterialClientRpc()
+    {
+        if (IsClient)
+        {
+            if (OwnerClientId == 0)
+            {
+                playerSkinHead.material = skinMaterialHappy1;
+                playerSkinarm.material = skinMaterialHappy1;
+            }
+            if (OwnerClientId == 1)
+            {
+                playerSkinHead.material = skinMaterialHappy2;
+                playerSkinarm.material = skinMaterialHappy2;
+            }
+            if (OwnerClientId == 2)
+            {
+                playerSkinHead.material = skinMaterialHappy3;
+                playerSkinarm.material = skinMaterialHappy3;
+            }
+        }
+    }
+
+    [ServerRpc]
+    public void RequestSetAoriMaterialServerRpc()
+    {
+        SetAoriMaterialClientRpc();
+    }
+
+    [ClientRpc]
+    void SetAoriMaterialClientRpc()
+    {
+        if (IsClient)
+        {
+            if (OwnerClientId == 0)
+            {
+                playerSkinHead.material = skinMaterialAori1;
+                playerSkinarm.material = skinMaterialAori1;
+            }
+            if (OwnerClientId == 1)
+            {
+                playerSkinHead.material = skinMaterialAori2;
+                playerSkinarm.material = skinMaterialAori2;
+            }
+            if (OwnerClientId == 2)
+            {
+                playerSkinHead.material = skinMaterialAori3;
+                playerSkinarm.material = skinMaterialAori3;
+            }
+        }
+    }
 
 }

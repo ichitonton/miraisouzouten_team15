@@ -358,7 +358,19 @@ public class GameManager : NetworkBehaviour
         _isStart = true;
     }
 
-    private IEnumerator StartEvent()
+    //タイマー開始
+	public void OnCountdownStartSpriteShown()
+	{
+		if (NetworkManager.Singleton == null) return;
+		if (!NetworkManager.Singleton.IsServer) return; // ホストだけが開始指示
+
+		var timer = Object.FindFirstObjectByType<TimerManager>();
+		if (timer != null)
+			timer.StartTimerServerRpc();
+	}
+
+
+	private IEnumerator StartEvent()
     {
         // LANじゃなければやらない
         if (!_IsLanModeActive) yield break;

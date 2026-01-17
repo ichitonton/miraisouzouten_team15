@@ -38,7 +38,7 @@ public class UICursorToWorld : MonoBehaviour
 
     public void SpawnTarget()
     {        
-        canvas = Object.FindFirstObjectByType<Canvas>();//キャンバスは1つにしないとちゃんと取得できない
+        canvas = Object.FindFirstObjectByType<InGameUIController>().gameObject.GetComponent<Canvas>();//キャンバスは1つにしないとちゃんと取得できない
         uiCamera = Camera.main;
         worldTarget =Instantiate(itemTarget, transform.position, Quaternion.identity).transform;
 
@@ -65,7 +65,7 @@ public class UICursorToWorld : MonoBehaviour
     {   // ====== 必須：null チェック ======
         if (canvas == null || uiCamera == null || uiIcon == null || worldTarget == null)
         {
-
+            Debug.Log("canvas:" + canvas + "uiCamera" + uiCamera + "uiIcon" + uiIcon  + "worldTarget" + worldTarget);
             return; // 必要な準備ができてないので処理しない
         }
         var pads = Gamepad.all;

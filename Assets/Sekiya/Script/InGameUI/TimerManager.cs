@@ -2,27 +2,31 @@
 using TMPro;
 using UnityEngine;
 using Unity.Netcode;
-using UnityEngine.SceneManagement;
 
-public class TimerManager  : NetworkBehaviour
+public class TimerManager : NetworkBehaviour
 {
     [SerializeField] private NetworkVariable<float> _count = new NetworkVariable<float>(180f);
-    [SerializeField] private TMP_Text timeText;
-    [SerializeField] private string nextSceneName = "ResultScene";
+	[SerializeField] private float startSeconds = 300f;
+
+	[SerializeField] private TMP_Text timeText;
 
     [SerializeField] private SceneChangerNetwork scenechange;
     private bool isTimeUp = false;
 
-    // ... StartとかOnNetworkSpawnとかはそのまま ...
+    // ★追加：タイマー動作フラグ（サーバーが管理、全員に同期）
+    private NetworkVariable<bool> _isRunning = new NetworkVariable<bool>(false);
 
     void Update()
     {
-        // UI更新などはそのまま
+        // UI更新は常に（止まってても表示したい）
         var span = TimeSpan.FromSeconds(_count.Value);
         if (timeText) timeText.text = span.ToString(@"m\:ss");
 
         if (!IsServer) return;
         //if (isTimeUp) return;
+
+        // ★追加：開始ボタン押されるまで減らさない
+        if (!_isRunning.Value) return;
 
         _count.Value -= Time.deltaTime;
 
@@ -34,12 +38,22 @@ public class TimerManager  : NetworkBehaviour
         }
     }
 
-    private void FinishGame()
+    // ★ホストの開始ボタンから呼ぶ用
+    [ServerRpc(RequireOwnership = false)]
+	public void StartTimerServerRpc()
+	{
+		if (_isRunning.Value) return;
+
+		_count.Value = startSeconds;   // ★ここ！
+		isTimeUp = false;
+		_isRunning.Value = true;
+	}
+
+
+	private void FinishGame()
     {
-        // 1. まずサーバー側で、現在のスコアを集計する
         float r = 0, b = 0, w = 0;
 
-        // シーン上のゴールを探す
         var goals = FindObjectsByType<GoalToUI>(FindObjectsSortMode.None);
         foreach (var goal in goals)
         {
@@ -48,20 +62,13 @@ public class TimerManager  : NetworkBehaviour
             else if (goal.targetPlayerId == 2) w = goal.Score;
         }
 
-        // 2. 「ClientRpc」を使って、全員（ホスト含む）に数値を強制配布する！
-        // これでクライアントのPCにある GameResultData にも数字が入る
         SetScoreClientRpc(r, b, w);
-
-        // 3. ちょっとだけ待つか、そのままシーン遷移
-        // （RPCは届くのが速いので、基本はこの順序でOK）
         scenechange.ChangeScene();
     }
 
-    // ★重要！ 全員のPCで実行される関数
     [ClientRpc]
     private void SetScoreClientRpc(float red, float blue, float white)
     {
-        // 受け取った数値を、自分のPCのデータ置き場に保存！
         FinalScore.ScoreTeam0 = red;
         FinalScore.ScoreTeam1 = blue;
         FinalScore.ScoreTeam2 = white;
