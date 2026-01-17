@@ -133,7 +133,15 @@ public class GameDirector : MonoBehaviour
         // --- フェーズ3: カメラとUI移動 ---
         Debug.Log("カメラとUI移動開始！");
         if (cameraMover != null) cameraMover.MoveCamera();
-        if (EffectMover != null) EffectMover.MoveCamera();
+        if (EffectMover != null)
+        {
+            if (EffectMover.gameObject.activeSelf == true)
+            {
+                if (EffectMover.enabled == true) EffectMover.MoveCamera();
+            }
+        }
+            
+
         if (uiMover != null) uiMover.MoveIn();
 
         yield return new WaitForSeconds(1.5f);
