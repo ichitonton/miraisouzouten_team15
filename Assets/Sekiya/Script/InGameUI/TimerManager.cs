@@ -22,7 +22,7 @@ public class TimerManager  : NetworkBehaviour
         if (timeText) timeText.text = span.ToString(@"m\:ss");
 
         if (!IsServer) return;
-        if (isTimeUp) return;
+        //if (isTimeUp) return;
 
         _count.Value -= Time.deltaTime;
 

@@ -11,7 +11,7 @@ public class TitleManager : MonoBehaviour
     // UI Button ‚Ì OnClick() ‚©‚çŒÄ‚Ô
     public void StartGame()
     {
-        FadeManager.Instance.PlayToScene(SceneName, FadeManager.FadeScope.LocalOnly);
+        VideoFadeManager.Instance.PlayToScene(SceneName, VideoFadeManager.FadeScope.LocalOnly);
     }
 
     private void Update()

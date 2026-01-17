@@ -79,7 +79,7 @@ MonoBehaviour:
   _targetCenter: {x: 0, y: 10, z: 0}
   _radius: 12
   _delayTime: 0.1
-  _dangoCount: 100
+  _dangoCount: 60
   _prefbId:
   - SansyokuDango_Event
   - SansyokuDango_Red
