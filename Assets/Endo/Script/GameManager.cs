@@ -160,12 +160,12 @@ public class GameManager : NetworkBehaviour
         _startingRoutine = true;
 
         //フェードの秒数設定
-        if (FadeManager.Instance != null)
+        if (VideoFadeManager.Instance != null)
         {
-            FadeManager.Instance.fadeInDuration = 1.5f;
-            FadeManager.Instance.fadeOutDuration = 0.8f;
+            VideoFadeManager.Instance.fadeInDuration = 1.5f;
+            VideoFadeManager.Instance.fadeOutDuration = 0.8f;
 
-            FadeManager.Instance.PlayFadeOnly(FadeManager.FadeScope.AllClients);
+            VideoFadeManager.Instance.PlayFadeOnly(VideoFadeManager.FadeScope.AllClients);
         }
 
         var players = GameObject.FindGameObjectsWithTag("Player");
@@ -182,7 +182,7 @@ public class GameManager : NetworkBehaviour
 
     private IEnumerator StartGame()
     {
-        float time = (FadeManager.Instance != null) ? FadeManager.Instance.fadeOutDuration : 0.5f;
+        float time = (VideoFadeManager.Instance != null) ? VideoFadeManager.Instance.fadeOutDuration : 0.5f;
         yield return new WaitForSeconds(time);
 
         //ムービーを流す
@@ -270,8 +270,8 @@ public class GameManager : NetworkBehaviour
         {
             Debug.LogWarning("[GameManager] GameStartMovie or VideoPlayer not found. Skip wait.");
             // 代わりに即フェード→UIへ
-            if (FadeManager.Instance != null)
-                FadeManager.Instance.PlayFadeOnly(FadeManager.FadeScope.AllClients);
+            if (VideoFadeManager.Instance != null)
+                VideoFadeManager.Instance.PlayFadeOnly(VideoFadeManager.FadeScope.AllClients);
 
             StartCoroutine(PlayStartUI());
             yield break;
@@ -280,13 +280,13 @@ public class GameManager : NetworkBehaviour
         var video = movie._videoPlayer;
 
         float v_time = (float)video.length;
-        v_time -= (FadeManager.Instance != null ? FadeManager.Instance.fadeOutDuration * 0.5f : 0f);
+        v_time -= (VideoFadeManager.Instance != null ? VideoFadeManager.Instance.fadeOutDuration * 0.5f : 0f);
         if (v_time < 0f) v_time = 0f;
 
         yield return new WaitForSeconds(v_time);
 
-        if (FadeManager.Instance != null)
-            FadeManager.Instance.PlayFadeOnly(FadeManager.FadeScope.AllClients);
+        if (VideoFadeManager.Instance != null)
+            VideoFadeManager.Instance.PlayFadeOnly(VideoFadeManager.FadeScope.AllClients);
 
         StartCoroutine(PlayStartUI());
     }
@@ -294,8 +294,8 @@ public class GameManager : NetworkBehaviour
     private IEnumerator PlayStartUI()
     {
         float wait = 0f;
-        if (FadeManager.Instance != null)
-            wait = FadeManager.Instance.fadeInDuration + FadeManager.Instance.fadeOutDuration;
+        if (VideoFadeManager.Instance != null)
+            wait = VideoFadeManager.Instance.fadeInDuration + VideoFadeManager.Instance.fadeOutDuration;
 
         yield return new WaitForSeconds(wait);
 
