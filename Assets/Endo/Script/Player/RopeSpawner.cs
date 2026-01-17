@@ -1,100 +1,131 @@
 using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
 public class RopeSpawner : NetworkBehaviour
 {
-
     [SerializeField] private GameObject _ropeObject = default;
+
     private PlayerNetworkConnect _playerNetworkConnect = null;
-    [SerializeField] private float _delayTime = 0.1f;
+
+    [SerializeField] private float _delayTime = 0.2f;
+
     [SerializeField] private Transform _pivotId0;
     [SerializeField] private Transform _pivotId1;
     [SerializeField] private Transform _pivotId2;
-    private Transform _pivot;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
 
-    void Start()
+    private bool _subscribed = false;
+
+    // NetworkBehaviourは Start より OnNetworkSpawn が安全
+    public override void OnNetworkSpawn()
     {
-        if (!IsServer) return;
-
         _playerNetworkConnect = GetComponent<PlayerNetworkConnect>();
-        NetworkManager.Singleton.OnServerStarted += OnHostStarted;
-        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+
+        SubscribeEvents();
     }
 
-    private void OnDisable()
+    public override void OnNetworkDespawn()
     {
-        if (!IsServer) return;
+        UnsubscribeEvents();
+        StopAllCoroutines();
+    }
+
+    private void OnDestroy()
+    {
+        // 念のため（シーン破棄などで Despawn を通らない時もある）
+        UnsubscribeEvents();
+    }
+
+    private void SubscribeEvents()
+    {
+        if (_subscribed) return;
+
+        var nm = NetworkManager.Singleton;
+        if (nm == null) return;
+
+        nm.OnServerStarted += OnHostStarted;
+        nm.OnClientConnectedCallback += OnClientConnected;
+
+        _subscribed = true;
+    }
+
+    private void UnsubscribeEvents()
+    {
+        if (!_subscribed) return;
 
         var nm = NetworkManager.Singleton;
         if (nm != null)
         {
             nm.OnServerStarted -= OnHostStarted;
-            nm.OnClientDisconnectCallback -= OnClientConnected;
+            nm.OnClientConnectedCallback -= OnClientConnected;  //  ここが一番大事（修正点）
         }
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        _subscribed = false;
     }
 
     private void OnHostStarted()
     {
+        if (!IsSpawned) return;
+
         Debug.Log("Host : Ropeを作る");
-        //ホストは自分自身にリクエストを送る
+
+        // Hostは自分自身にリクエスト
         StartCoroutine(DelayRequestRope(NetworkManager.Singleton.LocalClientId));
     }
 
     private void OnClientConnected(ulong clientId)
     {
-        var nm = NetworkManager.Singleton;
+        // 破棄済みなら即return（念のため）
+        if (!this || !isActiveAndEnabled) return;
+        if (!IsSpawned) return;
 
-        // Host側：Clientが接続してきたときに実行される
+        var nm = NetworkManager.Singleton;
+        if (nm == null) return;
+
+        // Host側：Clientが接続してきた
         if (nm.IsServer)
         {
-            // Host自身のClientIdも通るが、Hostが自分で自分を処理する必要はない
+            // Host自身の接続通知はスキップ
             if (clientId == nm.LocalClientId)
             {
-                Debug.Log("[Host] Rope自分（Host）が接続したのでスキップ");
+                Debug.Log("[Host] Rope 自分（Host）の接続通知なのでスキップ");
                 return;
             }
 
-            Debug.Log($"[Host] Rope Client {clientId} が接続しました（Host側）");
-
+            Debug.Log($"[Host] Rope Client {clientId} が接続しました");
+            // ※ここで何かするなら Host側で処理
             return;
         }
 
-        // Client側：Hostへの接続完了
+        // Client側：Hostに接続完了
         if (nm.IsClient && !nm.IsServer)
         {
             Debug.Log($"[Client] Hostに接続完了: {clientId}");
-            //このclientIdからリクエストを送ったよ
             StartCoroutine(DelayRequestRope(clientId));
         }
-
-
     }
 
     private IEnumerator DelayRequestRope(ulong clientId)
     {
+        // 接続途中に破棄される可能性があるのでガード
+        if (_playerNetworkConnect == null)
+            yield break;
+
         yield return new WaitForSeconds(_playerNetworkConnect._delayTime + _delayTime);
+
+        if (!IsSpawned) yield break;
+        if (NetworkManager.Singleton == null) yield break;
+        if (!NetworkManager.Singleton.IsListening) yield break;
+
         RequestRopeSpawnServerRpc(clientId);
     }
 
-
     // ======== Host側で実行される ==========
     [ServerRpc(RequireOwnership = false)]
-    private void RequestRopeSpawnServerRpc(ulong clientId)
+    private void RequestRopeSpawnServerRpc(ulong requestClientId)
     {
         if (!NetworkManager.Singleton.IsServer)
-        {
-            Debug.Log("[RPC] ClientでRope誤実行されたためスキップ");
             return;
-        }
 
         int playerCount = 0;
 
@@ -102,8 +133,9 @@ public class RopeSpawner : NetworkBehaviour
         {
             if (playerRef.TryGet(out var playerObj))
             {
-                //プレイヤーかつそのクライアントのモノかどうか
-                if (playerObj.gameObject.CompareTag("Player")&& playerObj.OwnerClientId == clientId)
+                if (playerObj != null &&
+                    playerObj.gameObject.CompareTag("Player") &&
+                    playerObj.OwnerClientId == requestClientId)
                 {
                     playerCount++;
                 }
@@ -116,64 +148,50 @@ public class RopeSpawner : NetworkBehaviour
             return;
         }
 
+        Debug.Log($"[Host] Client {requestClientId} からRope生成リクエストを受信");
 
-        Debug.Log($"[Host] Client {clientId} からRope生成リクエストを受信");
+        // pivot選択だけ %3（ownerは絶対にいじらない）
+        Transform pivot = GetPivotByClientId(requestClientId);
 
-        clientId %= 3;
-        if (clientId == 0)
-            _pivot = _pivotId0;
-        else if (clientId == 1)
-            _pivot = _pivotId1;
-        else if (clientId == 2)
-            _pivot = _pivotId2;
-
-        // Ropeを生成
-        GameObject rope = Instantiate(_ropeObject, _pivot.position, Quaternion.identity);
+        GameObject rope = Instantiate(_ropeObject, pivot.position, Quaternion.identity);
         var netObj = rope.GetComponent<NetworkObject>();
 
-        //オブジェクトのオーナーを決める
-        netObj.SpawnWithOwnership(clientId);
+        // 所有権は requestClientId のまま
+        netObj.SpawnWithOwnership(requestClientId);
 
-        //ネットワークオブジェクトのリストに格納
         GameManager.Instance._networkObjectList.Add(new NetworkObjectReference(netObj));
 
-        // ClientRpcの送信先を1クライアントに限定
+        //送信先も requestClientId のまま
         ClientRpcParams rpcParams = new ClientRpcParams
         {
             Send = new ClientRpcSendParams
             {
-                TargetClientIds = new ulong[] { clientId } // ← ここで送信先を指定！
+                TargetClientIds = new ulong[] { requestClientId }
             }
         };
 
-        // そのクライアントにだけ OnConnect を通知
         OnConnectClientRpc(netObj.NetworkObjectId, rpcParams);
     }
 
-
-
-    private IEnumerator DelayRequestConnect(ulong clientId)
+    private Transform GetPivotByClientId(ulong clientId)
     {
-        yield return new WaitForSeconds(_playerNetworkConnect._delayTime + _delayTime);
+        ulong mod = clientId % 3;
 
+        if (mod == 0) return _pivotId0;
+        if (mod == 1) return _pivotId1;
+        return _pivotId2;
     }
 
-
-    //クライアント側で実行されるHost側からきたリクエスト
     [ClientRpc]
     private void OnConnectClientRpc(ulong ropeNetworkId, ClientRpcParams clientRpcParams = default)
     {
-        //これでNetwrokObjectの固有id検索によりRopeが識別できる。
-        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(ropeNetworkId, out var ropeObj))
+        var nm = NetworkManager.Singleton;
+        if (nm == null) return;
+
+        if (nm.SpawnManager.SpawnedObjects.TryGetValue(ropeNetworkId, out var ropeObj))
         {
-            Debug.Log($"[ClientRpc] Rope({ropeNetworkId}) の Connect.OnConnect() を実行");
-            //プレイヤーをつなぐ処理
-            //ropeObj.gameObject.GetComponent<ConnectPlayers>().Connect();
-            
+            Debug.Log($"[ClientRpc] Rope({ropeNetworkId}) の Connect を実行");
+            // ropeObj.GetComponent<ConnectPlayers>()?.Connect();
         }
     }
-
-
-
-
 }

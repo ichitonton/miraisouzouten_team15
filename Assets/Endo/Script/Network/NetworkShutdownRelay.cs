@@ -1,18 +1,38 @@
 using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+
 public class NetworkShutdownRelay : NetworkBehaviour
 {
     public static NetworkShutdownRelay Instance { get; private set; }
 
-    //[Header("切断後に戻すシーン名")]
-    //[SerializeField] private string backSceneName = "Title";
-
     [Header("Hostが全員切断する時の待ち（RPC到達用）")]
     [SerializeField] private float hostShutdownDelay = 0.05f;
 
+    [Header("Shutdown後、IsListeningが落ちるまで待つ時間（秒）")]
+    [SerializeField] private float shutdownWaitTimeout = 2.0f;
+
+    [Header("NetworkManagerも破棄する（完全リセット）")]
+    [SerializeField] private bool destroyNetworkManagerObject = true;
+
     private bool _isLeaving = false;
+
+    //  Coroutineが止まらないための Runner
+    private static ShutdownRunner _runner;
+
+    //==================================================
+    // Runner（これがあるから Relay が消えても完走する）
+    //==================================================
+    private class ShutdownRunner : MonoBehaviour { }
+
+    private static void EnsureRunner()
+    {
+        if (_runner != null) return;
+
+        var go = new GameObject("[NetworkShutdownRunner]");
+        DontDestroyOnLoad(go);
+        _runner = go.AddComponent<ShutdownRunner>();
+    }
 
     private void Awake()
     {
@@ -22,120 +42,138 @@ public class NetworkShutdownRelay : NetworkBehaviour
             return;
         }
         Instance = this;
-        //DontDestroyOnLoad(gameObject);
+        // DontDestroyOnLoad(gameObject); // シーン毎に持つなら外してOK
+
+        EnsureRunner();
     }
 
     private void OnEnable()
     {
-        if (NetworkManager.Singleton != null)
+        var nm = NetworkManager.Singleton;
+        if (nm != null)
         {
-            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
+            nm.OnClientDisconnectCallback += OnClientDisconnected;
         }
     }
 
     private void OnDisable()
     {
-        if (NetworkManager.Singleton != null)
+        var nm = NetworkManager.Singleton;
+        if (nm != null)
         {
-            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
+            nm.OnClientDisconnectCallback -= OnClientDisconnected;
         }
     }
 
-
+    //==================================================
+    // 外から呼ぶ入口
+    //==================================================
     public void ShutDown()
     {
-        if(IsServer)
+        if (_isLeaving) return;
+
+        if (IsServer)
         {
-            //ホストが落ちたら全部落とす
+            //  Hostが落ちたら全員落とす
             Button_HostShutdownAll();
         }
         else
         {
-            //クライアントが落ちたらそいつだけ退出
+            //  Clientが落ちたら自分だけ退出
             Button_ClientLeave();
         }
     }
 
-    // =========================================================
-    //  ボタン用：Hostが押す（全員終了）
-    // =========================================================
+    //==================================================
+    // Host：全員終了
+    //==================================================
     private void Button_HostShutdownAll()
     {
         if (_isLeaving) return;
         _isLeaving = true;
 
-        // ネットワークが動いてないならローカルだけ戻す
-        if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsListening)
+        var nm = NetworkManager.Singleton;
+
+        // ネットワークが動いてないなら、ローカルだけ完全終了
+        if (nm == null || !nm.IsListening)
         {
+            BeginLocalShutdownAndDestroy();
             return;
         }
 
-        // Host/Server以外が押したら無視（安全）
+        // Host/Server以外が押したら無視
         if (!IsServer)
         {
             _isLeaving = false;
             return;
         }
 
-        StartCoroutine(HostShutdownAllRoutine());
+        //  Relayが消えても完走するRunnerで回す
+        EnsureRunner();
+        _runner.StartCoroutine(HostShutdownAllRoutine());
     }
 
     private IEnumerator HostShutdownAllRoutine()
     {
-        //  全Clientへ「切断して戻ってね」通知
+        // 1) 全Clientへ「切断してね」
         ShutdownAllClientsClientRpc();
 
-        //  すぐHostがShutdownするとRPC届かない事があるので少し待つ
+        // 2) RPC到達待ち
         yield return null;
-        if (hostShutdownDelay > 0f) yield return new WaitForSeconds(hostShutdownDelay);
+        if (hostShutdownDelay > 0f)
+            yield return new WaitForSecondsRealtime(hostShutdownDelay);
 
-        ShutdownLocalNetwork();
+        // 3) Host自身も完全終了（NetworkManager破棄まで）
+        BeginLocalShutdownAndDestroy();
     }
 
     [ClientRpc]
     private void ShutdownAllClientsClientRpc()
     {
-        // Host自身にも飛ぶので、Hostはここでは切らない（Host側はRoutineで切る）
+        // Hostにも飛ぶので Host はここでは落ちない（HostはRoutineで落ちる）
         if (IsServer) return;
 
-        // Clientは受け取ったら安全に退出
-        ClientLeave_Local();
+        //  Clientは受信したら自分だけ完全終了
+        BeginLocalShutdownAndDestroy();
     }
 
-    // =========================================================
-    //  ボタン用：Clientが押す（自分だけ退出）
-    // =========================================================
+    //==================================================
+    // Client：自分だけ退出
+    //==================================================
     private void Button_ClientLeave()
     {
         if (_isLeaving) return;
         _isLeaving = true;
 
-        // ネットワークが動いてないならローカルだけ戻す
-        if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsListening)
+        var nm = NetworkManager.Singleton;
+
+        // ネットワークが動いてないならローカルだけ完全終了
+        if (nm == null || !nm.IsListening)
         {
+            BeginLocalShutdownAndDestroy();
             return;
         }
 
-        // Hostがこれを押すのは事故なので HostShutdownAll に誘導
+        // Hostがこれ押したら全員終了に切り替える
         if (IsServer)
         {
-            // Hostが押しちゃった場合は全員終了を実行しちゃうのが安全
-            StartCoroutine(HostShutdownAllRoutine());
+            EnsureRunner();
+            _runner.StartCoroutine(HostShutdownAllRoutine());
             return;
         }
 
-        StartCoroutine(ClientLeaveRoutine());
+        EnsureRunner();
+        _runner.StartCoroutine(ClientLeaveRoutine());
     }
 
     private IEnumerator ClientLeaveRoutine()
     {
-        //  Hostへ「退出するね」を送って、Host側で即切断してもらう（任意だけど安全）
+        // 任意：Hostに「抜けるね」を送って Host側で即切断してもらう
         RequestKickMeServerRpc();
 
-        // 1フレ待ってからローカルShutdown（安定）
         yield return null;
 
-        ClientLeave_Local();
+        BeginLocalShutdownAndDestroy();
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -151,43 +189,77 @@ public class NetworkShutdownRelay : NetworkBehaviour
         // Host自身は対象外
         if (senderId == nm.LocalClientId) return;
 
-        // Host側でそのClientだけ切断
         nm.DisconnectClient(senderId);
     }
 
-    // =========================================================
-    //  切断イベント対応（Host落ち/蹴られた/回線切れでも戻す）
-    // =========================================================
+    //==================================================
+    // 切断イベント（Host落ち/蹴られ/回線落ち）
+    //==================================================
     private void OnClientDisconnected(ulong clientId)
     {
         var nm = NetworkManager.Singleton;
         if (nm == null) return;
 
-        // 自分が切断されたらタイトルへ戻す
+        // 自分が切断されたら完全終了へ
         if (clientId == nm.LocalClientId)
         {
-            // すでに自分で退出処理中なら二重実行しない
             if (_isLeaving) return;
 
             _isLeaving = true;
-            ShutdownLocalNetwork();
+            BeginLocalShutdownAndDestroy();
         }
     }
 
-    // =========================================================
-    //  ローカル切断（共通）
-    // =========================================================
-    private void ClientLeave_Local()
+    //==================================================
+    //  ここがメイン：NetworkManager破壊までやる
+    //==================================================
+    private void BeginLocalShutdownAndDestroy()
     {
-        ShutdownLocalNetwork();
+        EnsureRunner();
+
+        // 連続実行ガード（Runner側でも安全）
+        _runner.StartCoroutine(ShutdownAndDestroyRoutine());
     }
 
-    private void ShutdownLocalNetwork()
+    private IEnumerator ShutdownAndDestroyRoutine()
     {
         var nm = NetworkManager.Singleton;
-        if (nm != null && nm.IsListening)
+
+        // すでに無いなら終わり
+        if (nm == null)
+            yield break;
+
+        // 先にイベント解除（残り続ける事故を潰す）
+        nm.OnClientDisconnectCallback -= OnClientDisconnected;
+
+        //  Shutdown
+        if (nm.IsListening)
         {
             nm.Shutdown();
         }
+
+        //  IsListening が false になるまで待つ（後処理がある）
+        float t = 0f;
+        while (nm != null && nm.IsListening && t < shutdownWaitTimeout)
+        {
+            t += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        // 念のため1フレ
+        yield return null;
+
+        //  NetworkManagerのGameObjectを破壊（完全リセット）
+        if (destroyNetworkManagerObject && nm != null)
+        {
+            // ここ重要：Singleton参照が残る場合があるから破壊で確殺
+            Destroy(nm.gameObject);
+        }
+
+        // 念のため1フレ
+        yield return null;
+
+        // leaving解除（必要なら次の接続用に戻す）
+        _isLeaving = false;
     }
 }
