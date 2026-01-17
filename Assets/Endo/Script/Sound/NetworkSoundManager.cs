@@ -17,23 +17,16 @@ public class NetworkSoundManager : NetworkBehaviour
 	[SerializeField] private NetworkSeDatabase sfxDatabase;
 
 	[Header("AudioSources")]
-	[Tooltip("BGM用（基本2D）")]
 	[SerializeField] private AudioSource bgmSource;
-
-	[Tooltip("2D SE用（UI音など）")]
 	[SerializeField] private AudioSource sfx2DSource;
-
-	[Tooltip("3D SE用。位置に生成して使う（プール）")]
 	[SerializeField] private AudioSource sfx3DSourcePrefab;
 
 	[Header("SFX Pool")]
 	[SerializeField] private int sfx3DPoolSize = 16;
 
-	// --- runtime ---
 	private readonly List<AudioSource> _sfx3DPool = new();
 	private int _sfx3DPoolIndex = 0;
 
-	// anti-spam
 	private readonly Dictionary<string, float> _lastSfxTimeByTag = new();
 	private readonly Dictionary<string, int> _simultaneousCountByTag = new();
 
@@ -41,24 +34,17 @@ public class NetworkSoundManager : NetworkBehaviour
 
 	public static NetworkSoundManager Instance;
 
-	// ===== 追加：ループSE管理 =====
-	// tag -> ループ再生に使ってるAudioSource
+	// ===== ループSE管理 =====
 	private readonly Dictionary<string, AudioSource> _loopSfxByTag = new();
-	// 2Dループ専用（ワンショット2Dと干渉しないよう分ける）
 	private AudioSource _loop2DSource;
+
+	// ★追加：3Dループに使ってるAudioSourceを記録して、単発が奪わないようにする
+	private readonly HashSet<AudioSource> _loop3DSources = new();
 
 	private void Awake()
 	{
-		//シングルトンのインスタンス生成
-		if (Instance == null)
-		{
-			Instance = this;
-			//DontDestroyOnLoad(gameObject);
-		}
-		else
-		{
-			Destroy(gameObject);
-		}
+		if (Instance == null) Instance = this;
+		else { Destroy(gameObject); return; }
 
 		if (sfx3DSourcePrefab != null)
 		{
@@ -71,8 +57,6 @@ public class NetworkSoundManager : NetworkBehaviour
 			}
 		}
 
-		// 追加：2Dループ用AudioSourceを別で用意（実行時生成）
-		// 事実：sfx2DSourceをそのままループに使うとUI音などのPlayOneShotと干渉する
 		if (_loop2DSource == null)
 		{
 			var go = new GameObject("Loop2DSource");
@@ -80,18 +64,318 @@ public class NetworkSoundManager : NetworkBehaviour
 			_loop2DSource = go.AddComponent<AudioSource>();
 			_loop2DSource.playOnAwake = false;
 			_loop2DSource.loop = false;
-			_loop2DSource.spatialBlend = 0f; // 2D固定
+			_loop2DSource.spatialBlend = 0f;
 		}
 	}
 
 	// =========================
 	// Public API
 	// =========================
+	public void PlaySfx(string tag, SoundScope scope, bool spatial, Vector3 position = default)
+	{
+		if (scope == SoundScope.LocalOnly)
+		{
+			int seed = Environment.TickCount;
+			PlaySfxLocal(tag, spatial, position, seed);
+			return;
+		}
 
-	/// <summary>
-	/// BGM再生。scope=AllClients の場合、Server経由で全員に再生指示。
-	/// loopOverride=nullならDBの設定を使用。
-	/// </summary>
+		if (IsServer)
+		{
+			int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+			PlaySfxClientRpc(tag, spatial, position, seed);
+		}
+		else
+		{
+			RequestPlaySfxServerRpc(tag, spatial, position);
+		}
+	}
+
+	public void StartLoopSfx(string tag, SoundScope scope, bool spatial, Vector3 position = default)
+	{
+		if (scope == SoundScope.LocalOnly)
+		{
+			int seed = Environment.TickCount;
+			StartLoopSfxLocal(tag, spatial, position, seed);
+			return;
+		}
+
+		if (IsServer)
+		{
+			int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+			StartLoopSfxClientRpc(tag, spatial, position, seed);
+		}
+		else
+		{
+			RequestStartLoopSfxServerRpc(tag, spatial, position);
+		}
+	}
+
+	public void StopLoopSfx(string tag, SoundScope scope)
+	{
+		if (scope == SoundScope.LocalOnly)
+		{
+			StopLoopSfxLocal(tag);
+			return;
+		}
+
+		if (IsServer)
+		{
+			StopLoopSfxClientRpc(tag);
+		}
+		else
+		{
+			RequestStopLoopSfxServerRpc(tag);
+		}
+	}
+
+	// =========================
+	// RPCs
+	// =========================
+	[ServerRpc(RequireOwnership = false)]
+	private void RequestPlaySfxServerRpc(string tag, bool spatial, Vector3 pos)
+	{
+		int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+		PlaySfxClientRpc(tag, spatial, pos, seed);
+	}
+
+	[ClientRpc]
+	private void PlaySfxClientRpc(string tag, bool spatial, Vector3 pos, int seed)
+	{
+		PlaySfxLocal(tag, spatial, pos, seed);
+	}
+
+	[ServerRpc(RequireOwnership = false)]
+	private void RequestStartLoopSfxServerRpc(string tag, bool spatial, Vector3 pos)
+	{
+		int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+		StartLoopSfxClientRpc(tag, spatial, pos, seed);
+	}
+
+	[ClientRpc]
+	private void StartLoopSfxClientRpc(string tag, bool spatial, Vector3 pos, int seed)
+	{
+		StartLoopSfxLocal(tag, spatial, pos, seed);
+	}
+
+	[ServerRpc(RequireOwnership = false)]
+	private void RequestStopLoopSfxServerRpc(string tag)
+	{
+		StopLoopSfxClientRpc(tag);
+	}
+
+	[ClientRpc]
+	private void StopLoopSfxClientRpc(string tag)
+	{
+		StopLoopSfxLocal(tag);
+	}
+
+	// =========================
+	// Local Implementations
+	// =========================
+
+	private void PlaySfxLocal(string tag, bool spatial, Vector3 pos, int seed)
+	{
+		if (sfxDatabase == null) return;
+		if (!sfxDatabase.TryGet(tag, out var entry) || entry == null) return;
+
+		float now = Time.unscaledTime;
+		if (entry.cooldownSeconds > 0f)
+		{
+			if (_lastSfxTimeByTag.TryGetValue(tag, out float last) && (now - last) < entry.cooldownSeconds)
+				return;
+			_lastSfxTimeByTag[tag] = now;
+		}
+
+		if (entry.maxSimultaneous > 0)
+		{
+			_simultaneousCountByTag.TryGetValue(tag, out int count);
+			if (count >= entry.maxSimultaneous) return;
+			_simultaneousCountByTag[tag] = count + 1;
+		}
+
+		var rng = new System.Random(seed);
+		var clip = sfxDatabase.GetRandomClip(entry, rng);
+		if (clip == null) { DecreaseSimultaneousLater(tag, entry, 0.1f); return; }
+
+		float pitch = 1f;
+		if (entry.randomizePitch)
+		{
+			float min = Mathf.Min(entry.pitchMin, entry.pitchMax);
+			float max = Mathf.Max(entry.pitchMin, entry.pitchMax);
+			pitch = Mathf.Lerp(min, max, (float)rng.NextDouble());
+		}
+
+		if (!spatial)
+		{
+			if (sfx2DSource == null) { DecreaseSimultaneousLater(tag, entry, clip.length); return; }
+			if (entry.outputMixerGroup != null) sfx2DSource.outputAudioMixerGroup = entry.outputMixerGroup;
+			sfx2DSource.pitch = pitch;
+			sfx2DSource.PlayOneShot(clip, entry.volume);
+			DecreaseSimultaneousLater(tag, entry, clip.length);
+			return;
+		}
+
+		// ★ここが重要：ループに使ってる3Dソースを避ける
+		var src = GetNext3DSourceAvoidLoop();
+		if (src == null) { DecreaseSimultaneousLater(tag, entry, clip.length); return; }
+
+		src.transform.position = pos;
+		src.spatialBlend = entry.spatialBlend;
+		src.minDistance = entry.minDistance;
+		src.maxDistance = entry.maxDistance;
+		src.pitch = pitch;
+		src.loop = false;
+		if (entry.outputMixerGroup != null) src.outputAudioMixerGroup = entry.outputMixerGroup;
+
+		src.PlayOneShot(clip, entry.volume);
+		DecreaseSimultaneousLater(tag, entry, clip.length);
+	}
+
+	private void StartLoopSfxLocal(string tag, bool spatial, Vector3 pos, int seed)
+	{
+		if (sfxDatabase == null) return;
+		if (!sfxDatabase.TryGet(tag, out var entry) || entry == null) return;
+
+		if (_loopSfxByTag.TryGetValue(tag, out var playingSrc) && playingSrc != null)
+		{
+			if (spatial) playingSrc.transform.position = pos;
+			return;
+		}
+
+		if (entry.maxSimultaneous > 0)
+		{
+			_simultaneousCountByTag.TryGetValue(tag, out int count);
+			if (count >= entry.maxSimultaneous) return;
+			_simultaneousCountByTag[tag] = count + 1;
+		}
+
+		var rng = new System.Random(seed);
+		var clip = sfxDatabase.GetRandomClip(entry, rng);
+		if (clip == null) { DecreaseSimultaneousImmediate(tag, entry); return; }
+
+		float pitch = 1f;
+		if (entry.randomizePitch)
+		{
+			float min = Mathf.Min(entry.pitchMin, entry.pitchMax);
+			float max = Mathf.Max(entry.pitchMin, entry.pitchMax);
+			pitch = Mathf.Lerp(min, max, (float)rng.NextDouble());
+		}
+
+		AudioSource src;
+		if (!spatial)
+		{
+			src = _loop2DSource;
+			if (src == null) { DecreaseSimultaneousImmediate(tag, entry); return; }
+			src.spatialBlend = 0f;
+		}
+		else
+		{
+			src = GetFree3DSourceForLoop();
+			if (src == null) { DecreaseSimultaneousImmediate(tag, entry); return; }
+
+			src.transform.position = pos;
+			src.spatialBlend = entry.spatialBlend;
+			src.minDistance = entry.minDistance;
+			src.maxDistance = entry.maxDistance;
+
+			// ★ループに使ってる3Dソースとして記録
+			_loop3DSources.Add(src);
+		}
+
+		if (entry.outputMixerGroup != null) src.outputAudioMixerGroup = entry.outputMixerGroup;
+
+		src.Stop();
+		src.clip = clip;
+		src.pitch = pitch;
+		src.volume = entry.volume;
+		src.loop = true;
+		src.Play();
+
+		_loopSfxByTag[tag] = src;
+	}
+
+	private void StopLoopSfxLocal(string tag)
+	{
+		if (!_loopSfxByTag.TryGetValue(tag, out var src) || src == null) return;
+
+		// ★止める前に「ループ3D使用中」から外す（3Dだった場合だけ）
+		_loop3DSources.Remove(src);
+
+		src.Stop();
+		src.clip = null;
+		src.loop = false;
+
+		_loopSfxByTag.Remove(tag);
+
+		if (sfxDatabase != null && sfxDatabase.TryGet(tag, out var entry) && entry != null)
+		{
+			DecreaseSimultaneousImmediate(tag, entry);
+		}
+		else
+		{
+			if (_simultaneousCountByTag.TryGetValue(tag, out int c))
+				_simultaneousCountByTag[tag] = Mathf.Max(0, c - 1);
+		}
+	}
+
+	// ★修正版：ループに使われてるAudioSourceを避けて取る
+	private AudioSource GetNext3DSourceAvoidLoop()
+	{
+		if (_sfx3DPool.Count == 0) return null;
+
+		for (int i = 0; i < _sfx3DPool.Count; i++)
+		{
+			var src = _sfx3DPool[_sfx3DPoolIndex];
+			_sfx3DPoolIndex = (_sfx3DPoolIndex + 1) % _sfx3DPool.Count;
+
+			if (_loop3DSources.Contains(src))
+				continue; // ループ用は触らない
+
+			return src;
+		}
+
+		// 全部ループに占領されてたら諦め
+		return null;
+	}
+
+	private AudioSource GetFree3DSourceForLoop()
+	{
+		if (_sfx3DPool.Count == 0) return null;
+
+		for (int i = 0; i < _sfx3DPool.Count; i++)
+		{
+			var candidate = _sfx3DPool[i];
+			if (_loop3DSources.Contains(candidate)) continue;
+			return candidate;
+		}
+		return null;
+	}
+
+	private void DecreaseSimultaneousLater(string tag, NetworkSeDatabase.SfxEntry entry, float seconds)
+	{
+		if (entry.maxSimultaneous <= 0) return;
+		StartCoroutine(DecreaseLater(tag, Mathf.Max(0.01f, seconds)));
+	}
+
+	private IEnumerator DecreaseLater(string tag, float seconds)
+	{
+		yield return new WaitForSecondsRealtime(seconds);
+		if (_simultaneousCountByTag.TryGetValue(tag, out int c))
+			_simultaneousCountByTag[tag] = Mathf.Max(0, c - 1);
+	}
+
+	private void DecreaseSimultaneousImmediate(string tag, NetworkSeDatabase.SfxEntry entry)
+	{
+		if (entry.maxSimultaneous <= 0) return;
+		if (_simultaneousCountByTag.TryGetValue(tag, out int c))
+			_simultaneousCountByTag[tag] = Mathf.Max(0, c - 1);
+	}
+
+	// =========================
+	// BGM Public API
+	// =========================
+
 	public void PlayBgm(string tag, SoundScope scope, bool? loopOverride = null)
 	{
 		if (scope == SoundScope.LocalOnly)
@@ -129,78 +413,8 @@ public class NetworkSoundManager : NetworkBehaviour
 		}
 	}
 
-	/// <summary>
-	/// SE再生。spatial=trueなら3D。positionは spatial のときのみ有効。
-	/// </summary>
-	public void PlaySfx(string tag, SoundScope scope, bool spatial, Vector3 position = default)
-	{
-		if (scope == SoundScope.LocalOnly)
-		{
-			int seed = Environment.TickCount;
-			PlaySfxLocal(tag, spatial, position, seed);
-			return;
-		}
-
-		if (IsServer)
-		{
-			int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-			PlaySfxClientRpc(tag, spatial, position, seed);
-		}
-		else
-		{
-			RequestPlaySfxServerRpc(tag, spatial, position);
-		}
-	}
-
-	// ===== 追加：ループSE API =====
-
-	/// <summary>
-	/// ループSE開始。AllClientsならサーバー経由で全員開始。
-	/// spatial=trueなら3Dループ。positionはspatial時のみ有効。
-	/// </summary>
-	public void StartLoopSfx(string tag, SoundScope scope, bool spatial, Vector3 position = default)
-	{
-		if (scope == SoundScope.LocalOnly)
-		{
-			int seed = Environment.TickCount;
-			StartLoopSfxLocal(tag, spatial, position, seed);
-			return;
-		}
-
-		if (IsServer)
-		{
-			int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-			StartLoopSfxClientRpc(tag, spatial, position, seed);
-		}
-		else
-		{
-			RequestStartLoopSfxServerRpc(tag, spatial, position);
-		}
-	}
-
-	/// <summary>
-	/// ループSE停止。AllClientsならサーバー経由で全員停止。
-	/// </summary>
-	public void StopLoopSfx(string tag, SoundScope scope)
-	{
-		if (scope == SoundScope.LocalOnly)
-		{
-			StopLoopSfxLocal(tag);
-			return;
-		}
-
-		if (IsServer)
-		{
-			StopLoopSfxClientRpc(tag);
-		}
-		else
-		{
-			RequestStopLoopSfxServerRpc(tag);
-		}
-	}
-
 	// =========================
-	// RPCs
+	// BGM RPCs
 	// =========================
 
 	[ServerRpc(RequireOwnership = false)]
@@ -229,54 +443,15 @@ public class NetworkSoundManager : NetworkBehaviour
 		StopBgmLocal(fadeSecondsOverride);
 	}
 
-	[ServerRpc(RequireOwnership = false)]
-	private void RequestPlaySfxServerRpc(string tag, bool spatial, Vector3 pos)
-	{
-		int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-		PlaySfxClientRpc(tag, spatial, pos, seed);
-	}
-
-	[ClientRpc]
-	private void PlaySfxClientRpc(string tag, bool spatial, Vector3 pos, int seed)
-	{
-		PlaySfxLocal(tag, spatial, pos, seed);
-	}
-
-	// ===== 追加：ループSE RPC =====
-	[ServerRpc(RequireOwnership = false)]
-	private void RequestStartLoopSfxServerRpc(string tag, bool spatial, Vector3 pos)
-	{
-		int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-		StartLoopSfxClientRpc(tag, spatial, pos, seed);
-	}
-
-	[ClientRpc]
-	private void StartLoopSfxClientRpc(string tag, bool spatial, Vector3 pos, int seed)
-	{
-		StartLoopSfxLocal(tag, spatial, pos, seed);
-	}
-
-	[ServerRpc(RequireOwnership = false)]
-	private void RequestStopLoopSfxServerRpc(string tag)
-	{
-		StopLoopSfxClientRpc(tag);
-	}
-
-	[ClientRpc]
-	private void StopLoopSfxClientRpc(string tag)
-	{
-		StopLoopSfxLocal(tag);
-	}
-
 	// =========================
-	// Local Implementations
+	// BGM Local Implementations
 	// =========================
 
 	private void PlayBgmLocal(string tag, bool? loopOverride, int seed)
 	{
 		if (bgmSource == null || bgmDatabase == null)
 		{
-			Debug.LogWarning($"[NetworkSoundManager] BGM Source or Database missing.");
+			Debug.LogWarning("[NetworkSoundManager] BGM Source or Database missing.");
 			return;
 		}
 
@@ -309,10 +484,7 @@ public class NetworkSoundManager : NetworkBehaviour
 		if (bgmSource == null) return;
 
 		float fade = 0f;
-		if (bgmDatabase != null && bgmSource.clip != null)
-		{
-			fade = 0.2f;
-		}
+		if (bgmDatabase != null && bgmSource.clip != null) fade = 0.2f;
 		if (fadeSecondsOverride >= 0f) fade = fadeSecondsOverride;
 
 		if (_bgmFadeCoroutine != null) StopCoroutine(_bgmFadeCoroutine);
@@ -350,8 +522,7 @@ public class NetworkSoundManager : NetworkBehaviour
 
 	private IEnumerator FadeOutBgm(float fadeSeconds)
 	{
-		if (!bgmSource.isPlaying)
-			yield break;
+		if (!bgmSource.isPlaying) yield break;
 
 		if (fadeSeconds <= 0f)
 		{
@@ -372,247 +543,5 @@ public class NetworkSoundManager : NetworkBehaviour
 		bgmSource.volume = startVol;
 	}
 
-	private void PlaySfxLocal(string tag, bool spatial, Vector3 pos, int seed)
-	{
-		if (sfxDatabase == null)
-		{
-			Debug.LogWarning("[NetworkSoundManager] SFX Database missing.");
-			return;
-		}
 
-		if (!sfxDatabase.TryGet(tag, out var entry) || entry == null)
-		{
-			Debug.LogWarning($"[NetworkSoundManager] SFX tag not found: {tag}");
-			return;
-		}
-
-		float now = Time.unscaledTime;
-		if (entry.cooldownSeconds > 0f)
-		{
-			if (_lastSfxTimeByTag.TryGetValue(tag, out float last) && (now - last) < entry.cooldownSeconds)
-				return;
-
-			_lastSfxTimeByTag[tag] = now;
-		}
-
-		if (entry.maxSimultaneous > 0)
-		{
-			_simultaneousCountByTag.TryGetValue(tag, out int count);
-			if (count >= entry.maxSimultaneous) return;
-			_simultaneousCountByTag[tag] = count + 1;
-		}
-
-		var rng = new System.Random(seed);
-		var clip = sfxDatabase.GetRandomClip(entry, rng);
-		if (clip == null) return;
-
-		float pitch = 1f;
-		if (entry.randomizePitch)
-		{
-			float min = Mathf.Min(entry.pitchMin, entry.pitchMax);
-			float max = Mathf.Max(entry.pitchMin, entry.pitchMax);
-			pitch = Mathf.Lerp(min, max, (float)rng.NextDouble());
-		}
-
-		if (!spatial)
-		{
-			if (sfx2DSource == null)
-			{
-				Debug.LogWarning("[NetworkSoundManager] sfx2DSource missing.");
-				DecreaseSimultaneousLater(tag, entry, clip.length);
-				return;
-			}
-
-			if (entry.outputMixerGroup != null) sfx2DSource.outputAudioMixerGroup = entry.outputMixerGroup;
-			sfx2DSource.pitch = pitch;
-			sfx2DSource.PlayOneShot(clip, entry.volume);
-
-			DecreaseSimultaneousLater(tag, entry, clip.length);
-		}
-		else
-		{
-			var src = GetNext3DSource();
-			if (src == null)
-			{
-				DecreaseSimultaneousLater(tag, entry, clip.length);
-				return;
-			}
-
-			src.transform.position = pos;
-			src.spatialBlend = entry.spatialBlend;
-			src.minDistance = entry.minDistance;
-			src.maxDistance = entry.maxDistance;
-			src.pitch = pitch;
-			src.loop = false;
-			if (entry.outputMixerGroup != null) src.outputAudioMixerGroup = entry.outputMixerGroup;
-
-			src.PlayOneShot(clip, entry.volume);
-
-			DecreaseSimultaneousLater(tag, entry, clip.length);
-		}
-	}
-
-	// ===== 追加：ループSEのローカル実装 =====
-	private void StartLoopSfxLocal(string tag, bool spatial, Vector3 pos, int seed)
-	{
-		if (sfxDatabase == null)
-		{
-			Debug.LogWarning("[NetworkSoundManager] SFX Database missing.");
-			return;
-		}
-
-		if (!sfxDatabase.TryGet(tag, out var entry) || entry == null)
-		{
-			Debug.LogWarning($"[NetworkSoundManager] SFX tag not found: {tag}");
-			return;
-		}
-
-		// 既に回ってるなら、位置だけ更新して終わり（3Dの場合）
-		if (_loopSfxByTag.TryGetValue(tag, out var playingSrc) && playingSrc != null)
-		{
-			if (spatial) playingSrc.transform.position = pos;
-			return;
-		}
-
-		// 同時再生制限（ループは「開始で+1」「停止で-1」方式）
-		if (entry.maxSimultaneous > 0)
-		{
-			_simultaneousCountByTag.TryGetValue(tag, out int count);
-			if (count >= entry.maxSimultaneous) return;
-			_simultaneousCountByTag[tag] = count + 1;
-		}
-
-		var rng = new System.Random(seed);
-		var clip = sfxDatabase.GetRandomClip(entry, rng);
-		if (clip == null)
-		{
-			// 失敗したのでカウント戻す
-			DecreaseSimultaneousImmediate(tag, entry);
-			return;
-		}
-
-		float pitch = 1f;
-		if (entry.randomizePitch)
-		{
-			float min = Mathf.Min(entry.pitchMin, entry.pitchMax);
-			float max = Mathf.Max(entry.pitchMin, entry.pitchMax);
-			pitch = Mathf.Lerp(min, max, (float)rng.NextDouble());
-		}
-
-		AudioSource src;
-		if (!spatial)
-		{
-			// 2Dループ専用srcを使う（ワンショットと干渉しない）
-			src = _loop2DSource;
-			if (src == null)
-			{
-				Debug.LogWarning("[NetworkSoundManager] loop2DSource missing.");
-				DecreaseSimultaneousImmediate(tag, entry);
-				return;
-			}
-
-			src.spatialBlend = 0f;
-		}
-		else
-		{
-			src = GetFree3DSourceForLoop();
-			if (src == null)
-			{
-				DecreaseSimultaneousImmediate(tag, entry);
-				return;
-			}
-
-			src.transform.position = pos;
-			src.spatialBlend = entry.spatialBlend;
-			src.minDistance = entry.minDistance;
-			src.maxDistance = entry.maxDistance;
-		}
-
-		if (entry.outputMixerGroup != null) src.outputAudioMixerGroup = entry.outputMixerGroup;
-
-		src.Stop();
-		src.clip = clip;
-		src.pitch = pitch;
-		src.volume = entry.volume;
-		src.loop = true;
-		src.Play();
-
-		_loopSfxByTag[tag] = src;
-	}
-
-	private void StopLoopSfxLocal(string tag)
-	{
-		if (!_loopSfxByTag.TryGetValue(tag, out var src) || src == null)
-			return;
-
-		src.Stop();
-		src.clip = null;
-		src.loop = false;
-
-		_loopSfxByTag.Remove(tag);
-
-		// 同時再生カウントを戻す（ループは停止で-1）
-		if (sfxDatabase != null && sfxDatabase.TryGet(tag, out var entry) && entry != null)
-		{
-			DecreaseSimultaneousImmediate(tag, entry);
-		}
-		else
-		{
-			// entry取れない場合でも、カウントが増えっぱなしになるの防止（最低限）
-			if (_simultaneousCountByTag.TryGetValue(tag, out int c))
-				_simultaneousCountByTag[tag] = Mathf.Max(0, c - 1);
-		}
-	}
-
-	private AudioSource GetNext3DSource()
-	{
-		if (_sfx3DPool.Count == 0) return null;
-		var src = _sfx3DPool[_sfx3DPoolIndex];
-		_sfx3DPoolIndex = (_sfx3DPoolIndex + 1) % _sfx3DPool.Count;
-		return src;
-	}
-
-	// 追加：ループ用は「今ループに使われてない3Dソース」を優先で取る
-	private AudioSource GetFree3DSourceForLoop()
-	{
-		if (_sfx3DPool.Count == 0) return null;
-
-		for (int i = 0; i < _sfx3DPool.Count; i++)
-		{
-			var candidate = _sfx3DPool[i];
-			bool isUsedByLoop = false;
-			foreach (var kv in _loopSfxByTag)
-			{
-				if (kv.Value == candidate) { isUsedByLoop = true; break; }
-			}
-			if (!isUsedByLoop) return candidate;
-		}
-
-		// 空きが無いなら諦め（ループが途切れる事故を避けたい）
-		return null;
-	}
-
-	private void DecreaseSimultaneousLater(string tag, NetworkSeDatabase.SfxEntry entry, float seconds)
-	{
-		if (entry.maxSimultaneous <= 0) return;
-		StartCoroutine(DecreaseLater(tag, Mathf.Max(0.01f, seconds)));
-	}
-
-	private IEnumerator DecreaseLater(string tag, float seconds)
-	{
-		yield return new WaitForSecondsRealtime(seconds);
-		if (_simultaneousCountByTag.TryGetValue(tag, out int c))
-		{
-			c = Mathf.Max(0, c - 1);
-			_simultaneousCountByTag[tag] = c;
-		}
-	}
-
-	// 追加：ループ開始失敗/停止で即座にカウント戻す用
-	private void DecreaseSimultaneousImmediate(string tag, NetworkSeDatabase.SfxEntry entry)
-	{
-		if (entry.maxSimultaneous <= 0) return;
-		if (_simultaneousCountByTag.TryGetValue(tag, out int c))
-			_simultaneousCountByTag[tag] = Mathf.Max(0, c - 1);
-	}
 }

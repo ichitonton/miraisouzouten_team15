@@ -619,7 +619,9 @@ public class MovePlayerKey : NetworkBehaviour
 
     void UnlockStar()
     {
-        _mutekiParticleSystem.Stop();
+		NetworkSoundManager.Instance.StopLoopSfx("Item_Star", NetworkSoundManager.SoundScope.AllClients);
+
+		_mutekiParticleSystem.Stop();
         StopMutekiEffectClientRpc();
         _itemStarUse = false;
     }
@@ -629,7 +631,9 @@ public class MovePlayerKey : NetworkBehaviour
 
     void UnlockShoese()
     {
-        _shoeseParticleSystem.Stop();
+		NetworkSoundManager.Instance.StopLoopSfx("Item_SpeadUP", NetworkSoundManager.SoundScope.AllClients);
+
+		_shoeseParticleSystem.Stop();
         StopShooseEffectClientRpc();
         _itemShoeseUse = false;
     }
