@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-554298614899531132
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 10
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
@@ -7,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_IcePillar
-  m_Shader: {fileID: -6465566751694194690, guid: 98a2a316975cfb44784491fd2398233c, type: 3}
+  m_Name: M_Confetti
+  m_Shader: {fileID: -6465566751694194690, guid: 5084d01975075c741b7f38ccc63d2f75, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -25,7 +38,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: def228ddbb920434eaa957e857db6cf5, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -44,24 +57,32 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Dissolve_Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _IceTex:
-        m_Texture: {fileID: 2800000, guid: adc200337adc4a7479d6f2bfa6ea20e3, type: 3}
+    - _Flow_Map:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: def228ddbb920434eaa957e857db6cf5, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _MaskMap:
+    - _Main_Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask_Tex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
-        m_Texture: {fileID: 2800000, guid: def228ddbb920434eaa957e857db6cf5, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -90,99 +111,64 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AddPrecomputedVelocity: 0
-    - _Alpha: 1
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _BackScatter: 0.6
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
-    - _BloomSoftness: 0.05
-    - _BloomStrength: 0.47
-    - _BloomThreshold: 0.85
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
+    - _Color_Level: 1
+    - _Color_Rotate: 0
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
+    - _Dissolve_Edge: 0
+    - _Dissolve_Power: 1
+    - _Dissolve_Value: 0
+    - _Distortion_Polar: 0
+    - _Distotion_Intensity: 0
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _Fade1: 0.03
-    - _Fade2: 0.03
-    - _FadeIn: 21
-    - _FadeOut: 10
-    - _FresnelPower: 2.5
-    - _FresnelStrength: 0.14
+    - _Fade_End: 0
+    - _Fade_Start: 0
+    - _Fresnel_Power: 0
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _HighlightSmooth: 0.03
-    - _HighlightStrength: 1
-    - _HighlightThreshold: 0.9
-    - _LightContrast: 1
+    - _Gradation: 1
+    - _Invert: 0
     - _Metallic: 0
-    - _MochiSSSStrength: 0.4
-    - _NoiseScale: 8
-    - _NoiseStrength: 1
-    - _Normals: 0.4
     - _OcclusionStrength: 1
-    - _OutlineWidth: 0.003
     - _Parallax: 0.005
-    - _PowderHighlightReduce: 0.8
-    - _Purity: 0.8
-    - _PurityVariance: 0.5
+    - _Polar: 0
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _ReflactionAmount: 1
-    - _ScatterStrength: 0.8
-    - _ShadowOffset: 0
-    - _Smoothness: 1
+    - _Smooth_Level: 1
+    - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
-    - _SpecPower: 64
-    - _SpecStrength: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
-    - _Thickness: 1
-    - _Threshold1: 0.45
-    - _Threshold2: 0.2
-    - _WetHighlightBoost: 1
     - _WorkflowMode: 1
-    - _XRMotionVectorsPass: 1
     - _ZWrite: 1
-    - _metallic: 0.5
-    - _smoothness: 0.7
     m_Colors:
-    - _BaseColor: {r: 0.37647057, g: 0.6590005, b: 1, a: 1}
-    - _BloomColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.115443185, g: 0.5816689, b: 0.9132074, a: 1}
-    - _Color_1: {r: 0, g: 0, b: 0, a: 1}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color2: {r: 1, g: 1, b: 1, a: 0}
+    - _Dissolve_Tiling: {r: 1, g: 1, b: 0, a: 0}
+    - _Distotion_Speed: {r: 0, g: 0, b: 0, a: 0}
+    - _Edge_Color: {r: 0.7490196, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 1.1785542, g: 4.1771193, b: 6.309434, a: 1}
-    - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _IceTiling: {r: 2, g: 1, b: 0, a: 0}
-    - _MidColor: {r: 0, g: 0.6769446, b: 0.93207544, a: 0.6}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ScatterColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShadowColor: {r: 0, g: 0.43271038, b: 0.7283019, a: 1}
+    - _Flow_Tiling: {r: 1, g: 1, b: 0, a: 0}
+    - _HighLight: {r: 1, g: 1, b: 1, a: 1}
+    - _Main_Tiling: {r: 1, g: 1, b: 0, a: 0}
+    - _MidTone: {r: 1, g: 1, b: 1, a: 0}
+    - _Shadow: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &2923624661877711438
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
-  version: 10
