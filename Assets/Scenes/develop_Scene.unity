@@ -207,6 +207,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3721610}
   - component: {fileID: 3721611}
+  - component: {fileID: 3721612}
+  - component: {fileID: 3721614}
+  - component: {fileID: 3721613}
   m_Layer: 0
   m_Name: Collision_Side
   m_TagString: Untagged
@@ -250,6 +253,78 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &3721612
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3721609}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &3721613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3721609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dfa4524b3a369148813d1a390f98cd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallHItManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  hitEffectPrefab: {fileID: 0}
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 200
+  minImpactSpeed: 2
+  cooldown: 0.15
+  normalOffset: 0.03
+--- !u!114 &3721614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3721609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 628324651
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1001 &6361011
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10454,6 +10529,8 @@ GameObject:
   m_Component:
   - component: {fileID: 528744577}
   - component: {fileID: 528744578}
+  - component: {fileID: 528744579}
+  - component: {fileID: 528744580}
   m_Layer: 0
   m_Name: Collision_TwoSide_Left
   m_TagString: Untagged
@@ -10497,6 +10574,53 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &528744579
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 528744576}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &528744580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 528744576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dfa4524b3a369148813d1a390f98cd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallHItManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  hitEffectPrefab: {fileID: 0}
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 200
+  minImpactSpeed: 2
+  cooldown: 0.15
+  normalOffset: 0.03
 --- !u!1001 &530895579
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13456,7 +13580,7 @@ PrefabInstance:
       objectReference: {fileID: 94057360}
     - target: {fileID: 6280504052251466273, guid: fded7fdc3d848e446b54781a8caec72b, type: 3}
       propertyPath: startMode
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6280504052251466273, guid: fded7fdc3d848e446b54781a8caec72b, type: 3}
       propertyPath: gameSceneName
@@ -26050,6 +26174,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1093594589}
   - component: {fileID: 1093594590}
+  - component: {fileID: 1093594591}
+  - component: {fileID: 1093594592}
   m_Layer: 0
   m_Name: Collision_Side (1)
   m_TagString: Untagged
@@ -26093,6 +26219,53 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &1093594591
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1093594588}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &1093594592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1093594588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dfa4524b3a369148813d1a390f98cd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallHItManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  hitEffectPrefab: {fileID: 0}
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 200
+  minImpactSpeed: 2
+  cooldown: 0.15
+  normalOffset: 0.03
 --- !u!1001 &1093993020
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34589,6 +34762,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1288184736}
   - component: {fileID: 1288184737}
+  - component: {fileID: 1288184738}
+  - component: {fileID: 1288184739}
   m_Layer: 0
   m_Name: Collision_TwoSide_Right
   m_TagString: Untagged
@@ -34632,6 +34807,53 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &1288184738
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1288184735}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &1288184739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1288184735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dfa4524b3a369148813d1a390f98cd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallHItManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  hitEffectPrefab: {fileID: 0}
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 200
+  minImpactSpeed: 2
+  cooldown: 0.15
+  normalOffset: 0.03
 --- !u!1001 &1288336666
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -36327,13 +36549,13 @@ PrefabInstance:
       addedObject: {fileID: 1085906108}
     - targetCorrespondingSourceObject: {fileID: 6284297560931571926, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 929665138}
+    - targetCorrespondingSourceObject: {fileID: 6284297560931571926, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 716805118}
     - targetCorrespondingSourceObject: {fileID: 6284297560931571926, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1614852995}
-    - targetCorrespondingSourceObject: {fileID: 6284297560931571926, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 929665138}
     - targetCorrespondingSourceObject: {fileID: 6284297560931571926, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1246240486}
@@ -43005,6 +43227,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1660300596}
   - component: {fileID: 1660300597}
+  - component: {fileID: 1660300598}
+  - component: {fileID: 1660300599}
   m_Layer: 0
   m_Name: Collision_TwoSide_Right
   m_TagString: Untagged
@@ -43048,6 +43272,53 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &1660300598
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1660300595}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &1660300599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1660300595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dfa4524b3a369148813d1a390f98cd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallHItManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  hitEffectPrefab: {fileID: 0}
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 200
+  minImpactSpeed: 2
+  cooldown: 0.15
+  normalOffset: 0.03
 --- !u!1 &1660763435
 GameObject:
   m_ObjectHideFlags: 0
@@ -43058,6 +43329,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1660763436}
   - component: {fileID: 1660763437}
+  - component: {fileID: 1660763438}
+  - component: {fileID: 1660763439}
   m_Layer: 0
   m_Name: Collision_TwoSide_Right
   m_TagString: Untagged
@@ -43101,6 +43374,53 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &1660763438
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1660763435}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &1660763439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1660763435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dfa4524b3a369148813d1a390f98cd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallHItManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  hitEffectPrefab: {fileID: 0}
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 200
+  minImpactSpeed: 2
+  cooldown: 0.15
+  normalOffset: 0.03
 --- !u!1001 &1663464272
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -45037,6 +45357,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1768509476}
   - component: {fileID: 1768509477}
+  - component: {fileID: 1768509478}
+  - component: {fileID: 1768509479}
   m_Layer: 0
   m_Name: Collision_TwoSide_Left
   m_TagString: Untagged
@@ -45080,6 +45402,53 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &1768509478
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1768509475}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &1768509479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1768509475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dfa4524b3a369148813d1a390f98cd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallHItManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  hitEffectPrefab: {fileID: 0}
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 200
+  minImpactSpeed: 2
+  cooldown: 0.15
+  normalOffset: 0.03
 --- !u!1001 &1770449038
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -49065,6 +49434,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1980722116}
   - component: {fileID: 1980722117}
+  - component: {fileID: 1980722118}
+  - component: {fileID: 1980722119}
   m_Layer: 0
   m_Name: Collision_TwoSide_Left
   m_TagString: Untagged
@@ -49108,6 +49479,53 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &1980722118
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1980722115}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &1980722119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1980722115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dfa4524b3a369148813d1a390f98cd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallHItManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  hitEffectPrefab: {fileID: 0}
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 200
+  minImpactSpeed: 2
+  cooldown: 0.15
+  normalOffset: 0.03
 --- !u!1 &1981528355
 GameObject:
   m_ObjectHideFlags: 0
@@ -53415,6 +53833,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2115068575}
   - component: {fileID: 2115068576}
+  - component: {fileID: 2115068577}
+  - component: {fileID: 2115068578}
   m_Layer: 0
   m_Name: Collision_Side (2)
   m_TagString: Untagged
@@ -53458,6 +53878,53 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &2115068577
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2115068574}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &2115068578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2115068574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dfa4524b3a369148813d1a390f98cd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallHItManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  hitEffectPrefab: {fileID: 0}
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 200
+  minImpactSpeed: 2
+  cooldown: 0.15
+  normalOffset: 0.03
 --- !u!1001 &2115615261
 PrefabInstance:
   m_ObjectHideFlags: 0

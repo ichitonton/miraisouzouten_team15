@@ -61,3 +61,6 @@ MonoBehaviour:
   - effectId: 15
     label: MeteorFire2
     prefab: {fileID: 7133576029996950482, guid: be5d79b80bb7d134c8290eb6dba74a3f, type: 3}
+  - effectId: 16
+    label: wall
+    prefab: {fileID: 5998903659506325081, guid: 72e6c456c53ff1b4c9bd6328e567fe78, type: 3}

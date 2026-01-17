@@ -1,6 +1,7 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public class WallHItManager : MonoBehaviour
+public class WallHItManager : NetworkBehaviour
 {
     [Header("Effect")]
     [SerializeField] private GameObject hitEffectPrefab;
@@ -23,14 +24,21 @@ public class WallHItManager : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (Time.time < _nextAllowedTime) return;
+
+        if (!collision.gameObject.CompareTag("Player")) return;
+
+        Debug.Log("ぶち当たったべ");
+
+        //if (Time.time < _nextAllowedTime) return;
 
         // 壁レイヤー以外は無視
-        if (((1 << collision.gameObject.layer) & wallMask) == 0) return;
+        //if (((1 << collision.gameObject.layer) & wallMask) == 0) return;
 
         // 速度が小さいなら出さない（カス当たり防止）
-        float speed = _rb != null ? _rb.linearVelocity.magnitude : 0f;
+        float speed = _rb != null ? collision.gameObject.GetComponent<Rigidbody>().linearVelocity.magnitude : 0f;
         if (speed < minImpactSpeed) return;
+
+
 
         if (collision.contactCount == 0) return;
 
@@ -46,7 +54,7 @@ public class WallHItManager : MonoBehaviour
         // 例）壁に貼り付くように出したい → normalの逆を前方向にする
         Quaternion rot = Quaternion.LookRotation(-normal, Vector3.up);
 
-        
+        NetworkEffectSpawner.Instance.PlayEffect(16,spawnPos,rot);
 
         _nextAllowedTime = Time.time + cooldown;
     }
