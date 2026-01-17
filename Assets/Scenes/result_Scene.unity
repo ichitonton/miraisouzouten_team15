@@ -187,6 +187,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.01, y: 30.07, z: 0.6}
   m_Center: {x: -0.3, y: 13.85, z: 0}
+--- !u!95 &52657142 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8427100980178498739, guid: b3aebcb8d10e9de45923848dbabf4b2a, type: 3}
+  m_PrefabInstance: {fileID: 286900845}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &202018453 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5026639452212578053, guid: 2ac15079004162b44b353e7d2da8d90e, type: 3}
@@ -1158,6 +1163,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 618.6
       objectReference: {fileID: 0}
+    - target: {fileID: 3587954180881691093, guid: 2ac15079004162b44b353e7d2da8d90e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4119867692157793756, guid: 2ac15079004162b44b353e7d2da8d90e, type: 3}
       propertyPath: m_text
       value: ThankyouForPlaying!!
@@ -1191,7 +1200,8 @@ PrefabInstance:
       value: 231.00002
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1248703827391134772, guid: 2ac15079004162b44b353e7d2da8d90e, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5269480911553722549, guid: 2ac15079004162b44b353e7d2da8d90e, type: 3}
@@ -1330,7 +1340,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NetworkShutdownRelay
   ShowTopMostFoldoutHeaderGroup: 1
-  backSceneName: Title
   hostShutdownDelay: 0.05
 --- !u!4 &948478481
 Transform:
@@ -1638,6 +1647,11 @@ CapsuleCollider:
   m_Height: 24.65
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!95 &1342289209 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8427100980178498739, guid: d981fb3a9a68d8b448dc7a4dacaa90ee, type: 3}
+  m_PrefabInstance: {fileID: 1613831684}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1401374380
 GameObject:
   m_ObjectHideFlags: 0
@@ -1680,10 +1694,12 @@ MonoBehaviour:
   startDelay: 1
   minScale: 1
   maxScale: 2
-  winAnimController: {fileID: 929577562}
-  loseAnimController: {fileID: 1968661451}
+  winImageObject: {fileID: 929577557}
+  loseImageObject: {fileID: 1968661449}
   resultTextParent: {fileID: 202018453}
   afterResultWaitTime: 3
+  player1anim: {fileID: 52657142}
+  player2anim: {fileID: 1342289209}
   cameraMover: {fileID: 328514280}
   uiMover: {fileID: 929577555}
   thankYouObject: {fileID: 929577553}

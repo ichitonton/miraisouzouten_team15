@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-// using TMPro; // TextMeshProは使わなくなるので削除またはコメントアウト
-using UnityEngine.SceneManagement;
 using Unity.Netcode;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameDirector : MonoBehaviour
 {
@@ -81,6 +81,24 @@ public class GameDirector : MonoBehaviour
             //シャットダウン
             NetworkShutdownRelay.Instance.ShutDown();
             StartCoroutine(TransitionSequence(titleSceneName));
+        }
+        if (Gamepad.all.Count >= 0)
+        {
+            foreach (var gamepad in Gamepad.all)
+            {
+                if (gamepad.aButton.wasPressedThisFrame)
+                {
+                    //シャットダウン
+                    NetworkShutdownRelay.Instance.ShutDown();
+                    StartCoroutine(TransitionSequence(titleSceneName));
+                }
+                if (gamepad.bButton.wasPressedThisFrame)
+                {
+                    //シャットダウン
+                    NetworkShutdownRelay.Instance.ShutDown();
+                    StartCoroutine(TransitionSequence(gameSceneName));
+                }
+            }
         }
     }
 
