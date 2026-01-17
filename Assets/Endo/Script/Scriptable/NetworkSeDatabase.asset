@@ -52,15 +52,107 @@ MonoBehaviour:
     cooldownSeconds: 0.2
     maxSimultaneous: 0
     outputMixerGroup: {fileID: 0}
-  - tag: 
-    clips: []
-    volume: 0
+  - tag: SE_Back
+    clips:
+    - {fileID: 8300000, guid: f1ac9653a95cb6c4f999b9375778e5be, type: 3}
+    volume: 0.317
     randomizePitch: 0
-    pitchMin: 0
-    pitchMax: 0
-    spatialBlend: 0
-    minDistance: 0
-    maxDistance: 0
-    cooldownSeconds: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: SE_Decision
+    clips:
+    - {fileID: 8300000, guid: 71d27483f4ad07f46a8e737905be3ac0, type: 3}
+    volume: 0.3
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Item_BlackHole
+    clips:
+    - {fileID: 8300000, guid: 9942d4a46b337ce45856993ea581a967, type: 3}
+    volume: 0.317
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Item_Kanden
+    clips:
+    - {fileID: 8300000, guid: 67e0268340870ba48894baed52e13400, type: 3}
+    volume: 0.317
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Item_Star
+    clips:
+    - {fileID: 8300000, guid: 577bba15605908344bce2f44c4d101d8, type: 3}
+    volume: 0.317
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Item_SpeadUP
+    clips:
+    - {fileID: 8300000, guid: 85741a36e2b05694ba808a204d0df10d, type: 3}
+    volume: 0.317
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Item_Rakurai
+    clips:
+    - {fileID: 8300000, guid: 89792413076cf2d4bb57d0ca070a45a4, type: 3}
+    volume: 0.317
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: e
+    clips:
+    - {fileID: 8300000, guid: 89792413076cf2d4bb57d0ca070a45a4, type: 3}
+    volume: 0.317
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
     maxSimultaneous: 0
     outputMixerGroup: {fileID: 0}

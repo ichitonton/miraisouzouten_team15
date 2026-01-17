@@ -472,6 +472,7 @@ public class MovePlayerKey : NetworkBehaviour
     {
         _haveItem = (ItemType)itemId;
     }
+
     void SetHaveItem()
     {
         if (!IsServer) return;
@@ -595,6 +596,7 @@ public class MovePlayerKey : NetworkBehaviour
         PlayDyingEffectClientRpc();
         //NetworkEffectSpawner.Instance.PlayEffect(_hitDyingEffectId, transform.position, Quaternion.identity);
 
+
         Invoke(nameof(UnlockStun), delay);
     }
     [ClientRpc]
@@ -608,6 +610,7 @@ public class MovePlayerKey : NetworkBehaviour
 
         AnimDyingServerRpc(false);
         StopDyingEffectClientRpc();
+
     }
 
     [ClientRpc]
@@ -645,6 +648,7 @@ public class MovePlayerKey : NetworkBehaviour
             player.MoveSpeedAbekobe(_thunderDuration);
             player.AbekobeClientRpc();
             player.Stun(_thunderStunTime);
+
         }
     }
 
@@ -664,8 +668,9 @@ public class MovePlayerKey : NetworkBehaviour
             if (player.OwnerClientId == OwnerClientId) continue;
             // 雷エフェクト（全クライアント）
             PlayThunderEffectClientRpc(player.GetComponent<NetworkObject>());
-        }
-    }
+			
+		}
+	}
     [ClientRpc]
     void PlayThunderEffectClientRpc(NetworkObjectReference targetRef)
     {
@@ -875,7 +880,9 @@ public class MovePlayerKey : NetworkBehaviour
                 //靴の効果
                 if (_haveItem == ItemType.Shoese)
                 {
-                    _shoeseParticleSystem.Play();
+					NetworkSoundManager.Instance.StartLoopSfx("Item_SpeadUP", NetworkSoundManager.SoundScope.AllClients, true, transform.position);
+
+					_shoeseParticleSystem.Play();
                     PlayShoeseEffectClientRpc();
                     Invoke("UnlockShoese", _itemShoeseDelay);
                     MoveSpeedChange(_itemShoeseChangeSpeed, _itemShoeseDelay);
@@ -884,7 +891,10 @@ public class MovePlayerKey : NetworkBehaviour
                 //星の硬貨の効果
                 else if (_haveItem == ItemType.Star)
                 {
-                    _mutekiParticleSystem.Play();
+					NetworkSoundManager.Instance.StartLoopSfx("Item_Star", NetworkSoundManager.SoundScope.AllClients, true, transform.position);
+
+
+					_mutekiParticleSystem.Play();
                     PlayMutekiEffectClientRpc();
                     //一定時間後にスター効果解除
                     Invoke("UnlockStar", _itemStarDelay);
@@ -893,7 +903,10 @@ public class MovePlayerKey : NetworkBehaviour
                 }
                 else if (_haveItem == ItemType.Thunder)
                 {
-                    UseThunderEffectServerRpc();
+					NetworkSoundManager.Instance.PlaySfx("Item_Rakurai", NetworkSoundManager.SoundScope.AllClients, true, transform.position);
+
+
+					UseThunderEffectServerRpc();
                     Invoke("UseThunderServerRpc", 0.3f);
                 }
             }
