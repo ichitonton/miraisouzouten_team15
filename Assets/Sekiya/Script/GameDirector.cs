@@ -23,18 +23,16 @@ public class GameDirector : MonoBehaviour
     // 2. 勝敗判定と表示の設定
     // ==========================================
     [Header("【第2フェーズ】判定と表示設定")]
-    // --- 変更点開始 ---
-    // TextMeshPro関連は削除し、画像用GameObjectに変更
-    // [SerializeField] private TextMeshProUGUI resultText; // 削除
-    [Tooltip("WIN時に表示する画像オブジェクト")]
-    [SerializeField] private GameObject winImageObject;   // 追加
-    [Tooltip("LOSE時に表示する画像オブジェクト")]
-    [SerializeField] private GameObject loseImageObject;  // 追加
 
-    [SerializeField] private GameObject resultTextParent; // ※これは「結果表示全体の親」としてそのまま利用します
-    // [SerializeField] private Color winColor = Color.yellow; // 削除
-    // [SerializeField] private Color loseColor = Color.blue; // 削除
-    // --- 変更点終了 ---
+    [Tooltip("WIN時に表示する画像オブジェクト")]
+    [SerializeField] private GameObject winImageObject;
+    [Tooltip("LOSE時に表示する画像オブジェクト")]
+    [SerializeField] private GameObject loseImageObject;
+
+    [Tooltip("WIN時に再生するエフェクトオブジェクト")]
+    [SerializeField] private GameObject winEffectObject;
+
+    [SerializeField] private GameObject resultTextParent;
 
     [SerializeField] private float afterResultWaitTime = 2.0f;
 
@@ -46,6 +44,7 @@ public class GameDirector : MonoBehaviour
     // ==========================================
     [Header("【第3フェーズ】演出設定")]
     [SerializeField] private CameraMover cameraMover;
+    [SerializeField] private CameraMover EffectMover;
     [SerializeField] private ResultPanelMover uiMover;
 
     // ==========================================
@@ -72,13 +71,11 @@ public class GameDirector : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            //シャットダウン
             NetworkShutdownRelay.Instance.ShutDown();
             StartCoroutine(TransitionSequence(gameSceneName));
         }
         if (Input.GetKeyDown(KeyCode.T))
         {
-            //シャットダウン
             NetworkShutdownRelay.Instance.ShutDown();
             StartCoroutine(TransitionSequence(titleSceneName));
         }
@@ -88,13 +85,11 @@ public class GameDirector : MonoBehaviour
             {
                 if (gamepad.aButton.wasPressedThisFrame)
                 {
-                    //シャットダウン
                     NetworkShutdownRelay.Instance.ShutDown();
                     StartCoroutine(TransitionSequence(titleSceneName));
                 }
                 if (gamepad.bButton.wasPressedThisFrame)
                 {
-                    //シャットダウン
                     NetworkShutdownRelay.Instance.ShutDown();
                     StartCoroutine(TransitionSequence(gameSceneName));
                 }
@@ -108,11 +103,10 @@ public class GameDirector : MonoBehaviour
         if (resultTextParent != null) resultTextParent.SetActive(false);
         if (thankYouObject != null) thankYouObject.SetActive(false);
 
-        // --- 変更点開始 ---
-        // 個別の画像も念のため非表示にしておく
+        // 画像とエフェクトを初期化（非表示）
         if (winImageObject != null) winImageObject.SetActive(false);
         if (loseImageObject != null) loseImageObject.SetActive(false);
-        // --- 変更点終了 ---
+        if (winEffectObject != null) winEffectObject.SetActive(false);
 
         // --- フェーズ0: 開始待ち ---
         yield return new WaitForSeconds(startDelay);
@@ -133,21 +127,13 @@ public class GameDirector : MonoBehaviour
         // 余韻（Win/Loseが出ている時間）
         yield return new WaitForSeconds(afterResultWaitTime);
 
-        // ★追加変更：カメラが動く前に Win/Lose を消す！
-        if (resultTextParent != null)
-        {
-            resultTextParent.SetActive(false);
-        }
-        // --- 変更点開始 ---
-        // 親を非表示にするので必須ではないですが、安全のため個別画像も非表示に戻す
-        if (winImageObject != null) winImageObject.SetActive(false);
-        if (loseImageObject != null) loseImageObject.SetActive(false);
-        // --- 変更点終了 ---
-
+        // ★変更点：ここで非表示にする処理を削除しました。
+        // これにより、カメラが動いても画像やエフェクトは出たままになります。
 
         // --- フェーズ3: カメラとUI移動 ---
         Debug.Log("カメラとUI移動開始！");
         if (cameraMover != null) cameraMover.MoveCamera();
+        if (EffectMover != null) EffectMover.MoveCamera();
         if (uiMover != null) uiMover.MoveIn();
 
         yield return new WaitForSeconds(1.5f);
@@ -190,7 +176,6 @@ public class GameDirector : MonoBehaviour
 
     private void CheckAndShowResult()
     {
-        // ※ FinalScoreクラスの定義が不明なため、ここは元のコードが正しい前提で進めます
         ulong myId = FinalScore.MyPlayerID;
         int s0 = (int)FinalScore.ScoreTeam0;
         int s1 = (int)FinalScore.ScoreTeam1;
@@ -206,34 +191,19 @@ public class GameDirector : MonoBehaviour
         int maxScore = Mathf.Max(s0, s1, s2);
         bool isWin = (myScore == maxScore);
 
-        // --- 変更点開始 ---
-        // テキスト設定処理を削除し、画像の表示切替処理に変更
-        /* 以前のコード
-        if (resultText != null)
-        {
-            if (isWin)
-            {
-                resultText.text = "WIN!!";
-                resultText.color = winColor;
-            }
-            else
-            {
-                resultText.text = "LOSE...";
-                resultText.color = loseColor;
-            }
-        }
-        */
-
-        // 新しいコード：どちらの画像を表示するか選ぶ
         if (winImageObject != null && loseImageObject != null)
         {
             if (isWin)
             {
-                // 勝った場合：Win画像を表示、Lose画像を非表示
+                // 勝った場合
                 winImageObject.SetActive(true);
                 loseImageObject.SetActive(false);
 
-                int rand = Random.Range(0, 1);
+                // エフェクト表示
+                if (winEffectObject != null) winEffectObject.SetActive(true);
+
+                // アニメーション分岐 (Random.Rangeはintの場合、最大値を含まないので3にする)
+                int rand = Random.Range(0, 3);
 
                 if (rand == 0)
                 {
@@ -253,17 +223,19 @@ public class GameDirector : MonoBehaviour
             }
             else
             {
-                // 負けた場合：Win画像を非表示、Lose画像を表示
+                // 負けた場合
                 winImageObject.SetActive(false);
                 loseImageObject.SetActive(true);
+
+                // エフェクト非表示
+                if (winEffectObject != null) winEffectObject.SetActive(false);
+
                 player1anim.SetTrigger("Lose");
                 player2anim.SetTrigger("Lose");
-
             }
         }
-        // --- 変更点終了 ---
 
-        // 最後に親オブジェクトを表示して、選択された画像が画面に出るようにする
+        // 親オブジェクト表示
         if (resultTextParent != null) resultTextParent.SetActive(true);
     }
 }
