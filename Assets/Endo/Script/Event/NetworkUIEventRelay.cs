@@ -95,6 +95,8 @@ public class NetworkUIEventRelay : NetworkBehaviour
         var flash = _eventDatabase.GetFlash(eventId);
 
         UIEventManager.Instance.Play(message, icon, flash);
+
+        NetworkSoundManager.Instance.PlaySfx("UI_AlertJingle", NetworkSoundManager.SoundScope.LocalOnly, false);
     }
 
     // =========================================================
@@ -242,5 +244,7 @@ public class NetworkUIEventRelay : NetworkBehaviour
 
         // バナー文はServerで作った combinedMessage をそのまま表示（全員一致させやすい）
         UIEventManager.Instance.PlayDouble(combinedMessage, iconA, iconB, mergedFlash);
+
+        NetworkSoundManager.Instance.PlaySfx("UI_AlertJingle", NetworkSoundManager.SoundScope.LocalOnly, false);
     }
 }

@@ -3,29 +3,24 @@ using Unity.Netcode;
 using System.Collections;
 using System.Collections.Generic;
 
-
 public class MeteorManager : NetworkBehaviour
 {
     [Header("Visual")]
     [SerializeField] private Transform visualRoot;
     [SerializeField] private float spinSpeed = 360f;
 
-
     // ==============================
     // ★追加：炎エフェクト（Attached）
     // ==============================
     [Header("Trail Fire Effect (Attached)")]
-    [SerializeField] private int[] fireEffectId;                 // 炎エフェクトID（例）
-                    // 炎エフェクトID（例）
-
+    [SerializeField] private int[] fireEffectId;
     [SerializeField] private Vector3 fireLocalOffset = Vector3.zero;
-    [SerializeField] private Vector3 fireAxisOffsetEuler = Vector3.zero; // 向き補正（逆なら Y=180 など）
-    [SerializeField] private bool fireFaceAgainstVelocity = true;  // 炎が後ろ向きなら true
-    [SerializeField] private float fireRotationSlerp = 25f;         // 回転追従速度（0なら即反映）
+    [SerializeField] private Vector3 fireAxisOffsetEuler = Vector3.zero;
+    [SerializeField] private bool fireFaceAgainstVelocity = true;
+    [SerializeField] private float fireRotationSlerp = 25f;
 
-    
-    private List<Transform> _fireEffectTransform = new List<Transform>();   // ★生成した炎のTransformを掴む
-    private bool _fireSpawnRequested = false; // ★二重生成防止
+    private List<Transform> _fireEffectTransform = new List<Transform>();
+    private bool _fireSpawnRequested = false;
 
     [SerializeField] private GameObject _fireSpawnPrefab = null;
 
@@ -35,9 +30,9 @@ public class MeteorManager : NetworkBehaviour
     [Header("Impact Knockback")]
     [SerializeField] private float knockbackRadius = 5f;
     [SerializeField] private float knockbackForce = 12f;
-    [SerializeField] private float knockbackUpward = 2f;          // explosionForceのupwardsModifier
-    [SerializeField] private LayerMask knockbackMask = ~0;        // 影響対象レイヤー（必要なら絞る）
-    [SerializeField] private bool affectKonpeitoToo = false;      // 金平糖も巻き込むか（任意）
+    [SerializeField] private float knockbackUpward = 2f;
+    [SerializeField] private LayerMask knockbackMask = ~0;
+    [SerializeField] private bool affectKonpeitoToo = false;
 
     [Header("Konpeito Burst (8～11)")]
     [SerializeField] private int minKonpeito = 8;
@@ -53,14 +48,45 @@ public class MeteorManager : NetworkBehaviour
     private readonly NetworkVariable<Vector3> P0 = new(writePerm: NetworkVariableWritePermission.Server);
     private readonly NetworkVariable<Vector3> P1 = new(writePerm: NetworkVariableWritePermission.Server);
     private readonly NetworkVariable<Vector3> P2 = new(writePerm: NetworkVariableWritePermission.Server);
-    private readonly NetworkVariable<double> StartTime = new(writePerm: NetworkVariableWritePermission.Server); // ServerTime基準
-    private readonly NetworkVariable<float> Duration = new(writePerm: NetworkVariableWritePermission.Server);   // flightTime
+    private readonly NetworkVariable<double> StartTime = new(writePerm: NetworkVariableWritePermission.Server);
+    private readonly NetworkVariable<float> Duration = new(writePerm: NetworkVariableWritePermission.Server);
     private readonly NetworkVariable<bool> Started = new(writePerm: NetworkVariableWritePermission.Server);
     private readonly NetworkVariable<bool> Impacted = new(writePerm: NetworkVariableWritePermission.Server);
 
     private Vector3 _prevPos;
 
-    
+    // ==============================
+    // 落下ループSE
+    // ==============================
+    [Header("SFX")]
+    [SerializeField] private string fallLoopSfxTag = "SE_Meteor_FallLoop"; // ←DBのタグ名に合わせて
+    private string _fallLoopInstanceTag;
+    private bool _fallLoopPlaying = false;
+
+    public override void OnNetworkSpawn()
+    {
+        // 隕石ごとにユニークなタグ（複数同時でも干渉しない）
+        _fallLoopInstanceTag = $"{fallLoopSfxTag}_{NetworkObjectId}";
+    }
+
+    private void OnDisable()
+    {
+        // 取りこぼし防止：無効化されたら止める
+        StopFallLoopLocal();
+    }
+
+    private void StopFallLoopLocal()
+    {
+        if (!_fallLoopPlaying) return;
+        if (NetworkSoundManager.Instance == null) return;
+
+        NetworkSoundManager.Instance.StopLoopSfx(
+            _fallLoopInstanceTag,
+            NetworkSoundManager.SoundScope.LocalOnly
+        );
+        _fallLoopPlaying = false;
+    }
+
     public void ServerSetupPath(Vector3 p0, Vector3 p1, Vector3 p2, double startTime, float duration)
     {
         if (!IsServer) return;
@@ -84,7 +110,6 @@ public class MeteorManager : NetworkBehaviour
     //エフェクト生成
     private void ServerSpawnFireEffectOnce()
     {
-        //if (!IsServer) return;
         if (_fireSpawnRequested) return;
         _fireSpawnRequested = true;
 
@@ -94,35 +119,24 @@ public class MeteorManager : NetworkBehaviour
             return;
         }
 
-        // parent直下に生成
         NetworkEffectSpawner.Instance.PlayEffectAttached(
             13,
             GetComponent<NetworkObject>(),
             transform.position,
-            transform.rotation// 初期回転（補正も込み）
+            transform.rotation
         );
-        //// parent直下に生成
-        //NetworkEffectSpawner.Instance.PlayEffectAttached(
-        //    15,
-        //    GetComponent<NetworkObject>(),
-        //    transform.position,
-        //    transform.rotation// 初期回転（補正も込み）
-        //);
 
-        // ★生成した実体Transformを掴みに行く（1フレ待ってから探す）
         StartCoroutine(CoResolveFireEffectTransform());
     }
 
     private IEnumerator CoResolveFireEffectTransform()
     {
-        // 生成直後だと子がまだ増えてないことがあるので1フレ待つ
         yield return null;
 
-        // 目印（EffectIdMarker）を持つ子を探す
         var markers = GetComponentsInChildren<EffectIdMarker>(true);
         for (int i = 0; i < markers.Length; i++)
         {
-            if (markers[i] != null && markers[i].effectId == fireEffectId[i])
+            if (markers[i] != null && i < fireEffectId.Length && markers[i].effectId == fireEffectId[i])
             {
                 _fireEffectTransform.Add(markers[i].transform);
                 break;
@@ -137,19 +151,47 @@ public class MeteorManager : NetworkBehaviour
 
     private void Update()
     {
-        if (!Started.Value) return;
+        if (!Started.Value)
+        {
+            StopFallLoopLocal();
+            return;
+        }
 
         double now = NetworkManager.Singleton.ServerTime.Time;
         float t = (float)((now - StartTime.Value) / Duration.Value);
 
+        // 開始前は位置固定＆落下音は鳴らさない
         if (t <= 0f)
         {
             transform.position = P0.Value;
             _prevPos = transform.position;
+            StopFallLoopLocal();
             return;
         }
 
         float tt = Mathf.Clamp01(t);
+
+        // ==============================
+        // ★落下中だけループSE（3D・追従）
+        // ==============================
+        bool isFalling = (tt > 0f && tt < 1f && !Impacted.Value);
+
+        if (isFalling)
+        {
+            // LocalOnlyで各端末が鳴らす（毎フレAllClientsで飛ばさない）
+            NetworkSoundManager.Instance.StartLoopSfx(
+                _fallLoopInstanceTag,
+                NetworkSoundManager.SoundScope.LocalOnly,
+                true,
+                transform.position
+            );
+            _fallLoopPlaying = true;
+        }
+        else
+        {
+            StopFallLoopLocal();
+        }
+
         Vector3 pos = Bezier(P0.Value, P1.Value, P2.Value, tt);
         transform.position = pos;
 
@@ -159,13 +201,8 @@ public class MeteorManager : NetworkBehaviour
         if (vel.sqrMagnitude > 0.000001f)
             transform.rotation = Quaternion.LookRotation(vel.normalized, Vector3.up);
 
-        // ★追加：炎エフェクトを進行方向に向ける
+        // 炎エフェクトを進行方向に向ける
         UpdateFireFacing(vel);
-
-        
-        //Debug.Log(transform.rotation);
-       // _fireSpawnPrefab.transform.rotation = transform.rotation;
-        //Debug.Log(_fireSpawnPrefab.transform.rotation);
 
         if (visualRoot != null)
             visualRoot.Rotate(Vector3.forward, spinSpeed * Time.deltaTime, Space.Self);
@@ -176,11 +213,14 @@ public class MeteorManager : NetworkBehaviour
         {
             Impacted.Value = true;
             ServerOnImpact(P2.Value);
+
+            // サーバー到達確定時にも止める（念押し）
+            StopFallLoopLocal();
         }
     }
 
     // ============================
-    // ★追加：炎の回転制御（本体）
+    // 炎の回転制御
     // ============================
     private void UpdateFireFacing(Vector3 vel)
     {
@@ -189,19 +229,16 @@ public class MeteorManager : NetworkBehaviour
 
         Vector3 dir = vel.normalized;
 
-        // 炎は基本「移動方向の逆」を向けると自然（尾を引く）
         if (fireFaceAgainstVelocity)
             dir = -dir;
 
         Quaternion look = Quaternion.LookRotation(dir, Vector3.up);
-
-        // 補正（必要なら）
         Quaternion offset = Quaternion.Euler(fireAxisOffsetEuler);
-
         Quaternion target = look * offset;
 
         foreach (Transform t in _fireEffectTransform)
         {
+            if (t == null) continue;
 
             if (fireRotationSlerp <= 0f)
             {
@@ -218,23 +255,22 @@ public class MeteorManager : NetworkBehaviour
         }
     }
 
-
-
     private void ServerOnImpact(Vector3 impactPoint)
     {
-        
-        //エフェクトの再生
-        NetworkEffectSpawner.Instance.PlayEffect(14,impactPoint,Quaternion.identity,new Vector3(knockbackRadius, knockbackRadius, knockbackRadius));
-        //エフェクトの再生
-        //NetworkEffectSpawner.Instance.PlayEffect(2, impactPoint, Quaternion.identity, new Vector3(knockbackRadius * 2, knockbackRadius * 2, knockbackRadius * 2));
-        //SEの再生
+        // エフェクトの再生
+        NetworkEffectSpawner.Instance.PlayEffect(
+            14,
+            impactPoint,
+            Quaternion.identity,
+            new Vector3(knockbackRadius, knockbackRadius, knockbackRadius)
+        );
 
-        //衝撃波を出す
+        // 衝撃波を出す
         ServerApplyKnockback(impactPoint);
-        //金平糖をはじけさせる
+        // 金平糖をはじけさせる
         ServerSpawnKonpeito(impactPoint);
 
-        // 少し待って隕石を消す（見た目の余韻）
+        // 少し待って隕石を消す
         Invoke(nameof(ServerDespawnSelf), despawnAfterImpact);
     }
 
@@ -257,21 +293,17 @@ public class MeteorManager : NetworkBehaviour
             Vector3 spawnPos = origin + offset;
             Quaternion rot = Random.rotation;
 
-            //var obj = Instantiate(prefab, spawnPos, rot);
-            //obj.Spawn(true);
-
             NetworkObjectPool _ObjectPool = NetworkObjectPool.Instance;
             if (_ObjectPool == null)
             {
                 Debug.LogError("NetworkObjectPool: prefab is NULL");
                 return;
             }
+
             NetworkObject obj = _ObjectPool.Get(prefab.GetComponent<NetworkObject>(), spawnPos, rot);
             obj.Spawn(true);
             obj.GetComponent<PooledNetworkObject>().SetPrefab(prefab.GetComponent<NetworkObject>());
-            //GetComponent<PooledNetworkObject>().DestroySelf();
 
-            // 弾けさせる（サーバーで）
             if (obj.TryGetComponent<Rigidbody>(out var rb))
             {
                 Vector3 dir = Random.onUnitSphere;
@@ -285,13 +317,10 @@ public class MeteorManager : NetworkBehaviour
         }
     }
 
-
     private void ServerApplyKnockback(Vector3 impactPoint)
     {
-        // サーバー権威でのみ
         if (!IsServer) return;
 
-        // OverlapSphereで周囲のColliderを拾う
         Collider[] hits = Physics.OverlapSphere(
             impactPoint,
             knockbackRadius,
@@ -299,21 +328,17 @@ public class MeteorManager : NetworkBehaviour
             QueryTriggerInteraction.Ignore
         );
 
-        Debug.Log( "当たったオブジェクト数 = " + hits.Length );
+        Debug.Log("当たったオブジェクト数 = " + hits.Length);
 
         for (int i = 0; i < hits.Length; i++)
         {
             var col = hits[i];
 
-            // 自分自身や、Meteorの子コライダーを巻き込まない
             if (col.transform.IsChildOf(transform)) continue;
 
-            // Rigidbodyを探す（Collider直下になければ親を見る）
             Rigidbody rb = col.attachedRigidbody;
-            if (rb == null)
-                continue;
-    
-            // 爆発力で吹っ飛ばす（ForceMode.Impulse相当の方が派手なら AddForce でも可）
+            if (rb == null) continue;
+
             rb.AddExplosionForce(
                 knockbackForce,
                 impactPoint,
@@ -323,33 +348,24 @@ public class MeteorManager : NetworkBehaviour
             );
 
             var ice = hits[i].GetComponent<IcePillar>();
-
-            //氷柱にダメージを与える
-            if(ice != null)
+            if (ice != null)
             {
-
-                Vector3 hitPoint = Vector3.zero;
-                Vector3 hitDir = Vector3.zero;
-
-                hitPoint = hits[i].ClosestPoint(transform.position);
-                hitDir = (hits[i].transform.position - transform.position).normalized;
+                Vector3 hitPoint = hits[i].ClosestPoint(transform.position);
+                Vector3 hitDir = (hits[i].transform.position - transform.position).normalized;
                 if (hitDir.sqrMagnitude < 0.001f) hitDir = Vector3.up;
 
                 ice.ApplyDamageServer(OwnerClientId, hitPoint, hitDir, false, 9f);
             }
 
-            //プレイヤーはスタンさせる
             if (hits[i].gameObject.CompareTag("Player"))
             {
-                if(hits[i].gameObject.GetComponent<MovePlayerKey>() != null)
+                var mp = hits[i].gameObject.GetComponent<MovePlayerKey>();
+                if (mp != null)
                 {
-                    //スタンさせる
-                    hits[i].gameObject.GetComponent<MovePlayerKey>().Stun(2f);
-                    hits[i].gameObject.GetComponent<MovePlayerKey>().PlayCameraShake();
+                    mp.Stun(2f);
+                    mp.PlayCameraShake();
                 }
-                
             }
-
         }
     }
 
@@ -366,5 +382,4 @@ public class MeteorManager : NetworkBehaviour
         Vector3 bc = Vector3.Lerp(b, c, t);
         return Vector3.Lerp(ab, bc, t);
     }
-
 }

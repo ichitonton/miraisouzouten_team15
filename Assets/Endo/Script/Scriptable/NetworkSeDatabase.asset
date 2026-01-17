@@ -143,9 +143,9 @@ MonoBehaviour:
     cooldownSeconds: 0.2
     maxSimultaneous: 0
     outputMixerGroup: {fileID: 0}
-  - tag: e
+  - tag: ItemBox
     clips:
-    - {fileID: 8300000, guid: 89792413076cf2d4bb57d0ca070a45a4, type: 3}
+    - {fileID: 8300000, guid: b017f81ca398ff749b71c12504defd82, type: 3}
     volume: 0.317
     randomizePitch: 0
     pitchMin: 0.9
@@ -153,6 +153,84 @@ MonoBehaviour:
     spatialBlend: 1
     minDistance: 30
     maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Event_IceBreak
+    clips:
+    - {fileID: 8300000, guid: 00033a1d9e22ba94f9c1a87428d16c2d, type: 3}
+    volume: 0.317
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 60
+    maxDistance: 80
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: UI_AlertJingle
+    clips:
+    - {fileID: 8300000, guid: 4aff23b61985ea3478ee57bd8cfb2b60, type: 3}
+    volume: 0.317
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 40
+    maxDistance: 50
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: SE_Gorilla_Land
+    clips:
+    - {fileID: 8300000, guid: d34c01ddcc2b7ec4093a102eb609ce50, type: 3}
+    volume: 0.317
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 80
+    maxDistance: 120
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: SE_Gorilla_Drag
+    clips:
+    - {fileID: 8300000, guid: d91ca43b7b46ff545b7956b213d50d3b, type: 3}
+    volume: 1
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 90
+    maxDistance: 200
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: SE_Meteor_FallLoop
+    clips:
+    - {fileID: 8300000, guid: 7403a360133f11548a9011e6d13e3961, type: 3}
+    volume: 0.317
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 60
+    maxDistance: 80
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: sdf
+    clips:
+    - {fileID: 8300000, guid: 7403a360133f11548a9011e6d13e3961, type: 3}
+    volume: 0.317
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 60
+    maxDistance: 80
     cooldownSeconds: 0.2
     maxSimultaneous: 0
     outputMixerGroup: {fileID: 0}

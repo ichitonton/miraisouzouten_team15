@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 4211107300
+  GlobalObjectIdHash: 1709632610
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -179,3 +179,4 @@ MonoBehaviour:
   upward: 4
   spawnRadius: 0.25
   despawnAfterImpact: 0.2
+  fallLoopSfxTag: SE_Meteor_FallLoop

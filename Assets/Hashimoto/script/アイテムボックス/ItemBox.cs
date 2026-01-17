@@ -66,11 +66,12 @@ public class ItemBox : NetworkBehaviour
 		if (eff_Item_Debris != null)
 		{
 			NetworkEffectSpawner.Instance.PlayEffect("item_Debris", _boxObject.transform.position, _boxObject.transform.rotation);
-			//NetworkEffectSpawner.Instance.
-			//Instantiate(eff_Item_Debris,
-			//	_boxObject != null ? _boxObject.transform.position : transform.position,
-			//	transform.rotation);
-		}
+            //NetworkEffectSpawner.Instance.
+            //Instantiate(eff_Item_Debris,
+            //	_boxObject != null ? _boxObject.transform.position : transform.position,
+            //	transform.rotation);
+            NetworkSoundManager.Instance.PlaySfx("ItemBox", NetworkSoundManager.SoundScope.LocalOnly, false);
+        }
 
 		// •œŠˆ‚Ü‚Å
 		StartCoroutine(RespawnRoutine());

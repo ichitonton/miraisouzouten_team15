@@ -329,6 +329,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoldenWagashiObject
   _offset: 1
+  dragStartSpeed: 0.02
+  dragStopSpeed: 0.01
+  stopGraceTime: 0.15
 --- !u!114 &-3348948946875761200
 MonoBehaviour:
   m_ObjectHideFlags: 0

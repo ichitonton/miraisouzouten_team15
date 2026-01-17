@@ -29,6 +29,8 @@ public class MovePlayerKey : NetworkBehaviour
     [SerializeField] float _stunTime = 1.0f;//パンチした時のスタン時間
     [SerializeField] Transform _haveTrans;//持ってるアイテム
     Vector3 _target;
+    private string thunderLoopTag;
+
 
     [System.Serializable]
     public class ItemLotteryEntry
@@ -194,6 +196,9 @@ public class MovePlayerKey : NetworkBehaviour
             GetComponent<UICursorToWorld>().SpawnTarget();
             _target = GetComponent<UICursorToWorld>().GetItemTargetTransform().position;
         }
+
+        thunderLoopTag = "ThunderLoop_" + NetworkObjectId;
+
     }
 
     void SetRigidFalse()
@@ -555,6 +560,13 @@ public class MovePlayerKey : NetworkBehaviour
         if (_itemStarUse) _moveSpeed = _moveSpeed * _itemStarChangeSpeed;
         else _moveSpeed = _moveSpeedInitial;
         StopThunderEffectClientRpc();
+
+        // 雷効果が切れたらループ停止
+        NetworkSoundManager.Instance.StopLoopSfx(
+            thunderLoopTag,
+            NetworkSoundManager.SoundScope.AllClients
+        );
+
     }
 
     [ClientRpc]
@@ -659,9 +671,18 @@ public class MovePlayerKey : NetworkBehaviour
     [ClientRpc]
     void AbekobeClientRpc()
     {
-        MoveSpeedAbekobe(_thunderDuration); 
+        MoveSpeedAbekobe(_thunderDuration);
         _thunderPiripiriParticleSystem.Play();
+
+        // 雷が有効になった瞬間にループ開始（3D）
+        NetworkSoundManager.Instance.StartLoopSfx(
+            thunderLoopTag,
+            NetworkSoundManager.SoundScope.AllClients,
+            true,
+            transform.position
+        );
     }
+
 
     [ServerRpc(RequireOwnership = false)]
     void UseThunderEffectServerRpc()
