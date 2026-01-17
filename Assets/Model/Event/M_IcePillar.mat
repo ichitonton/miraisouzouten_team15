@@ -114,7 +114,7 @@ Material:
     - _Fade2: 0.03
     - _FadeIn: 21
     - _FadeOut: 10
-    - _FresnelPower: 1
+    - _FresnelPower: 2.5
     - _FresnelStrength: 0.14
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -127,7 +127,7 @@ Material:
     - _MochiSSSStrength: 0.4
     - _NoiseScale: 8
     - _NoiseStrength: 1
-    - _Normals: 2.2
+    - _Normals: 0.4
     - _OcclusionStrength: 1
     - _OutlineWidth: 0.003
     - _Parallax: 0.005
@@ -137,7 +137,7 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _ReflactionAmount: -0.208
+    - _ReflactionAmount: 1
     - _ScatterStrength: 0.8
     - _ShadowOffset: 0
     - _Smoothness: 1
@@ -155,17 +155,17 @@ Material:
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
-    - _metallic: 0.453
-    - _smoothness: 0.684
+    - _metallic: 0.5
+    - _smoothness: 0.7
     m_Colors:
     - _BaseColor: {r: 0.37647057, g: 0.6590005, b: 1, a: 1}
     - _BloomColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0, g: 0.013540023, b: 0.7660377, a: 1}
+    - _Color: {r: 0.115443185, g: 0.5816689, b: 0.9132074, a: 1}
     - _Color_1: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.49483073, g: 1.690496, b: 2.5462172, a: 1}
+    - _FresnelColor: {r: 1.1785542, g: 4.1771193, b: 6.309434, a: 1}
     - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _IceTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _IceTiling: {r: 0.2, g: 0.1, b: 0, a: 0}
     - _MidColor: {r: 0, g: 0.6769446, b: 0.93207544, a: 0.6}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _ScatterColor: {r: 1, g: 1, b: 1, a: 1}
