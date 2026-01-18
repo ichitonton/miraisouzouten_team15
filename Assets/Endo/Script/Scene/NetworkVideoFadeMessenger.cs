@@ -92,27 +92,29 @@ public class NetworkVideoFadeMessenger : MonoBehaviour
     private void OnVideoFadeOut(ulong senderClientId, FastBufferReader reader)
     {
         reader.ReadValueSafe(out float outDuration);
+        reader.ReadValueSafe(out int videoIndex);
 
         if (overlay == null)
             overlay = FindFirstObjectByType<VideoFadeOverlay>(FindObjectsInactive.Include);
 
-        overlay?.PlayFadeOutOnly(outDuration);
+        overlay?.PlayFadeOutOnly(outDuration, videoIndex);
     }
 
     private void OnVideoFadeIn(ulong senderClientId, FastBufferReader reader)
     {
         reader.ReadValueSafe(out float inDuration);
+        reader.ReadValueSafe(out int videoIndex);
 
         if (overlay == null)
             overlay = FindFirstObjectByType<VideoFadeOverlay>(FindObjectsInactive.Include);
 
-        overlay?.PlayFadeInOnly(inDuration);
+        overlay?.PlayFadeInOnly(inDuration, videoIndex);
     }
 
     // =========================
     // Send (Host)
     // =========================
-    public void SendFadeOutToAll(float outDuration)
+    public void SendFadeOutToAll(float outDuration, int videoIndex)
     {
         var nm = NetworkManager.Singleton;
         if (nm == null || !nm.IsListening) return;
@@ -120,13 +122,15 @@ public class NetworkVideoFadeMessenger : MonoBehaviour
         var cmm = nm.CustomMessagingManager;
         if (cmm == null) return;
 
-        using var writer = new FastBufferWriter(sizeof(float), Allocator.Temp);
+        // float + int
+        using var writer = new FastBufferWriter(sizeof(float) + sizeof(int), Allocator.Temp);
         writer.WriteValueSafe(outDuration);
+        writer.WriteValueSafe(videoIndex);
 
         cmm.SendNamedMessageToAll(MsgVideoFadeOut, writer, NetworkDelivery.ReliableSequenced);
     }
 
-    public void SendFadeInToAll(float inDuration)
+    public void SendFadeInToAll(float inDuration, int videoIndex)
     {
         var nm = NetworkManager.Singleton;
         if (nm == null || !nm.IsListening) return;
@@ -134,8 +138,9 @@ public class NetworkVideoFadeMessenger : MonoBehaviour
         var cmm = nm.CustomMessagingManager;
         if (cmm == null) return;
 
-        using var writer = new FastBufferWriter(sizeof(float), Allocator.Temp);
+        using var writer = new FastBufferWriter(sizeof(float) + sizeof(int), Allocator.Temp);
         writer.WriteValueSafe(inDuration);
+        writer.WriteValueSafe(videoIndex);
 
         cmm.SendNamedMessageToAll(MsgVideoFadeIn, writer, NetworkDelivery.ReliableSequenced);
     }

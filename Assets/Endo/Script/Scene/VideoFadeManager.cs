@@ -25,6 +25,10 @@ public class VideoFadeManager : MonoBehaviour
     [Header("Hold (Out -> wait -> In)")]
     [SerializeField, Min(0f)] public float holdSeconds = 0.2f;
 
+    [Header("Video Index")]
+    [Tooltip("Overlay側の videoSets から使うIndex")]
+    public int _videoIndex = 0; // ★追加
+
     [Header("Behavior")]
     [Tooltip("シーン遷移後に自動でフェードインする")]
     [SerializeField] private bool autoFadeInAfterSceneLoad = true;
@@ -65,7 +69,14 @@ public class VideoFadeManager : MonoBehaviour
     public void PlayFadeOnly(FadeScope scope)
     {
         if (_running) return;
-        StartCoroutine(FadeOnlyRoutine(scope));
+        StartCoroutine(FadeOnlyRoutine(scope, _videoIndex));
+    }
+
+    // ★Index指定もできる版（便利）
+    public void PlayFadeOnly(FadeScope scope, int videoIndex)
+    {
+        if (_running) return;
+        StartCoroutine(FadeOnlyRoutine(scope, videoIndex));
     }
 
     // =========================
@@ -80,22 +91,35 @@ public class VideoFadeManager : MonoBehaviour
         }
         if (_running) return;
 
-        StartCoroutine(TransitionRoutine(sceneName, scope));
+        StartCoroutine(TransitionRoutine(sceneName, scope, _videoIndex));
+    }
+
+    // ★Index指定もできる版（便利）
+    public void PlayToScene(string sceneName, FadeScope scope, int videoIndex)
+    {
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            Debug.LogError("[VideoFadeManager] sceneName が空です");
+            return;
+        }
+        if (_running) return;
+
+        StartCoroutine(TransitionRoutine(sceneName, scope, videoIndex));
     }
 
     // =========================
     // Routine：FadeOnly
     // =========================
-    private IEnumerator FadeOnlyRoutine(FadeScope scope)
+    private IEnumerator FadeOnlyRoutine(FadeScope scope, int videoIndex)
     {
         _running = true;
 
-        yield return FadeOutRoutine(scope);
+        yield return FadeOutRoutine(scope, videoIndex);
 
         if (holdSeconds > 0f)
             yield return new WaitForSecondsRealtime(holdSeconds);
 
-        yield return FadeInRoutine(scope);
+        yield return FadeInRoutine(scope, videoIndex);
 
         _running = false;
     }
@@ -103,14 +127,14 @@ public class VideoFadeManager : MonoBehaviour
     // =========================
     // Routine：Transition
     // =========================
-    private IEnumerator TransitionRoutine(string sceneName, FadeScope scope)
+    private IEnumerator TransitionRoutine(string sceneName, FadeScope scope, int videoIndex)
     {
         _running = true;
 
         // 1) FadeOut（動画：最終フレーム保持）
-        yield return FadeOutRoutine(scope);
+        yield return FadeOutRoutine(scope, videoIndex);
 
-        // 2) Hold（Outの最後の絵を保持したまま待つ）
+        // 2) Hold
         if (holdSeconds > 0f)
             yield return new WaitForSecondsRealtime(holdSeconds);
 
@@ -129,7 +153,7 @@ public class VideoFadeManager : MonoBehaviour
             ResolveNet();
 
             if (autoFadeInAfterSceneLoad)
-                yield return FadeInRoutine(scope);
+                yield return FadeInRoutine(scope, videoIndex);
 
             _running = false;
             yield break;
@@ -180,7 +204,7 @@ public class VideoFadeManager : MonoBehaviour
         ResolveNet();
 
         if (autoFadeInAfterSceneLoad)
-            yield return FadeInRoutine(scope);
+            yield return FadeInRoutine(scope, videoIndex);
 
         _running = false;
     }
@@ -188,22 +212,22 @@ public class VideoFadeManager : MonoBehaviour
     // =========================
     // Fade Out/In Routine
     // =========================
-    private IEnumerator FadeOutRoutine(FadeScope scope)
+    private IEnumerator FadeOutRoutine(FadeScope scope, int videoIndex)
     {
-        StartFadeOut(scope, fadeOutDuration);
+        StartFadeOut(scope, fadeOutDuration, videoIndex);
         yield return new WaitForSecondsRealtime(fadeOutDuration);
     }
 
-    private IEnumerator FadeInRoutine(FadeScope scope)
+    private IEnumerator FadeInRoutine(FadeScope scope, int videoIndex)
     {
-        StartFadeIn(scope, fadeInDuration);
+        StartFadeIn(scope, fadeInDuration, videoIndex);
         yield return new WaitForSecondsRealtime(fadeInDuration);
     }
 
     // =========================
     // Core：Start Fade（ローカル/全員）
     // =========================
-    private void StartFadeOut(FadeScope scope, float duration)
+    private void StartFadeOut(FadeScope scope, float duration, int videoIndex)
     {
         var ov = ResolveOverlay();
         if (ov == null)
@@ -215,23 +239,22 @@ public class VideoFadeManager : MonoBehaviour
         // ローカル or ネット無し
         if (!HasNet || scope == FadeScope.LocalOnly)
         {
-            ov.PlayFadeOutOnly(duration);
+            ov.PlayFadeOutOnly(duration, videoIndex);
             return;
         }
 
         // AllClients：Hostは自分も再生
-        ov.PlayFadeOutOnly(duration);
+        ov.PlayFadeOutOnly(duration, videoIndex);
 
-        // 全員へ合図（Host）
         if (IsServer)
         {
             var n = ResolveNet();
-            if (n != null) n.SendFadeOutToAll(duration);
+            if (n != null) n.SendFadeOutToAll(duration, videoIndex);
             else Debug.LogWarning("[VideoFadeManager] NetworkVideoFadeMessenger が見つからず AllClients FadeOut を配信できません");
         }
     }
 
-    private void StartFadeIn(FadeScope scope, float duration)
+    private void StartFadeIn(FadeScope scope, float duration, int videoIndex)
     {
         var ov = ResolveOverlay();
         if (ov == null)
@@ -243,18 +266,17 @@ public class VideoFadeManager : MonoBehaviour
         // ローカル or ネット無し
         if (!HasNet || scope == FadeScope.LocalOnly)
         {
-            ov.PlayFadeInOnly(duration);
+            ov.PlayFadeInOnly(duration, videoIndex);
             return;
         }
 
         // AllClients：Hostは自分も再生
-        ov.PlayFadeInOnly(duration);
+        ov.PlayFadeInOnly(duration, videoIndex);
 
-        // 全員へ合図（Host）
         if (IsServer)
         {
             var n = ResolveNet();
-            if (n != null) n.SendFadeInToAll(duration);
+            if (n != null) n.SendFadeInToAll(duration, videoIndex);
             else Debug.LogWarning("[VideoFadeManager] NetworkVideoFadeMessenger が見つからず AllClients FadeIn を配信できません");
         }
     }
