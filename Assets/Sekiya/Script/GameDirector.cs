@@ -77,12 +77,7 @@ public class GameDirector : MonoBehaviour
     {
         if (!canInput) return;
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-
-            StartCoroutine(ActiveThankyou(gameSceneName));
-        }
-        if (Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.N))
         {
             StartCoroutine(ActiveThankyou(titleSceneName));
 
@@ -91,15 +86,10 @@ public class GameDirector : MonoBehaviour
         {
             foreach (var gamepad in Gamepad.all)
             {
-                if (gamepad.bButton.wasPressedThisFrame)
+                if (gamepad.yButton.wasPressedThisFrame)
                 {
 
                     StartCoroutine(ActiveThankyou(gameSceneName));
-                }
-                if (gamepad.aButton.wasPressedThisFrame)
-                {
-
-                    StartCoroutine(ActiveThankyou(titleSceneName));
                 }
             }
         }
@@ -180,12 +170,15 @@ public class GameDirector : MonoBehaviour
 
         yield return new WaitForSeconds(video.fadeOutDuration);
 
-        if (thankYouObject != null)
-        {
-            thankYouObject.SetActive(true);
-        }
+        //クレジットの再生
+        CreditsSequence.Instancs.ActiveCredits();
 
-        StartCoroutine(TransitionSequence(nextScene));
+        //if (thankYouObject != null)
+        //{
+        //    thankYouObject.SetActive(true);
+        //}
+
+        //StartCoroutine(TransitionSequence(nextScene));
 
     }
 

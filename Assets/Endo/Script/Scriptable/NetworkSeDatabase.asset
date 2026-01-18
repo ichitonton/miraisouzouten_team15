@@ -35,7 +35,7 @@ MonoBehaviour:
     pitchMax: 1.1
     spatialBlend: 1
     minDistance: 1
-    maxDistance: 60
+    maxDistance: 15
     cooldownSeconds: 0
     maxSimultaneous: 0
     outputMixerGroup: {fileID: 0}
@@ -217,7 +217,7 @@ MonoBehaviour:
     pitchMax: 1
     spatialBlend: 1
     minDistance: 1.5
-    maxDistance: 60
+    maxDistance: 20
     cooldownSeconds: 0
     maxSimultaneous: 0
     outputMixerGroup: {fileID: 0}

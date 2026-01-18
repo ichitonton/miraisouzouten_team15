@@ -129,6 +129,13 @@ public class MovePlayerKey : NetworkBehaviour
 
     SetSkinMaterial _setSkinMaterial;
 
+    public readonly NetworkVariable<bool> IsRunNet =
+    new NetworkVariable<bool>(
+        true,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server
+    );
+
     public bool _isRun = true;
 
     public enum ItemType
@@ -165,6 +172,19 @@ public class MovePlayerKey : NetworkBehaviour
     }
 
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        //if (IsServer) return;
+
+        // èââÒîΩâf
+        _isRun = IsRunNet.Value;
+
+        // ïœçXäƒéã
+        IsRunNet.OnValueChanged += OnIs3DRunChanged;
+
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -1165,6 +1185,11 @@ public class MovePlayerKey : NetworkBehaviour
         _InputEmote2 = emote2;
         _InputEmote3 = emote3;
         _InputEmote4 = emote4;
+    }
+
+    private void OnIs3DRunChanged(bool prev, bool next)
+    {
+        _isRun = next;
     }
 
 }

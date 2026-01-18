@@ -40,14 +40,23 @@ public class NetworkSoundManager : NetworkBehaviour
 
     // ===== ループSE管理 =====
     private readonly Dictionary<string, AudioSource> _loopSfxByTag = new();
-
-    // ★2Dループはタグごとに持つ（複数同時OK）
     private readonly Dictionary<string, AudioSource> _loop2DSourcesByTag = new();
-
-    // ★3Dループに使ってるAudioSourceを記録（単発が奪わない）
     private readonly HashSet<AudioSource> _loop3DSources = new();
 
-    public bool _is3DRun = true;
+    // =========================================================
+    // ★追加：サーバーだけが変更できる 3D再生許可フラグ
+    // - Client はこれを読むだけ（変更できない）
+    // =========================================================
+    public readonly NetworkVariable<bool> Is3DRunNet =
+     new NetworkVariable<bool>(
+         true,
+         NetworkVariableReadPermission.Everyone,
+         NetworkVariableWritePermission.Server
+     );
+
+    // ★ローカルキャッシュ（毎回Net.Value参照でもOKだけど、読みやすさ用）
+    private bool _is3DRunLocal = true;
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -71,9 +80,63 @@ public class NetworkSoundManager : NetworkBehaviour
         }
     }
 
-    // =========================
+    // =========================================================
+    // ★追加：NetworkSpawn時に同期値を反映＆監視
+    // =========================================================
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        // 初回反映
+        _is3DRunLocal = Is3DRunNet.Value;
+
+        // 変更監視
+        Is3DRunNet.OnValueChanged += OnIs3DRunChanged;
+
+        // もしfalseでスポーンしてきたなら念のため3Dループ停止
+        if (!_is3DRunLocal)
+        {
+            StopAll3DLoopsLocal();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (IsSpawned)
+            Is3DRunNet.OnValueChanged -= OnIs3DRunChanged;
+    }
+
+    private void OnIs3DRunChanged(bool prev, bool next)
+    {
+        _is3DRunLocal = next;
+
+        // OFFになった瞬間に 3Dループだけ全部止める（単発OneShotは止められないけどOK）
+        if (!next)
+        {
+            StopAll3DLoopsLocal();
+        }
+    }
+
+    // =========================================================
+    // ★追加：サーバー専用API（Clientは呼んでも何も起きない）
+    // =========================================================
+    public void Set3DSfxEnabled_ServerOnly(bool enabled)
+    {
+        if (!IsServer)
+        {
+            Debug.LogWarning("[NetworkSoundManager] Set3DSfxEnabled_ServerOnly は Server 専用です。Client からは変更できません。");
+            return;
+        }
+
+        Is3DRunNet.Value = enabled;
+    }
+
+    // ★外から状態確認したい場合
+    public bool Is3DSfxEnabled() => _is3DRunLocal;
+
+    // =========================================================
     // Public API (SFX)
-    // =========================
+    // =========================================================
 
     public void PlaySfx(string tag, SoundScope scope, bool spatial, Vector3 position = default)
     {
@@ -84,7 +147,6 @@ public class NetworkSoundManager : NetworkBehaviour
             return;
         }
 
-        // AllClients
         if (IsServer)
         {
             int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
@@ -105,7 +167,6 @@ public class NetworkSoundManager : NetworkBehaviour
             return;
         }
 
-        // AllClients
         if (IsServer)
         {
             int seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
@@ -125,7 +186,6 @@ public class NetworkSoundManager : NetworkBehaviour
             return;
         }
 
-        // AllClients
         if (IsServer)
         {
             StopLoopSfxClientRpc(tag);
@@ -136,9 +196,9 @@ public class NetworkSoundManager : NetworkBehaviour
         }
     }
 
-    // =========================
+    // =========================================================
     // RPCs (SFX)
-    // =========================
+    // =========================================================
 
     [ServerRpc(RequireOwnership = false)]
     private void RequestPlaySfxServerRpc(string tag, bool spatial, Vector3 pos)
@@ -178,9 +238,9 @@ public class NetworkSoundManager : NetworkBehaviour
         StopLoopSfxLocal(tag);
     }
 
-    // =========================
+    // =========================================================
     // Local Implementations (SFX)
-    // =========================
+    // =========================================================
 
     private void PlaySfxLocal(string tag, bool spatial, Vector3 pos, int seed)
     {
@@ -238,27 +298,30 @@ public class NetworkSoundManager : NetworkBehaviour
             sfx2DSource.pitch = pitch;
             sfx2DSource.PlayOneShot(clip, entry.volume);
 
-            // 少し余裕持ってカウントを戻す（OneShotのズレ対策）
             DecreaseSimultaneousLater(tag, entry, clip.length + 0.05f);
             return;
         }
 
-        //isRunがfalseだったら3Dは鳴らさない
-        if (_is3DRun == false) return;
+        // =========================================================
+        // ★変更：3D禁止なら、3D単発は再生しない（Clientも含めて全員同じ挙動）
+        // =========================================================
+        if (_is3DRunLocal == false)
+        {
+            DecreaseSimultaneousImmediate(tag, entry);
+            return;
+        }
 
         // ---- 3D OneShot ----
         var src = GetFree3DSourceForOneShot();
 
         if (src == null)
         {
-            // プール埋まり時の挙動
             if (dropOneShotWhenPoolBusy)
             {
                 DecreaseSimultaneousImmediate(tag, entry);
                 return;
             }
 
-            // どうしても鳴らすなら「奪う」(ループは絶対守る)
             src = GetSteal3DSourceForOneShot();
             if (src == null)
             {
@@ -286,6 +349,14 @@ public class NetworkSoundManager : NetworkBehaviour
     {
         if (sfxDatabase == null) return;
         if (!sfxDatabase.TryGet(tag, out var entry) || entry == null) return;
+
+        // =========================================================
+        // ★追加：3D禁止なら、3Dループは開始しない（Clientも含めて全員同じ挙動）
+        // =========================================================
+        if (spatial && _is3DRunLocal == false)
+        {
+            return;
+        }
 
         // すでに鳴ってるなら更新だけ
         if (_loopSfxByTag.TryGetValue(tag, out var playingSrc) && playingSrc != null)
@@ -323,7 +394,6 @@ public class NetworkSoundManager : NetworkBehaviour
         // ---- 2D Loop ----
         if (!spatial)
         {
-            // タグごとにAudioSourceを持つ
             if (!_loop2DSourcesByTag.TryGetValue(tag, out src) || src == null)
             {
                 var go = new GameObject($"Loop2D_{tag}");
@@ -354,7 +424,6 @@ public class NetworkSoundManager : NetworkBehaviour
             src.minDistance = entry.minDistance;
             src.maxDistance = entry.maxDistance;
 
-            // ループで使う3Dソースとしてロック
             _loop3DSources.Add(src);
         }
 
@@ -375,7 +444,6 @@ public class NetworkSoundManager : NetworkBehaviour
     {
         if (!_loopSfxByTag.TryGetValue(tag, out var src) || src == null) return;
 
-        // 3Dループならロック解除
         _loop3DSources.Remove(src);
 
         src.Stop();
@@ -384,7 +452,6 @@ public class NetworkSoundManager : NetworkBehaviour
 
         _loopSfxByTag.Remove(tag);
 
-        // maxSimultaneous を戻す
         if (sfxDatabase != null && sfxDatabase.TryGet(tag, out var entry) && entry != null)
         {
             DecreaseSimultaneousImmediate(tag, entry);
@@ -396,11 +463,30 @@ public class NetworkSoundManager : NetworkBehaviour
         }
     }
 
-    // =========================
-    // 3D Pool Getters (Important)
-    // =========================
+    // =========================================================
+    // ★追加：3Dループを全部停止（3D OFF時の取りこぼし防止）
+    // =========================================================
+    private void StopAll3DLoopsLocal()
+    {
+        var keys = new List<string>(_loopSfxByTag.Keys);
 
-    //単発は「ループじゃない」＆「再生中じゃない」だけ使う
+        for (int i = 0; i < keys.Count; i++)
+        {
+            var tag = keys[i];
+            if (!_loopSfxByTag.TryGetValue(tag, out var src) || src == null) continue;
+
+            // 3Dっぽい判定：spatialBlend > 0
+            if (src.spatialBlend > 0.01f)
+            {
+                StopLoopSfxLocal(tag);
+            }
+        }
+    }
+
+    // =========================================================
+    // 3D Pool Getters
+    // =========================================================
+
     private AudioSource GetFree3DSourceForOneShot()
     {
         if (_sfx3DPool.Count == 0) return null;
@@ -419,7 +505,6 @@ public class NetworkSoundManager : NetworkBehaviour
         return null;
     }
 
-    //  ループも「ループじゃない」＆「再生中じゃない」だけ使う（単発を奪わない）
     private AudioSource GetFree3DSourceForLoop()
     {
         if (_sfx3DPool.Count == 0) return null;
@@ -436,7 +521,6 @@ public class NetworkSoundManager : NetworkBehaviour
         return null;
     }
 
-    // どうしても鳴らしたい場合のみ：単発を奪う（ループは絶対守る）
     private AudioSource GetSteal3DSourceForOneShot()
     {
         if (_sfx3DPool.Count == 0) return null;
@@ -448,7 +532,6 @@ public class NetworkSoundManager : NetworkBehaviour
 
             if (_loop3DSources.Contains(candidate)) continue;
 
-            // 単発なら奪ってOK（ただし位置やpitch書き換わるのでStop推奨）
             candidate.Stop();
             candidate.clip = null;
             candidate.loop = false;
@@ -459,9 +542,9 @@ public class NetworkSoundManager : NetworkBehaviour
         return null;
     }
 
-    // =========================
+    // =========================================================
     // maxSimultaneous Counter
-    // =========================
+    // =========================================================
 
     private void DecreaseSimultaneousLater(string tag, NetworkSeDatabase.SfxEntry entry, float seconds)
     {
@@ -483,9 +566,9 @@ public class NetworkSoundManager : NetworkBehaviour
             _simultaneousCountByTag[tag] = Mathf.Max(0, c - 1);
     }
 
-    // =========================
-    // Public API (BGM)
-    // =========================
+    // =========================================================
+    // BGM （ここはあなたのまま）
+    // =========================================================
 
     public void PlayBgm(string tag, SoundScope scope, bool? loopOverride = null)
     {
@@ -524,10 +607,6 @@ public class NetworkSoundManager : NetworkBehaviour
         }
     }
 
-    // =========================
-    // RPCs (BGM)
-    // =========================
-
     [ServerRpc(RequireOwnership = false)]
     private void RequestPlayBgmServerRpc(string tag, bool hasLoopOverride, bool loopOverride)
     {
@@ -553,10 +632,6 @@ public class NetworkSoundManager : NetworkBehaviour
     {
         StopBgmLocal(fadeSecondsOverride);
     }
-
-    // =========================
-    // Local Implementations (BGM)
-    // =========================
 
     private void PlayBgmLocal(string tag, bool? loopOverride, int seed)
     {

@@ -69,8 +69,8 @@ public class TimerManager : NetworkBehaviour
         UIEventManager.Instance.OnHideSceneUI();
 
         VideoFadeManager.Instance._videoIndex = 1;
-        VideoFadeManager.Instance.fadeInDuration = 1.5f;
-        VideoFadeManager.Instance.fadeOutDuration = 1.6f;
+        VideoFadeManager.Instance.fadeInDuration = 1.1f;
+        VideoFadeManager.Instance.fadeOutDuration = 1.1f;
 
         StartCoroutine(DelayChangeScene());
 
