@@ -26,6 +26,7 @@ public class TitleAnimationController : MonoBehaviour
 
         // --- フェーズ 2 開始 ---
         titleAnimator.SetInteger("Phase", 2);
+        titleAnimator.SetTrigger("StartLogo");
         yield return new WaitForSeconds(phase2Duration);
 
         // --- フェーズ 3 開始 ---
