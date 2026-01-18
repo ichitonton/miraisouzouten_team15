@@ -14,24 +14,34 @@ public class TitleManager : MonoBehaviour
         VideoFadeManager.Instance.PlayToScene(SceneName, VideoFadeManager.FadeScope.LocalOnly);
     }
 
-    private void Update()
-    {
+	private void Update()
+	{
+		bool requestedStart = false;
 
-        if (Input.GetKey(KeyCode.Return))
-        {
-            StartGame();
-        }
+		// キーボード（Enter）
+		if (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame)
+		{
+			requestedStart = true;
+		}
 
-        if (Gamepad.all.Count >= 0)
-        {
-            foreach (var gamepad in Gamepad.all)
-            {
-                if (gamepad.rightShoulder.wasPressedThisFrame && gamepad.leftShoulder.wasPressedThisFrame)
-                {
-                    StartGame();
-                }
-            }
-        }
-    }
+		// ゲームパッド（2台想定：どっちかがY押したらOK）
+		if (!requestedStart && Gamepad.all.Count > 0)
+		{
+			foreach (var pad in Gamepad.all)
+			{
+				if (pad != null && pad.buttonWest.wasPressedThisFrame) // Yボタン
+				{
+					requestedStart = true;
+					break;
+				}
+			}
+		}
+
+		if (requestedStart)
+		{
+			StartGame();
+		}
+	}
+
 }
 
