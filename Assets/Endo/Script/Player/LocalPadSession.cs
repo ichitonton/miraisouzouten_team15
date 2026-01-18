@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq; // List.Containsなどで使用
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,8 +9,14 @@ public class LocalPadSession : MonoBehaviour
     [Header("UI: Connection")]
     [SerializeField] private GameObject blurUI;
     [SerializeField] private GameObject connectUI;
-    [SerializeField] private GameObject gamepadUI1;
-    [SerializeField] private GameObject gamepadUI2;
+    // ★変更: GameObject型ではなく、作ったスクリプトの型にする
+    [SerializeField] private PlayerJoinVisual gamepadUI1;
+    [SerializeField] private PlayerJoinVisual gamepadUI2;
+
+    [SerializeField] private GameObject bluelineUI;
+    [SerializeField] private GameObject orangelineUI;
+
+
 
     [Header("UI: InGame (turn on when playing)")]
     [SerializeField] private GameObject[] inGameUIs;
@@ -16,23 +24,31 @@ public class LocalPadSession : MonoBehaviour
     [Header("Start Condition")]
     [SerializeField] private int requiredGamepads = 2;
 
-    [Tooltip("開始ボタン：Dpad下。A(×)にしたいなら false にして buttonSouth")]
+    [Tooltip("参加ボタン：Dpad下。A(×)にしたいなら false にして buttonSouth")]
     [SerializeField] private bool useDpadDownToStart = true;
 
-    // ---- GameManagerから登録される参照（Inspector不要） ----
+    // ---- GameManagerから登録される参照 ----
     private PlayerPadBinding p1Binding;
     private PlayerPadBinding p2Binding;
     private PlayerControlGate p1Gate;
     private PlayerControlGate p2Gate;
 
-    // Pad重複割当防止
+    // ★変更点1: 参加確定したデバイスIDを順番に保持するリスト
+    private List<int> joinedDeviceIds = new List<int>();
+
+    // Pad重複割当防止（兼・現在のアクティブなデバイス管理）
     private readonly HashSet<int> assigned = new();
 
+    //一秒待機中のボタン押下防止
+    private bool isStarting = false;
+
+    [SerializeField]private float startTime = 1.0f;
+
     // 状態
-    private bool inGameUI = false;          // InGame UIを出してるか
-    private bool startRequested = false;    // Start押下済み（プレイヤー生成待ち）
-    private bool startedOnce = false;       // 開始確定済み（一度開始した）
-    private bool waitingReconnect = false;  // 切断復帰待ち
+    private bool inGameUI = false;
+    private bool startRequested = false;
+    private bool startedOnce = false;
+    private bool waitingReconnect = false;
 
     public static LocalPadSession Instance { get; private set; }
 
@@ -52,7 +68,7 @@ public class LocalPadSession : MonoBehaviour
 
     private void OnEnable()
     {
-        if(IsDebug) return;
+        if (IsDebug) return;
         InputSystem.onDeviceChange += OnDeviceChange;
         RefreshPadCountUI();
     }
@@ -65,60 +81,103 @@ public class LocalPadSession : MonoBehaviour
     private void LateUpdate()
     {
         if (IsDebug) return;
-        if (!inGameUI) RefreshPadCountUI();
         if (inGameUI) return;
 
-        // 初回開始：Start押下で GameManager に開始要求 → RegisterPlayers待ち
+        // --- 初回開始待ち（エントリー画面） ---
         if (!startedOnce)
         {
-            if (!startRequested)
+            // 入力受付は「開始要求も待機もしていない」ときだけ行う
+            if (!startRequested && !isStarting)
             {
-                if (AvailablePadCount() < requiredGamepads) return;
-                if (!AnyPadPressedStart()) return;
-
-                startRequested = true;
-                RequestGameStart();
-                Debug.Log("[LocalPadSession] Start requested -> waiting RegisterPlayers()");
+                HandlePlayerEntry();
             }
+            RefreshPadCountUI();
 
-            TryFinalizeStartIfReady();
+            // 開始要求済みなら確定処理へ
+            if (startRequested)
+            {
+                TryFinalizeStartIfReady();
+            }
             return;
         }
 
-        // 復帰：Padが揃ったら即復帰（Start押し不要）
-        if (waitingReconnect)
+        // ... (復帰待ちはそのまま)
+    }
+
+    private void HandlePlayerEntry()
+    {
+        // ★変更: ここでは RequestGameStart を即呼ばずに、コルーチンを開始する
+        if (joinedDeviceIds.Count >= requiredGamepads)
         {
-            FinalizeResumeIfReady();
+            // まだコルーチンが走っていなければ開始
+            if (!isStarting)
+            {
+                StartCoroutine(WaitAndStartSequence());
+            }
+            return;
+        }
+
+        foreach (var pad in Gamepad.all)
+        {
+            if (!IsUsable(pad)) continue;
+            if (joinedDeviceIds.Contains(pad.deviceId)) continue;
+
+            bool pressed = useDpadDownToStart
+                ? pad.dpad.down.wasPressedThisFrame
+                : pad.buttonSouth.wasPressedThisFrame;
+
+            if (pressed)
+            {
+                joinedDeviceIds.Add(pad.deviceId);
+                Debug.Log($"[LocalPadSession] Player {joinedDeviceIds.Count} Joined! (DeviceID: {pad.deviceId})");
+
+                // ★追加: もしこの参加で人数が揃ったら、直後にコルーチンへ
+                if (joinedDeviceIds.Count >= requiredGamepads)
+                {
+                    if (!isStarting) StartCoroutine(WaitAndStartSequence());
+                }
+            }
         }
     }
 
+
     // =========================================================
-    // ★ GameManager -> LocalPadSession 登録口（これがメイン）
+    // ★ GameManager -> LocalPadSession 登録口
     // =========================================================
     public void RegisterPlayers(GameObject p1Player, GameObject p2Player)
     {
-        if (p1Player == null || p2Player == null)
-        {
-            Debug.LogError("[LocalPadSession] RegisterPlayers: p1/p2 が null");
-            return;
-        }
+        if (p1Player == null || p2Player == null) return;
 
         p1Binding = p1Player.GetComponent<PlayerPadBinding>() ?? p1Player.GetComponentInChildren<PlayerPadBinding>(true);
         p2Binding = p2Player.GetComponent<PlayerPadBinding>() ?? p2Player.GetComponentInChildren<PlayerPadBinding>(true);
 
-        if (p1Binding == null || p2Binding == null)
-        {
-            Debug.LogError("[LocalPadSession] RegisterPlayers: PlayerPadBinding が見つからない（プレイヤーに付けてね）");
-            return;
-        }
+        if (p1Binding == null || p2Binding == null) return;
 
         p1Gate = p1Player.GetComponent<PlayerControlGate>() ?? p1Player.GetComponentInChildren<PlayerControlGate>(true);
         p2Gate = p2Player.GetComponent<PlayerControlGate>() ?? p2Player.GetComponentInChildren<PlayerControlGate>(true);
 
-        Debug.Log($"[LocalPadSession] RegisterPlayers OK: P1={p1Player.name} P2={p2Player.name}");
+        Debug.Log($"[LocalPadSession] RegisterPlayers OK");
 
-        // Start要求済みなら開始確定を試す
         TryFinalizeStartIfReady();
+    }
+
+    private IEnumerator WaitAndStartSequence()
+    {
+        isStarting = true; // ガードをかける（これ以上エントリー操作を受け付けない）
+
+        Debug.Log("Players ready! Starting in 1 second...");
+
+        // ここで「READY!」などの演出UIを出したり、決定音を鳴らすと親切です
+        // if (readyUI) readyUI.SetActive(true); 
+
+        // 1秒待機
+        yield return new WaitForSeconds(startTime);
+
+        // 待機完了後に本来の開始処理
+        startRequested = true;
+        RequestGameStart();
+
+        Debug.Log("[LocalPadSession] Request Game Start sent.");
     }
 
     // =========================================================
@@ -129,13 +188,13 @@ public class LocalPadSession : MonoBehaviour
         if (!startRequested) return;
         if (startedOnce) return;
         if (p1Binding == null || p2Binding == null) return;
-        if (AvailablePadCount() < requiredGamepads) return;
 
-        BindFirstTwoPads();
+        // ★変更: エントリーリストを使ってバインドする
+        BindOrderedPads();
 
         if (!HasBothBound())
         {
-            Debug.LogWarning("[LocalPadSession] FinalizeStart: Pad割当失敗");
+            Debug.LogWarning("[LocalPadSession] FinalizeStart: Pad割当失敗 (Binding情報不足)");
             return;
         }
 
@@ -148,7 +207,7 @@ public class LocalPadSession : MonoBehaviour
 
         ShowInGameUI();
 
-        Debug.Log($"[LocalPadSession] Start Finalized: P1={p1Binding.DeviceId}, P2={p2Binding.DeviceId}");
+        Debug.Log($"[LocalPadSession] Start Finalized: P1(ID:{p1Binding.DeviceId}), P2(ID:{p2Binding.DeviceId})");
     }
 
     // =========================================================
@@ -156,9 +215,11 @@ public class LocalPadSession : MonoBehaviour
     // =========================================================
     private void HandlePadDisconnected(Gamepad gp)
     {
-        if (!startedOnce) return; // まだゲーム開始してないなら無視
+        if (!startedOnce) return;
 
         bool hit = false;
+        // 切断時、Bindingからは外すが、joinedDeviceIds から消すかどうかは仕様による
+        // 今回は「ゲーム中」なので一時停止扱いとし、IDは保持したまま再接続を待つ形が自然
 
         if (p1Binding != null && p1Binding.HasPad && p1Binding.DeviceId == gp.deviceId)
         {
@@ -166,7 +227,6 @@ public class LocalPadSession : MonoBehaviour
             p1Binding.Unbind();
             SetGateLocked(p1Gate, true);
             hit = true;
-            Debug.Log("[LocalPadSession] P1 pad disconnected");
         }
 
         if (p2Binding != null && p2Binding.HasPad && p2Binding.DeviceId == gp.deviceId)
@@ -175,7 +235,6 @@ public class LocalPadSession : MonoBehaviour
             p2Binding.Unbind();
             SetGateLocked(p2Gate, true);
             hit = true;
-            Debug.Log("[LocalPadSession] P2 pad disconnected");
         }
 
         if (hit)
@@ -186,30 +245,30 @@ public class LocalPadSession : MonoBehaviour
     }
 
     // =========================================================
-    // 再接続→InGameへ（Padが揃ったら即復帰）
+    // 再接続→InGameへ
     // =========================================================
     private void FinalizeResumeIfReady()
     {
         if (!waitingReconnect) return;
         if (p1Binding == null || p2Binding == null) return;
 
-        // assigned を再構築（ズレ対策）
         assigned.Clear();
+        // 既存の接続を確認
         if (p1Binding.HasPad) assigned.Add(p1Binding.DeviceId);
         if (p2Binding.HasPad) assigned.Add(p2Binding.DeviceId);
 
-        // Missing を埋める
+        // ★復帰時は「元々P1だったID」を探して割り当て直すのが理想だが、
+        // 簡易的に「空いているパッドを割り当てる」なら AutoFillMissing でOK
+        // もし厳密にID一致させるなら joinedDeviceIds を使うロジックにする
         AutoFillMissing();
 
         if (!HasBothBound()) return;
 
         waitingReconnect = false;
-
         SetGateLocked(p1Gate, false);
         SetGateLocked(p2Gate, false);
 
         ShowInGameUI();
-        Debug.Log($"[LocalPadSession] Resume Finalized: P1={p1Binding.DeviceId}, P2={p2Binding.DeviceId}");
     }
 
     private void AutoFillMissing()
@@ -219,7 +278,6 @@ public class LocalPadSession : MonoBehaviour
             var pad = PickUnassignedPad();
             if (pad != null) TryBind(p1Binding, pad);
         }
-
         if (!p2Binding.HasPad)
         {
             var pad = PickUnassignedPad();
@@ -227,61 +285,58 @@ public class LocalPadSession : MonoBehaviour
         }
     }
 
-    // =========================================================
-    // Device change
-    // =========================================================
     private void OnDeviceChange(InputDevice device, InputDeviceChange change)
     {
         if (device is not Gamepad gp) return;
 
-        // UIカウントは常に更新（接続画面中）
-        if (!inGameUI) RefreshPadCountUI();
-
-        // ★抜けた時：接続UIへ
         if (change == InputDeviceChange.Disconnected || change == InputDeviceChange.Removed)
         {
+            // エントリー中（開始前）に抜けた場合、リストから削除してやり直しさせる
+            if (!startedOnce && joinedDeviceIds.Contains(gp.deviceId))
+            {
+                joinedDeviceIds.Remove(gp.deviceId);
+                RefreshPadCountUI();
+                return;
+            }
             HandlePadDisconnected(gp);
-            return;
         }
-
-        // ★戻ってきた時：復帰を試す
-        if (change == InputDeviceChange.Added ||
-            change == InputDeviceChange.Reconnected ||
-            change == InputDeviceChange.Enabled)
+        else if (change == InputDeviceChange.Added || change == InputDeviceChange.Reconnected || change == InputDeviceChange.Enabled)
         {
-            // まだ開始してないならUI更新だけでOK
-            if (!startedOnce) return;
-
-            // 復帰待ちなら復帰を試す
-            if (waitingReconnect && !inGameUI)
+            if (startedOnce && waitingReconnect && !inGameUI)
                 FinalizeResumeIfReady();
         }
     }
 
     // =========================================================
-    // Binding helpers
+    // ★変更点3: Binding helpers (順番指定版)
     // =========================================================
-    private void BindFirstTwoPads()
+    private void BindOrderedPads()
     {
         assigned.Clear();
         p1Binding.Unbind();
         p2Binding.Unbind();
 
-        int bound = 0;
-        foreach (var pad in Gamepad.all)
+        // 参加リスト(joinedDeviceIds)の順番通りに割り当てる
+
+        // P1の割り当て
+        if (joinedDeviceIds.Count > 0)
         {
-            if (!IsUsable(pad)) continue;
-
-            if (bound == 0)
+            // IDからGamepadインスタンスを探す
+            var pad1 = Gamepad.all.FirstOrDefault(g => g.deviceId == joinedDeviceIds[0]);
+            if (pad1 != null && IsUsable(pad1))
             {
-                if (TryBind(p1Binding, pad)) bound++;
+                TryBind(p1Binding, pad1);
             }
-            else if (bound == 1)
-            {
-                if (TryBind(p2Binding, pad)) bound++;
-            }
+        }
 
-            if (bound >= 2) break;
+        // P2の割り当て
+        if (joinedDeviceIds.Count > 1)
+        {
+            var pad2 = Gamepad.all.FirstOrDefault(g => g.deviceId == joinedDeviceIds[1]);
+            if (pad2 != null && IsUsable(pad2))
+            {
+                TryBind(p2Binding, pad2);
+            }
         }
     }
 
@@ -291,15 +346,13 @@ public class LocalPadSession : MonoBehaviour
         if (!IsUsable(pad)) return false;
         if (assigned.Contains(pad.deviceId)) return false;
 
-        if (binding.HasPad) assigned.Remove(binding.DeviceId);
-
+        // すでに持ってる場合一旦外す処理は省略（ここでは新規割り当て前提）
         binding.Bind(pad);
         assigned.Add(pad.deviceId);
         return true;
     }
 
-    private bool HasBothBound()
-        => p1Binding != null && p2Binding != null && p1Binding.HasPad && p2Binding.HasPad;
+    private bool HasBothBound() => p1Binding != null && p2Binding != null && p1Binding.HasPad && p2Binding.HasPad;
 
     private Gamepad PickUnassignedPad()
     {
@@ -312,8 +365,7 @@ public class LocalPadSession : MonoBehaviour
         return null;
     }
 
-    private bool IsUsable(Gamepad pad)
-        => pad != null && pad.added && pad.enabled;
+    private bool IsUsable(Gamepad pad) => pad != null && pad.added && pad.enabled;
 
     // =========================================================
     // UI helpers
@@ -321,89 +373,89 @@ public class LocalPadSession : MonoBehaviour
     private void ShowConnectionUI()
     {
         inGameUI = false;
-
         if (blurUI) blurUI.SetActive(true);
         if (connectUI) connectUI.SetActive(true);
-
-        if (inGameUIs != null)
-            foreach (var ui in inGameUIs)
-                if (ui) ui.SetActive(false);
-
+        if (inGameUIs != null) foreach (var ui in inGameUIs) if (ui) ui.SetActive(false);
         RefreshPadCountUI();
     }
 
     private void ShowInGameUI()
     {
         inGameUI = true;
-
         if (blurUI) blurUI.SetActive(false);
         if (connectUI) connectUI.SetActive(false);
-        if (gamepadUI1) gamepadUI1.SetActive(false);
-        if (gamepadUI2) gamepadUI2.SetActive(false);
-
-        if (inGameUIs != null)
-            foreach (var ui in inGameUIs)
-                if (ui) ui.SetActive(true);
+        if (gamepadUI1) gamepadUI1.Hide();
+        if (gamepadUI2) gamepadUI2.Hide();
+        if (inGameUIs != null) foreach (var ui in inGameUIs) if (ui) ui.SetActive(true);
     }
 
     private void RefreshPadCountUI()
     {
-        // まだプレイヤー登録前（初回開始前）なら「接続台数」で表示
-        if (p1Binding == null || p2Binding == null || !startedOnce)
+        // まだ開始前（エントリー画面）の場合
+        if (!startedOnce)
         {
-            int c = AvailablePadCount();
-            if (gamepadUI1) gamepadUI1.SetActive(c >= 1);
-            if (gamepadUI2) gamepadUI2.SetActive(c >= 2);
+            int joinedCount = joinedDeviceIds.Count;
+
+            // P1の表示制御
+            if (gamepadUI1 != null)
+            {
+                // 参加済み かつ まだ表示されてなければ Show()、そうでなければ Hide()
+                // ※ ここで毎回Showを呼ぶとアニメーションし続けてしまうので、
+                // 「アクティブじゃなかったらShowする」というガードを入れると良いです
+
+                bool shouldShow = (joinedCount >= 1);
+
+                if (shouldShow && !gamepadUI1.gameObject.activeSelf)
+                {
+                    bluelineUI.SetActive(false);
+                    gamepadUI1.Show(); // ★アニメーション開始！
+                }
+                else if (!shouldShow && gamepadUI1.gameObject.activeSelf)
+                {
+                    gamepadUI1.Hide();
+                }
+            }
+
+            // P2の表示制御
+            if (gamepadUI2 != null)
+            {
+                bool shouldShow = (joinedCount >= 2);
+                if (shouldShow) Debug.Log("P2を表示しようとしています！");
+
+                if (shouldShow && !gamepadUI2.gameObject.activeSelf)
+                {
+                    orangelineUI.SetActive(false);
+                    gamepadUI2.Show(); // ★アニメーション開始！
+                }
+                else if (!shouldShow && gamepadUI2.gameObject.activeSelf)
+                {
+                    gamepadUI2.Hide();
+                }
+            }
             return;
         }
-
-        // ゲーム開始後 / 登録済みなら「割当状態」で表示（どっちが抜けたか分かる）
-        if (gamepadUI1) gamepadUI1.SetActive(p1Binding.HasPad);
-        if (gamepadUI2) gamepadUI2.SetActive(p2Binding.HasPad);
-    }
-
-    private int AvailablePadCount()
-    {
-        int count = 0;
-        foreach (var p in Gamepad.all)
-            if (IsUsable(p)) count++;
-        return count;
-    }
-
-    private bool AnyPadPressedStart()
-    {
-        foreach (var pad in Gamepad.all)
+        // ゲーム開始後（既存ロジックの修正）
+        // Bindingがあるなら表示状態にする（アニメーションは不要なら強制表示でもOKですが、Showでも問題ないです）
+        if (gamepadUI1)
         {
-            if (!IsUsable(pad)) continue;
-
-            if (useDpadDownToStart)
-            {
-                if (pad.dpad.down.wasPressedThisFrame) return true;
-            }
-            else
-            {
-                if (pad.buttonSouth.wasPressedThisFrame) return true;
-            }
+            if (p1Binding != null && p1Binding.HasPad) { if (!gamepadUI1.gameObject.activeSelf) gamepadUI1.Show(); }
+            else gamepadUI1.Hide();
         }
-        return false;
-    }
 
-    private void SetGateLocked(PlayerControlGate gate, bool locked)
+        if (gamepadUI2)
+        {
+            if (p2Binding != null && p2Binding.HasPad) { if (!gamepadUI2.gameObject.activeSelf) gamepadUI2.Show(); }
+            else gamepadUI2.Hide();
+        }
+    }
+private void SetGateLocked(PlayerControlGate gate, bool locked)
     {
         if (gate != null) gate.SetLocked(locked);
     }
 
-    // =========================================================
-    // GameManager bridge
-    // =========================================================
     private void RequestGameStart()
     {
-        if (GameManager.Instance == null)
-        {
-            Debug.LogWarning("[LocalPadSession] GameManager.Instance が見つからない");
-            return;
-        }
-
+        if (GameManager.Instance == null) return;
         GameManager.Instance.StartLocalGameRequest();
     }
 }
