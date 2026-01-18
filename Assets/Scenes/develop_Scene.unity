@@ -8729,6 +8729,28 @@ Transform:
   - {fileID: 721754700}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &370087009 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3425225336369496045, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
+  m_PrefabInstance: {fileID: 1411986149}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1de9f61751235fb4097af552edf7b748, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerJoinVisual
+--- !u!114 &370087010 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4077835545131156164, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
+  m_PrefabInstance: {fileID: 1411986149}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1de9f61751235fb4097af552edf7b748, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerJoinVisual
 --- !u!1 &372626216
 GameObject:
   m_ObjectHideFlags: 0
@@ -9983,6 +10005,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 290928a0d0a719042be48417ff0aaadc, type: 3}
+--- !u!1 &472321578 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9806429389617492, guid: c05e86240d1bacd46a75ea214b6592af, type: 3}
+  m_PrefabInstance: {fileID: 716805114}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &476074297
 GameObject:
   m_ObjectHideFlags: 0
@@ -17464,6 +17491,11 @@ GameObject:
 --- !u!224 &716805118 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 862802894087386377, guid: c05e86240d1bacd46a75ea214b6592af, type: 3}
+  m_PrefabInstance: {fileID: 716805114}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &716805119 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4093831285255119662, guid: c05e86240d1bacd46a75ea214b6592af, type: 3}
   m_PrefabInstance: {fileID: 716805114}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &716886316
@@ -25605,29 +25637,25 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 929665137}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
-      propertyPath: IsDebug
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: connectUI
       value: 
       objectReference: {fileID: 716805117}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
+      propertyPath: bluelineUI
+      value: 
+      objectReference: {fileID: 472321578}
+    - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: gamepadUI1
       value: 
-      objectReference: {fileID: 716805116}
+      objectReference: {fileID: 370087010}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: gamepadUI2
       value: 
-      objectReference: {fileID: 716805115}
+      objectReference: {fileID: 370087009}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
-      propertyPath: useDpadDownToStart
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
-      propertyPath: inGameUIs.Array.size
-      value: 6
-      objectReference: {fileID: 0}
+      propertyPath: orangelineUI
+      value: 
+      objectReference: {fileID: 716805119}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: 'inGameUIs.Array.data[0]'
       value: 
