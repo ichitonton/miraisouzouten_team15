@@ -127,6 +127,8 @@ public class MovePlayerKey : NetworkBehaviour
 
     private Dictionary<ulong, NetworkObject> itemDictionary;
 
+    SetSkinMaterial _setSkinMaterial;
+
     public enum ItemType
     {
         None,
@@ -169,7 +171,7 @@ public class MovePlayerKey : NetworkBehaviour
         _currentHp = _MaxHp;
         _moveSpeedInitial = _moveSpeed;
         _anim = GetComponent<Animator>();
-
+        _setSkinMaterial = GetComponent<SetSkinMaterial>();
 
         _ObjectPool = NetworkObjectPool.Instance;
 
@@ -254,8 +256,8 @@ public class MovePlayerKey : NetworkBehaviour
 
     void AnimDyingFly(bool fly)
     {
-        Debug.Log("fly : " + fly);
-        if (_fly == fly) return;
+        //Debug.Log("fly : " + fly);
+        //if (_fly == fly) return;
         AnimDyingFlyServerRpc(fly);
         _fly = fly;
     }
@@ -607,7 +609,7 @@ public class MovePlayerKey : NetworkBehaviour
         _dyingParticleSystem.Play();
         PlayDyingEffectClientRpc();
         //NetworkEffectSpawner.Instance.PlayEffect(_hitDyingEffectId, transform.position, Quaternion.identity);
-
+        _setSkinMaterial.RequestSetKizetuMaterialServerRpc();
 
         Invoke(nameof(UnlockStun), delay);
     }
@@ -622,6 +624,7 @@ public class MovePlayerKey : NetworkBehaviour
 
         AnimDyingServerRpc(false);
         StopDyingEffectClientRpc();
+        _setSkinMaterial.RequestSetNormalMaterialServerRpc();
 
     }
 
@@ -968,24 +971,28 @@ public class MovePlayerKey : NetworkBehaviour
             _isEmote = true;
             Invoke("IsEmoteFinish", 1.0f);
             AnimEmote1ServerRpc(true);
+            _setSkinMaterial.RequestSetAoriMaterialServerRpc();
         }
         if (_InputEmote2)
         {
             _isEmote = true;
             Invoke("IsEmoteFinish", 1.0f);
             AnimEmote2ServerRpc(true);
+            _setSkinMaterial.RequestSetHappyMaterialServerRpc();
         }
         if (_InputEmote3)
         {
             _isEmote = true;
             Invoke("IsEmoteFinish", 1.0f);
             AnimEmote3ServerRpc(true);
+            _setSkinMaterial.RequestSetKanasimiMaterialServerRpc();
         }
         if (_InputEmote4)
         {
             _isEmote = true;
             Invoke("IsEmoteFinish", 1.0f);
             AnimEmote4ServerRpc(true);
+            _setSkinMaterial.RequestSetOkoriMaterialServerRpc();
         }
     }
 
@@ -1000,6 +1007,7 @@ public class MovePlayerKey : NetworkBehaviour
         AnimEmote2ServerRpc(false);
         AnimEmote3ServerRpc(false);
         AnimEmote4ServerRpc(false);
+        _setSkinMaterial.RequestSetNormalMaterialServerRpc();
     }
 
     //カメラシェイク用
