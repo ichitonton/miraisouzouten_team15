@@ -57,6 +57,9 @@ public class GameDirector : MonoBehaviour
 
     private bool canInput = false;
 
+    [SerializeField] ResultSetSkinMaterial _resultSetSkinMaterial1;
+    [SerializeField] ResultSetSkinMaterial _resultSetSkinMaterial2;
+
     // --------------------------------------------------
     // 処理本体
     // --------------------------------------------------
@@ -210,8 +213,11 @@ public class GameDirector : MonoBehaviour
                 // エフェクト表示
                 if (winEffectObject != null) winEffectObject.SetActive(true);
 
+                _resultSetSkinMaterial1.SetSkinMaterialWin();
+                _resultSetSkinMaterial2.SetSkinMaterialWin();
+
                 // アニメーション分岐 (Random.Rangeはintの場合、最大値を含まないので3にする)
-                int rand = Random.Range(0, 3);
+                int rand = Random.Range(0, 2);
 
                 if (rand == 0)
                 {
@@ -223,14 +229,16 @@ public class GameDirector : MonoBehaviour
                     player1anim.SetTrigger("Win3L");
                     player2anim.SetTrigger("Win3R");
                 }
-                else if (rand == 2)
-                {
-                    player1anim.SetTrigger("Win2L");
-                    player2anim.SetTrigger("Win2R");
-                }
+                //else if (rand == 2)
+                //{
+                //    player1anim.SetTrigger("Win2L");
+                //    player2anim.SetTrigger("Win2R");
+                //}
             }
             else
             {
+                _resultSetSkinMaterial1.SetSkinMaterialLose();
+                _resultSetSkinMaterial2.SetSkinMaterialLose();
                 // 負けた場合
                 winImageObject.SetActive(false);
                 loseImageObject.SetActive(true);
