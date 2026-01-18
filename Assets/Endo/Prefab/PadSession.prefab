@@ -48,9 +48,16 @@ MonoBehaviour:
   connectUI: {fileID: 0}
   gamepadUI1: {fileID: 0}
   gamepadUI2: {fileID: 0}
-  inGameUIs: []
+  bluelineUI: {fileID: 0}
+  orangelineUI: {fileID: 0}
+  inGameUIs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   requiredGamepads: 2
-  useDpadDownToStart: 1
-  p1Gate: {fileID: 0}
-  p2Gate: {fileID: 0}
-  inGame: 0
+  useDpadDownToStart: 0
+  startTime: 1
+  IsDebug: 0
