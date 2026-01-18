@@ -25477,7 +25477,7 @@ PrefabInstance:
       objectReference: {fileID: 929665137}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: IsDebug
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: connectUI
@@ -46656,6 +46656,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4238187822472940311, guid: 77ade106b88ed0544af14774c809f661, type: 3}
   m_PrefabInstance: {fileID: 1806681436}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1810359980 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1815177204662863336, guid: 8d44d5ef5c7f909459a4803066c4d9fb, type: 3}
+  m_PrefabInstance: {fileID: 2064006340}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1811563822
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -51134,7 +51139,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1815177204662863336, guid: 8d44d5ef5c7f909459a4803066c4d9fb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2064006343}
   m_SourcePrefab: {fileID: 100100000, guid: 8d44d5ef5c7f909459a4803066c4d9fb, type: 3}
 --- !u!4 &2064006341 stripped
 Transform:
@@ -51146,12 +51154,25 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2617391042355764094, guid: 8d44d5ef5c7f909459a4803066c4d9fb, type: 3}
   m_PrefabInstance: {fileID: 2064006340}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1810359980}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 827c7876fa128e5428b3b17bdca95f83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+--- !u!114 &2064006343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1810359980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb95097738394b94d9d1f4ea0941b356, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneBgmStarter
+  bgmTag: Taiki
 --- !u!1001 &2066968569
 PrefabInstance:
   m_ObjectHideFlags: 0

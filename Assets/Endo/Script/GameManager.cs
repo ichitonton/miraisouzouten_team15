@@ -446,7 +446,14 @@ public class GameManager : NetworkBehaviour
 
         if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 100, 120, 30), "ゲームスタート"))
         {
-            StartLocalGameRequest();
+			if (NetworkSoundManager.Instance != null)
+			{
+				NetworkSoundManager.Instance.StopBgm(
+					NetworkSoundManager.SoundScope.LocalOnly,
+					0.7f // フェード時間。好みで
+				);
+			}
+			StartLocalGameRequest();
         }
     }
 

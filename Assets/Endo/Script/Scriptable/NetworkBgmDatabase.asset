@@ -16,7 +16,21 @@ MonoBehaviour:
   - tag: FuwaFuwa
     clips:
     - {fileID: 8300000, guid: 4a7195df860ca9c48b306bfac88f62ee, type: 3}
-    volume: 0.05
+    volume: 0.03
+    loop: 1
+    fadeSeconds: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Taiki
+    clips:
+    - {fileID: 8300000, guid: fb790b2e5b049b54aa889ac701233345, type: 3}
+    volume: 0.03
+    loop: 1
+    fadeSeconds: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Taiki
+    clips:
+    - {fileID: 8300000, guid: fb790b2e5b049b54aa889ac701233345, type: 3}
+    volume: 0.03
     loop: 1
     fadeSeconds: 0
     outputMixerGroup: {fileID: 0}
