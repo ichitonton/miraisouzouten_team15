@@ -211,14 +211,14 @@ MonoBehaviour:
   - tag: SE_Meteor_FallLoop
     clips:
     - {fileID: 8300000, guid: 7403a360133f11548a9011e6d13e3961, type: 3}
-    volume: 0.317
+    volume: 1
     randomizePitch: 0
     pitchMin: 0.9
     pitchMax: 1
     spatialBlend: 1
-    minDistance: 60
-    maxDistance: 80
-    cooldownSeconds: 0.2
+    minDistance: 3
+    maxDistance: 60
+    cooldownSeconds: 0
     maxSimultaneous: 0
     outputMixerGroup: {fileID: 0}
   - tag: sdf
