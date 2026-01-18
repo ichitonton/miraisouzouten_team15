@@ -4066,7 +4066,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -15, y: 0}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &196091634
@@ -4089,7 +4089,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 4e9a6b454ccd79f43b86ac9bc5ca9dd6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 123e7c131e2dc4c40bcd52c96c805830, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -10942,7 +10942,7 @@ PrefabInstance:
     - target: {fileID: -9166671611561208469, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
       propertyPath: _mapRect
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1246240486}
     - target: {fileID: -9166671611561208469, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
       propertyPath: _mapCamera
       value: 
@@ -11198,7 +11198,7 @@ PrefabInstance:
     - target: {fileID: 8333864430798299636, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
       propertyPath: _mapRect
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1246240486}
     - target: {fileID: 8333864430798299636, guid: 2a0739cc7b869ac4da29461f9d20566c, type: 3}
       propertyPath: _mapCamera
       value: 
@@ -11652,6 +11652,14 @@ PrefabInstance:
       value: 2.4
       objectReference: {fileID: 0}
     - target: {fileID: 546970859194657621, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _spawnInterval
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 546970859194657621, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _totalSpawnCount
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 546970859194657621, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: '_pivots.Array.data[0]'
       value: 
       objectReference: {fileID: 180542917}
@@ -11735,6 +11743,22 @@ PrefabInstance:
       propertyPath: sfx2DSource
       value: 
       objectReference: {fileID: 600237068}
+    - target: {fileID: 1789616683787185576, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: sfx3DPoolSize
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 2557600072764507866, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _spawnInterval
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2557600072764507866, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _burstSpawnCount
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2557600072764507866, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _totalSpawnCount
+      value: 300
+      objectReference: {fileID: 0}
     - target: {fileID: 2557600072764507866, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: '_pivots.Array.data[0]'
       value: 
@@ -11747,6 +11771,14 @@ PrefabInstance:
       propertyPath: '_pivots.Array.data[2]'
       value: 
       objectReference: {fileID: 721754700}
+    - target: {fileID: 3986827641485018724, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _spawnInterval
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 3986827641485018724, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _totalSpawnCount
+      value: 300
+      objectReference: {fileID: 0}
     - target: {fileID: 3986827641485018724, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: '_pivots.Array.data[0]'
       value: 
@@ -40621,7 +40653,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 874974346997713278, guid: 08be5cbe9ab57a246b7c79d5db929e0c, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 7
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 874974346997713278, guid: 08be5cbe9ab57a246b7c79d5db929e0c, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -40662,7 +40694,7 @@ PrefabInstance:
     - target: {fileID: 4537547583009165028, guid: 08be5cbe9ab57a246b7c79d5db929e0c, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 22cd7c249ae9f9e478de6f3ab9d9c711, type: 3}
+      objectReference: {fileID: 21300000, guid: 81ebf36cb1f4acb469b0dc0cdfbf2291, type: 3}
     - target: {fileID: 4537547583009165028, guid: 08be5cbe9ab57a246b7c79d5db929e0c, type: 3}
       propertyPath: m_Color.b
       value: 0.91886795
