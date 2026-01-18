@@ -16,7 +16,7 @@ public class UICursor : MonoBehaviour
 
     void Start()
     {
-        _canvas = Object.FindFirstObjectByType<Canvas>();
+        _canvas = Object.FindFirstObjectByType<InGameUIController>().gameObject.GetComponent<Canvas>();//ƒLƒƒƒ“ƒoƒX‚Í1‚Â‚É‚µ‚È‚¢‚Æ‚¿‚á‚ñ‚ÆŽæ“¾‚Å‚«‚È‚¢
         _canvasTransform = _canvas.GetComponent<RectTransform>();
         _cursorTransform = this.GetComponent<RectTransform>();
 
