@@ -25496,6 +25496,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1289284548}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
+      propertyPath: joinSfxTag
+      value: SE_Decision
+      objectReference: {fileID: 0}
+    - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: orangelineUI
       value: 
       objectReference: {fileID: 1289284546}

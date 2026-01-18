@@ -33,8 +33,13 @@ public class LocalPadSession : MonoBehaviour
     private PlayerControlGate p1Gate;
     private PlayerControlGate p2Gate;
 
-    // ★変更点1: 参加確定したデバイスIDを順番に保持するリスト
-    private List<int> joinedDeviceIds = new List<int>();
+	[Header("SE")]
+	[SerializeField] private string joinSfxTag = "SE_Decision"; 
+	[SerializeField] private NetworkSoundManager.SoundScope joinSfxScope = NetworkSoundManager.SoundScope.LocalOnly;
+
+
+	// ★変更点1: 参加確定したデバイスIDを順番に保持するリスト
+	private List<int> joinedDeviceIds = new List<int>();
 
     // Pad重複割当防止（兼・現在のアクティブなデバイス管理）
     private readonly HashSet<int> assigned = new();
@@ -408,7 +413,9 @@ public class LocalPadSession : MonoBehaviour
                 if (shouldShow && !gamepadUI1.gameObject.activeSelf)
                 {
                     bluelineUI.SetActive(false);
-                    gamepadUI1.Show(); // ★アニメーション開始！
+					PlayJoinSe();
+					gamepadUI1.Show(); // ★アニメーション開始！
+
                 }
                 else if (!shouldShow && gamepadUI1.gameObject.activeSelf)
                 {
@@ -425,7 +432,8 @@ public class LocalPadSession : MonoBehaviour
                 if (shouldShow && !gamepadUI2.gameObject.activeSelf)
                 {
                     orangelineUI.SetActive(false);
-                    gamepadUI2.Show(); // ★アニメーション開始！
+					PlayJoinSe();
+					gamepadUI2.Show(); // ★アニメーション開始！
                 }
                 else if (!shouldShow && gamepadUI2.gameObject.activeSelf)
                 {
@@ -448,7 +456,20 @@ public class LocalPadSession : MonoBehaviour
             else gamepadUI2.Hide();
         }
     }
-private void SetGateLocked(PlayerControlGate gate, bool locked)
+	private void PlayJoinSe()
+	{
+		if (NetworkSoundManager.Instance == null) return;
+		if (string.IsNullOrEmpty(joinSfxTag)) return;
+
+		// UIなので 2D（spatial=false）
+		NetworkSoundManager.Instance.PlaySfx(
+			joinSfxTag,
+			joinSfxScope,
+			spatial: false
+		);
+	}
+
+	private void SetGateLocked(PlayerControlGate gate, bool locked)
     {
         if (gate != null) gate.SetLocked(locked);
     }
