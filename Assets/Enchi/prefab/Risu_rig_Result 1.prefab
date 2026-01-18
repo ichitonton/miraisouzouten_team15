@@ -3111,7 +3111,7 @@ Animator:
   m_GameObject: {fileID: 7459081349001929016}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 128cbfc97ef2a0c46908df6249aa28d3, type: 2}
+  m_Controller: {fileID: 9100000, guid: f7153dd979c233146ac228b70502dd46, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -3182,21 +3182,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkAnimator
   ShowTopMostFoldoutHeaderGroup: 1
-  TransitionStateInfoList:
-  - IsCrossFadeExit: 0
-    Layer: 0
-    OriginatingState: -453240694
-    DestinationState: 2075013949
-    TransitionDuration: 0
-    TriggerNameHash: -316645540
-    TransitionIndex: 2
-  - IsCrossFadeExit: 0
-    Layer: 0
-    OriginatingState: 545524378
-    DestinationState: -1477183844
-    TransitionDuration: 0
-    TriggerNameHash: -316645540
-    TransitionIndex: 0
+  TransitionStateInfoList: []
   m_Animator: {fileID: 8427100980178498739}
 --- !u!114 &4693011718261107481
 MonoBehaviour:

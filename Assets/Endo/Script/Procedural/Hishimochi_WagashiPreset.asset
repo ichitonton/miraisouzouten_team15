@@ -33,11 +33,11 @@ MonoBehaviour:
     min: 0.2
     max: 0.35
   dynamicFriction:
-    min: 0.7
-    max: 1.2
+    min: 0.6
+    max: 0.6
   staticFriction:
-    min: 0.9
-    max: 1.4
+    min: 0.6
+    max: 0.6
   frictionCombine: 3
   bounceCombine: 3
   useBucketForPhysicsMaterial: 0
