@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
@@ -7,13 +8,20 @@ public class VideoFadeOverlay : MonoBehaviour
 {
     public static VideoFadeOverlay Instance { get; private set; }
 
+    [System.Serializable]
+    public class FadeVideoSet
+    {
+        public string name;
+        public VideoClip fadeOut;
+        public VideoClip fadeIn;
+    }
+
     [Header("Refs")]
     [SerializeField] private VideoPlayer videoPlayer;
     [SerializeField] private RawImage transitionImage;
 
-    [Header("Clips (recommended: separate Out / In)")]
-    [SerializeField] private VideoClip fadeOutClip;
-    [SerializeField] private VideoClip fadeInClip;
+    [Header("Video Sets (Out/In pairs)")]
+    [SerializeField] private List<FadeVideoSet> videoSets = new();
 
     [Header("Defaults")]
     [SerializeField, Min(0.05f)] private float defaultOutDuration = 0.35f;
@@ -45,7 +53,6 @@ public class VideoFadeOverlay : MonoBehaviour
         {
             transitionImage.gameObject.SetActive(false);
 
-            // 入力ブロックしたい場合は CanvasGroup を追加して制御
             _cg = transitionImage.GetComponentInParent<CanvasGroup>();
             if (_cg == null) _cg = transitionImage.gameObject.GetComponent<CanvasGroup>();
             if (_cg == null) _cg = transitionImage.gameObject.AddComponent<CanvasGroup>();
@@ -69,7 +76,7 @@ public class VideoFadeOverlay : MonoBehaviour
     }
 
     // =========================================================
-    // Public API（外から使いやすい形）
+    // Public API
     // =========================================================
     public void Cancel()
     {
@@ -85,62 +92,56 @@ public class VideoFadeOverlay : MonoBehaviour
         Hide();
     }
 
-    public void PlayFadeOutOnly(float? outDuration = null)
+    // ★Index指定版
+    public void PlayFadeOutOnly(float? outDuration = null, int videoIndex = 0)
     {
         int token = ++_playToken;
         if (_co != null) StopCoroutine(_co);
-        _co = StartCoroutine(CoFadeOutOnly(token, outDuration ?? defaultOutDuration));
+        _co = StartCoroutine(CoFadeOutOnly(token, outDuration ?? defaultOutDuration, videoIndex));
     }
 
-    public void PlayFadeInOnly(float? inDuration = null)
+    // ★Index指定版
+    public void PlayFadeInOnly(float? inDuration = null, int videoIndex = 0)
     {
         int token = ++_playToken;
         if (_co != null) StopCoroutine(_co);
-        _co = StartCoroutine(CoFadeInOnly(token, inDuration ?? defaultInDuration));
+        _co = StartCoroutine(CoFadeInOnly(token, inDuration ?? defaultInDuration, videoIndex));
     }
 
-    /// <summary>
-    /// Out → Hold → In のシーケンス（演出だけ）
-    /// </summary>
-    public void PlayFadeSequence(float? outDuration = null, float? holdSeconds = null, float? inDuration = null)
+    public void PlayFadeSequence(float? outDuration = null, float? holdSeconds = null, float? inDuration = null, int videoIndex = 0)
     {
         int token = ++_playToken;
         if (_co != null) StopCoroutine(_co);
         _co = StartCoroutine(CoFadeSequence(token,
             outDuration ?? defaultOutDuration,
             holdSeconds ?? defaultHoldSeconds,
-            inDuration ?? defaultInDuration));
+            inDuration ?? defaultInDuration,
+            videoIndex));
     }
 
-    /// <summary>
-    /// Scene遷移などで使いやすい：Outして最終フレーム保持→Hold（ここで止められる）
-    /// </summary>
-    public IEnumerator CoFadeOutAndHold(float outDuration, float holdSeconds)
+    public IEnumerator CoFadeOutAndHold(float outDuration, float holdSeconds, int videoIndex = 0)
     {
         int token = ++_playToken;
         IsBusy = true;
 
         Show();
-        yield return PlayClipHoldLastFrame(token, fadeOutClip, outDuration);
+        var outClip = GetFadeOutClip(videoIndex);
+        yield return PlayClipHoldLastFrame(token, outClip, outDuration);
 
         if (!IsTokenAlive(token)) yield break;
 
         if (holdSeconds > 0f)
             yield return WaitRealtimeCancelable(token, holdSeconds);
-
-        // この時点で「最終フレーム保持」のまま止まってる
     }
 
-    /// <summary>
-    /// Hold解除して In を流し、終わったら消す
-    /// </summary>
-    public IEnumerator CoFadeInAndHide(float inDuration)
+    public IEnumerator CoFadeInAndHide(float inDuration, int videoIndex = 0)
     {
         int token = ++_playToken;
         IsBusy = true;
 
         Show();
-        yield return PlayClipAndHide(token, fadeInClip, inDuration);
+        var inClip = GetFadeInClip(videoIndex);
+        yield return PlayClipAndHide(token, inClip, inDuration);
 
         if (!IsTokenAlive(token)) yield break;
 
@@ -150,54 +151,92 @@ public class VideoFadeOverlay : MonoBehaviour
     // =========================================================
     // Core Routines
     // =========================================================
-    private IEnumerator CoFadeOutOnly(int token, float outDuration)
+    private IEnumerator CoFadeOutOnly(int token, float outDuration, int videoIndex)
     {
         IsBusy = true;
         Show();
 
-        yield return PlayClipHoldLastFrame(token, fadeOutClip, outDuration);
-
-        if (!IsTokenAlive(token)) yield break;
-
-        // “最終フレーム保持”したまま終わる（必要なら外で Cancel or FadeIn を呼ぶ）
-        IsBusy = false;
-    }
-
-    private IEnumerator CoFadeInOnly(int token, float inDuration)
-    {
-        IsBusy = true;
-        Show();
-
-        yield return PlayClipAndHide(token, fadeInClip, inDuration);
+        var clip = GetFadeOutClip(videoIndex);
+        yield return PlayClipHoldLastFrame(token, clip, outDuration);
 
         if (!IsTokenAlive(token)) yield break;
 
         IsBusy = false;
     }
 
-    private IEnumerator CoFadeSequence(int token, float outDuration, float holdSeconds, float inDuration)
+    private IEnumerator CoFadeInOnly(int token, float inDuration, int videoIndex)
     {
         IsBusy = true;
         Show();
 
-        // Out → 最終フレーム保持
-        yield return PlayClipHoldLastFrame(token, fadeOutClip, outDuration);
+        var clip = GetFadeInClip(videoIndex);
+        yield return PlayClipAndHide(token, clip, inDuration);
+
         if (!IsTokenAlive(token)) yield break;
 
-        // Hold
+        IsBusy = false;
+    }
+
+    private IEnumerator CoFadeSequence(int token, float outDuration, float holdSeconds, float inDuration, int videoIndex)
+    {
+        IsBusy = true;
+        Show();
+
+        var outClip = GetFadeOutClip(videoIndex);
+        var inClip = GetFadeInClip(videoIndex);
+
+        yield return PlayClipHoldLastFrame(token, outClip, outDuration);
+        if (!IsTokenAlive(token)) yield break;
+
         if (holdSeconds > 0f)
             yield return WaitRealtimeCancelable(token, holdSeconds);
         if (!IsTokenAlive(token)) yield break;
 
-        // In → 終了後 Hide
-        yield return PlayClipAndHide(token, fadeInClip, inDuration);
+        yield return PlayClipAndHide(token, inClip, inDuration);
         if (!IsTokenAlive(token)) yield break;
 
         IsBusy = false;
     }
 
     // =========================================================
-    // Clip Play Helpers（安定性重視）
+    // Clip Picking
+    // =========================================================
+    private VideoClip GetFadeOutClip(int index)
+    {
+        if (videoSets == null || videoSets.Count == 0)
+        {
+            Debug.LogWarning("[VideoFadeOverlay] videoSets is empty.");
+            return null;
+        }
+
+        index = Mathf.Clamp(index, 0, videoSets.Count - 1);
+
+        var clip = videoSets[index].fadeOut;
+        if (clip == null)
+            Debug.LogWarning($"[VideoFadeOverlay] FadeOut clip is null. index={index} name={videoSets[index].name}");
+
+        return clip;
+    }
+
+    private VideoClip GetFadeInClip(int index)
+    {
+        if (videoSets == null || videoSets.Count == 0)
+        {
+            Debug.LogWarning("[VideoFadeOverlay] videoSets is empty.");
+            return null;
+        }
+
+        index = Mathf.Clamp(index, 0, videoSets.Count - 1);
+
+        var clip = videoSets[index].fadeIn;
+        if (clip == null)
+            Debug.LogWarning($"[VideoFadeOverlay] FadeIn clip is null. index={index} name={videoSets[index].name}");
+
+        return clip;
+    }
+
+    // =========================================================
+    // Clip Play Helpers
     // =========================================================
     private IEnumerator PlayClipHoldLastFrame(int token, VideoClip clip, float targetDuration)
     {
@@ -212,7 +251,6 @@ public class VideoFadeOverlay : MonoBehaviour
 
         SetupClipSpeed(clip, targetDuration);
 
-        // Prepare
         videoPlayer.Prepare();
         yield return WaitPrepared(token, 3.0f);
         if (!IsTokenAlive(token)) yield break;
@@ -223,7 +261,6 @@ public class VideoFadeOverlay : MonoBehaviour
         videoPlayer.loopPointReached += OnEnd;
         videoPlayer.Play();
 
-        // 完了待ち（ended が一番安定）
         while (!ended)
         {
             if (!IsTokenAlive(token))
@@ -236,10 +273,8 @@ public class VideoFadeOverlay : MonoBehaviour
 
         videoPlayer.loopPointReached -= OnEnd;
 
-        // ★最終フレーム保持
         videoPlayer.Pause();
 
-        // clip.frameCount が取れる場合は最後フレームに寄せる（環境差対策）
         if (clip.frameCount > 0)
             videoPlayer.frame = (long)(clip.frameCount - 1);
     }
@@ -280,7 +315,6 @@ public class VideoFadeOverlay : MonoBehaviour
 
         videoPlayer.loopPointReached -= OnEnd;
 
-        // 終わったら消す
         Hide();
     }
 
@@ -357,7 +391,7 @@ public class VideoFadeOverlay : MonoBehaviour
     }
 
     // =========================================================
-    // Optional: Inspector/Runtime setters
+    // Optional setters
     // =========================================================
     public void SetDefaultDurations(float outSec, float inSec)
     {
@@ -368,11 +402,5 @@ public class VideoFadeOverlay : MonoBehaviour
     public void SetDefaultHold(float holdSec)
     {
         defaultHoldSeconds = Mathf.Max(0f, holdSec);
-    }
-
-    public void SetClips(VideoClip outClip, VideoClip inClip)
-    {
-        fadeOutClip = outClip;
-        fadeInClip = inClip;
     }
 }
