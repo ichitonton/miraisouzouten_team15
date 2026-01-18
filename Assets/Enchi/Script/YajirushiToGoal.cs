@@ -1,138 +1,141 @@
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class YajirushiToGoal : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] Camera targetCamera;
-    [SerializeField] GameObject yajirushiPrefab;
-    [SerializeField] Transform goalId1;
-    [SerializeField] Transform goalId2;
-    [SerializeField] Transform goalId3;
-    Transform goal;
+	[Header("References")]
+	[SerializeField] Camera targetCamera;
+	[SerializeField] GameObject yajirushiPrefab;
+	[SerializeField] Transform goalId1;
+	[SerializeField] Transform goalId2;
+	[SerializeField] Transform goalId3;
 
-    [Header("Ground Settings")]
-    [SerializeField] LayerMask groundLayer;
-    [SerializeField] float groundOffset = 0.2f;
+	[Header("Ground Settings")]
+	[SerializeField] LayerMask groundLayer;
+	[SerializeField] float groundOffset = 0.2f;
 
-    [Header("Screen Settings")]
-    [SerializeField, Range(0f, 0.49f)]
-    float screenMargin = 0.08f;
+	[Header("Screen Settings")]
+	[SerializeField, Range(0f, 0.49f)]
+	float screenMargin = 0.08f;
 
-    [Header("Ray Settings")]
-    [SerializeField] float rayLength = 1000f;
+	[Header("Ray Settings")]
+	[SerializeField] float rayLength = 1000f;
 
-    private GameObject yajirushiInstance;
-    private bool isVisible;
+	GameObject yajirushiInstance;
+	bool isVisible;
 
-    void Start()
-    {
-        goal = transform;
-        if (targetCamera == null)
-            targetCamera = Camera.main;
+	// ★ scene開始時に保存するゴール座標
+	Vector3 goalPos1;
+	Vector3 goalPos2;
+	Vector3 goalPos3;
 
-        yajirushiInstance = Instantiate(yajirushiPrefab);
-        yajirushiInstance.SetActive(false);
-        isVisible = false;
-    }
-    public void SetTargetGoal(ulong clientId)
-    {
-        //Debug.Log("YajirushiToGoal: Id" + clientId);
-        clientId %= 3;
-        if (clientId == 0)
-            goal = goalId1;
-        else if (clientId == 1)
-            goal = goalId2;
-        else if (clientId == 2)
-            goal = goalId3;
+	// ★ 現在採用しているゴール座標
+	Vector3 currentGoalPos;
 
-        goal.transform.position = new Vector3(goal.transform.position.x, 0.0f, goal.transform.position.z);
-    }
+	void Start()
+	{
+		if (targetCamera == null)
+			targetCamera = Camera.main;
 
-    void LateUpdate()
-    {
-        if (yajirushiInstance == null || goal == null) return;
+		// --- ゴール初期座標を保存（Transformはいじらない） ---
+		goalPos1 = goalId1.position;
+		goalPos2 = goalId2.position;
+		goalPos3 = goalId3.position;
 
-        //Debug.Log("YajirushiToGoal: LateUpdate running" + goal.position);
-        // ================================
-        // ① 向き：カメラ → ゴール
-        // ================================
-        Vector3 dirFromCamera = goal.position - targetCamera.transform.position;
-        dirFromCamera.y = 0f;
+		// デフォルト
+		currentGoalPos = goalPos1;
 
-        if (dirFromCamera.sqrMagnitude < 0.001f)
-        {
-            SetVisible(false);
-            return;
-        }
+		yajirushiInstance = Instantiate(yajirushiPrefab);
+		yajirushiInstance.SetActive(false);
+		isVisible = false;
+	}
 
-        yajirushiInstance.transform.rotation =
-            Quaternion.LookRotation(dirFromCamera.normalized);
+	public void SetTargetGoal(ulong clientId)
+	{
+		clientId %= 3;
 
-        // ================================
-        // ② 画面端方向
-        // ================================
-        Vector3 dirLocal =
-            targetCamera.transform.InverseTransformDirection(dirFromCamera);
+		if (clientId == 0)
+			currentGoalPos = goalPos1;
+		else if (clientId == 1)
+			currentGoalPos = goalPos2;
+		else
+			currentGoalPos = goalPos3;
+	}
 
-        if (dirLocal.z < 0f)
-            dirLocal.z = 0.0001f;
+	void LateUpdate()
+	{
+		if (yajirushiInstance == null) return;
 
-        Vector2 dir2D = new Vector2(dirLocal.x, dirLocal.y).normalized;
+		// ================================
+		// ① 向き：カメラ → ゴール
+		// ================================
+		Vector3 dirFromCamera = currentGoalPos - targetCamera.transform.position;
+		dirFromCamera.y = 0f;
 
-        Vector2 viewportPos = new Vector2(
-            0.5f + dir2D.x * 0.5f,
-            0.5f + dir2D.y * 0.5f
-        );
+		if (dirFromCamera.sqrMagnitude < 0.001f)
+		{
+			SetVisible(false);
+			return;
+		}
 
-        viewportPos.x = Mathf.Clamp(viewportPos.x, screenMargin, 1f - screenMargin);
-        viewportPos.y = Mathf.Clamp(viewportPos.y, screenMargin, 1f - screenMargin);
+		// ================================
+		// ② 画面端方向
+		// ================================
+		Vector3 dirLocal =
+			targetCamera.transform.InverseTransformDirection(dirFromCamera);
 
-        // ================================
-        // ③ 地面 Raycast
-        // ================================
-        Ray ray = targetCamera.ViewportPointToRay(
-            new Vector3(viewportPos.x, viewportPos.y, 0f)
-        );
+		if (dirLocal.z < 0f)
+			dirLocal.z = 0.0001f;
 
-        bool hitGround = Physics.Raycast(ray, out RaycastHit hit, rayLength, groundLayer);
-        // 地面ヒット後
-        if (hitGround)
-        {
-            Vector3 arrowPos = hit.point + hit.normal * groundOffset;
-            yajirushiInstance.transform.position = arrowPos;
+		Vector2 dir2D = new Vector2(dirLocal.x, dirLocal.y).normalized;
 
-            // ★ 向きを「矢印位置 → ゴール」にする
-            Vector3 lookDir = goal.position - arrowPos;
-            lookDir.y = 0f;
+		Vector2 viewportPos = new Vector2(
+			0.5f + dir2D.x * 0.5f,
+			0.5f + dir2D.y * 0.5f
+		);
 
-            if (lookDir.sqrMagnitude > 0.001f)
-            {
-                yajirushiInstance.transform.rotation =
-                    Quaternion.LookRotation(lookDir.normalized, Vector3.up);
-            }
+		viewportPos.x = Mathf.Clamp(viewportPos.x, screenMargin, 1f - screenMargin);
+		viewportPos.y = Mathf.Clamp(viewportPos.y, screenMargin, 1f - screenMargin);
 
-            SetVisible(true);
-        }
+		// ================================
+		// ③ 地面 Raycast
+		// ================================
+		Ray ray = targetCamera.ViewportPointToRay(
+			new Vector3(viewportPos.x, viewportPos.y, 0f)
+		);
 
-        else
-        {
-            SetVisible(false);
-        }
-    }
+		if (Physics.Raycast(ray, out RaycastHit hit, rayLength, groundLayer))
+		{
+			Vector3 arrowPos = hit.point + hit.normal * groundOffset;
+			yajirushiInstance.transform.position = arrowPos;
 
-    void SetVisible(bool visible)
-    {
-        if (isVisible == visible) return;
+			Vector3 lookDir = currentGoalPos - arrowPos;
+			lookDir.y = 0f;
 
-        isVisible = visible;
-        yajirushiInstance.SetActive(visible);
-    }
+			if (lookDir.sqrMagnitude > 0.001f)
+			{
+				yajirushiInstance.transform.rotation =
+					Quaternion.LookRotation(lookDir.normalized, Vector3.up);
+			}
 
-    public void YajirushiOnOff(bool isOn)
-    {
-        if (yajirushiInstance != null)
-            yajirushiInstance.SetActive(isOn);
-    }
+			SetVisible(true);
+		}
+		else
+		{
+			SetVisible(false);
+		}
+	}
+
+	void SetVisible(bool visible)
+	{
+		if (isVisible == visible) return;
+
+		isVisible = visible;
+		yajirushiInstance.SetActive(visible);
+	}
+
+	public void YajirushiOnOff(bool isOn)
+	{
+		if (yajirushiInstance != null)
+			yajirushiInstance.SetActive(isOn);
+	}
 }
