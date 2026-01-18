@@ -126,6 +126,30 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+
+    private void LateUpdate()
+    {
+
+
+        if (Gamepad.all.Count >= 2)
+        {
+            foreach (var gamepad in Gamepad.all)
+            {
+                if (gamepad.bButton.wasPressedThisFrame)
+                {
+
+                    
+                }
+                if (gamepad.aButton.wasPressedThisFrame)
+                {
+
+                    
+                }
+            }
+        }
+    }
+
+
     // ==========================================================
     // ★LocalPadSession から呼ぶ入口
     // ==========================================================
@@ -162,10 +186,10 @@ public class GameManager : NetworkBehaviour
         //フェードの秒数設定
         if (VideoFadeManager.Instance != null)
         {
-            VideoFadeManager.Instance.fadeInDuration = 1.1f;
-            VideoFadeManager.Instance.fadeOutDuration = 1.1f;
+            VideoFadeManager.Instance.fadeInDuration = 1.0f;
+            VideoFadeManager.Instance.fadeOutDuration = 1.0f;
 
-            VideoFadeManager.Instance._videoIndex = 0;
+            //VideoFadeManager.Instance._videoIndex = 0;
             VideoFadeManager.Instance.PlayFadeOnly(VideoFadeManager.FadeScope.AllClients);
         }
 
@@ -174,8 +198,12 @@ public class GameManager : NetworkBehaviour
         //プレイヤー操作不能（ここは君の実装を後で入れる）
         foreach (var p in players)
         {
-            // 例：p.GetComponent<PlayerController>()?.SetEnabled(false);
+            //プレイヤー操作不能
+            p.GetComponent<MovePlayerKey>()._isRun = false;
         }
+
+        //3DSEを鳴らさない
+        NetworkSoundManager.Instance._is3DRun = false;
 
         //ゲームスタート
         StartCoroutine(StartGame());
@@ -183,7 +211,7 @@ public class GameManager : NetworkBehaviour
 
     private IEnumerator StartGame()
     {
-        float time = (VideoFadeManager.Instance != null) ? VideoFadeManager.Instance.fadeOutDuration : 1.1f;
+        float time = (VideoFadeManager.Instance != null) ? VideoFadeManager.Instance.fadeOutDuration : 1.0f;
         yield return new WaitForSeconds(time);
 
         //ムービーを流す
@@ -296,7 +324,7 @@ public class GameManager : NetworkBehaviour
 
         if (VideoFadeManager.Instance != null)
         {
-            //VideoFadeManager.Instance._videoIndex = 1;
+            VideoFadeManager.Instance._videoIndex = 1;
             VideoFadeManager.Instance.PlayFadeOnly(VideoFadeManager.FadeScope.AllClients);
             
         }
@@ -365,8 +393,7 @@ public class GameManager : NetworkBehaviour
             slot++;
         }
 
-        if (NetworkSoundManager.Instance != null)
-            NetworkSoundManager.Instance.PlayBgm("FuwaFuwa", NetworkSoundManager.SoundScope.AllClients, true);
+        
 
         _isStart = true;
     }
@@ -380,15 +407,30 @@ public class GameManager : NetworkBehaviour
 		var timer = Object.FindFirstObjectByType<TimerManager>();
 		if (timer != null)
 			timer.StartTimerServerRpc();
-	}
+
+        if (NetworkSoundManager.Instance != null)
+            NetworkSoundManager.Instance.PlayBgm("FuwaFuwa", NetworkSoundManager.SoundScope.AllClients, true);
+
+        var players = GameObject.FindGameObjectsWithTag("Player");
+
+        //プレイヤー操作可能
+        foreach (var p in players)
+        {
+            p.GetComponent<MovePlayerKey>()._isRun = true;
+        }
+
+        //3DSEをなるようにする
+        NetworkSoundManager.Instance._is3DRun = true;
+
+    }
 
 
-	private IEnumerator StartEvent()
+    private IEnumerator StartEvent()
     {
         // LANじゃなければやらない
         if (!_IsLanModeActive) yield break;
 
-        yield return new WaitForSeconds(30f);
+        yield return new WaitForSeconds(35f);
 
         //イベントを始めます
         if (GameEventManager.Instance != null)

@@ -49,7 +49,7 @@ MonoBehaviour:
     spatialBlend: 1
     minDistance: 1
     maxDistance: 10
-    cooldownSeconds: 0.2
+    cooldownSeconds: 0.1
     maxSimultaneous: 0
     outputMixerGroup: {fileID: 0}
   - tag: SE_Back
@@ -146,7 +146,7 @@ MonoBehaviour:
   - tag: ItemBox
     clips:
     - {fileID: 8300000, guid: b017f81ca398ff749b71c12504defd82, type: 3}
-    volume: 0.317
+    volume: 0.198
     randomizePitch: 0
     pitchMin: 0.9
     pitchMax: 1
@@ -190,7 +190,7 @@ MonoBehaviour:
     pitchMin: 0.9
     pitchMax: 1
     spatialBlend: 1
-    minDistance: 80
+    minDistance: 4
     maxDistance: 120
     cooldownSeconds: 0.2
     maxSimultaneous: 0
@@ -205,7 +205,7 @@ MonoBehaviour:
     spatialBlend: 1
     minDistance: 90
     maxDistance: 200
-    cooldownSeconds: 0.2
+    cooldownSeconds: 0
     maxSimultaneous: 0
     outputMixerGroup: {fileID: 0}
   - tag: SE_Meteor_FallLoop
@@ -216,7 +216,7 @@ MonoBehaviour:
     pitchMin: 0.9
     pitchMax: 1
     spatialBlend: 1
-    minDistance: 3
+    minDistance: 1.5
     maxDistance: 60
     cooldownSeconds: 0
     maxSimultaneous: 0

@@ -25477,7 +25477,7 @@ PrefabInstance:
       objectReference: {fileID: 929665137}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: IsDebug
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: connectUI
@@ -36422,6 +36422,10 @@ PrefabInstance:
       propertyPath: goalWhite
       value: 
       objectReference: {fileID: 593846793}
+    - target: {fileID: 5047105618854013406, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5342359017251551364, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 16
@@ -36656,7 +36660,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8937094665437567331, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: _count.m_InternalValue
-      value: 300
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 9011111834402605567, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: m_StaticEditorFlags

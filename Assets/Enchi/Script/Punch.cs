@@ -72,7 +72,10 @@ public class Punch : MonoBehaviour
 			//スター状態なら無効
 			if (otherPlayer.GetUseStar()) return;
 
-			if(otherPlayer._hitCount == 0)
+            NetworkEffectSpawner.Instance.PlayEffect(_hitDmgEffectId, transform.position, Quaternion.identity);
+            NetworkEffectSpawner.Instance.PlayEffect(_hitEffectId, transform.position, Quaternion.identity);
+
+            if (otherPlayer._hitCount == 0)
 			{
 				otherPlayer._hitCount = 1;
 				return;
@@ -90,6 +93,8 @@ public class Punch : MonoBehaviour
                 if (otherPlayer.ToGetPunch(_punchDamage, _stunTime))
                     KnockBack(rb);
 
+				otherPlayer._hitCount = 0;
+
 				return;
             }
 
@@ -98,8 +103,7 @@ public class Punch : MonoBehaviour
    //             KnockBack(rb);
 
             //NetworkEffectSpawner.Instance._otherRoot = transform;
-            NetworkEffectSpawner.Instance.PlayEffect(_hitDmgEffectId, transform.position, Quaternion.identity);
-			NetworkEffectSpawner.Instance.PlayEffect(_hitEffectId, transform.position, Quaternion.identity);
+            
 		}
 
 		// ★Sweet判定（階層検索）
@@ -109,6 +113,12 @@ public class Punch : MonoBehaviour
 			NetworkEffectSpawner.Instance.PlayEffect(_hitEffectId, transform.position, Quaternion.identity);
 		}
 
+		var ice = other.GetComponent<IcePillar>();
+		if( ice != null )
+		{
+            Debug.LogWarning($"[Punch EFFECT] Sweet HIT → {other.name}");
+            NetworkEffectSpawner.Instance.PlayEffect(_hitEffectId, transform.position, Quaternion.identity);
+        }
 
 		// ノックバック
 		Debug.Log("ノックバック" + other);
