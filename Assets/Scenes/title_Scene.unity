@@ -762,6 +762,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 276610925475159527, guid: 4d06c555e20cd3f4985c7de1552b1fb8, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 195a2284bea4bf2469169cdd158f72bb, type: 3}
     - target: {fileID: 404404811044781735, guid: 4d06c555e20cd3f4985c7de1552b1fb8, type: 3}
       propertyPath: m_SizeDelta.x
       value: 631
@@ -1294,6 +1298,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8887935724597970433, guid: 4d06c555e20cd3f4985c7de1552b1fb8, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 195a2284bea4bf2469169cdd158f72bb, type: 3}
     - target: {fileID: 9005469598299587103, guid: 4d06c555e20cd3f4985c7de1552b1fb8, type: 3}
       propertyPath: m_LocalScale.x
       value: 2
