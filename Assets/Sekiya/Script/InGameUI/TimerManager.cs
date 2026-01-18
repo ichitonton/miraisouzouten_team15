@@ -2,6 +2,7 @@
 using TMPro;
 using UnityEngine;
 using Unity.Netcode;
+using System.Collections;
 
 public class TimerManager : NetworkBehaviour
 {
@@ -11,6 +12,7 @@ public class TimerManager : NetworkBehaviour
 	[SerializeField] private TMP_Text timeText;
 
     [SerializeField] private SceneChangerNetwork scenechange;
+    [SerializeField] private float _delay = 1f;
     private bool isTimeUp = false;
 
     // ★追加：タイマー動作フラグ（サーバーが管理、全員に同期）
@@ -63,7 +65,15 @@ public class TimerManager : NetworkBehaviour
         }
 
         SetScoreClientRpc(r, b, w);
-        scenechange.ChangeScene();
+
+        UIEventManager.Instance.OnHideSceneUI();
+
+        VideoFadeManager.Instance._videoIndex = 1;
+        VideoFadeManager.Instance.fadeInDuration = 1.5f;
+        VideoFadeManager.Instance.fadeOutDuration = 1.6f;
+
+        StartCoroutine(DelayChangeScene());
+
     }
 
     [ClientRpc]
@@ -75,4 +85,14 @@ public class TimerManager : NetworkBehaviour
 
         Debug.Log($"スコア届いたよ！ R:{red} B:{blue} W:{white}");
     }
+
+    private IEnumerator DelayChangeScene()
+    {
+
+        yield return new WaitForSeconds(_delay);
+
+        scenechange.ChangeScene();
+
+    }
+
 }
