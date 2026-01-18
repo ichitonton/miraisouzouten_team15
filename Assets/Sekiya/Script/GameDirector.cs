@@ -83,12 +83,12 @@ public class GameDirector : MonoBehaviour
         {
             foreach (var gamepad in Gamepad.all)
             {
-                if (gamepad.aButton.wasPressedThisFrame)
+                if (gamepad.bButton.wasPressedThisFrame)
                 {
                     NetworkShutdownRelay.Instance.ShutDown();
                     StartCoroutine(TransitionSequence(titleSceneName));
                 }
-                if (gamepad.bButton.wasPressedThisFrame)
+                if (gamepad.aButton.wasPressedThisFrame)
                 {
                     NetworkShutdownRelay.Instance.ShutDown();
                     StartCoroutine(TransitionSequence(gameSceneName));

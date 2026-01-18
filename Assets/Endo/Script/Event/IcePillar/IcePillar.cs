@@ -131,7 +131,7 @@ public class IcePillar : NetworkBehaviour
             UpdateHpStageServer(Vector3.zero);
             StartCoroutine(RiseRoutineServer());
             Vector3 pos = transform.position + loopEffectOffset;
-            if (enableLoopEffect) NetworkEffectSpawner.Instance.PlayEffect(loopEffectId, pos, Quaternion.identity, loopEffectScale);
+            //if (enableLoopEffect) NetworkEffectSpawner.Instance.PlayEffect(loopEffectId, pos, Quaternion.identity, loopEffectScale);
             //_loopCo = StartCoroutine(Loop());
         }
     }

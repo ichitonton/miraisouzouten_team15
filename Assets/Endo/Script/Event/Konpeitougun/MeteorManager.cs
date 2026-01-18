@@ -60,8 +60,10 @@ public class MeteorManager : NetworkBehaviour
     // ==============================
     [Header("SFX")]
     [SerializeField] private string fallLoopSfxTag = "SE_Meteor_FallLoop"; // ←DBのタグ名に合わせて
+    [SerializeField] private float _soundDelay = 0.2f;
     private string _fallLoopInstanceTag;
     private bool _fallLoopPlaying = false;
+   
 
     public override void OnNetworkSpawn()
     {
@@ -72,7 +74,7 @@ public class MeteorManager : NetworkBehaviour
     private void OnDisable()
     {
         // 取りこぼし防止：無効化されたら止める
-        StopFallLoopLocal();
+        //StopFallLoopLocal();
     }
 
     private void StopFallLoopLocal()
@@ -81,7 +83,7 @@ public class MeteorManager : NetworkBehaviour
         if (NetworkSoundManager.Instance == null) return;
 
         NetworkSoundManager.Instance.StopLoopSfx(
-            _fallLoopInstanceTag,
+            fallLoopSfxTag,
             NetworkSoundManager.SoundScope.LocalOnly
         );
         _fallLoopPlaying = false;
@@ -153,7 +155,7 @@ public class MeteorManager : NetworkBehaviour
     {
         if (!Started.Value)
         {
-            StopFallLoopLocal();
+            //StopFallLoopLocal();
             return;
         }
 
@@ -165,7 +167,7 @@ public class MeteorManager : NetworkBehaviour
         {
             transform.position = P0.Value;
             _prevPos = transform.position;
-            StopFallLoopLocal();
+            //StopFallLoopLocal();
             return;
         }
 
@@ -178,18 +180,11 @@ public class MeteorManager : NetworkBehaviour
 
         if (isFalling)
         {
-            // LocalOnlyで各端末が鳴らす（毎フレAllClientsで飛ばさない）
-            NetworkSoundManager.Instance.StartLoopSfx(
-                _fallLoopInstanceTag,
-                NetworkSoundManager.SoundScope.LocalOnly,
-                true,
-                transform.position
-            );
-            _fallLoopPlaying = true;
+            
         }
         else
         {
-            StopFallLoopLocal();
+            //StopFallLoopLocal();
         }
 
         Vector3 pos = Bezier(P0.Value, P1.Value, P2.Value, tt);
@@ -208,6 +203,23 @@ public class MeteorManager : NetworkBehaviour
             visualRoot.Rotate(Vector3.forward, spinSpeed * Time.deltaTime, Space.Self);
 
         _prevPos = pos;
+        if(_fallLoopPlaying == false)
+        {
+            if ((float)now >= (float)(StartTime.Value + Duration.Value) - _soundDelay)
+            {
+                Debug.Log("メテオ鳴らしてるで");
+                // LocalOnlyで各端末が鳴らす（毎フレAllClientsで飛ばさない）
+                NetworkSoundManager.Instance.PlaySfx(
+                    fallLoopSfxTag,
+                    NetworkSoundManager.SoundScope.AllClients,
+                    true,
+                    P2.Value
+                );
+
+                _fallLoopPlaying = true;
+            }
+        }
+        
 
         if (tt >= 1f && IsServer && !Impacted.Value)
         {
@@ -215,7 +227,7 @@ public class MeteorManager : NetworkBehaviour
             ServerOnImpact(P2.Value);
 
             // サーバー到達確定時にも止める（念押し）
-            StopFallLoopLocal();
+            //StopFallLoopLocal();
         }
     }
 
@@ -265,6 +277,7 @@ public class MeteorManager : NetworkBehaviour
             new Vector3(knockbackRadius, knockbackRadius, knockbackRadius)
         );
 
+        
         // 衝撃波を出す
         ServerApplyKnockback(impactPoint);
         // 金平糖をはじけさせる

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -284,6 +285,11 @@ public class UIEventManager : MonoBehaviour
                 _sceneUIDir.Add(rt, dir);
             }
         }
+    }
+
+    public void OnHideSceneUI()
+    {
+        StartCoroutine(HideSceneUI());
     }
 
     private IEnumerator HideSceneUI()

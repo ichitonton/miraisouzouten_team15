@@ -8,7 +8,7 @@ public class WallHItManager : NetworkBehaviour
 
     [Header("Hit Filter")]
     [SerializeField] private LayerMask wallMask;        // 壁レイヤーを指定
-    [SerializeField] private float minImpactSpeed = 2f; // これ以下なら出さない（弱ヒット無視）
+    [SerializeField] private float minImpactSpeed = 0.2f; // これ以下なら出さない（弱ヒット無視）
     [SerializeField] private float cooldown = 0.15f;    // 連続発生防止
 
     [Header("Spawn Offset")]
@@ -27,7 +27,7 @@ public class WallHItManager : NetworkBehaviour
 
         if (!collision.gameObject.CompareTag("Player")) return;
 
-        Debug.Log("ぶち当たったべ");
+        
 
         //if (Time.time < _nextAllowedTime) return;
 
@@ -36,7 +36,7 @@ public class WallHItManager : NetworkBehaviour
 
         // 速度が小さいなら出さない（カス当たり防止）
         float speed = _rb != null ? collision.gameObject.GetComponent<Rigidbody>().linearVelocity.magnitude : 0f;
-        if (speed < minImpactSpeed) return;
+        //if (speed < minImpactSpeed) return;
 
 
 
@@ -53,6 +53,8 @@ public class WallHItManager : NetworkBehaviour
         // エフェクトの向き：
         // 例）壁に貼り付くように出したい → normalの逆を前方向にする
         Quaternion rot = Quaternion.LookRotation(-normal, Vector3.up);
+
+        Debug.Log("ぶち当たったべ");
 
         NetworkEffectSpawner.Instance.PlayEffect(16,spawnPos,rot);
 

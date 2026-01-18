@@ -296,7 +296,7 @@ public class GameManager : NetworkBehaviour
 
         if (VideoFadeManager.Instance != null)
         {
-            VideoFadeManager.Instance._videoIndex = 1;
+            //VideoFadeManager.Instance._videoIndex = 1;
             VideoFadeManager.Instance.PlayFadeOnly(VideoFadeManager.FadeScope.AllClients);
             
         }
