@@ -5,266 +5,427 @@ using UnityEngine.UI;
 
 public class CreditsSequence : MonoBehaviour
 {
-	[Header("Logo (Game Logo)")]
-	[SerializeField] private Image logoImage;                 // ゲームロゴImage
-	[SerializeField] private RectTransform logoRect;          // ゲームロゴRect
-	[SerializeField] private float logoFadeInSeconds = 1.5f;  // フェードイン時間
-	[SerializeField] private float logoHoldSeconds = 0.8f;    // フェード後の静止
-	[SerializeField] private float logoMoveUpDeltaY = 500f;   // ロゴをどれだけ上に逃がすか
+    [Header("Logo (Game Logo)")]
+    [SerializeField] private Image logoImage;
+    [SerializeField] private RectTransform logoRect;
+    [SerializeField] private float logoFadeInSeconds = 1.5f;
+    [SerializeField] private float logoHoldSeconds = 0.8f;
+    [SerializeField] private float logoMoveUpDeltaY = 500f;
 
-	[Header("Credits")]
-	[SerializeField] private RectTransform creditsRect;       // スタッフロールのRect
-	[SerializeField] private float creditsScrollSpeed = 80f;  // px/秒（ロゴもこれで動く）
+    [Header("Credits")]
+    [SerializeField] private RectTransform creditsRect;
+    [SerializeField] private float creditsScrollSpeed = 80f;
 
-	[Header("Team Logo (After Credits)")]
-	[SerializeField] private Image teamLogoImage;             // チームロゴImage
-	[SerializeField] private float teamLogoTargetY = 254.5f;  // ここで停止
-	[SerializeField] private float teamLogoHoldSeconds = 2.0f;// 中央で静止時間
-	[SerializeField] private float teamLogoFadeInSeconds = 0.3f; // チームロゴを軽くフェードインするなら
+    [Header("Team Logo (After Credits)")]
+    [SerializeField] private Image teamLogoImage;
+    [SerializeField] private float teamLogoFadeInSeconds = 0.3f;
 
-	[Header("Fade to Black + Title")]
-	[SerializeField] private Image fadeOverlayImage;          // 全画面黒Image
-	[SerializeField] private float fadeToBlackSeconds = 1.0f;
-	[SerializeField] private string titleSceneName = "TitleScene";
+    [Header("Thank You UI")]
+    [SerializeField] private Image thankYouImage;
+    [SerializeField] private float thankYouTargetY = 254.5f;
+    [SerializeField] private float thankYouHoldSeconds = 2.0f;
+    [SerializeField] private float thankYouFadeInSeconds = 0.25f;
 
-	[Header("BGM")]
-	[SerializeField] private AudioSource bgm;
-	[SerializeField] private float bgmStartVolume = 1f;
-	[SerializeField] private float bgmFadeOutSeconds = 1.5f;
+    [Header("BackGround")]
+    [SerializeField] private GameObject backGround = null;
 
-	void Awake()
-	{
-		// ゲームロゴは最初透明
-		SetAlpha(logoImage, 0f);
+    [Header("Fade to Black + Title")]
+    [SerializeField] private Image fadeOverlayImage;
+    [SerializeField] private float fadeToBlackSeconds = 1.0f;
+    [SerializeField] private string titleSceneName = "TitleScene";
 
-		// チームロゴは最初は非表示運用でもOK
-		if (teamLogoImage)
-		{
-			// 最初FalseにしたいならここでfalseにしとけばOK（InspectorでFalseでもOK）
-			// teamLogoImage.gameObject.SetActive(false);
-			SetAlpha(teamLogoImage, 0f);
-		}
+    [Header("BGM")]
+    [SerializeField] private AudioSource bgm;
+    [SerializeField] private float bgmStartVolume = 1f;
+    [SerializeField] private float bgmFadeOutSeconds = 1.5f;
 
-		// 黒オーバーレイも最初透明（最初FalseでもOK）
-		if (fadeOverlayImage)
-		{
-			// fadeOverlayImage.gameObject.SetActive(false); // InspectorでFalseでもOK
-			SetAlpha(fadeOverlayImage, 0f);
-		}
-	}
+    // ================================
+    // ★ 早送り
+    // ================================
+    [Header("Fast Forward")]
+    [SerializeField] private bool enableFastForward = true;
+    [SerializeField] private KeyCode fastForwardKey = KeyCode.Space;
+    [SerializeField, Range(1f, 10f)] private float fastForwardTimeScale = 3f;
+    [SerializeField] private bool holdToFastForward = true; // 押してる間だけ推奨
 
-	void Start()
-	{
-		StartCoroutine(Sequence());
-	}
+    private float _defaultTimeScale = 1f;
+    private bool _isFastForwarding = false;
 
-	IEnumerator Sequence()
-	{
-		// BGM開始
-		if (bgm)
-		{
-			bgm.volume = Mathf.Clamp01(bgmStartVolume);
-			if (!bgm.isPlaying) bgm.Play();
-		}
+    // ★ThankYouが止まったら早送り受付終了
+    private bool _canFastForward = true;
 
-		// 1) ゲームロゴ フェードイン
-		yield return StartCoroutine(FadeImageAlpha(logoImage, 0f, 1f, logoFadeInSeconds));
+    public static CreditsSequence Instancs { get; private set; }
 
-		// 2) ロゴ表示しきってから静止
-		if (logoHoldSeconds > 0f)
-			yield return new WaitForSeconds(logoHoldSeconds);
+    private Vector2 _creditsStartPos;
+    private Vector2 _teamLogoStartPos;
+    private Vector2 _thankYouStartPos;
+    private Vector2 _logoStartPos;
 
-		// 3) ゲームロゴ上移動（クレジットと同じ速度） + クレジットスクロール（同時）
-		bool logoDone = false;
-		bool creditsDone = false;
+    void Awake()
+    {
+        Instancs = this;
 
-		StartCoroutine(MoveUpAtSpeed_WithDone(logoRect, logoMoveUpDeltaY, creditsScrollSpeed, () => logoDone = true));
-		StartCoroutine(ScrollCreditsUp_UntilOffscreen_WithDone(creditsRect, creditsScrollSpeed, () => creditsDone = true));
+        _defaultTimeScale = 1f;
 
-		while (!logoDone || !creditsDone)
-			yield return null;
+        if (creditsRect) _creditsStartPos = creditsRect.anchoredPosition;
+        if (teamLogoImage) _teamLogoStartPos = teamLogoImage.rectTransform.anchoredPosition;
+        if (thankYouImage) _thankYouStartPos = thankYouImage.rectTransform.anchoredPosition;
+        if (logoRect) _logoStartPos = logoRect.anchoredPosition;
 
-		// 4) クレジット終わったら、表示整理（好み）
-		if (creditsRect) creditsRect.gameObject.SetActive(false);
-		if (logoRect) logoRect.gameObject.SetActive(false);
+        if (backGround) backGround.SetActive(false);
+        if (creditsRect) creditsRect.gameObject.SetActive(false);
 
-		// 5) チームロゴを表示（最初FalseでもここでONにする）
-		if (teamLogoImage && !teamLogoImage.gameObject.activeSelf)
-			teamLogoImage.gameObject.SetActive(true);
+        SetAlpha(logoImage, 0f);
 
-		// チームロゴをフェードイン（軽く）
-		if (teamLogoImage)
-			yield return StartCoroutine(FadeImageAlpha(teamLogoImage, teamLogoImage.color.a, 1f, teamLogoFadeInSeconds));
+        if (teamLogoImage)
+        {
+            SetAlpha(teamLogoImage, 0f);
+            teamLogoImage.gameObject.SetActive(false);
+        }
 
-		// 6) チームロゴを下から上げて targetY で停止
-		//    その瞬間にBGMフェードアウト開始
-		yield return StartCoroutine(
-			MoveToY_AndTriggerBgmFade(
-				teamLogoImage ? teamLogoImage.rectTransform : null,
-				teamLogoTargetY,
-				creditsScrollSpeed,
-				bgm,
-				bgmFadeOutSeconds
-			)
-		);
+        if (thankYouImage)
+        {
+            SetAlpha(thankYouImage, 0f);
+            thankYouImage.gameObject.SetActive(false);
+        }
 
-		// 7) 中央で静止
-		if (teamLogoHoldSeconds > 0f)
-			yield return new WaitForSeconds(teamLogoHoldSeconds);
+        if (fadeOverlayImage)
+        {
+            SetAlpha(fadeOverlayImage, 0f);
+        }
+    }
 
-		// 8) 黒フェード（最初FalseでもここでONにする）→ タイトルへ
-		if (fadeOverlayImage && !fadeOverlayImage.gameObject.activeSelf)
-			fadeOverlayImage.gameObject.SetActive(true);
+    void Update()
+    {
+        if (!enableFastForward) return;
+        if (!_canFastForward) return; // ★ThankYou停止後は早送り受付しない
 
-		yield return StartCoroutine(FadeImageAlpha(fadeOverlayImage, 0f, 1f, fadeToBlackSeconds));
-		SceneManager.LoadScene(titleSceneName);
-	}
+        if (holdToFastForward)
+        {
+            if (Input.GetKeyDown(fastForwardKey)) SetFastForward(true);
+            if (Input.GetKeyUp(fastForwardKey)) SetFastForward(false);
+        }
+        else
+        {
+            if (Input.GetKeyDown(fastForwardKey))
+            {
+                SetFastForward(!_isFastForwarding);
+            }
+        }
+    }
 
-	// ---- helpers ----
+    private void SetFastForward(bool enable)
+    {
+        _isFastForwarding = enable;
 
-	static void SetAlpha(Image img, float a)
-	{
-		if (!img) return;
-		var c = img.color;
-		c.a = Mathf.Clamp01(a);
-		img.color = c;
-	}
+        Time.timeScale = enable ? fastForwardTimeScale : _defaultTimeScale;
 
-	IEnumerator FadeImageAlpha(Image img, float from, float to, float seconds)
-	{
-		if (!img) yield break;
+        // Physics安定（任意）
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+    }
 
-		if (seconds <= 0f)
-		{
-			SetAlpha(img, to);
-			yield break;
-		}
+    private void ResetTimeScaleSafe()
+    {
+        _isFastForwarding = false;
+        Time.timeScale = _defaultTimeScale;
+        Time.fixedDeltaTime = 0.02f;
+    }
 
-		float t = 0f;
-		Color c = img.color;
-		while (t < seconds)
-		{
-			t += Time.deltaTime;
-			c.a = Mathf.Lerp(from, to, t / seconds);
-			img.color = c;
-			yield return null;
-		}
-		c.a = to;
-		img.color = c;
-	}
+    private void OnDisable()
+    {
+        ResetTimeScaleSafe();
+    }
 
-	IEnumerator FadeOutBgm(AudioSource source, float seconds)
-	{
-		if (!source) yield break;
+    private void OnDestroy()
+    {
+        ResetTimeScaleSafe();
+    }
 
-		float start = source.volume;
-		if (seconds <= 0f)
-		{
-			source.volume = 0f;
-			source.Stop();
-			yield break;
-		}
+    public void ActiveCredits()
+    {
+        StartCoroutine(Sequence());
+    }
 
-		float t = 0f;
-		while (t < seconds)
-		{
-			t += Time.deltaTime;
-			source.volume = Mathf.Lerp(start, 0f, t / seconds);
-			yield return null;
-		}
+    IEnumerator Sequence()
+    {
+        // ★開始時に早送り受付ON＆timeScale戻す
+        _canFastForward = true;
+        ResetTimeScaleSafe();
 
-		source.volume = 0f;
-		source.Stop();
-	}
+        // 位置リセット（連続再生でも安全）
+        if (creditsRect) creditsRect.anchoredPosition = _creditsStartPos;
+        if (teamLogoImage) teamLogoImage.rectTransform.anchoredPosition = _teamLogoStartPos;
+        if (thankYouImage) thankYouImage.rectTransform.anchoredPosition = _thankYouStartPos;
+        if (logoRect) logoRect.anchoredPosition = _logoStartPos;
 
-	IEnumerator MoveUpAtSpeed_WithDone(RectTransform rt, float deltaY, float speed, System.Action onDone)
-	{
-		if (!rt) { onDone?.Invoke(); yield break; }
+        // BGM開始
+        if (bgm)
+        {
+            bgm.volume = Mathf.Clamp01(bgmStartVolume);
+            if (!bgm.isPlaying) bgm.Play();
+        }
 
-		float startY = rt.anchoredPosition.y;
-		float targetY = startY + deltaY;
+        // 0
+        if (backGround) backGround.SetActive(true);
+        if (creditsRect) creditsRect.gameObject.SetActive(true);
 
-		while (rt.anchoredPosition.y < targetY)
-		{
-			var p = rt.anchoredPosition;
-			p.y += speed * Time.deltaTime;
-			rt.anchoredPosition = p;
-			yield return null;
-		}
+        // 1) ゲームロゴ フェードイン
+        yield return StartCoroutine(FadeImageAlpha(logoImage, 0f, 1f, logoFadeInSeconds));
 
-		var end = rt.anchoredPosition;
-		end.y = targetY;
-		rt.anchoredPosition = end;
+        // 2) ロゴ表示しきってから静止
+        if (logoHoldSeconds > 0f)
+            yield return new WaitForSeconds(logoHoldSeconds);
 
-		onDone?.Invoke();
-	}
+        // 3) ロゴ上移動 + クレジットスクロール（同時）
+        bool logoDone = false;
+        bool creditsDone = false;
 
-	// ★「y=900で止める」仕様を撤廃：画面外へ完全に抜けるまで流す
-	IEnumerator ScrollCreditsUp_UntilOffscreen_WithDone(RectTransform rt, float speed, System.Action onDone)
-	{
-		if (!rt) { onDone?.Invoke(); yield break; }
+        StartCoroutine(MoveUpAtSpeed_WithDone(logoRect, logoMoveUpDeltaY, creditsScrollSpeed, () => logoDone = true));
+        StartCoroutine(ScrollCreditsUp_UntilOffscreen_WithDone(creditsRect, creditsScrollSpeed, () => creditsDone = true));
 
-		// 画面外判定を安定させるため、毎フレームcornersを見る
-		var corners = new Vector3[4];
+        // TeamLogoも最初からスクロール開始（空白消し）
+        bool teamLogoDone = false;
+        if (teamLogoImage)
+        {
+            teamLogoImage.gameObject.SetActive(true);
 
-		while (true)
-		{
-			var p = rt.anchoredPosition;
-			p.y += speed * Time.deltaTime;
-			rt.anchoredPosition = p;
+            // 画面外でON → フェードイン（任意）
+            yield return StartCoroutine(FadeImageAlpha(teamLogoImage, 0f, 1f, teamLogoFadeInSeconds));
 
-			// 全コーナーが画面の上より上に行ったら終了（完全に見えなくなった）
-			rt.GetWorldCorners(corners);
-			bool allAbove = true;
-			for (int i = 0; i < 4; i++)
-			{
-				Vector2 sp = RectTransformUtility.WorldToScreenPoint(null, corners[i]);
-				if (sp.y <= Screen.height)
-				{
-					allAbove = false;
-					break;
-				}
-			}
+            StartCoroutine(ScrollRectUp_UntilOffscreen_WithDone(
+                teamLogoImage.rectTransform,
+                creditsScrollSpeed,
+                () => teamLogoDone = true
+            ));
+        }
+        else
+        {
+            teamLogoDone = true;
+        }
 
-			if (allAbove) break;
+        // ThankYouも画面外で先にONして透明待機
+        if (thankYouImage)
+        {
+            thankYouImage.gameObject.SetActive(true);
+            SetAlpha(thankYouImage, 0f);
+        }
 
-			yield return null;
-		}
+        // ロゴ＆クレジットが終わるまで待つ
+        while (!logoDone || !creditsDone)
+            yield return null;
 
-		onDone?.Invoke();
-	}
+        // 4) クレジット終わったら整理
+        if (creditsRect) creditsRect.gameObject.SetActive(false);
+        if (logoRect) logoRect.gameObject.SetActive(false);
 
-	IEnumerator MoveToY_AndTriggerBgmFade(RectTransform rt, float targetY, float speed, AudioSource bgm, float bgmFadeSeconds)
-	{
-		if (!rt) yield break;
+        // 5) チームロゴが完全に画面外へ抜けるまで待つ
+        while (!teamLogoDone)
+            yield return null;
 
-		bool fadeStarted = false;
+        // 6) ThankYou：透明→フェードインして中央で止める（ここでBGMフェード）
+        if (thankYouImage)
+        {
+            yield return StartCoroutine(FadeImageAlpha(thankYouImage, 0f, 1f, thankYouFadeInSeconds));
 
-		while (rt.anchoredPosition.y < targetY)
-		{
-			var p = rt.anchoredPosition;
-			p.y += speed * Time.deltaTime;
-			rt.anchoredPosition = p;
+            yield return StartCoroutine(
+                MoveToY_AndTriggerBgmFade(
+                    thankYouImage.rectTransform,
+                    thankYouTargetY,
+                    creditsScrollSpeed,
+                    bgm,
+                    bgmFadeOutSeconds
+                )
+            );
 
-			// target到達の瞬間に一度だけBGMフェード開始
-			if (!fadeStarted && p.y >= targetY)
-			{
-				fadeStarted = true;
-				if (bgm) StartCoroutine(FadeOutBgm(bgm, bgmFadeSeconds));
-			}
+            // ★ThankYouが中央で止まったら「早送り終了＆以降無効化」
+            ResetTimeScaleSafe();
+            _canFastForward = false;
+        }
 
-			yield return null;
-		}
+        // 7) 中央で静止
+        if (thankYouHoldSeconds > 0f)
+            yield return new WaitForSeconds(thankYouHoldSeconds);
 
-		// ピタ止め
-		var end = rt.anchoredPosition;
-		end.y = targetY;
-		rt.anchoredPosition = end;
+        // 8) 黒フェード → タイトル
+        if (fadeOverlayImage && !fadeOverlayImage.gameObject.activeSelf)
+            fadeOverlayImage.gameObject.SetActive(true);
 
-		// 保険
-		if (!fadeStarted)
-		{
-			if (bgm) StartCoroutine(FadeOutBgm(bgm, bgmFadeSeconds));
-		}
-	}
+        yield return StartCoroutine(FadeImageAlpha(fadeOverlayImage, 0f, 1f, fadeToBlackSeconds));
+
+        // 保険（シーン遷移前）
+        ResetTimeScaleSafe();
+        SceneManager.LoadScene(titleSceneName);
+    }
+
+    // ---- helpers ----
+
+    static void SetAlpha(Image img, float a)
+    {
+        if (!img) return;
+        var c = img.color;
+        c.a = Mathf.Clamp01(a);
+        img.color = c;
+    }
+
+    IEnumerator FadeImageAlpha(Image img, float from, float to, float seconds)
+    {
+        if (!img) yield break;
+
+        if (seconds <= 0f)
+        {
+            SetAlpha(img, to);
+            yield break;
+        }
+
+        float t = 0f;
+        Color c = img.color;
+        while (t < seconds)
+        {
+            t += Time.deltaTime;
+            c.a = Mathf.Lerp(from, to, t / seconds);
+            img.color = c;
+            yield return null;
+        }
+        c.a = to;
+        img.color = c;
+    }
+
+    IEnumerator FadeOutBgm(AudioSource source, float seconds)
+    {
+        if (!source) yield break;
+
+        float start = source.volume;
+        if (seconds <= 0f)
+        {
+            source.volume = 0f;
+            source.Stop();
+            yield break;
+        }
+
+        float t = 0f;
+        while (t < seconds)
+        {
+            t += Time.deltaTime;
+            source.volume = Mathf.Lerp(start, 0f, t / seconds);
+            yield return null;
+        }
+
+        source.volume = 0f;
+        source.Stop();
+    }
+
+    IEnumerator MoveUpAtSpeed_WithDone(RectTransform rt, float deltaY, float speed, System.Action onDone)
+    {
+        if (!rt) { onDone?.Invoke(); yield break; }
+
+        float startY = rt.anchoredPosition.y;
+        float targetY = startY + deltaY;
+
+        while (rt.anchoredPosition.y < targetY)
+        {
+            var p = rt.anchoredPosition;
+            p.y += speed * Time.deltaTime;
+            rt.anchoredPosition = p;
+            yield return null;
+        }
+
+        var end = rt.anchoredPosition;
+        end.y = targetY;
+        rt.anchoredPosition = end;
+
+        onDone?.Invoke();
+    }
+
+    IEnumerator ScrollCreditsUp_UntilOffscreen_WithDone(RectTransform rt, float speed, System.Action onDone)
+    {
+        if (!rt) { onDone?.Invoke(); yield break; }
+
+        var corners = new Vector3[4];
+
+        while (true)
+        {
+            var p = rt.anchoredPosition;
+            p.y += speed * Time.deltaTime;
+            rt.anchoredPosition = p;
+
+            rt.GetWorldCorners(corners);
+            bool allAbove = true;
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 sp = RectTransformUtility.WorldToScreenPoint(null, corners[i]);
+                if (sp.y <= Screen.height)
+                {
+                    allAbove = false;
+                    break;
+                }
+            }
+
+            if (allAbove) break;
+            yield return null;
+        }
+
+        onDone?.Invoke();
+    }
+
+    IEnumerator ScrollRectUp_UntilOffscreen_WithDone(RectTransform rt, float speed, System.Action onDone)
+    {
+        if (!rt) { onDone?.Invoke(); yield break; }
+
+        var corners = new Vector3[4];
+
+        while (true)
+        {
+            var p = rt.anchoredPosition;
+            p.y += speed * Time.deltaTime;
+            rt.anchoredPosition = p;
+
+            rt.GetWorldCorners(corners);
+            bool allAbove = true;
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 sp = RectTransformUtility.WorldToScreenPoint(null, corners[i]);
+                if (sp.y <= Screen.height)
+                {
+                    allAbove = false;
+                    break;
+                }
+            }
+
+            if (allAbove) break;
+            yield return null;
+        }
+
+        onDone?.Invoke();
+    }
+
+    IEnumerator MoveToY_AndTriggerBgmFade(RectTransform rt, float targetY, float speed, AudioSource bgm, float bgmFadeSeconds)
+    {
+        if (!rt) yield break;
+
+        bool fadeStarted = false;
+
+        while (rt.anchoredPosition.y < targetY)
+        {
+            var p = rt.anchoredPosition;
+            p.y += speed * Time.deltaTime;
+            rt.anchoredPosition = p;
+
+            if (!fadeStarted && p.y >= targetY)
+            {
+                fadeStarted = true;
+                if (bgm) StartCoroutine(FadeOutBgm(bgm, bgmFadeSeconds));
+            }
+
+            yield return null;
+        }
+
+        var end = rt.anchoredPosition;
+        end.y = targetY;
+        rt.anchoredPosition = end;
+
+        if (!fadeStarted)
+        {
+            if (bgm) StartCoroutine(FadeOutBgm(bgm, bgmFadeSeconds));
+        }
+    }
 }

@@ -403,4 +403,6 @@ public class MovePlayerKeyLocal : MonoBehaviour
         if (shaker == null) return;
         shaker.StartShake();
     }
+
+   
 }

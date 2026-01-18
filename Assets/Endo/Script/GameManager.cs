@@ -129,21 +129,26 @@ public class GameManager : NetworkBehaviour
 
     private void LateUpdate()
     {
-
-
-        if (Gamepad.all.Count >= 2)
+        if (NetworkManager.Singleton == null) return; 
+        if (!IsServer) return;
+        
+            //3チーム接続済みなら
+        if(NetworkManager.Singleton.ConnectedClientsIds.Count >= 3)
         {
-            foreach (var gamepad in Gamepad.all)
+            if (Gamepad.all.Count >= 2)
             {
-                if (gamepad.bButton.wasPressedThisFrame)
+                foreach (var gamepad in Gamepad.all)
                 {
+                    if (gamepad.bButton.wasPressedThisFrame)
+                    {
+                        StartLocalGameRequest();
 
-                    
-                }
-                if (gamepad.aButton.wasPressedThisFrame)
-                {
+                    }
+                    if (gamepad.aButton.wasPressedThisFrame)
+                    {
 
-                    
+                        StartLocalGameRequest();
+                    }
                 }
             }
         }
@@ -199,11 +204,11 @@ public class GameManager : NetworkBehaviour
         foreach (var p in players)
         {
             //プレイヤー操作不能
-            p.GetComponent<MovePlayerKey>()._isRun = false;
+            p.GetComponent<MovePlayerKey>().IsRunNet.Value = false;
         }
 
         //3DSEを鳴らさない
-        NetworkSoundManager.Instance._is3DRun = false;
+        NetworkSoundManager.Instance.Is3DRunNet.Value = false; ;
 
         //ゲームスタート
         StartCoroutine(StartGame());
@@ -416,11 +421,11 @@ public class GameManager : NetworkBehaviour
         //プレイヤー操作可能
         foreach (var p in players)
         {
-            p.GetComponent<MovePlayerKey>()._isRun = true;
+            p.GetComponent<MovePlayerKey>().IsRunNet.Value = true;
         }
 
         //3DSEをなるようにする
-        NetworkSoundManager.Instance._is3DRun = true;
+        NetworkSoundManager.Instance.Is3DRunNet.Value = true ;
 
     }
 
