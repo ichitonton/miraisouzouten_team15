@@ -3250,6 +3250,12 @@ MonoBehaviour:
   skinMaterial1: {fileID: 2100000, guid: 1330196967a88064fbb8d7e81173de4f, type: 2}
   skinMaterial2: {fileID: 2100000, guid: e0825b6a1b89c2e4f98c0f84be7ca21c, type: 2}
   skinMaterial3: {fileID: 2100000, guid: beff4b5cc558c974e8df9322ff84927e, type: 2}
+  skinMaterialWin1: {fileID: 2100000, guid: 89906bb368c2bcc43baf00347ace7343, type: 2}
+  skinMaterialWin2: {fileID: 2100000, guid: c70fba65f5dc6624fa1895c62031f0e5, type: 2}
+  skinMaterialWin3: {fileID: 2100000, guid: d6f0563838c29b24589aa18c4c34c808, type: 2}
+  skinMaterialLose1: {fileID: 2100000, guid: 8119af36637583a40b4dbdd3848fb72e, type: 2}
+  skinMaterialLose2: {fileID: 2100000, guid: 4cd3a74fd624c854293fcce7ba786bb5, type: 2}
+  skinMaterialLose3: {fileID: 2100000, guid: b748029fce681ad4394e206e52317529, type: 2}
 --- !u!1 &7481435165760361928
 GameObject:
   m_ObjectHideFlags: 0
