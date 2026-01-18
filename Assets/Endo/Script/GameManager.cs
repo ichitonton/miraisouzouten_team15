@@ -162,9 +162,10 @@ public class GameManager : NetworkBehaviour
         //フェードの秒数設定
         if (VideoFadeManager.Instance != null)
         {
-            VideoFadeManager.Instance.fadeInDuration = 1.5f;
-            VideoFadeManager.Instance.fadeOutDuration = 0.8f;
+            VideoFadeManager.Instance.fadeInDuration = 1.1f;
+            VideoFadeManager.Instance.fadeOutDuration = 1.1f;
 
+            VideoFadeManager.Instance._videoIndex = 0;
             VideoFadeManager.Instance.PlayFadeOnly(VideoFadeManager.FadeScope.AllClients);
         }
 
@@ -182,7 +183,7 @@ public class GameManager : NetworkBehaviour
 
     private IEnumerator StartGame()
     {
-        float time = (VideoFadeManager.Instance != null) ? VideoFadeManager.Instance.fadeOutDuration : 0.5f;
+        float time = (VideoFadeManager.Instance != null) ? VideoFadeManager.Instance.fadeOutDuration : 1.1f;
         yield return new WaitForSeconds(time);
 
         //ムービーを流す
@@ -271,7 +272,11 @@ public class GameManager : NetworkBehaviour
             Debug.LogWarning("[GameManager] GameStartMovie or VideoPlayer not found. Skip wait.");
             // 代わりに即フェード→UIへ
             if (VideoFadeManager.Instance != null)
+            {
+                //VideoFadeManager.Instance._videoIndex = 1;
                 VideoFadeManager.Instance.PlayFadeOnly(VideoFadeManager.FadeScope.AllClients);
+                
+            }
 
             StartCoroutine(PlayStartUI());
             yield break;
@@ -280,13 +285,21 @@ public class GameManager : NetworkBehaviour
         var video = movie._videoPlayer;
 
         float v_time = (float)video.length;
-        v_time -= (VideoFadeManager.Instance != null ? VideoFadeManager.Instance.fadeOutDuration * 0.5f : 0f);
+
+
+        v_time -= (VideoFadeManager.Instance != null ? VideoFadeManager.Instance.fadeOutDuration : 0f);
+
+
         if (v_time < 0f) v_time = 0f;
 
         yield return new WaitForSeconds(v_time);
 
         if (VideoFadeManager.Instance != null)
+        {
+            VideoFadeManager.Instance._videoIndex = 1;
             VideoFadeManager.Instance.PlayFadeOnly(VideoFadeManager.FadeScope.AllClients);
+            
+        }
 
         StartCoroutine(PlayStartUI());
     }
