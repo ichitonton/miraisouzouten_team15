@@ -60,12 +60,17 @@ public class GameDirector : MonoBehaviour
     [SerializeField] ResultSetSkinMaterial _resultSetSkinMaterial1;
     [SerializeField] ResultSetSkinMaterial _resultSetSkinMaterial2;
 
+
+    [SerializeField] private float thankTime = 3f;
     // --------------------------------------------------
     // 処理本体
     // --------------------------------------------------
     private void Start()
     {
         StartCoroutine(GameSequence());
+
+        VideoFadeManager.Instance.fadeInDuration = 1.0f;
+        VideoFadeManager.Instance.fadeOutDuration = 1.0f;
     }
 
     private void Update()
@@ -74,13 +79,13 @@ public class GameDirector : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            NetworkShutdownRelay.Instance.ShutDown();
-            StartCoroutine(TransitionSequence(gameSceneName));
+
+            StartCoroutine(ActiveThankyou(gameSceneName));
         }
         if (Input.GetKeyDown(KeyCode.T))
         {
-            NetworkShutdownRelay.Instance.ShutDown();
-            StartCoroutine(TransitionSequence(titleSceneName));
+            StartCoroutine(ActiveThankyou(titleSceneName));
+
         }
         if (Gamepad.all.Count >= 0)
         {
@@ -88,13 +93,13 @@ public class GameDirector : MonoBehaviour
             {
                 if (gamepad.bButton.wasPressedThisFrame)
                 {
-                    NetworkShutdownRelay.Instance.ShutDown();
-                    StartCoroutine(TransitionSequence(titleSceneName));
+
+                    StartCoroutine(ActiveThankyou(gameSceneName));
                 }
                 if (gamepad.aButton.wasPressedThisFrame)
                 {
-                    NetworkShutdownRelay.Instance.ShutDown();
-                    StartCoroutine(TransitionSequence(gameSceneName));
+
+                    StartCoroutine(ActiveThankyou(titleSceneName));
                 }
             }
         }
@@ -158,19 +163,30 @@ public class GameDirector : MonoBehaviour
     {
         canInput = false;
 
+        yield return new WaitForSeconds(thankTime);
+
+        VideoFadeManager.Instance.PlayToScene(nextScene, VideoFadeManager.FadeScope.LocalOnly);
+        
+    }
+
+    private IEnumerator ActiveThankyou(string nextScene)
+    {
+        //ネットを落とす
+        NetworkShutdownRelay.Instance.ShutDown();
+
+        var video = VideoFadeManager.Instance;
+
+        video.PlayFadeOnly(VideoFadeManager.FadeScope.LocalOnly);
+
+        yield return new WaitForSeconds(video.fadeOutDuration);
+
         if (thankYouObject != null)
         {
             thankYouObject.SetActive(true);
         }
 
-        yield return new WaitForSeconds(3.0f);
+        StartCoroutine(TransitionSequence(nextScene));
 
-        if (NetworkManager.Singleton != null)
-        {
-            NetworkManager.Singleton.Shutdown();
-        }
-
-        SceneManager.LoadScene(nextScene);
     }
 
     private void SpawnWagashi()

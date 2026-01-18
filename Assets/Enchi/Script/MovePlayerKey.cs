@@ -129,6 +129,8 @@ public class MovePlayerKey : NetworkBehaviour
 
     SetSkinMaterial _setSkinMaterial;
 
+    public bool _isRun = true;
+
     public enum ItemType
     {
         None,
@@ -211,6 +213,8 @@ public class MovePlayerKey : NetworkBehaviour
 
     void FixedUpdate()
     {
+        if (!_isRun) return;
+
         if (IsOwner)
         {
             ItemTargetServerRpc(GetComponent<UICursorToWorld>().GetItemTargetTransform().position);
@@ -264,6 +268,8 @@ public class MovePlayerKey : NetworkBehaviour
 
     void Update()
     {
+
+        if (!_isRun) return;
 
         if (IsServer)
         {

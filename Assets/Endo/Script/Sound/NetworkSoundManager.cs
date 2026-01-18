@@ -47,6 +47,7 @@ public class NetworkSoundManager : NetworkBehaviour
     // ★3Dループに使ってるAudioSourceを記録（単発が奪わない）
     private readonly HashSet<AudioSource> _loop3DSources = new();
 
+    public bool _is3DRun = true;
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -241,6 +242,9 @@ public class NetworkSoundManager : NetworkBehaviour
             DecreaseSimultaneousLater(tag, entry, clip.length + 0.05f);
             return;
         }
+
+        //isRunがfalseだったら3Dは鳴らさない
+        if (_is3DRun == false) return;
 
         // ---- 3D OneShot ----
         var src = GetFree3DSourceForOneShot();
