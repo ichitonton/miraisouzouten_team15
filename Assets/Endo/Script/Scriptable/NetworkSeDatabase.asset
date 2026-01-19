@@ -221,10 +221,10 @@ MonoBehaviour:
     cooldownSeconds: 0
     maxSimultaneous: 0
     outputMixerGroup: {fileID: 0}
-  - tag: sdf
+  - tag: UI_Start
     clips:
-    - {fileID: 8300000, guid: 7403a360133f11548a9011e6d13e3961, type: 3}
-    volume: 0.317
+    - {fileID: 8300000, guid: d0290d885a081484e940805ca076aa88, type: 3}
+    volume: 0.3
     randomizePitch: 0
     pitchMin: 0.9
     pitchMax: 1
