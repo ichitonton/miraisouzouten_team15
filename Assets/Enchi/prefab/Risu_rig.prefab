@@ -3475,24 +3475,24 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   playerSkinHead: {fileID: 6609132362112859094}
   playerSkinarm: {fileID: 3446463301028211675}
-  skinMaterial1: {fileID: 2100000, guid: 1330196967a88064fbb8d7e81173de4f, type: 2}
-  skinMaterial2: {fileID: 2100000, guid: e0825b6a1b89c2e4f98c0f84be7ca21c, type: 2}
-  skinMaterial3: {fileID: 2100000, guid: beff4b5cc558c974e8df9322ff84927e, type: 2}
-  skinMaterialKanasimi1: {fileID: 2100000, guid: 8119af36637583a40b4dbdd3848fb72e, type: 2}
-  skinMaterialKanasimi2: {fileID: 2100000, guid: 4cd3a74fd624c854293fcce7ba786bb5, type: 2}
-  skinMaterialKanasimi3: {fileID: 2100000, guid: b748029fce681ad4394e206e52317529, type: 2}
-  skinMaterialKizetu1: {fileID: 2100000, guid: 3c0bed4c43019bc47b78b2c59549236a, type: 2}
-  skinMaterialKizetu2: {fileID: 2100000, guid: abc356782a09d634daffcba5cb03857f, type: 2}
-  skinMaterialKizetu3: {fileID: 2100000, guid: e3c9ef0e4162aa9488de9abd3f26b92c, type: 2}
-  skinMaterialOkori1: {fileID: 2100000, guid: 49f2d95530f4f24488e2832511b45ad9, type: 2}
-  skinMaterialOkori2: {fileID: 2100000, guid: 8c432c4950261cd45824037d2864a263, type: 2}
-  skinMaterialOkori3: {fileID: 2100000, guid: dbf4ba52debb7b4429e04499381e05de, type: 2}
-  skinMaterialHappy1: {fileID: 2100000, guid: 89906bb368c2bcc43baf00347ace7343, type: 2}
-  skinMaterialHappy2: {fileID: 2100000, guid: c70fba65f5dc6624fa1895c62031f0e5, type: 2}
-  skinMaterialHappy3: {fileID: 2100000, guid: d6f0563838c29b24589aa18c4c34c808, type: 2}
-  skinMaterialAori1: {fileID: 2100000, guid: 784b3dc5b98944b41b3f12810e9896eb, type: 2}
-  skinMaterialAori2: {fileID: 2100000, guid: fc47c8cbd43136f469572841932eeb1d, type: 2}
-  skinMaterialAori3: {fileID: 2100000, guid: 3563d638cd434c54cbebe4e1e8540eae, type: 2}
+  skinMaterial1: {fileID: 2100000, guid: beff4b5cc558c974e8df9322ff84927e, type: 2}
+  skinMaterial2: {fileID: 2100000, guid: 1330196967a88064fbb8d7e81173de4f, type: 2}
+  skinMaterial3: {fileID: 2100000, guid: e0825b6a1b89c2e4f98c0f84be7ca21c, type: 2}
+  skinMaterialKanasimi1: {fileID: 2100000, guid: b748029fce681ad4394e206e52317529, type: 2}
+  skinMaterialKanasimi2: {fileID: 2100000, guid: 8119af36637583a40b4dbdd3848fb72e, type: 2}
+  skinMaterialKanasimi3: {fileID: 2100000, guid: 4cd3a74fd624c854293fcce7ba786bb5, type: 2}
+  skinMaterialKizetu1: {fileID: 2100000, guid: e3c9ef0e4162aa9488de9abd3f26b92c, type: 2}
+  skinMaterialKizetu2: {fileID: 2100000, guid: 3c0bed4c43019bc47b78b2c59549236a, type: 2}
+  skinMaterialKizetu3: {fileID: 2100000, guid: abc356782a09d634daffcba5cb03857f, type: 2}
+  skinMaterialOkori1: {fileID: 2100000, guid: dbf4ba52debb7b4429e04499381e05de, type: 2}
+  skinMaterialOkori2: {fileID: 2100000, guid: 49f2d95530f4f24488e2832511b45ad9, type: 2}
+  skinMaterialOkori3: {fileID: 2100000, guid: 8c432c4950261cd45824037d2864a263, type: 2}
+  skinMaterialHappy1: {fileID: 2100000, guid: d6f0563838c29b24589aa18c4c34c808, type: 2}
+  skinMaterialHappy2: {fileID: 2100000, guid: 89906bb368c2bcc43baf00347ace7343, type: 2}
+  skinMaterialHappy3: {fileID: 2100000, guid: c70fba65f5dc6624fa1895c62031f0e5, type: 2}
+  skinMaterialAori1: {fileID: 2100000, guid: 3563d638cd434c54cbebe4e1e8540eae, type: 2}
+  skinMaterialAori2: {fileID: 2100000, guid: 784b3dc5b98944b41b3f12810e9896eb, type: 2}
+  skinMaterialAori3: {fileID: 2100000, guid: fc47c8cbd43136f469572841932eeb1d, type: 2}
 --- !u!114 &-6520160973488650656
 MonoBehaviour:
   m_ObjectHideFlags: 0
