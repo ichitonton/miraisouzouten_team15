@@ -24,6 +24,13 @@ public class TimerManager : NetworkBehaviour
         var span = TimeSpan.FromSeconds(_count.Value);
         if (timeText) timeText.text = span.ToString(@"m\:ss");
 
+        //サーバー以外
+        if (_count.Value <= 0)
+        {
+            MapScreenController.Instance.isRun = false;
+
+        }
+
         if (!IsServer) return;
         if (isTimeUp) return;
 
@@ -81,6 +88,14 @@ public class TimerManager : NetworkBehaviour
 
         UIEventManager.Instance.OnHideSceneUI();
 
+        var players = GameObject.FindGameObjectsWithTag("Player");
+
+        //プレイヤー操作不能（ここは君の実装を後で入れる）
+        foreach (var p in players)
+        {
+            //プレイヤー操作不能
+            p.GetComponent<MovePlayerKey>().IsRunNet.Value = false;
+        }
         VideoFadeManager.Instance._videoIndex = 1;
         VideoFadeManager.Instance.fadeInDuration = 1.1f;
         VideoFadeManager.Instance.fadeOutDuration = 1.1f;
