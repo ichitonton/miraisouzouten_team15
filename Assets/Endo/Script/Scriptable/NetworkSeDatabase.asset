@@ -234,3 +234,16 @@ MonoBehaviour:
     cooldownSeconds: 0.2
     maxSimultaneous: 0
     outputMixerGroup: {fileID: 0}
+  - tag: SE_TimeUP
+    clips:
+    - {fileID: 8300000, guid: 92479c7b7be650e43babc35fc0f9e9f4, type: 3}
+    volume: 0.3
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 60
+    maxDistance: 80
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}

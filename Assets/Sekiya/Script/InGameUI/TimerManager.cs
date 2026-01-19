@@ -25,7 +25,7 @@ public class TimerManager : NetworkBehaviour
         if (timeText) timeText.text = span.ToString(@"m\:ss");
 
         if (!IsServer) return;
-        //if (isTimeUp) return;
+        if (isTimeUp) return;
 
         // ★追加：開始ボタン押されるまで減らさない
         if (!_isRunning.Value) return;
@@ -36,7 +36,20 @@ public class TimerManager : NetworkBehaviour
         {
             _count.Value = 0;
             isTimeUp = true;
-            FinishGame();
+
+			_isRunning.Value = false;
+
+			// ▼追加：タイムアップSE
+			if (NetworkSoundManager.Instance != null)
+			{
+				NetworkSoundManager.Instance.PlaySfx(
+					"SE_TimeUP",
+					NetworkSoundManager.SoundScope.AllClients,
+			false
+		);
+			}
+
+			FinishGame();
         }
     }
 
