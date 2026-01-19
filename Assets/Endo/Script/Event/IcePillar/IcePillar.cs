@@ -512,9 +512,9 @@ public class IcePillar : NetworkBehaviour
         NetworkSoundManager.Instance.PlaySfx("Event_IceBreak", NetworkSoundManager.SoundScope.AllClients, true, transform.position);
 
         Vector3 pos = transform.position + loopEffectOffset;
-        NetworkEffectSpawner.Instance.PlayEffect(11, pos, Quaternion.identity, new Vector3(2.3f,2.3f,2.3f));
-        NetworkEffectSpawner.Instance.PlayEffect(11, new Vector3(pos.x,pos.y + 1f,pos.z), Quaternion.identity, new Vector3(2.3f, 2.3f, 2.3f));
-        NetworkEffectSpawner.Instance.PlayEffect(11, new Vector3(pos.x, pos.y + 2f, pos.z), Quaternion.identity, new Vector3(2.3f, 2.3f, 2.3f));
+        NetworkEffectSpawner.Instance.PlayEffect(11, pos, Quaternion.identity, new Vector3(1.5f,1.5f,1.5f));
+        NetworkEffectSpawner.Instance.PlayEffect(11, new Vector3(pos.x,pos.y + 1f,pos.z), Quaternion.identity, new Vector3(1.5f, 1.5f, 1.5f));
+        NetworkEffectSpawner.Instance.PlayEffect(11, new Vector3(pos.x, pos.y + 2f, pos.z), Quaternion.identity, new Vector3(1.5f, 1.5f, 1.5f));
 
         
 
