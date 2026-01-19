@@ -3257,7 +3257,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UICursorToWorld
   groundLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 192
   itemTarget: {fileID: 3966227638361369922, guid: 2f78ca4fa4ae40b43a36dab265e8dcf3, type: 3}
   maxDistance: 12
 --- !u!114 &607975850266814620
@@ -3347,6 +3347,7 @@ MonoBehaviour:
   _groundCheck: {fileID: 1582976327585532857}
   _stun: 0
   _hitCount: 2
+  _isRun: 1
 --- !u!54 &4346886339305241986
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -138,6 +138,7 @@ public class RopeSpawner : NetworkBehaviour
                     playerObj.OwnerClientId == requestClientId)
                 {
                     playerCount++;
+                    playerObj.GetComponent<MovePlayerKey>().GameStartUseItem();
                 }
             }
         }
