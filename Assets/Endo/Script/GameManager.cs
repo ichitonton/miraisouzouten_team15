@@ -129,9 +129,12 @@ public class GameManager : NetworkBehaviour
 
     private void LateUpdate()
     {
+
+       
         if (NetworkManager.Singleton == null) return; 
         if (!IsServer) return;
-        
+        if (_startingRoutine) return;
+
             //3チーム接続済みなら
         if(NetworkManager.Singleton.ConnectedClientsIds.Count >= 3)
         {
@@ -139,12 +142,7 @@ public class GameManager : NetworkBehaviour
             {
                 foreach (var gamepad in Gamepad.all)
                 {
-                    if (gamepad.bButton.wasPressedThisFrame)
-                    {
-                        StartLocalGameRequest();
-
-                    }
-                    if (gamepad.aButton.wasPressedThisFrame)
+                    if (gamepad.buttonWest.wasPressedThisFrame)
                     {
 
                         StartLocalGameRequest();
@@ -241,7 +239,7 @@ public class GameManager : NetworkBehaviour
         InGame = true;
 
         Debug.Log("[GameManager] Network Start (Host) done. (No local player spawn)");
-        _startingRoutine = false;
+        //_startingRoutine = false;
     }
 
     private IEnumerator TeleportAfterDelay(float sec)
@@ -361,7 +359,7 @@ public class GameManager : NetworkBehaviour
             GameStartUIManager.Instance.Play();
 
         //イベントのスタート
-        StartCoroutine(StartEvent());
+        //StartCoroutine(StartEvent());
     }
 
     [ClientRpc]
@@ -434,6 +432,8 @@ public class GameManager : NetworkBehaviour
         {
             p.GetComponent<MovePlayerKey>().IsRunNet.Value = true;
         }
+
+        //MapScreenController.Instance.isRun = true;
 
         //3DSEをなるようにする
         NetworkSoundManager.Instance.Is3DRunNet.Value = true ;
@@ -545,4 +545,5 @@ public class GameManager : NetworkBehaviour
             Debug.LogWarning($"[GameManager] Rope connect skipped (safe): {e.Message}");
         }
     }
+
 }

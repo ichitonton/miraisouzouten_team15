@@ -7,73 +7,72 @@ using Unity.Netcode;
 
 public class NetworkObjectRandomGenerator : NetworkBehaviour
 {
-	[Header("データベース")]
-	[SerializeField] private NetworkPrefabDatabase _database;
+    [Header("データベース")]
+    [SerializeField] private NetworkPrefabDatabase _database;
 
-	[Header("スポーン基準点（Pivot）")]
-	[SerializeField] private Transform[] _pivots;
+    [Header("スポーン基準点（Pivot）")]
+    [SerializeField] private Transform[] _pivots;
 
-	[Header("スポーン範囲")]
-	[SerializeField, Range(0f, 50f)] private float _spawnRadius = 3f;
+    [Header("スポーン範囲")]
+    [SerializeField, Range(0f, 50f)] private float _spawnRadius = 3f;
 
-	[Tooltip("同じ場所に生成しない判定の最小距離（メートル）。大きいほど重複しにくい")]
-	[SerializeField, Range(0.1f, 10f)] private float _minDistanceBetweenSpawns = 1.0f;
+    [Tooltip("同じ場所に生成しない判定の最小距離（メートル）。大きいほど重複しにくい")]
+    [SerializeField, Range(0.1f, 10f)] private float _minDistanceBetweenSpawns = 1.0f;
 
-	[Tooltip("1体生成するために、位置抽選を何回までやり直すか")]
-	[SerializeField, Range(1, 200)] private int _maxAttemptsPerSpawn = 40;
+    [Tooltip("1体生成するために、位置抽選を何回までやり直すか")]
+    [SerializeField, Range(1, 200)] private int _maxAttemptsPerSpawn = 40;
 
-	[Header("地面 / 衝突（任意）")]
-	[SerializeField] private bool _snapToGround = true;
+    [Header("地面 / 衝突（任意）")]
+    [SerializeField] private bool _snapToGround = true;
 
-	[Tooltip("地面判定Rayの開始高さ")]
-	[SerializeField, Range(0.1f, 50f)] private float _groundRayStartHeight = 10f;
+    [Tooltip("地面判定Rayの開始高さ")]
+    [SerializeField, Range(0.1f, 50f)] private float _groundRayStartHeight = 10f;
 
-	[Tooltip("地面判定Rayの長さ")]
-	[SerializeField, Range(0.1f, 200f)] private float _groundRayLength = 50f;
+    [Tooltip("地面判定Rayの長さ")]
+    [SerializeField, Range(0.1f, 200f)] private float _groundRayLength = 50f;
 
-	[SerializeField] private LayerMask _groundMask = ~0;
+    [SerializeField] private LayerMask _groundMask = ~0;
 
-	[Tooltip("このレイヤーに当たる場所には生成しない（壁・障害物など）")]
-	[SerializeField] private LayerMask _blockedMask = 0;
+    [Tooltip("このレイヤーに当たる場所には生成しない（壁・障害物など）")]
+    [SerializeField] private LayerMask _blockedMask = 0;
 
-	[Tooltip("障害物チェック半径。0ならOverlapチェックしない")]
-	[SerializeField, Range(0f, 5f)] private float _blockedCheckRadius = 0.5f;
+    [Tooltip("障害物チェック半径。0ならOverlapチェックしない")]
+    [SerializeField, Range(0f, 5f)] private float _blockedCheckRadius = 0.5f;
 
-	[Header("レアリティ確率（%）")]
-	[SerializeField, Range(0f, 100f)] private float _rarity1Percent = 60f;
-	[SerializeField, Range(0f, 100f)] private float _rarity2Percent = 30f;
-	[SerializeField, Range(0f, 100f)] private float _rarity3Percent = 10f;
+    [Header("レアリティ確率（%）")]
+    [SerializeField, Range(0f, 100f)] private float _rarity1Percent = 60f;
+    [SerializeField, Range(0f, 100f)] private float _rarity2Percent = 30f;
+    [SerializeField, Range(0f, 100f)] private float _rarity3Percent = 10f;
 
-	[Header("スポーン間隔")]
-	[Tooltip("合計で何個生成するか（MaxAliveで止まる方が優先される）")]
-	[SerializeField, Min(1)] private int _totalSpawnCount = 30;
+    [Header("スポーン間隔")]
+    [Tooltip("合計で何個生成するか（MaxAliveで止まる方が優先される）")]
+    [SerializeField, Min(1)] private int _totalSpawnCount = 30;
 
-	[Tooltip("生成タイミングごとに一気に生む数（例: 5）")]
-	[SerializeField, Min(1)] private int _burstSpawnCount = 5;
+    [Tooltip("生成タイミングごとに一気に生む数（例: 5）")]
+    [SerializeField, Min(1)] private int _burstSpawnCount = 5;
 
-	[Tooltip("何秒ごとにバースト生成するか")]
-	[SerializeField, Range(0f, 60f)] private float _spawnInterval = 3.0f;
+    [Tooltip("何秒ごとにバースト生成するか")]
+    [SerializeField, Range(0f, 60f)] private float _spawnInterval = 3.0f;
 
-	[Header("最大同時存在数（停止条件）")]
-	[Tooltip("場に存在できる最大数。到達したらコルーチンを止める")]
-	[SerializeField, Min(1)] private int _maxAliveObjects = 20;
+    [Header("最大同時存在数（停止条件）")]
+    [Tooltip("場に存在できる最大数。到達したらコルーチンを止める")]
+    [SerializeField, Min(1)] private int _maxAliveObjects = 20;
 
-	[Tooltip("開始時に自動で生成を開始")]
-	[SerializeField] private bool _spawnOnNetworkSpawn = true;
+    [Tooltip("開始時に自動で生成を開始")]
+    [SerializeField] private bool _spawnOnNetworkSpawn = true;
 
-	[Tooltip("Pivotを全体で使い捨てにする（trueだと同じpivotは二度と使わない）")]
-	[SerializeField] private bool _useUniquePivotOverall = false;
+    [Tooltip("Pivotを全体で使い捨てにする（trueだと同じpivotは二度と使わない）")]
+    [SerializeField] private bool _useUniquePivotOverall = false;
 
-	[Header("乱数（任意）")]
-	[SerializeField] private bool _useFixedSeed = false;
-	[SerializeField] private int _fixedSeed = 12345;
+    [Header("乱数（任意）")]
+    [SerializeField] private bool _useFixedSeed = false;
+    [SerializeField] private int _fixedSeed = 12345;
+   
+    [Header("デバッグ")]
+    [SerializeField] private bool _drawGizmos = true;
 
-	[Header("デバッグ")]
-	[SerializeField] private bool _drawGizmos = true;
-
-
-	// ----- runtime -----
-	private Coroutine _spawnRoutine;
+    // ----- runtime -----
+    private Coroutine _spawnRoutine;
 
     // 「同じ場所に生成しない」用（グリッド化してHashSet管理）
     private HashSet<Vector3Int> _occupiedCells = new HashSet<Vector3Int>();
@@ -128,8 +127,8 @@ public class NetworkObjectRandomGenerator : NetworkBehaviour
         _database.Initialize(); // 念のため
         _cellSize = Mathf.Max(0.05f, _minDistanceBetweenSpawns);
 
-        // null掃除（破棄済みをカウントしない）
-        _aliveObjects.RemoveWhere(o => o == null);
+        // ★変更：null ＋ inactive を除外
+        CleanupAliveObjects();
 
         BuildPivotPool();
 
@@ -156,9 +155,10 @@ public class NetworkObjectRandomGenerator : NetworkBehaviour
 
         while (spawnedTotal < _totalSpawnCount)
         {
-            _aliveObjects.RemoveWhere(o => o == null);
+            // ★変更：null ＋ inactive を除外
+            CleanupAliveObjects();
 
-            // ★ MaxAlive到達で停止（要望）
+            // ★ MaxAlive到達で停止
             if (_aliveObjects.Count >= _maxAliveObjects)
             {
                 Debug.Log($"[RandomGenerator] MaxAlive({_maxAliveObjects})に到達したので生成を停止します。");
@@ -176,7 +176,7 @@ public class NetworkObjectRandomGenerator : NetworkBehaviour
                 break;
             }
 
-            // ★ 同じタイミング内は必ず別pivot（要望）
+            // ★ 同じタイミング内は必ず別pivot
             var usedPivotThisBurst = new HashSet<int>();
 
             int succeededThisBurst = 0;
@@ -256,29 +256,30 @@ public class NetworkObjectRandomGenerator : NetworkBehaviour
             var prefab = candidates[UnityEngine.Random.Range(0, candidates.Count)];
             if (prefab == null) continue;
 
-            //生成
-            NetworkObject obj = NetworkObjectPool.Instance.Get(prefab.GetComponent<NetworkObject>(), pos, Quaternion.identity);
+            // ===== 生成（Pool）=====
+            NetworkObject obj = NetworkObjectPool.Instance.Get(
+                prefab.GetComponent<NetworkObject>(),
+                pos,
+                Quaternion.identity
+            );
+
             obj.Spawn(true);
-            obj.GetComponent<PooledNetworkObject>().SetPrefab(prefab.GetComponent<NetworkObject>());
 
-            //var go = Instantiate(prefab, pos, Quaternion.identity);
+            var pooled = obj.GetComponent<PooledNetworkObject>();
+            if (pooled != null)
+            {
+                pooled.SetPrefab(prefab.GetComponent<NetworkObject>());
+            }
 
-            //var netObj = go.GetComponent<NetworkObject>();
-            //if (netObj == null)
-            //{
-            //    Debug.LogError($"[RandomGenerator] Prefab '{prefab.name}' に NetworkObject が付いていません。");
-            //    Destroy(go);
-            //    return false;
-            //}
+            // ★追加：aliveObjects に追加（MaxAliveが効くようになる）
+            _aliveObjects.Add(obj);
 
-            // 追跡用コンポーネントを付与（Despawnでaliveから外す）
-            //var tracker = go.GetComponent<RandomSpawnTracker>();
-            //if (tracker == null) tracker = go.AddComponent<RandomSpawnTracker>();
-            //tracker.Init(this);
+            // ★追加：追跡用コンポーネントを付ける（Despawn時にaliveから外したいなら使う）
+            // ※ 既に別の仕組みで抜いてるなら不要
+            var tracker = obj.GetComponent<RandomSpawnTracker>();
+            if (tracker == null) tracker = obj.gameObject.AddComponent<RandomSpawnTracker>();
+            tracker.Init(this);
 
-            //netObj.Spawn();
-
-            //_aliveObjects.Add(netObj);
             MarkOccupied(pos);
 
             // このバースト内で使ったpivotとして記録（必ず別pivot）
@@ -326,8 +327,6 @@ public class NetworkObjectRandomGenerator : NetworkBehaviour
             if (_pivotPool.Count == 0) BuildPivotPool();
             if (_pivotPool.Count == 0) return false;
 
-            // バースト内で未使用のpivotを選ぶ
-            // pivot数よりburstが大きい場合、ここで詰むのでfalseになる（安全）
             int safety = Mathf.Min(500, _pivotPool.Count * 10);
             for (int t = 0; t < safety; t++)
             {
@@ -357,25 +356,12 @@ public class NetworkObjectRandomGenerator : NetworkBehaviour
 
     private bool TryGetRandomPointAroundPivot(Transform pivot, out Vector3 pos)
     {
-        pos = pivot.position;
-
+        // Pivotを中心にXZ平面でランダム抽選
         Vector2 r = UnityEngine.Random.insideUnitCircle * _spawnRadius;
-        Vector3 candidate = pivot.position + new Vector3(r.x, 0f, r.y);
 
-        if (_snapToGround)
-        {
-            Vector3 rayStart = candidate + Vector3.up * _groundRayStartHeight;
-            if (Physics.Raycast(rayStart, Vector3.down, out var hit, _groundRayLength, _groundMask, QueryTriggerInteraction.Ignore))
-            {
-                candidate = hit.point;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        // ★そのまま候補地点に生成（Ray無し）
+        pos = pivot.position + new Vector3(r.x, 0f, r.y);
 
-        
         return true;
     }
 
@@ -418,7 +404,6 @@ public class NetworkObjectRandomGenerator : NetworkBehaviour
     {
         rarity = Mathf.Clamp(rarity, 1, 3);
 
-        // Database Entry に「public int Rarity => _rarity;」がある前提
         return _database._entries
             .Where(e => e != null && e._prefab != null && e.Rarity == rarity)
             .Select(e => e._prefab)
@@ -442,6 +427,12 @@ public class NetworkObjectRandomGenerator : NetworkBehaviour
     private void MarkOccupied(Vector3 pos)
     {
         _occupiedCells.Add(ToCell(pos));
+    }
+
+    // ★追加：aliveObjectsの掃除（null + inactive除外）
+    private void CleanupAliveObjects()
+    {
+        _aliveObjects.RemoveWhere(o => o == null || !o.gameObject.activeInHierarchy);
     }
 
     // ===== alive tracking callback =====

@@ -11585,7 +11585,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 546970859194657621, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: _spawnInterval
-      value: 20
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 546970859194657621, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _burstSpawnCount
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 546970859194657621, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _maxAliveObjects
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 546970859194657621, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: _totalSpawnCount
@@ -11681,11 +11689,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2557600072764507866, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: _spawnInterval
-      value: 30
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2557600072764507866, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: _burstSpawnCount
-      value: 5
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2557600072764507866, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _maxAliveObjects
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2557600072764507866, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: _totalSpawnCount
@@ -11705,7 +11717,15 @@ PrefabInstance:
       objectReference: {fileID: 721754700}
     - target: {fileID: 3986827641485018724, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: _spawnInterval
-      value: 25
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3986827641485018724, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _burstSpawnCount
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3986827641485018724, guid: aec5b00b8bff49e459f493970a308894, type: 3}
+      propertyPath: _maxAliveObjects
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 3986827641485018724, guid: aec5b00b8bff49e459f493970a308894, type: 3}
       propertyPath: _totalSpawnCount
@@ -36302,7 +36322,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5047105618854013406, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5342359017251551364, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: m_StaticEditorFlags

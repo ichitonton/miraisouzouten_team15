@@ -1218,6 +1218,7 @@ public class MovePlayerKey : NetworkBehaviour
     private void OnIs3DRunChanged(bool prev, bool next)
     {
         _isRun = next;
+        MapScreenController.Instance.isRun = next;
     }
 
 }
