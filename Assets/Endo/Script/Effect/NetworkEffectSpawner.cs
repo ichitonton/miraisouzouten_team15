@@ -85,6 +85,12 @@ public class NetworkEffectSpawner : NetworkBehaviour
         if (effectId < 0) return;
         PlayEffect(effectId, position, rotation);
     }
+    public void PlayEffect(string effectKey, Vector3 position, Quaternion rotation , Vector3 scale)
+    {
+        int effectId = _effectDatabase.GetEffectId(effectKey);
+        if (effectId < 0) return;
+        PlayEffect(effectId, position, rotation, scale);
+    }
 
     /// <summary>
     /// 親(NetworkObject)に追従させたい場合（全クライアントで同じ親になる）

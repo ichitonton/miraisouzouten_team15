@@ -67,6 +67,7 @@ public class GameDirector : MonoBehaviour
     // --------------------------------------------------
     private void Start()
     {
+
         StartCoroutine(GameSequence());
 
         VideoFadeManager.Instance.fadeInDuration = 1.0f;

@@ -271,11 +271,34 @@ public class MovePlayerKey : NetworkBehaviour
                     Move();
                     Emote();
                 }
+                //if (Input.GetKey((KeyCode)'Q'))
+                //{
+                //    Debug.Log("あいてむりせっと");
+                //    GameStartUseItem();
+                //}
             }
              AnimDyingFly(!_groundCheck.CheckGroundStatus());
              //移動モーション
              AnimBlendServerRpc(_animBlend);
         }
+    }
+
+    public void GameStartUseItem()
+    {
+        Debug.Log("あいてむりせっと");
+        //アイテムを持ってるとき
+        if (_haveItem != ItemType.None && _haveItem != ItemType.Max)
+        {
+            ItemReset();
+        }
+    }
+
+    void ItemReset()
+    {
+        _item.GetComponent<PooledNetworkObject>().DestroySelf();
+        SpawnItemClientRpc((int)_haveItem);
+        AnimItemServerRpc(false);
+        _item = null;
     }
 
     void AnimDyingFly(bool fly)

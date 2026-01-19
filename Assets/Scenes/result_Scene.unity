@@ -718,6 +718,42 @@ PrefabInstance:
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
       value: 3495114249
       objectReference: {fileID: 0}
+    - target: {fileID: 5520357180008683595, guid: b3aebcb8d10e9de45923848dbabf4b2a, type: 3}
+      propertyPath: skinMaterial1
+      value: 
+      objectReference: {fileID: 2100000, guid: beff4b5cc558c974e8df9322ff84927e, type: 2}
+    - target: {fileID: 5520357180008683595, guid: b3aebcb8d10e9de45923848dbabf4b2a, type: 3}
+      propertyPath: skinMaterial2
+      value: 
+      objectReference: {fileID: 2100000, guid: 1330196967a88064fbb8d7e81173de4f, type: 2}
+    - target: {fileID: 5520357180008683595, guid: b3aebcb8d10e9de45923848dbabf4b2a, type: 3}
+      propertyPath: skinMaterial3
+      value: 
+      objectReference: {fileID: 2100000, guid: e0825b6a1b89c2e4f98c0f84be7ca21c, type: 2}
+    - target: {fileID: 5520357180008683595, guid: b3aebcb8d10e9de45923848dbabf4b2a, type: 3}
+      propertyPath: skinMaterialWin1
+      value: 
+      objectReference: {fileID: 2100000, guid: d6f0563838c29b24589aa18c4c34c808, type: 2}
+    - target: {fileID: 5520357180008683595, guid: b3aebcb8d10e9de45923848dbabf4b2a, type: 3}
+      propertyPath: skinMaterialWin2
+      value: 
+      objectReference: {fileID: 2100000, guid: 89906bb368c2bcc43baf00347ace7343, type: 2}
+    - target: {fileID: 5520357180008683595, guid: b3aebcb8d10e9de45923848dbabf4b2a, type: 3}
+      propertyPath: skinMaterialWin3
+      value: 
+      objectReference: {fileID: 2100000, guid: c70fba65f5dc6624fa1895c62031f0e5, type: 2}
+    - target: {fileID: 5520357180008683595, guid: b3aebcb8d10e9de45923848dbabf4b2a, type: 3}
+      propertyPath: skinMaterialLose1
+      value: 
+      objectReference: {fileID: 2100000, guid: b748029fce681ad4394e206e52317529, type: 2}
+    - target: {fileID: 5520357180008683595, guid: b3aebcb8d10e9de45923848dbabf4b2a, type: 3}
+      propertyPath: skinMaterialLose2
+      value: 
+      objectReference: {fileID: 2100000, guid: 8119af36637583a40b4dbdd3848fb72e, type: 2}
+    - target: {fileID: 5520357180008683595, guid: b3aebcb8d10e9de45923848dbabf4b2a, type: 3}
+      propertyPath: skinMaterialLose3
+      value: 
+      objectReference: {fileID: 2100000, guid: 4cd3a74fd624c854293fcce7ba786bb5, type: 2}
     - target: {fileID: 7459081349001929016, guid: b3aebcb8d10e9de45923848dbabf4b2a, type: 3}
       propertyPath: m_Name
       value: Risu_rig_Result
@@ -1869,7 +1905,7 @@ PrefabInstance:
     - target: {fileID: 6526141927368440542, guid: 2ac15079004162b44b353e7d2da8d90e, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 25aaed2ce0b19a04e831052c369233ea, type: 3}
+      objectReference: {fileID: 21300000, guid: b4e5330ee17937a41b171e5f81de4b09, type: 3}
     - target: {fileID: 6848581454866037890, guid: 2ac15079004162b44b353e7d2da8d90e, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -2860,6 +2896,42 @@ PrefabInstance:
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
       value: 2012267606
       objectReference: {fileID: 0}
+    - target: {fileID: 5821067487165471226, guid: d981fb3a9a68d8b448dc7a4dacaa90ee, type: 3}
+      propertyPath: skinMaterial1
+      value: 
+      objectReference: {fileID: 2100000, guid: c5d61619877e95143a5cca12fb3bd7b3, type: 2}
+    - target: {fileID: 5821067487165471226, guid: d981fb3a9a68d8b448dc7a4dacaa90ee, type: 3}
+      propertyPath: skinMaterial2
+      value: 
+      objectReference: {fileID: 2100000, guid: 8a9b7f2274b38c248813540af8cdf4ad, type: 2}
+    - target: {fileID: 5821067487165471226, guid: d981fb3a9a68d8b448dc7a4dacaa90ee, type: 3}
+      propertyPath: skinMaterial3
+      value: 
+      objectReference: {fileID: 2100000, guid: c69ed89f96bae904b857d4b62efc62e9, type: 2}
+    - target: {fileID: 5821067487165471226, guid: d981fb3a9a68d8b448dc7a4dacaa90ee, type: 3}
+      propertyPath: skinMaterialWin1
+      value: 
+      objectReference: {fileID: 2100000, guid: ac7eac56d5c2c8d4586ba228024e7c7b, type: 2}
+    - target: {fileID: 5821067487165471226, guid: d981fb3a9a68d8b448dc7a4dacaa90ee, type: 3}
+      propertyPath: skinMaterialWin2
+      value: 
+      objectReference: {fileID: 2100000, guid: a63c4d530dea7a940b9cdb309c9e36aa, type: 2}
+    - target: {fileID: 5821067487165471226, guid: d981fb3a9a68d8b448dc7a4dacaa90ee, type: 3}
+      propertyPath: skinMaterialWin3
+      value: 
+      objectReference: {fileID: 2100000, guid: 7eff13c12c6d7b54f897fb22348b5b84, type: 2}
+    - target: {fileID: 5821067487165471226, guid: d981fb3a9a68d8b448dc7a4dacaa90ee, type: 3}
+      propertyPath: skinMaterialLose1
+      value: 
+      objectReference: {fileID: 2100000, guid: 36a7a0ac037c2d740bf33b2347c0a736, type: 2}
+    - target: {fileID: 5821067487165471226, guid: d981fb3a9a68d8b448dc7a4dacaa90ee, type: 3}
+      propertyPath: skinMaterialLose2
+      value: 
+      objectReference: {fileID: 2100000, guid: f3bcea6300f862746a3e666f9543f347, type: 2}
+    - target: {fileID: 5821067487165471226, guid: d981fb3a9a68d8b448dc7a4dacaa90ee, type: 3}
+      propertyPath: skinMaterialLose3
+      value: 
+      objectReference: {fileID: 2100000, guid: fe73fba1391dfb14bae0d784136415a4, type: 2}
     - target: {fileID: 7459081349001929016, guid: d981fb3a9a68d8b448dc7a4dacaa90ee, type: 3}
       propertyPath: m_Name
       value: Risu_rig_Result 1
