@@ -226,7 +226,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -1577}
+  m_AnchoredPosition: {x: 0, y: -1649}
   m_SizeDelta: {x: 846.52, y: 3711.23}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &55894741
@@ -533,7 +533,7 @@ MonoBehaviour:
   bgm: {fileID: 118724299}
   bgmStartVolume: 1
   bgmFadeOutSeconds: 4
-  enableFastForward: 1
+  enableFastForward: 0
   fastForwardKey: 32
   fastForwardTimeScale: 3
   holdToFastForward: 1
@@ -2913,6 +2913,7 @@ MonoBehaviour:
   _resultSetSkinMaterial1: {fileID: 225137490}
   _resultSetSkinMaterial2: {fileID: 1342289210}
   thankTime: 3
+  isCredits: 0
 --- !u!4 &1401374382
 Transform:
   m_ObjectHideFlags: 0

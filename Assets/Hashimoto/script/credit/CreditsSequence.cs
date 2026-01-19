@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class CreditsSequence : MonoBehaviour
 {
@@ -43,7 +44,7 @@ public class CreditsSequence : MonoBehaviour
     // ★ 早送り
     // ================================
     [Header("Fast Forward")]
-    [SerializeField] private bool enableFastForward = true;
+    [SerializeField] private bool enableFastForward = false;
     [SerializeField] private KeyCode fastForwardKey = KeyCode.Space;
     [SerializeField, Range(1f, 10f)] private float fastForwardTimeScale = 3f;
     [SerializeField] private bool holdToFastForward = true; // 押してる間だけ推奨
@@ -99,11 +100,26 @@ public class CreditsSequence : MonoBehaviour
     {
         if (!enableFastForward) return;
         if (!_canFastForward) return; // ★ThankYou停止後は早送り受付しない
+        //クレジット画面に来たら
+        if (!GameDirector.Instance.isCredits) return;
 
         if (holdToFastForward)
         {
             if (Input.GetKeyDown(fastForwardKey)) SetFastForward(true);
             if (Input.GetKeyUp(fastForwardKey)) SetFastForward(false);
+
+            foreach(var pad in Gamepad.all)
+            {
+                if (pad.buttonWest.isPressed)
+                {
+                    SetFastForward(true);
+                }
+                else
+                {
+                    SetFastForward(false);
+                }
+            }
+
         }
         else
         {
@@ -148,15 +164,6 @@ public class CreditsSequence : MonoBehaviour
 
     IEnumerator Sequence()
     {
-        // ★開始時に早送り受付ON＆timeScale戻す
-        _canFastForward = true;
-        ResetTimeScaleSafe();
-
-        // 位置リセット（連続再生でも安全）
-        if (creditsRect) creditsRect.anchoredPosition = _creditsStartPos;
-        if (teamLogoImage) teamLogoImage.rectTransform.anchoredPosition = _teamLogoStartPos;
-        if (thankYouImage) thankYouImage.rectTransform.anchoredPosition = _thankYouStartPos;
-        if (logoRect) logoRect.anchoredPosition = _logoStartPos;
 
         // BGM開始
         if (bgm)
@@ -168,6 +175,21 @@ public class CreditsSequence : MonoBehaviour
         // 0
         if (backGround) backGround.SetActive(true);
         if (creditsRect) creditsRect.gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(1.5f);
+
+        // ★開始時に早送り受付ON＆timeScale戻す
+        _canFastForward = true;
+        enableFastForward = true;
+        ResetTimeScaleSafe();
+
+        // 位置リセット（連続再生でも安全）
+        if (creditsRect) creditsRect.anchoredPosition = _creditsStartPos;
+        if (teamLogoImage) teamLogoImage.rectTransform.anchoredPosition = _teamLogoStartPos;
+        if (thankYouImage) thankYouImage.rectTransform.anchoredPosition = _thankYouStartPos;
+        if (logoRect) logoRect.anchoredPosition = _logoStartPos;
+
+        
 
         // 1) ゲームロゴ フェードイン
         yield return StartCoroutine(FadeImageAlpha(logoImage, 0f, 1f, logoFadeInSeconds));

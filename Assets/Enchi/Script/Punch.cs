@@ -1,9 +1,9 @@
 ﻿using Unity.Netcode;
 using UnityEngine;
 
-public class Punch : MonoBehaviour
+public class Punch : NetworkBehaviour
 {
-	float _punchForce = 10.0f;
+    [SerializeField] private float _punchForce = 10.0f;
 	[SerializeField] private float _stunTime = 1.0f;
 	int _punchDamage = 10;
 
@@ -75,35 +75,36 @@ public class Punch : MonoBehaviour
             NetworkEffectSpawner.Instance.PlayEffect(_hitDmgEffectId, transform.position, Quaternion.identity);
             NetworkEffectSpawner.Instance.PlayEffect(_hitEffectId, transform.position, Quaternion.identity);
 
-            if (otherPlayer._hitCount == 0)
+			Debug.Log("otherHitCount" + otherPlayer._hitCount);
+
+			if (otherPlayer._hitCount == 0)
 			{
-				otherPlayer._hitCount = 1;
-				return;
+				otherPlayer._hitCount++;
+				
 			}
-			else if(otherPlayer._hitCount == 1)
+			else if (otherPlayer._hitCount == 1)
 			{
-				otherPlayer._hitCount = 2;
-				otherPlayer.Stun(_stunTime);
+				otherPlayer._hitCount++;
+				otherPlayer.Stun(2f);
 				otherPlayer._stun = true;
-				return;
+				
 			}
-			else if(otherPlayer._hitCount == 2&&otherPlayer._stun)
+			else if (otherPlayer._stun == true)
 			{
-                Debug.LogWarning($"[Punch EFFECT] Player HIT → {otherPlayer.name}");
-                if (otherPlayer.ToGetPunch(_punchDamage, _stunTime))
-                    KnockBack(rb);
+				Debug.LogWarning($"[Punch EFFECT] Player HIT → {otherPlayer.name}");
+				KnockBack(rb);
 
-				otherPlayer._hitCount = 0;
+				//otherPlayer._hitCount = 0;
 
-				return;
-            }
+				
+			}
 
-   //         Debug.LogWarning($"[Punch EFFECT] Player HIT → {otherPlayer.name}");
-			//if(otherPlayer.ToGetPunch(_punchDamage, _stunTime))
-   //             KnockBack(rb);
+			//Debug.LogWarning($"[Punch EFFECT] Player HIT → {otherPlayer.name}");
+			//if (otherPlayer.ToGetPunch(_punchDamage, _stunTime))
+			//	KnockBack(rb);
 
-            //NetworkEffectSpawner.Instance._otherRoot = transform;
-            
+			//NetworkEffectSpawner.Instance._otherRoot = transform;
+
 		}
 
 		// ★Sweet判定（階層検索）
@@ -120,16 +121,17 @@ public class Punch : MonoBehaviour
             NetworkEffectSpawner.Instance.PlayEffect(_hitEffectId, transform.position, Quaternion.identity);
         }
 
-		// ノックバック
-		Debug.Log("ノックバック" + other);
-		KnockBack(rb);
+		//otherPlayer.Stun(2.0f);
+
+		//// ノックバック
+		//Debug.Log("ノックバック" + other);
+		//KnockBack(rb);
 		NetworkSoundManager.Instance.PlaySfx("Punch", NetworkSoundManager.SoundScope.LocalOnly,false);
 	}
 
-	[ServerRpc]
 	void KnockBack(Rigidbody rb)
 	{
-        rb.AddForce((transform.forward + Vector3.up * 0.1f) * _punchForce, ForceMode.Impulse);
+        rb.AddForce((transform.forward + Vector3.up) * _punchForce, ForceMode.Impulse);
     }
 	bool IsSweets(Collider other)
 	{

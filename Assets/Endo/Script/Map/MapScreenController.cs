@@ -31,12 +31,17 @@ public class MapScreenController : MonoBehaviour
     private PlayerMapIconManager _playerMapIconManager;
 
 
+    public static MapScreenController Instance { get; private set; }
+
+    public bool isRun = true;
 
     private bool _isOpen = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+
+        Instance = this;
 
         // ”O‚Ì‚½‚ß‚±‚±‚Å‚à•R•t‚¯
         if (blurBG != null && _snapshotRT != null)
@@ -69,6 +74,8 @@ public class MapScreenController : MonoBehaviour
     {
         //ƒQ[ƒ€‚É“ü‚Á‚Ä‚È‚¢‚È‚çƒŠƒ^[ƒ“
         if (!GameManager.Instance.InGame) return;
+        if (!isRun) return;
+
 
         if (Input.GetKeyDown(toggleKey))
         {

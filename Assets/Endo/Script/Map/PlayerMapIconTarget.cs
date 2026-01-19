@@ -12,8 +12,6 @@ public class PlayerMapIconTarget : MonoBehaviour
     [Tooltip("アイコンの位置・向きを取りたいTransform。空ならこのオブジェクト")]
     [SerializeField] private Transform _iconTarget;
 
-    [Tooltip("LANモード時、ローカルプレイヤーだけ表示するか")]
-    [SerializeField] private bool _onlyLocalInLan = true;
 
     [SerializeField] public int _id = 0;
 

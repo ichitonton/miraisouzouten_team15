@@ -122,8 +122,9 @@ public class MovePlayerKey : NetworkBehaviour
     bool _fly = false;
     [SerializeField] GroundCheck3D _groundCheck;
 
+    //ƒXƒ^ƒ“—p
     public bool _stun = false;
-    public int _hitCount = 2;
+    public int _hitCount = 0;
 
     private Dictionary<ulong, NetworkObject> itemDictionary;
 
@@ -163,12 +164,15 @@ public class MovePlayerKey : NetworkBehaviour
     {
         itemDictionary = new()
     {
+
         { (ulong)ItemType.Bomb, _itemBomb.GetComponent<NetworkObject>() },
         { (ulong)ItemType.BlackHole, _itemBlackHole.GetComponent<NetworkObject>() },
         { (ulong)ItemType.Shoese, _itemShouse.GetComponent<NetworkObject>() },
         { (ulong)ItemType.Star, _itemStar.GetComponent<NetworkObject>() },
         { (ulong)ItemType.Thunder, _itemThunder.GetComponent<NetworkObject>() }
     };
+
+        _hitCount = 0;
     }
 
 
@@ -670,6 +674,7 @@ public class MovePlayerKey : NetworkBehaviour
         _canNotInputKey = false;
         _currentHp = _MaxHp;
         _stun = false;
+        _hitCount = 0;
 
         AnimDyingServerRpc(false);
         StopDyingEffectClientRpc();

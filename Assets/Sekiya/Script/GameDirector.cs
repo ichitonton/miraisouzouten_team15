@@ -62,11 +62,17 @@ public class GameDirector : MonoBehaviour
 
 
     [SerializeField] private float thankTime = 3f;
+    public bool isCredits = false;
+
+    public static GameDirector Instance { get; private set; }
+
     // --------------------------------------------------
     // 処理本体
     // --------------------------------------------------
     private void Start()
     {
+
+        Instance = this;
 
         StartCoroutine(GameSequence());
 
@@ -77,6 +83,7 @@ public class GameDirector : MonoBehaviour
     private void Update()
     {
         if (!canInput) return;
+        if (isCredits) return;
 
         if (Input.GetKeyDown(KeyCode.N))
         {
@@ -87,7 +94,7 @@ public class GameDirector : MonoBehaviour
         {
             foreach (var gamepad in Gamepad.all)
             {
-                if (gamepad.yButton.wasPressedThisFrame)
+                if (gamepad.buttonWest.wasPressedThisFrame)
                 {
 
                     StartCoroutine(ActiveThankyou(gameSceneName));
@@ -165,11 +172,15 @@ public class GameDirector : MonoBehaviour
         //ネットを落とす
         NetworkShutdownRelay.Instance.ShutDown();
 
+        isCredits = true;
+
         var video = VideoFadeManager.Instance;
 
         video.PlayFadeOnly(VideoFadeManager.FadeScope.LocalOnly);
 
         yield return new WaitForSeconds(video.fadeOutDuration);
+
+      
 
         //クレジットの再生
         CreditsSequence.Instancs.ActiveCredits();

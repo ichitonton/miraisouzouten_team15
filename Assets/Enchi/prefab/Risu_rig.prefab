@@ -1507,6 +1507,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89fc784e8066c7b45bdfe152007c4bca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  ShowTopMostFoldoutHeaderGroup: 1
+  _punchForce: 100
   _stunTime: 1
 --- !u!1 &2922357933262809565
 GameObject:
@@ -3156,6 +3158,7 @@ GameObject:
   - component: {fileID: -6520160973488650656}
   - component: {fileID: 2191849881936588458}
   - component: {fileID: 1582976327585532857}
+  - component: {fileID: 2705938217022899121}
   m_Layer: 0
   m_Name: Risu_rig
   m_TagString: Player
@@ -3287,7 +3290,7 @@ MonoBehaviour:
   _punchObj: {fileID: 2597632125628933293}
   _MaxHp: 100
   _punchDamage: 20
-  _punchForce: 10
+  _punchForce: 100
   _stunTime: 1
   _haveTrans: {fileID: 7533343180309272194}
   _rankLotteryTables:
@@ -3346,7 +3349,7 @@ MonoBehaviour:
   _playerNumber: 1
   _groundCheck: {fileID: 1582976327585532857}
   _stun: 0
-  _hitCount: 2
+  _hitCount: 0
   _isRun: 1
 --- !u!54 &4346886339305241986
 Rigidbody:
@@ -3552,6 +3555,22 @@ MonoBehaviour:
     m_Bits: 64
   offset: {x: 0, y: 0.1, z: 0}
   distance: 0.35
+--- !u!114 &2705938217022899121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7459081349001929016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9e0acc1f91b50c46accd44529afdb23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMapIconTarget
+  _iconTarget: {fileID: 0}
+  _onlyLocalInLan: 1
+  _id: 1
+  _registerWhenNoNetwork: 1
 --- !u!1 &7481435165760361928
 GameObject:
   m_ObjectHideFlags: 0
