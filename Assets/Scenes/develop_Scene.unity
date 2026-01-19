@@ -25266,7 +25266,7 @@ PrefabInstance:
       objectReference: {fileID: 929665137}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: IsDebug
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: connectUI
@@ -25327,6 +25327,10 @@ PrefabInstance:
     - target: {fileID: 6214443042104124277, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: m_Name
       value: PadSession
+      objectReference: {fileID: 0}
+    - target: {fileID: 6214443042104124277, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -50806,7 +50810,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2617391042355764094, guid: 8d44d5ef5c7f909459a4803066c4d9fb, type: 3}
       propertyPath: _onlineMode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2617391042355764094, guid: 8d44d5ef5c7f909459a4803066c4d9fb, type: 3}
       propertyPath: _pivot.Array.size

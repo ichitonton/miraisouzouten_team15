@@ -188,8 +188,19 @@ public class GameManager : NetworkBehaviour
         if (_startingRoutine) return; // 二重開始防止
         _startingRoutine = true;
 
-        //フェードの秒数設定
-        if (VideoFadeManager.Instance != null)
+		// ホスト開始でネットワーク同期BGM再生
+		if (NetworkSoundManager.Instance != null)
+		{
+			NetworkSoundManager.Instance.PlayBgm(
+				"angel",
+				NetworkSoundManager.SoundScope.AllClients,
+				true
+			);
+		}
+
+
+		//フェードの秒数設定
+		if (VideoFadeManager.Instance != null)
         {
             VideoFadeManager.Instance.fadeInDuration = 1.0f;
             VideoFadeManager.Instance.fadeOutDuration = 1.0f;
@@ -454,7 +465,7 @@ public class GameManager : NetworkBehaviour
 			if (NetworkSoundManager.Instance != null)
 			{
 				NetworkSoundManager.Instance.StopBgm(
-					NetworkSoundManager.SoundScope.LocalOnly,
+					NetworkSoundManager.SoundScope.AllClients,
 					0.7f // フェード時間。好みで
 				);
 			}

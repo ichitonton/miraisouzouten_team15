@@ -27,9 +27,16 @@ MonoBehaviour:
     loop: 1
     fadeSeconds: 0
     outputMixerGroup: {fileID: 0}
-  - tag: Taiki
+  - tag: angel
     clips:
-    - {fileID: 8300000, guid: fb790b2e5b049b54aa889ac701233345, type: 3}
+    - {fileID: 8300000, guid: da1d9b91f10a51741a44a54ede889447, type: 3}
+    volume: 0.03
+    loop: 1
+    fadeSeconds: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: momo
+    clips:
+    - {fileID: 8300000, guid: da1d9b91f10a51741a44a54ede889447, type: 3}
     volume: 0.03
     loop: 1
     fadeSeconds: 0

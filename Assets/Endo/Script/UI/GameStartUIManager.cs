@@ -53,6 +53,11 @@ public class GameStartUIManager : MonoBehaviour
 
 	[SerializeField] private UnityEvent onStartSpriteShown;
 
+	[Header("BGM Fade Out (Before Start!)")]
+	[SerializeField, Min(0f)] private float bgmFadeLeadSeconds = 2.0f; // Start! の何秒前にフェード開始するか
+	[SerializeField, Min(0f)] private float bgmFadeOutSeconds = 2.0f; // フェード時間
+
+
 
 	private bool _playing = false;
 
@@ -153,23 +158,35 @@ public class GameStartUIManager : MonoBehaviour
 
         HideAllImages();
 
-        // 3/2/1 は countdownImage を使う
-        yield return PlayOne(countdownImage, sprite3, startScale, endScale);
-        yield return PlayOne(countdownImage, sprite2, startScale, endScale);
-        yield return PlayOne(countdownImage, sprite1, startScale, endScale);
+		// 3/2/1 は countdownImage を使う
+		yield return PlayOne(countdownImage, sprite3, startScale, endScale);
+		yield return PlayOne(countdownImage, sprite2, startScale, endScale);
+		yield return PlayOne(countdownImage, sprite1, startScale, endScale);
 
-        // Start! は startOnlyImage があればそっち、無ければ countdownImage を使う
-        var startImg = (startOnlyImage != null) ? startOnlyImage : countdownImage;
+		// Start! が出るまでの残り時間（= 直前の "1" 表示が終わった直後なので、基本 _delay だけ先）
+		float timeUntilStartSprite = _delay;
 
-        // もし別Imageを使うなら、3/2/1のImageは消してから出す
-        if (startImg != countdownImage)
-            countdownImage.enabled = false;
+		// 0の数秒前からフェードしたい：Start! までの残り - lead
+		// lead が _delay より大きい場合は「もう今すぐフェード開始」でOK
+		float fadeWait = timeUntilStartSprite - bgmFadeLeadSeconds;
+		StartCoroutine(FadeOutBgmBeforeStartSprite(fadeWait));
 
+		// Start! は startOnlyImage があればそっち、無ければ countdownImage を使う
+		var startImg = (startOnlyImage != null) ? startOnlyImage : countdownImage;
+
+		// もし別Imageを使うなら、3/2/1のImageは消してから出す
+		if (startImg != countdownImage)
+			countdownImage.enabled = false;
+
+		// Start! が出た瞬間イベント（既存）
 		onStartSpriteShown?.Invoke();
+
+		NetworkSoundManager.Instance.PlaySfx("UI_Start", NetworkSoundManager.SoundScope.LocalOnly, false);
 
 		yield return PlayOne(startImg, spriteStart, startStartScale, startEndScale);
 
-        if (startHoldSeconds > 0f)
+
+		if (startHoldSeconds > 0f)
             yield return new WaitForSecondsRealtime(startHoldSeconds);
 
         HideAllImages();
@@ -270,4 +287,23 @@ public class GameStartUIManager : MonoBehaviour
         float a = 1f - x;
         return 1f - (a * a * a);
     }
+
+	private IEnumerator FadeOutBgmBeforeStartSprite(float secondsBeforeStart)
+	{
+		// ネットワーク中はホストだけが指示（全員同期）
+		if (HasNet && !IsServer) yield break;
+
+		float wait = Mathf.Max(0f, secondsBeforeStart);
+		if (wait > 0f)
+			yield return new WaitForSecondsRealtime(wait);
+
+		if (NetworkSoundManager.Instance != null)
+		{
+			NetworkSoundManager.Instance.StopBgm(
+				NetworkSoundManager.SoundScope.AllClients,
+				bgmFadeOutSeconds
+			);
+		}
+	}
+
 }
