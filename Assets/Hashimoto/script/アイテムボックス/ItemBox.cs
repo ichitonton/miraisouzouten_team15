@@ -65,7 +65,7 @@ public class ItemBox : NetworkBehaviour
 		// 割れるエフェクト
 		if (eff_Item_Debris != null)
 		{
-			NetworkEffectSpawner.Instance.PlayEffect("item_Debris", _boxObject.transform.position, _boxObject.transform.rotation);
+			NetworkEffectSpawner.Instance.PlayEffect("item_Debris", _boxObject.transform.position, _boxObject.transform.rotation, new Vector3(1.2f,1.2f,1.2f));
             //NetworkEffectSpawner.Instance.
             //Instantiate(eff_Item_Debris,
             //	_boxObject != null ? _boxObject.transform.position : transform.position,

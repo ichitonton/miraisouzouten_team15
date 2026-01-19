@@ -115,7 +115,8 @@ public class GoalToUI : NetworkBehaviour
                     NetworkEffectSpawner.Instance.PlayEffect(
                         _TeleportId,
                         transform.position,
-                        transform.rotation
+                        transform.rotation,
+                        new Vector3(2f, 2f, 2f)
                     );
                 }
             }
