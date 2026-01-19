@@ -31,7 +31,7 @@ public class SetSkinMaterial : NetworkBehaviour
         SetNormalMaterialClientRpc();
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void RequestSetNormalMaterialServerRpc()
     {
         SetNormalMaterialClientRpc();
@@ -58,7 +58,7 @@ public class SetSkinMaterial : NetworkBehaviour
     }
 
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void RequestSetKanasimiMaterialServerRpc()
     {
         SetKanasimiMaterialClientRpc();
@@ -85,7 +85,7 @@ public class SetSkinMaterial : NetworkBehaviour
     }
 
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void RequestSetKizetuMaterialServerRpc()
     {
         SetKizetuMaterialClientRpc();
@@ -114,7 +114,7 @@ public class SetSkinMaterial : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void RequestSetOkoriMaterialServerRpc()
     {
         SetOkoriMaterialClientRpc();
@@ -144,7 +144,7 @@ public class SetSkinMaterial : NetworkBehaviour
     }
 
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void RequestSetHappyMaterialServerRpc()
     {
         SetHappyMaterialClientRpc();
@@ -173,7 +173,7 @@ public class SetSkinMaterial : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void RequestSetAoriMaterialServerRpc()
     {
         SetAoriMaterialClientRpc();
