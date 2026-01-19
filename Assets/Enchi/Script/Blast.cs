@@ -5,12 +5,15 @@ using UnityEngine;
 public class Blast : NetworkBehaviour
 {
     [SerializeField] float _lifeTime = 0.1f;
+    [SerializeField] float _blastTime = 0.5f;
     [SerializeField] float _impactForce = 10.0f;
 
 	//[SerializeField] int _explosionEffectId = 2;
 
 	Rigidbody _rigidbody;
     float _boneTime = 0.0f;
+    bool _isBlast = false;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -27,6 +30,7 @@ public class Blast : NetworkBehaviour
         //Debug.Log("Spawn Ç≥ÇÍÇΩÇÊÅI");
         Collider col = GetComponent<Collider>();
         col.isTrigger = true;
+        _isBlast = true;
         _boneTime = 0.0f;
         //Invoke("SetColTriggerServerRpc", 0.4f);
     }
@@ -45,6 +49,10 @@ public class Blast : NetworkBehaviour
     {
         _boneTime += Time.deltaTime;
 
+        if (_boneTime >= _blastTime)
+        {
+            _isBlast = false;
+        }
         if (_boneTime >= _lifeTime)
         {
             ActiveFalse();
@@ -62,6 +70,7 @@ public class Blast : NetworkBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (!IsServer) return; // Å© Ç±ÇÍÇ™ïKê{
+        if (!_isBlast) return;
         if (other.transform.GetComponent<Rigidbody>() != null)
         {
             if (other.transform.GetComponent<MovePlayerKey>() != null)

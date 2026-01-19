@@ -3328,9 +3328,9 @@ MonoBehaviour:
   _itemStarDelay: 7
   _itemStarChangeSpeed: 1.3
   _itemThunder: {fileID: 8455190012305423608, guid: b5b5577d0be3c5c469d7e7642efadcd5, type: 3}
-  _thunderDuration: 10
-  _thunderStunTime: 5
-  _itemFlightTime: 2
+  _thunderDuration: 15
+  _thunderStunTime: 3
+  _itemFlightTime: 1
   _dashParticleSystem: {fileID: 3473640514092605486}
   _mutekiParticleSystem: {fileID: 2625033748614898017}
   _shoeseParticleSystem: {fileID: 2012435520365155609}
