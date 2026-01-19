@@ -2993,7 +2993,6 @@ GameObject:
   - component: {fileID: 8427100980178498739}
   - component: {fileID: -4386107049502542322}
   - component: {fileID: 7313837968559615433}
-  - component: {fileID: -6520160973488650656}
   - component: {fileID: 2191849881936588458}
   - component: {fileID: 1582976327585532857}
   - component: {fileID: 5520357180008683595}
@@ -3188,21 +3187,6 @@ MonoBehaviour:
   UseRigidBodyForMotion: 0
   AutoUpdateKinematicState: 1
   AutoSetKinematicOnDespawn: 1
---- !u!114 &-6520160973488650656
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7459081349001929016}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkAnimator
-  ShowTopMostFoldoutHeaderGroup: 1
-  TransitionStateInfoList: []
-  m_Animator: {fileID: 8427100980178498739}
 --- !u!114 &2191849881936588458
 MonoBehaviour:
   m_ObjectHideFlags: 0
