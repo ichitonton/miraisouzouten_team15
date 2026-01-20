@@ -1219,6 +1219,7 @@ public class MovePlayerKey : NetworkBehaviour
     {
         _isRun = next;
         MapScreenController.Instance.isRun = next;
+        MapScreenController.Instance.CloseMap();
     }
 
 }

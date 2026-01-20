@@ -132,7 +132,7 @@ public class MapScreenController : MonoBehaviour
         
     }
 
-    private void CloseMap()
+    public void CloseMap()
     {
         _isOpen = false;
 

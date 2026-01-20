@@ -222,6 +222,8 @@ public class GameManager : NetworkBehaviour
         //3DSEを鳴らさない
         NetworkSoundManager.Instance.Is3DRunNet.Value = false; ;
 
+        //MapScreenController.Instance.CloseMap();
+
         //ゲームスタート
         StartCoroutine(StartGame());
     }
@@ -416,17 +418,17 @@ public class GameManager : NetworkBehaviour
     }
 
     //タイマー開始
-	public void OnCountdownStartSpriteShown()
-	{
-		if (NetworkManager.Singleton == null) return;
-		if (!NetworkManager.Singleton.IsServer) return; // ホストだけが開始指示
+    private void OnCountdownStartSpriteShown()
+    {
+        if (NetworkManager.Singleton == null) return;
+        if (!NetworkManager.Singleton.IsServer) return; // ホストだけが開始指示
 
-		var timer = Object.FindFirstObjectByType<TimerManager>();
-		if (timer != null)
-			timer.StartTimerServerRpc();
+        var timer = Object.FindFirstObjectByType<TimerManager>();
+        if (timer != null)
+            timer.StartTimerServerRpc();
 
         if (NetworkSoundManager.Instance != null)
-            NetworkSoundManager.Instance.PlayBgm("FuwaFuwa", NetworkSoundManager.SoundScope.AllClients, true);
+            NetworkSoundManager.Instance.PlayBgm("FuwaFuwa", NetworkSoundManager.SoundScope.AllClients, false);
 
         var players = GameObject.FindGameObjectsWithTag("Player");
 
@@ -439,7 +441,7 @@ public class GameManager : NetworkBehaviour
         //MapScreenController.Instance.isRun = true;
 
         //3DSEをなるようにする
-        NetworkSoundManager.Instance.Is3DRunNet.Value = true ;
+        NetworkSoundManager.Instance.Is3DRunNet.Value = true;
 
     }
 
@@ -456,25 +458,25 @@ public class GameManager : NetworkBehaviour
             GameEventManager.Instance.TryStartAutoLoop();
     }
 
-   // private void OnGUI()
-   // {
-   //     // 既存デバッグGUIは残す（LAN中ホストのみ）
-   //     if (!InGame) return;
-   //     if (NetworkManager.Singleton == null) return;
-   //     if (!NetworkManager.Singleton.IsServer) return;
+    private void OnGUI()
+    {
+        //// 既存デバッグGUIは残す（LAN中ホストのみ）
+        //if (!InGame) return;
+        //if (NetworkManager.Singleton == null) return;
+        //if (!NetworkManager.Singleton.IsServer) return;
 
-   //     if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 100, 120, 30), "ゲームスタート"))
-   //     {
-			//if (NetworkSoundManager.Instance != null)
-			//{
-			//	NetworkSoundManager.Instance.StopBgm(
-			//		NetworkSoundManager.SoundScope.AllClients,
-			//		0.7f // フェード時間。好みで
-			//	);
-			//}
-			//StartLocalGameRequest();
-   //     }
-   // }
+        //if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 100, 120, 30), "ゲームスタート"))
+        //{
+        //    if (NetworkSoundManager.Instance != null)
+        //    {
+        //        NetworkSoundManager.Instance.StopBgm(
+        //            NetworkSoundManager.SoundScope.AllClients,
+        //            0.7f // フェード時間。好みで
+        //        );
+        //    }
+        //    StartLocalGameRequest();
+        //}
+    }
 
     // ==========================================================
     //  Teleport + RopeConnect（安全化）

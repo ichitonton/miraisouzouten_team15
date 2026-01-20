@@ -24,13 +24,7 @@ public class TimerManager : NetworkBehaviour
         var span = TimeSpan.FromSeconds(_count.Value);
         if (timeText) timeText.text = span.ToString(@"m\:ss");
 
-        //サーバー以外
-        if (_count.Value <= 0)
-        {
-            MapScreenController.Instance.isRun = false;
-
-        }
-
+       
         if (!IsServer) return;
         if (isTimeUp) return;
 
