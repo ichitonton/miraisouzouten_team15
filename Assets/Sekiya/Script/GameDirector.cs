@@ -19,6 +19,11 @@ public class GameDirector : MonoBehaviour
     [SerializeField] private float minScale = 1.0f;
     [SerializeField] private float maxScale = 1.0f;
 
+    [SerializeField] AudioSource bgmAudioWin;
+    [SerializeField] AudioSource bgmAudioLose;
+    [SerializeField] AudioSource dramRoal;
+    [SerializeField] AudioSource dramRoalEnd;
+
     // ==========================================
     // 2. 勝敗判定と表示の設定
     // ==========================================
@@ -118,7 +123,10 @@ public class GameDirector : MonoBehaviour
         yield return new WaitForSeconds(startDelay);
 
         // --- フェーズ1: 時間いっぱい和菓子生成 ---
+        dramRoal.Play();
+
         float timer = 0f;
+
         while (timer < spawnDuration)
         {
             SpawnWagashi();
@@ -126,9 +134,13 @@ public class GameDirector : MonoBehaviour
             timer += spawnInterval;
         }
 
+        dramRoal.Stop();
+        dramRoalEnd.Play();
+
         // --- フェーズ2: 勝敗判定 ---
         Debug.Log("タイムアップ！勝敗を判定します...");
         CheckAndShowResult();
+       
 
         // 余韻（Win/Loseが出ている時間）
         yield return new WaitForSeconds(afterResultWaitTime);
@@ -255,6 +267,8 @@ public class GameDirector : MonoBehaviour
                 //    player1anim.SetTrigger("Win2L");
                 //    player2anim.SetTrigger("Win2R");
                 //}
+
+                bgmAudioWin.Play();
             }
             else
             {
@@ -269,6 +283,9 @@ public class GameDirector : MonoBehaviour
 
                 player1anim.SetTrigger("Lose");
                 player2anim.SetTrigger("Lose");
+
+
+                bgmAudioLose.Play();
             }
         }
 

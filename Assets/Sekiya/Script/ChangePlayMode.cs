@@ -11,7 +11,7 @@ public class ChangePlayMode : MonoBehaviour
 	[SerializeField] private AudioClip seSwitch;
 	[SerializeField] private AudioClip seDecision;
 
-	private bool isHostMode = true;
+	private bool isHostMode = false;
 
 	void Start()
 	{
