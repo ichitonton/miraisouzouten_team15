@@ -138,10 +138,10 @@ public class GameManager : NetworkBehaviour
         if (_startingRoutine) return;
 
             //3ƒ`[ƒ€Ú‘±Ï‚Ý‚È‚ç
-        //if(NetworkManager.Singleton.ConnectedClientsIds.Count >= 3)
-        //{
-            //if (Gamepad.all.Count >= 2)
-            //{
+        if(NetworkManager.Singleton.ConnectedClientsIds.Count >= 3)
+        {
+            if (Gamepad.all.Count >= 2)
+            {
                 foreach (var gamepad in Gamepad.all)
                 {
                     if (gamepad.buttonWest.wasPressedThisFrame)
@@ -150,8 +150,8 @@ public class GameManager : NetworkBehaviour
                         StartLocalGameRequest();
                     }
                 }
-            //}
-        //}
+            }
+        }
     }
 
 
