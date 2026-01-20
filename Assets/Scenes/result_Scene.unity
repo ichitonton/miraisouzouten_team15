@@ -226,8 +226,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -1649}
-  m_SizeDelta: {x: 846.52, y: 3769}
+  m_AnchoredPosition: {x: 0, y: -1900}
+  m_SizeDelta: {x: 846.52, y: 4607}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &55894741
 MonoBehaviour:
@@ -526,7 +526,7 @@ MonoBehaviour:
   teamLogoImage: {fileID: 409637588}
   teamLogoFadeInSeconds: 0
   thankYouImage: {fileID: 981738786}
-  thankYouTargetY: 100
+  thankYouTargetY: 50
   thankYouHoldSeconds: 3
   thankYouFadeInSeconds: 0
   backGround: {fileID: 1196556785}
@@ -1129,7 +1129,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -3375}
+  m_AnchoredPosition: {x: 0, y: -3420}
   m_SizeDelta: {x: 540, y: 304}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &409637588
