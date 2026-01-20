@@ -1188,7 +1188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 924844981
+  GlobalObjectIdHash: 2752076993
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -3051,7 +3051,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Y
+  m_text: 'X
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 6dd5e9671d15eb24aa1ebc89c7cc028b, type: 2}
   m_sharedMaterial: {fileID: -3008364219795785678, guid: 6dd5e9671d15eb24aa1ebc89c7cc028b, type: 2}
