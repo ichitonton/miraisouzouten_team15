@@ -2042,6 +2042,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 231.00002
       objectReference: {fileID: 0}
+    - target: {fileID: 8914779544432553889, guid: 2ac15079004162b44b353e7d2da8d90e, type: 3}
+      propertyPath: soundEffect
+      value: 
+      objectReference: {fileID: 8300000, guid: 71d27483f4ad07f46a8e737905be3ac0, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 1248703827391134772, guid: 2ac15079004162b44b353e7d2da8d90e, type: 3}
