@@ -43,6 +43,8 @@ public class NetworkStartUI : MonoBehaviour
     private bool _autoStarted = false;
     private Coroutine _autoRoutine;
 
+    
+
     // =========================
     // Unity Events
     // =========================
@@ -192,6 +194,8 @@ public class NetworkStartUI : MonoBehaviour
                 return;
             }
             _lanHost.StartHostConnect();
+            GameManager.Instance._buttonY.SetActive(true);
+
         }
         else // Client
         {

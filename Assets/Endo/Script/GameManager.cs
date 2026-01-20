@@ -71,6 +71,8 @@ public class GameManager : NetworkBehaviour
 
     private bool _isStart = false;
 
+     public GameObject _buttonY = null;
+
     //  何回もStartが走らないように保険
     private bool _startingRoutine = false;
 
@@ -88,6 +90,8 @@ public class GameManager : NetworkBehaviour
         }
 
         Application.targetFrameRate = 60;
+
+        _buttonY.SetActive(false);
     }
 
     public override void OnNetworkDespawn()
@@ -129,17 +133,15 @@ public class GameManager : NetworkBehaviour
 
     private void LateUpdate()
     {
-
-       
         if (NetworkManager.Singleton == null) return; 
         if (!IsServer) return;
         if (_startingRoutine) return;
 
             //3チーム接続済みなら
-        if(NetworkManager.Singleton.ConnectedClientsIds.Count >= 3)
-        {
-            if (Gamepad.all.Count >= 2)
-            {
+        //if(NetworkManager.Singleton.ConnectedClientsIds.Count >= 3)
+        //{
+            //if (Gamepad.all.Count >= 2)
+            //{
                 foreach (var gamepad in Gamepad.all)
                 {
                     if (gamepad.buttonWest.wasPressedThisFrame)
@@ -148,8 +150,8 @@ public class GameManager : NetworkBehaviour
                         StartLocalGameRequest();
                     }
                 }
-            }
-        }
+            //}
+        //}
     }
 
 
@@ -185,9 +187,10 @@ public class GameManager : NetworkBehaviour
     {
         if (_startingRoutine) return; // 二重開始防止
         _startingRoutine = true;
+        _buttonY.SetActive(false);
 
-		// ホスト開始でネットワーク同期BGM再生
-		if (NetworkSoundManager.Instance != null)
+        // ホスト開始でネットワーク同期BGM再生
+        if (NetworkSoundManager.Instance != null)
 		{
 			NetworkSoundManager.Instance.PlayBgm(
 				"angel",
