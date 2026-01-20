@@ -81,7 +81,7 @@ MonoBehaviour:
   - tag: Item_BlackHole
     clips:
     - {fileID: 8300000, guid: 9942d4a46b337ce45856993ea581a967, type: 3}
-    volume: 0.317
+    volume: 1
     randomizePitch: 0
     pitchMin: 0.9
     pitchMax: 1
@@ -94,7 +94,7 @@ MonoBehaviour:
   - tag: Item_Kanden
     clips:
     - {fileID: 8300000, guid: 67e0268340870ba48894baed52e13400, type: 3}
-    volume: 0.317
+    volume: 0.563
     randomizePitch: 0
     pitchMin: 0.9
     pitchMax: 1
@@ -146,7 +146,7 @@ MonoBehaviour:
   - tag: ItemBox
     clips:
     - {fileID: 8300000, guid: b017f81ca398ff749b71c12504defd82, type: 3}
-    volume: 0.198
+    volume: 0.138
     randomizePitch: 0
     pitchMin: 0.9
     pitchMax: 1

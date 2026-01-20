@@ -29,6 +29,8 @@ public class BlackHole : NetworkBehaviour
         _boneTime = 0.0f;
         _isAction = true;
         //Invoke("SetColTriggerServerRpc", 0.4f);
+
+        NetworkSoundManager.Instance.PlaySfx("Item_BlackHole", NetworkSoundManager.SoundScope.LocalOnly, false);
     }
 
     //   void OnEnable()
