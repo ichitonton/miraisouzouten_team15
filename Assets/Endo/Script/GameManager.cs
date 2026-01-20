@@ -428,7 +428,7 @@ public class GameManager : NetworkBehaviour
             timer.StartTimerServerRpc();
 
         if (NetworkSoundManager.Instance != null)
-            NetworkSoundManager.Instance.PlayBgm("FuwaFuwa", NetworkSoundManager.SoundScope.AllClients, false);
+            NetworkSoundManager.Instance.PlayBgm("FuwaFuwa", NetworkSoundManager.SoundScope.AllClients, true);
 
         var players = GameObject.FindGameObjectsWithTag("Player");
 
@@ -460,7 +460,7 @@ public class GameManager : NetworkBehaviour
 
     private void OnGUI()
     {
-        //// 既存デバッグGUIは残す（LAN中ホストのみ）
+        ////// 既存デバッグGUIは残す（LAN中ホストのみ）
         //if (!InGame) return;
         //if (NetworkManager.Singleton == null) return;
         //if (!NetworkManager.Singleton.IsServer) return;
