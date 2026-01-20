@@ -68,8 +68,6 @@ public class GoldenWagashiObject : MonoBehaviour
             GameObject child = transform.GetChild(0).gameObject;
             Vector3 childPos = child.transform.position;
 
-            NetworkEffectSpawner.Instance.PlayEffect(_effectId, childPos, Quaternion.identity);
-
             // 着地SE（ずどーん）
             NetworkSoundManager.Instance.PlaySfx(
                 LandTag,
