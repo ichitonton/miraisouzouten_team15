@@ -173,6 +173,8 @@ public class MovePlayerKey : NetworkBehaviour
     };
 
         _hitCount = 0;
+
+
     }
 
 
@@ -188,6 +190,7 @@ public class MovePlayerKey : NetworkBehaviour
         // 変更監視
         IsRunNet.OnValueChanged += OnIs3DRunChanged;
 
+        
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -235,12 +238,16 @@ public class MovePlayerKey : NetworkBehaviour
         rb.isKinematic = false; // クライアントでは物理演算しない
     }
 
+
+
     void FixedUpdate()
     {
         if (!_isRun) return;
 
         if (IsOwner)
         {
+            GetComponent<CapsuleCollider>().enabled = true;
+
             ItemTargetServerRpc(GetComponent<UICursorToWorld>().GetItemTargetTransform().position);
         }
         if (IsServer)

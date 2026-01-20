@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,7 +39,7 @@ public class UIEventManager : MonoBehaviour
     [SerializeField, Min(0f)] private float warningSideFadeOut = 0.20f;
 
     // ================================
-    // ★ Scene UI Retreat Settings（追加）
+    // Scene UI Retreat Settings
     // ================================
 
     public enum RetreatDir { Left, Right, Up, Down }
@@ -92,7 +91,7 @@ public class UIEventManager : MonoBehaviour
     private Coroutine _running;
     private Coroutine _warningSideFadeRoutine;
 
-    // ★Scene UI retreat state
+    // Scene UI retreat state
     private Coroutine _sceneUIRoutine;
     private bool _sceneUIHidden = false;
 
@@ -109,7 +108,7 @@ public class UIEventManager : MonoBehaviour
         if (warningSideGroup == null && _warningSide != null)
             warningSideGroup = _warningSide.GetComponent<CanvasGroup>();
 
-        BuildSceneUITargets(); // ★追加（方向辞書を作る）
+        BuildSceneUITargets();
 
         ResetUI();
         StopFlash();
@@ -142,7 +141,7 @@ public class UIEventManager : MonoBehaviour
         ResetUI();
         StopFlash();
 
-        // ★イベント開始：元UIを画面外へ退避（Activeは触らない）
+        // イベント開始：元UIを画面外へ退避
         yield return HideSceneUI();
 
         SetupWarningIconSingle(warningIcon);
@@ -154,13 +153,15 @@ public class UIEventManager : MonoBehaviour
 
         SetExclamationVisible(true);
 
+        // 点滅演出（ここで ! / アイコン が消える）
         yield return StartCoroutine(BlinkCoreRoutine());
+
+        // ★このタイミングで WarningSide も消す + SceneUIを戻す（中央ワーニングと同じタイミング）
+        // 並列っぽく同時に進める（体感が揃う）
+        yield return StartCoroutine(StopWarningSideAndReturnSceneUI());
+
+        // バナーはそのまま（戻ったUIの上で流す）
         yield return StartCoroutine(BannerRoutine(message));
-
-        yield return StopWarningSide();
-
-        // ★イベント終了：元UIを元の位置へ戻す
-        yield return ShowSceneUI();
 
         _running = null;
     }
@@ -170,7 +171,7 @@ public class UIEventManager : MonoBehaviour
         ResetUI();
         StopFlash();
 
-        // ★イベント開始：元UIを画面外へ退避
+        // イベント開始：元UIを画面外へ退避
         yield return HideSceneUI();
 
         SetupWarningIconSingle(null);
@@ -182,13 +183,14 @@ public class UIEventManager : MonoBehaviour
 
         SetExclamationVisible(true);
 
+        // 点滅演出（ここで ! / アイコン が消える）
         yield return StartCoroutine(BlinkCoreRoutine());
+
+        // ★ここで WarningSide も消す + SceneUIを戻す
+        yield return StartCoroutine(StopWarningSideAndReturnSceneUI());
+
+        // バナーはそのまま
         yield return StartCoroutine(BannerRoutine(messageCombined));
-
-        yield return StopWarningSide();
-
-        // ★イベント終了：元UI復帰
-        yield return ShowSceneUI();
 
         _running = null;
     }
@@ -223,9 +225,11 @@ public class UIEventManager : MonoBehaviour
             yield return null;
         }
 
+        // フェードアウト（!）
         if (exclamationGroup != null)
             yield return Fade(exclamationGroup, exclamationGroup.alpha, 0f, exclamationFadeOut);
 
+        // アイコンは表示しているものだけ落とす
         if (IsIconActive(warningIconImage))
             yield return FadeIconTo(warningIconImage, warningIconGroup, 0f, exclamationFadeOut);
         if (IsIconActive(warningIconImage2))
@@ -254,12 +258,9 @@ public class UIEventManager : MonoBehaviour
     }
 
     // -------------------------------
-    // ★ Scene UI Retreat（追加）
+    // Scene UI Retreat
     // -------------------------------
 
-    /// <summary>
-    /// Inspectorの4方向リストから、UI->方向 の辞書を作る
-    /// </summary>
     private void BuildSceneUITargets()
     {
         _sceneUIDir.Clear();
@@ -278,7 +279,6 @@ public class UIEventManager : MonoBehaviour
 
                 if (_sceneUIDir.ContainsKey(rt))
                 {
-                    // 同じUIが複数方向に入ってたら最初優先（事故予防）
                     Debug.LogWarning($"[UIEventManager] SceneUI '{rt.name}' is registered multiple times. First direction is used.");
                     continue;
                 }
@@ -287,20 +287,13 @@ public class UIEventManager : MonoBehaviour
         }
     }
 
-    public void OnHideSceneUI()
-    {
-        StartCoroutine(HideSceneUI());
-    }
-
     private IEnumerator HideSceneUI()
     {
         if (_sceneUIHidden) yield break;
         if (_sceneUIDir.Count == 0) yield break;
 
-        // 途中の移動が残ってるなら止める
         if (_sceneUIRoutine != null) StopCoroutine(_sceneUIRoutine);
 
-        // 元位置保存（初回のみ）
         foreach (var kv in _sceneUIDir)
         {
             var rt = kv.Key;
@@ -330,14 +323,12 @@ public class UIEventManager : MonoBehaviour
         _sceneUIRoutine = null;
     }
 
-    private IEnumerator CoSlideSceneUI(bool hide, float duration)
+    public IEnumerator CoSlideSceneUI(bool hide, float duration)
     {
-        // Canvasサイズ取得（解像度変化してもOK）
         var canvasRect = GetRootCanvasRect();
         float w = canvasRect.x;
         float h = canvasRect.y;
 
-        // 開始/目標位置を作る
         var rts = new List<RectTransform>(_sceneUIDir.Count);
         var start = new List<Vector2>(_sceneUIDir.Count);
         var target = new List<Vector2>(_sceneUIDir.Count);
@@ -358,7 +349,6 @@ public class UIEventManager : MonoBehaviour
                 continue;
             }
 
-            // hide時：方向に応じて画面外へ押し出す
             Vector2 to = origin;
             switch (kv.Value)
             {
@@ -382,8 +372,6 @@ public class UIEventManager : MonoBehaviour
         {
             t += Time.unscaledDeltaTime;
             float x = Mathf.Clamp01(t / duration);
-
-            // SmoothStep
             float e = x * x * (3f - 2f * x);
 
             for (int i = 0; i < rts.Count; i++)
@@ -401,7 +389,6 @@ public class UIEventManager : MonoBehaviour
 
     private Vector2 GetRootCanvasRect()
     {
-        // なるべくRootCanvasを取りに行く（UI階層が複雑でも安定）
         Canvas canvas = GetComponentInParent<Canvas>();
         if (canvas != null && canvas.rootCanvas != null)
         {
@@ -413,7 +400,6 @@ public class UIEventManager : MonoBehaviour
             }
         }
 
-        // fallback（最悪でも動く）
         return new Vector2(Screen.width, Screen.height);
     }
 
@@ -489,7 +475,13 @@ public class UIEventManager : MonoBehaviour
         {
             flashOverlayImage.sprite = null;
             flashOverlayImage.color = s.flashColor;
-            _warningSide.GetComponent<Image>().color = s.flashColor;
+
+            // ★warningSideの色も合わせたいなら安全に
+            if (_warningSide != null)
+            {
+                var img = _warningSide.GetComponent<Image>();
+                if (img != null) img.color = s.flashColor;
+            }
         }
 
         SetFlashAlpha(0f);
@@ -539,6 +531,25 @@ public class UIEventManager : MonoBehaviour
 
         yield return Fade(warningSideGroup, warningSideGroup.alpha, 0f, warningSideFadeOut);
         _warningSide.SetActive(false);
+    }
+
+    /// <summary>
+    /// ★中央ワーニングが消えるタイミングで
+    /// - WarningSideもフェードアウト
+    /// - SceneUIも復帰
+    /// を“同時っぽく”行う
+    /// </summary>
+    private IEnumerator StopWarningSideAndReturnSceneUI()
+    {
+        // 並列実行：時間の長い方に合わせて待つ
+        float wait = Mathf.Max(warningSideFadeOut, sceneUIShowDuration);
+
+        // どっちも走らせる（中でガードされるので安全）
+        StartCoroutine(StopWarningSide());
+        StartCoroutine(ShowSceneUI());
+
+        if (wait > 0f)
+            yield return WaitUnscaled(wait);
     }
 
     // -------------------------------
@@ -713,5 +724,20 @@ public class UIEventManager : MonoBehaviour
             t += Time.unscaledDeltaTime;
             yield return null;
         }
+    }
+
+    /// <summary>
+    /// ★ゲームシーンUIを「隠すだけ」
+    /// （SetActiveは触らず、画面外へ退避する）
+    /// </summary>
+    public void HideGameSceneUI()
+    {
+        // 方向辞書が空なら作る（保険）
+        if (_sceneUIDir.Count == 0) BuildSceneUITargets();
+
+        // 途中で動いてたら止めてやり直す
+        if (_sceneUIRoutine != null) StopCoroutine(_sceneUIRoutine);
+
+        StartCoroutine(HideSceneUI());
     }
 }
