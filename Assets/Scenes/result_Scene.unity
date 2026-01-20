@@ -227,7 +227,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -1649}
-  m_SizeDelta: {x: 846.52, y: 3711.23}
+  m_SizeDelta: {x: 846.52, y: 3769}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &55894741
 MonoBehaviour:
@@ -250,7 +250,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "STAFF\n\n<size=60%>TEAM READER</size>\n\u5713\u5730\u3000\u90FD\u6597\n\n<size=60%>DIRECTOR
-    / PLANNER</size>\n\u517C\u5B50\u3000\u6D77\u661F\n\n<size=60%>PROGRAMMER</size>\n\u9060\u85E4\u3000\u6674\u8F1D\n\u5713\u5730\u3000\u90FD\u6597\n\u95A2\u8C37\u3000\u52C7\u4EBA\n\u6A4B\u672C\u3000\u53F2\u594F\n\u6A4B\u672C\u3000\u512A\u6597\n\n<size=60%>DESIGNER</size>\n\u517C\u5B50\u3000\u6D77\u661F\n\u5927\u77F3\u3000\u7FD4\u8F1D\n\u7530\u4E2D\u3000\u674F\u5948\n\n<size=60%>DEBUGGE</size>\n\u9999\u7530\u3000\u5927\u8F1D\n\n<size=60%>ASSISTANT</size>\n\u9AD8\u6A4B\u3000\u5BB0\n\u5BAE\u5D0E\u3000\u5927\u96C5\n\n<size=60%>BGM</size>\n\u753A\u7530\u30AD\u30EA\u30B3\u3000\u69D8\n<size=60%>\u3046\u3055\u304E\u306E\u304A\u83D3\u5B50\u5C4B\u3055\u3093</size>\n\n\u3055\u3093\u3046\u3055\u304E\u3000\u69D8\n<size=60%>\u3075\u308F\u3075\u308F\u3069\u3053\u3078\u3044\u304F\u3093\u3060\u3041??</size>\n<size=60%>\u3048?\u3061\u3001\u3061\u304C\u3063\u305F...??</size>\n<size=60%>\u5922\u306E\u4E2D\u304F\u3089\u3044\u5922\u307F\u305F\u3063\u3066\u3044\u3044\u3088\u306D....</size>\n<size=60%>\u3080\u3059\u3063</size>\n\n<size=60%>SE</size>\nOtoLogic\u3000\u69D8\r\nMOMIZizm
+    </size>\n\u517C\u5B50\u3000\u6D77\u661F\n\n <size=60%>MAIN PLANNER</size>\n\u517C\u5B50\u3000\u6D77\u661F\n\n
+    <size=60%>SUB PLANNER</size>\n\u6A4B\u672C\u3000\u53F2\u594F\n\n<size=60%>PROGRAMMER</size>\n\u9060\u85E4\u3000\u6674\u8F1D\n\u5713\u5730\u3000\u90FD\u6597\n\u95A2\u8C37\u3000\u52C7\u4EBA\n\u6A4B\u672C\u3000\u53F2\u594F\n\n<size=60%>EVENT
+    PROGRAMMER</size>\n\u6A4B\u672C\u3000\u512A\u6597\n\n<size=60%>DESIGNER</size>\n\u517C\u5B50\u3000\u6D77\u661F\n\u5927\u77F3\u3000\u7FD4\u8F1D\n\u7530\u4E2D\u3000\u674F\u5948\n\n<size=60%>SUB
+    DESIGNER</size>\n\u6A4B\u672C\u3000\u53F2\u594F\n\n<size=60%>DEBUGGE</size>\n\u9060\u85E4\u3000\u6674\u8F1D\n\u5713\u5730\u3000\u90FD\u6597\n\u6A4B\u672C\u3000\u53F2\u594F\n\u9999\u7530\u3000\u5927\u8F1D\n\n<size=60%>ASSISTANT</size>\n\u9AD8\u6A4B\u3000\u5BB0\n\u5BAE\u5D0E\u3000\u5927\u96C5\n\n<size=60%>BGM</size>\n\u753A\u7530\u30AD\u30EA\u30B3\u3000\u69D8\n<size=60%>\u3046\u3055\u304E\u306E\u304A\u83D3\u5B50\u5C4B\u3055\u3093</size>\n\n\u3055\u3093\u3046\u3055\u304E\u3000\u69D8\n<size=60%>\u3075\u308F\u3075\u308F\u3069\u3053\u3078\u3044\u304F\u3093\u3060\u3041??</size>\n<size=60%>\u3048?\u3061\u3001\u3061\u304C\u3063\u305F...??</size>\n<size=60%>\u5922\u306E\u4E2D\u304F\u3089\u3044\u5922\u307F\u305F\u3063\u3066\u3044\u3044\u3088\u306D....</size>\n<size=60%>\u3080\u3059\u3063</size>\n\n<size=60%>SE</size>\nOtoLogic\u3000\u69D8\r\nMOMIZizm
     MUSiC \u69D8</size>\n\u52B9\u679C\u97F3\u30E9\u30DC\u3000\u69D8\n\r\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e911cc42ad1499142839d581615aaa67, type: 2}
@@ -1126,7 +1129,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -2782}
+  m_AnchoredPosition: {x: 0, y: -3375}
   m_SizeDelta: {x: 540, y: 304}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &409637588
@@ -3239,7 +3242,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: e9f73a2ae4e1e3e4fa9cf6aeba55da7e, type: 3}
+  m_Resource: {fileID: 8300000, guid: 95f131188294d6b4da042c55a5ffb2e5, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
