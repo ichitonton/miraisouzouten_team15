@@ -103,6 +103,8 @@ public class IcePillar : NetworkBehaviour
 
     private Coroutine _shakeCo;
 
+    public System.Action OnBroken;
+
     public override void OnNetworkSpawn()
     {
         if (visualRoot == null)
@@ -155,7 +157,7 @@ public class IcePillar : NetworkBehaviour
     {
         ApplyHpStage(next);
     }
-
+    
     private void ApplyHpStage(int stage)
     {
         if (hpStageModels == null || hpStageModels.Length == 0) return;
@@ -516,13 +518,20 @@ public class IcePillar : NetworkBehaviour
         NetworkEffectSpawner.Instance.PlayEffect(11, new Vector3(pos.x,pos.y + 1f,pos.z), Quaternion.identity, new Vector3(1.5f, 1.5f, 1.5f));
         NetworkEffectSpawner.Instance.PlayEffect(11, new Vector3(pos.x, pos.y + 2f, pos.z), Quaternion.identity, new Vector3(1.5f, 1.5f, 1.5f));
 
-        
+        // ★追加：壊れた通知（全クライアントで反応させたい）
+        NotifyBrokenClientRpc();
 
 
         SpawnIceBlocksServer(hitDir);
         ReleaseWagashiServer(hitDir);
 
         StartCoroutine(DespawnAfterSecondsServer(despawnDelay));
+    }
+
+    [ClientRpc]
+    private void NotifyBrokenClientRpc()
+    {
+        OnBroken?.Invoke();
     }
 
     private void ReleaseWagashiServer(Vector3 hitDir)

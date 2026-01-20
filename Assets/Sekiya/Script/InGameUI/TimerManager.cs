@@ -80,7 +80,9 @@ public class TimerManager : NetworkBehaviour
 
         SetScoreClientRpc(r, b, w);
 
-        UIEventManager.Instance.OnHideSceneUI();
+
+        UIEventManager.Instance.HideGameSceneUI();
+        //UIEventManager.Instance.OnHideSceneUI();
 
         var players = GameObject.FindGameObjectsWithTag("Player");
 

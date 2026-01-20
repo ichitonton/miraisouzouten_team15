@@ -1396,7 +1396,7 @@ GameObject:
   - component: {fileID: 3097515965334929784}
   - component: {fileID: 3320722616173251268}
   - component: {fileID: 5772709833363241592}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Punch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3159,6 +3159,7 @@ GameObject:
   - component: {fileID: 2191849881936588458}
   - component: {fileID: 1582976327585532857}
   - component: {fileID: 2705938217022899121}
+  - component: {fileID: 334879077891986587}
   m_Layer: 0
   m_Name: Risu_rig
   m_TagString: Player
@@ -3568,9 +3569,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMapIconTarget
   _iconTarget: {fileID: 0}
-  _onlyLocalInLan: 1
   _id: 1
   _registerWhenNoNetwork: 1
+--- !u!114 &334879077891986587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7459081349001929016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f4d2cc90da5c724fbfd3c4a681fa5cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerPunchPromptImage
+  ShowTopMostFoldoutHeaderGroup: 1
+  promptPrefab: {fileID: 3549009106759339352, guid: 932d5f9161cc0be4982d5b8b8503ed86, type: 3}
+  headAnchor: {fileID: 2907767407704484893}
+  offset: {x: 0, y: 1, z: 0}
 --- !u!1 &7481435165760361928
 GameObject:
   m_ObjectHideFlags: 0

@@ -114,6 +114,11 @@ public class Punch : NetworkBehaviour
 			NetworkEffectSpawner.Instance.PlayEffect(_hitEffectId, transform.position, Quaternion.identity);
 		}
 
+		//if (other.isTrigger == true) return;
+			
+
+		
+
 		var ice = other.GetComponent<IcePillar>();
 		if( ice != null )
 		{
