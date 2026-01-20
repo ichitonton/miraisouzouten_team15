@@ -359,7 +359,7 @@ public class GameManager : NetworkBehaviour
             GameStartUIManager.Instance.Play();
 
         //イベントのスタート
-        //StartCoroutine(StartEvent());
+        StartCoroutine(StartEvent());
     }
 
     [ClientRpc]
@@ -453,25 +453,25 @@ public class GameManager : NetworkBehaviour
             GameEventManager.Instance.TryStartAutoLoop();
     }
 
-    private void OnGUI()
-    {
-        // 既存デバッグGUIは残す（LAN中ホストのみ）
-        if (!InGame) return;
-        if (NetworkManager.Singleton == null) return;
-        if (!NetworkManager.Singleton.IsServer) return;
+   // private void OnGUI()
+   // {
+   //     // 既存デバッグGUIは残す（LAN中ホストのみ）
+   //     if (!InGame) return;
+   //     if (NetworkManager.Singleton == null) return;
+   //     if (!NetworkManager.Singleton.IsServer) return;
 
-        if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 100, 120, 30), "ゲームスタート"))
-        {
-			if (NetworkSoundManager.Instance != null)
-			{
-				NetworkSoundManager.Instance.StopBgm(
-					NetworkSoundManager.SoundScope.AllClients,
-					0.7f // フェード時間。好みで
-				);
-			}
-			StartLocalGameRequest();
-        }
-    }
+   //     if (GUI.Button(new Rect(Screen.width / 2 - 50, (Screen.height / 2) + 100, 120, 30), "ゲームスタート"))
+   //     {
+			//if (NetworkSoundManager.Instance != null)
+			//{
+			//	NetworkSoundManager.Instance.StopBgm(
+			//		NetworkSoundManager.SoundScope.AllClients,
+			//		0.7f // フェード時間。好みで
+			//	);
+			//}
+			//StartLocalGameRequest();
+   //     }
+   // }
 
     // ==========================================================
     //  Teleport + RopeConnect（安全化）
