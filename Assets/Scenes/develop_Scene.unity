@@ -25379,7 +25379,7 @@ PrefabInstance:
       objectReference: {fileID: 929665137}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: IsDebug
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3960604188005789990, guid: 56b31b0772d798a4d8b3776b4b09eb86, type: 3}
       propertyPath: connectUI
@@ -36802,7 +36802,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8937094665437567331, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: _delay
-      value: 1.5
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8937094665437567331, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: timeUpUI
@@ -36810,7 +36810,7 @@ PrefabInstance:
       objectReference: {fileID: 2078728326}
     - target: {fileID: 8937094665437567331, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: startSeconds
-      value: 10
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 8937094665437567331, guid: 9a8ec8d0e66bb8c418c2f8e8947c184e, type: 3}
       propertyPath: nextSceneName
@@ -51574,6 +51574,7 @@ GameObject:
   - component: {fileID: 2078728327}
   - component: {fileID: 2078728329}
   - component: {fileID: 2078728328}
+  - component: {fileID: 2078728330}
   m_Layer: 5
   m_Name: TimeUPUI
   m_TagString: Untagged
@@ -51598,7 +51599,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 1200, y: 305}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2078728328
 MonoBehaviour:
@@ -51638,6 +51639,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2078728326}
   m_CullTransparentMesh: 1
+--- !u!114 &2078728330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2078728326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 793b065d4181da049afb115abe3fac06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ZoomInUI
+  duration: 0.25
+  startScale: {x: 0, y: 0, z: 0}
+  endScale: {x: 1, y: 1, z: 1}
 --- !u!1001 &2088993873
 PrefabInstance:
   m_ObjectHideFlags: 0
