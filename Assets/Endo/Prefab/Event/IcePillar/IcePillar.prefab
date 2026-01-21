@@ -102,9 +102,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60924a1190aabea48827ba4d23e8c27f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IcePillarProximityPromptImage
-  ShowTopMostFoldoutHeaderGroup: 1
-  triggerCapsule: {fileID: 7262789768244471710}
   icePillar: {fileID: 0}
+  stayTimeout: 0.15
 --- !u!1 &4626324179615048775
 GameObject:
   m_ObjectHideFlags: 0
