@@ -7,16 +7,25 @@ using System.Collections;
 public class TimerManager : NetworkBehaviour
 {
     [SerializeField] private NetworkVariable<float> _count = new NetworkVariable<float>(180f);
-	[SerializeField] private float startSeconds = 300f;
+    [SerializeField] private float startSeconds = 300f;
 
-	[SerializeField] private TMP_Text timeText;
+    [SerializeField] private TMP_Text timeText;
 
     [SerializeField] private SceneChangerNetwork scenechange;
     [SerializeField] private float _delay = 1f;
     private bool isTimeUp = false;
 
+    [Header("UI: TimeUp (Canvas上のImage/Panelなど)")]
+    [SerializeField] private GameObject timeUpUI;
+
     // ★追加：タイマー動作フラグ（サーバーが管理、全員に同期）
     private NetworkVariable<bool> _isRunning = new NetworkVariable<bool>(false);
+
+    private void Start()
+    {
+        // 最初は消しとく（出っぱなし事故防止）
+        if (timeUpUI) timeUpUI.SetActive(false);
+    }
 
     void Update()
     {
@@ -24,11 +33,10 @@ public class TimerManager : NetworkBehaviour
         var span = TimeSpan.FromSeconds(_count.Value);
         if (timeText) timeText.text = span.ToString(@"m\:ss");
 
-       
         if (!IsServer) return;
         if (isTimeUp) return;
 
-        // ★追加：開始ボタン押されるまで減らさない
+        // ★開始ボタン押されるまで減らさない
         if (!_isRunning.Value) return;
 
         _count.Value -= Time.deltaTime;
@@ -38,35 +46,40 @@ public class TimerManager : NetworkBehaviour
             _count.Value = 0;
             isTimeUp = true;
 
-			_isRunning.Value = false;
+            _isRunning.Value = false;
 
-			// ▼追加：タイムアップSE
-			if (NetworkSoundManager.Instance != null)
-			{
-				NetworkSoundManager.Instance.PlaySfx(
-					"SE_TimeUP",
-					NetworkSoundManager.SoundScope.AllClients,
-			false
-		);
-			}
+            // ▼TimeUp UI（全員）
+            ShowTimeUpUIClientRpc(true);
 
-			FinishGame();
+            // ▼タイムアップSE
+            if (NetworkSoundManager.Instance != null)
+            {
+                NetworkSoundManager.Instance.PlaySfx(
+                    "SE_TimeUP",
+                    NetworkSoundManager.SoundScope.AllClients,
+                    false
+                );
+            }
+
+            FinishGame();
         }
     }
 
     // ★ホストの開始ボタンから呼ぶ用
     [ServerRpc(RequireOwnership = false)]
-	public void StartTimerServerRpc()
-	{
-		if (_isRunning.Value) return;
+    public void StartTimerServerRpc()
+    {
+        if (_isRunning.Value) return;
 
-		_count.Value = startSeconds;   // ★ここ！
-		isTimeUp = false;
-		_isRunning.Value = true;
-	}
+        _count.Value = startSeconds;
+        isTimeUp = false;
+        _isRunning.Value = true;
 
+        // ▼開始時はTimeUp UI消す（全員）
+        ShowTimeUpUIClientRpc(false);
+    }
 
-	private void FinishGame()
+    private void FinishGame()
     {
         float r = 0, b = 0, w = 0;
 
@@ -84,20 +97,29 @@ public class TimerManager : NetworkBehaviour
         UIEventManager.Instance.HideGameSceneUI();
         //UIEventManager.Instance.OnHideSceneUI();
 
-        var players = GameObject.FindGameObjectsWithTag("Player");
+        // ▼保険：HideSceneUIで巻き込まれて消えても、最後にもう一回表示状態に戻す
+        // （Activeは戻る。位置スライドで画面外なら根本はCanvas分離して）
+        ShowTimeUpUIClientRpc(true);
 
-        //プレイヤー操作不能（ここは君の実装を後で入れる）
+        var players = GameObject.FindGameObjectsWithTag("Player");
         foreach (var p in players)
         {
-            //プレイヤー操作不能
-            p.GetComponent<MovePlayerKey>().IsRunNet.Value = false;
+            var mpk = p.GetComponent<MovePlayerKey>();
+            if (mpk != null)
+                mpk.IsRunNet.Value = false;
         }
+
         VideoFadeManager.Instance._videoIndex = 1;
         VideoFadeManager.Instance.fadeInDuration = 1.1f;
         VideoFadeManager.Instance.fadeOutDuration = 1.1f;
 
         StartCoroutine(DelayChangeScene());
+    }
 
+    [ClientRpc]
+    private void ShowTimeUpUIClientRpc(bool show)
+    {
+        if (timeUpUI) timeUpUI.SetActive(show);
     }
 
     [ClientRpc]
@@ -112,11 +134,7 @@ public class TimerManager : NetworkBehaviour
 
     private IEnumerator DelayChangeScene()
     {
-
         yield return new WaitForSeconds(_delay);
-
         scenechange.ChangeScene();
-
     }
-
 }
