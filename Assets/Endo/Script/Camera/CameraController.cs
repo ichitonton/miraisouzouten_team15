@@ -7,7 +7,6 @@ using System.Collections.Generic;
 public class CameraController : MonoBehaviour
 {
 
-    [SerializeField] private GameObject _GameManager;
     private GameObject _player1;
     private GameObject _player2;
 
@@ -31,22 +30,70 @@ public class CameraController : MonoBehaviour
 
     [Header("角度制御")]
     [SerializeField] private float _rotateSpeed = 10.0f;
+    [SerializeField] private float _minPitch = -30f;
+    [SerializeField] private float _maxPitch = 30f;
     private float _pitch = 0f;//縦方向の回転(z軸)
-    private void Start()
+
+    // ピッチに応じて LookAt の高さを変える
+    [Header("注視点( LookAt ) 高さ制御")]
+    [SerializeField] private float _lookAtBaseHeight = 0.0f;     // 常に足す基準の高さ
+    [SerializeField] private float _lookAtHeightSideView = 2.0f; // 横から見てる時にどれだけ上を見るか
+    [SerializeField] private float _lookAtHeightTopView = -1.0f;// 俯瞰に近い時にどれだけ下を見るか
+
+
+
+    [Header("ズーム入力")]
+    [SerializeField] private KeyCode _zoomInKey = KeyCode.B;   // ズームイン
+    [SerializeField] private KeyCode _zoomOutKey = KeyCode.V;  // ズームアウト
+    [SerializeField] private float _manualZoomSpeed = 20f;     // 手動ズームの速さ
+    [SerializeField] private float _maxManualOffset = 10f;     // 自動ズームからどれだけズラせるか
+    private float _manualZoomOffset = 0f;                      // 手動オフセット
+
+    // オブジェクトを透明にしたいよ
+	[Header("カメラ障害物フェード")]
+	[SerializeField] private LayerMask _obstacleMask;   // 壁・柱とかのレイヤーを指定
+	[SerializeField] private int _maxObstacleHits = 16; // 1フレームの最大ヒット数
+
+	// 今フェード中のオブジェクトたち
+	private readonly List<CameraObstacleFader> _fadingNow = new List<CameraObstacleFader>();
+	private RaycastHit[] _obstacleHits;
+
+    [Header("Delay")]
+    [SerializeField]private float _delayTime = 0.5f;
+
+	private void Start()
     {
         _cam = GetComponent<Camera>();
         var nm = NetworkManager.Singleton;
+
+		_obstacleHits = new RaycastHit[_maxObstacleHits];
+
+		Debug.Log(NetworkManager.Singleton);
 
         //ローカルネットワークに接続したとき
         nm.OnClientConnectedCallback += OnClientConnected;
         
     }
+
+    private void OnDisable()
+    {
+        var nm = NetworkManager.Singleton;
+        if (nm != null)
+        {
+            nm.OnClientConnectedCallback -= OnClientConnected;
+        }
+    }
     // Update is called once per frame
     private void LateUpdate()
     {
-        
 
-        if(GameManager.Instance._IsLanModeActive == true)
+        // まずズーム入力を読む
+        HandleZoomInput();
+
+        if (NetworkManager.Singleton == null) return;
+        if(GameManager.Instance == null) return;
+
+        if (GameManager.Instance._IsLanModeActive == true)
         {
             //Debug.Log("カメラの処理をオンライン用に切り替えます");
             /*Debug.Log(GameManager.Instance._objectList.Count);
@@ -56,8 +103,12 @@ public class CameraController : MonoBehaviour
             }*/
             var players = GameManager.Instance._networkObjectList;
 
-            Debug.Log("ネットワークオブジェクトの数 = " + players.Count);
+            if(players.Count > 0) 
+            {
+                    Debug.Log("ネットワークオブジェクトの数 = " + players.Count);
+            }
             //Debug.Log(_players.Count);
+
         }
         else
         {
@@ -85,7 +136,9 @@ public class CameraController : MonoBehaviour
         {
             PairPlayer();
         }
-    }
+
+		HandleObstacleFadeForPlayers();
+	}
 
 
     private void PairPlayer()
@@ -103,7 +156,7 @@ public class CameraController : MonoBehaviour
             _pitch -= _rotateSpeed * Time.deltaTime;
 
         // クランプ（角度制限、真上から真横までぐらい）
-        _pitch = Mathf.Clamp(_pitch, -30f, 30f);
+        _pitch = Mathf.Clamp(_pitch, _minPitch, _maxPitch);
 
         //Debug.Log(_pitch);
 
@@ -121,28 +174,27 @@ public class CameraController : MonoBehaviour
         //追従を線形補完で滑らかに
         transform.position = Vector3.Lerp(transform.position, targetPosition, _smoothSpeed * Time.deltaTime);
 
-        // プレイヤー間の距離からターゲットズームを算出
+        // プレイヤー間の距離から「自動ズーム値」を算出
         float distance = Vector3.Distance(_player1.transform.position, _player2.transform.position);
-        float targetZoom = Mathf.Lerp(_minZoom, _maxZoom, distance / _zoomLimiter);
 
-        // 見切れチェック
-        Vector3 viewPos1 = _cam.WorldToViewportPoint(_player1.transform.position);
-        Vector3 viewPos2 = _cam.WorldToViewportPoint(_player2.transform.position);
+        // まず 0 1 にクランプ
+        float t = Mathf.Clamp01(distance / _zoomLimiter);
 
+        // 0→_minZoom, 1→_maxZoom の範囲内に収まる
+        float baseZoom = Mathf.Lerp(_minZoom, _maxZoom, t);
 
-        // 広め（ズームアウト判定）
-        float outerBorder = 0.10f;
-        bool outsideP1 = (viewPos1.x < outerBorder || viewPos1.x > 1f - outerBorder ||
-                          viewPos1.y < outerBorder || viewPos1.y > 1f - outerBorder);
-        bool outsideP2 = (viewPos2.x < outerBorder || viewPos2.x > 1f - outerBorder ||
-                          viewPos2.y < outerBorder || viewPos2.y > 1f - outerBorder);
+        // 手動オフセットを足して最終ターゲットズームに
+        float targetZoom = Mathf.Clamp(baseZoom + _manualZoomOffset, _minZoom, _maxZoom);
 
         // スムーズに補間
         _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, targetZoom, Time.deltaTime * _zoomSpeed);
 
         //見る位置
         center.y -= 1f;
-        transform.LookAt(center);
+        // 見る位置（ピッチに応じて高さを調整）
+        Vector3 lookAtPos = GetLookAtPosition(center);
+        //Debug.Log("今見ている位置は" + lookAtPos);
+        transform.LookAt(lookAtPos);
 
     }
 
@@ -159,7 +211,7 @@ public class CameraController : MonoBehaviour
             _pitch -= _rotateSpeed * Time.deltaTime;
 
         // クランプ（角度制限、真上から真横までぐらい）
-        _pitch = Mathf.Clamp(_pitch, -30f, 30f);
+        _pitch = Mathf.Clamp(_pitch, _minPitch, _maxPitch);
 
         //Debug.Log(_pitch);
 
@@ -169,6 +221,7 @@ public class CameraController : MonoBehaviour
         //ピッチ角を offset に反映
         Quaternion rotation = Quaternion.Euler(_pitch, 0f, 0f);
         Vector3 rotatedOffset = rotation * (_offset / 2f);
+        //Vector3 rotatedOffset = GetRotatedOffset(0.5f);
 
 
         //カメラの位置
@@ -177,9 +230,21 @@ public class CameraController : MonoBehaviour
         //追従を線形補完で滑らかに
         transform.position = Vector3.Lerp(transform.position, targetPosition, _smoothSpeed * Time.deltaTime);
 
+        // スムーズに補間
+        float baseZoom = 35f; // 1人のときの基準ズーム（好みで変えてOK）
+        float targetZoom = Mathf.Clamp(baseZoom + _manualZoomOffset, _minZoom, _maxZoom);
+        _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, targetZoom, Time.deltaTime * _zoomSpeed);
+
+        //Debug.Log("カメラのビュー" +  _cam.fieldOfView);
+        //Debug.Log("マニュアル" + _manualZoomOffset);
+
         //見る位置
-        center.y -= 1f;
-        transform.LookAt(center);
+        //center.y -= 1f;
+
+        // 見る位置（ピッチに応じて高さを調整）
+        Vector3 lookAtPos = GetLookAtPosition(center);
+        //Debug.Log("今見ている位置は" + lookAtPos);
+        transform.LookAt(lookAtPos);
     }
 
 
@@ -192,33 +257,146 @@ public class CameraController : MonoBehaviour
     private IEnumerator DelayRegisterPlayer()
     {
 
-        yield return new WaitForSeconds(_playerNetworkConnect._delayTime + 0.3f);
+        yield return new WaitForSeconds(_playerNetworkConnect._delayTime + _delayTime);
         //Debug.Log("カメラが追うプレイヤーを再登録します");
         RegisterPlayer();
 
+    }
+
+
+    private void HandleZoomInput()
+    {
+        float dir = 0f;
+
+        if (Input.GetKey(_zoomInKey)) dir -= 1f;  // FOVを小さく = ズームイン
+        if (Input.GetKey(_zoomOutKey)) dir += 1f;  // FOVを大きく = ズームアウト
+
+        if (Mathf.Abs(dir) > 0.01f)
+        {
+            _manualZoomOffset += dir * _manualZoomSpeed * Time.deltaTime;
+            _manualZoomOffset = Mathf.Clamp(_manualZoomOffset, -_maxManualOffset, _maxManualOffset);
+        }
+    }
+
+    /// <summary>
+    /// 現在のピッチ角に応じて、LookAt する位置の高さを調整した center を返す
+    /// 「横から見るほどプレイヤーの上あたりを見る」イメージ
+    /// </summary>
+    private Vector3 GetLookAtPosition(Vector3 center)
+    {
+        // forward.y の絶対値が小さいほど「横から見ている」状態
+        // forward.y の絶対値が大きいほど「俯瞰・真上」状態
+        float vertical = Mathf.Abs(_cam.transform.forward.y);
+        // vertical = 0 → 完全に横から
+        // vertical = 1 → 真上/真下（※今回は真下には行かないはずだけど）
+
+        // 横 view: vertical ≒ 0 → t = 1
+        // 上 view : vertical ≒ 1 → t = 0
+        float t = Mathf.InverseLerp(1f, 0f, vertical);
+
+        // t=0 → _lookAtOffsetTopView
+        // t=1 → _lookAtOffsetSideView
+        float offsetY = Mathf.Lerp(_lookAtHeightTopView, _lookAtHeightSideView, t);
+
+        center.y += offsetY;
+        return center;
     }
 
     private void RegisterPlayer()
     {
         _players.Clear();//一回リセット
 
+        Debug.Log("カメラに映すプレイヤーを登録");
+
+        Debug.Log("ネットワークオブジェクトの数" + GameManager.Instance._networkObjectList.Count);
 
         foreach (var playerRef in GameManager.Instance._networkObjectList)
         {
             //これで「実際に存在するネットワークオブジェクトを取り出す」処理。
             //成功した場合 playerObj に GameObject が入る。
+
             if (playerRef.TryGet(out var playerObj))
             {
                 //プレイヤーのタグを持っているかつ所有権があるなら
-                if(playerObj.gameObject.CompareTag("Player") && playerObj.IsOwner)
+                if(playerObj.gameObject.CompareTag("Player") && playerObj.OwnerClientId == NetworkManager.Singleton.LocalClientId)
                 {
-                    //Debug.Log("所有権を持ったプレイヤーです");
+                    Debug.Log("所有権を持ったプレイヤーです");
                     _players.Add(playerObj.gameObject);
                 }
             }
-
-
         }
+
+        Debug.Log("カメラに映すプレイヤーの数");
     }
+    //レイを飛ばす処理
+	private void HandleObstacleFadeForPlayers()
+	{
+		if (_players == null || _players.Count == 0)
+			return;
+
+		// 今フレームで「レイに当たった」フェーダー
+		var hitsThisFrame = new HashSet<CameraObstacleFader>();
+
+		Vector3 camPos = transform.position;
+
+		// 1人 or 2人どっちでもOK：今いるプレイヤー全員にレイを飛ばす
+		for (int i = 0; i < _players.Count; i++)
+		{
+			var player = _players[i];
+			if (player == null) continue;
+
+			Vector3 to = player.transform.position;
+			Vector3 dir = to - camPos;
+			float dist = dir.magnitude;
+			if (dist <= 0.01f) continue;
+
+			dir /= dist;
+
+			int hitCount = Physics.RaycastNonAlloc(
+				camPos,
+				dir,
+				_obstacleHits,
+				dist,
+				_obstacleMask,
+				QueryTriggerInteraction.Ignore
+			);
+
+			for (int h = 0; h < hitCount; h++)
+			{
+				var hit = _obstacleHits[h];
+				if (hit.collider == null) continue;
+
+				var fader = hit.collider.GetComponentInParent<CameraObstacleFader>();
+				if (fader == null) continue;
+
+				hitsThisFrame.Add(fader);
+
+				// まだフェードリストに入ってないなら、フェード開始
+				if (!_fadingNow.Contains(fader))
+				{
+					fader.SetFaded(true);
+					_fadingNow.Add(fader);
+				}
+			}
+		}
+
+		// 先フレームまでフェードしてたけど、
+		// 今フレームはどのプレイヤーとの線上にもいないやつは元に戻す
+		for (int i = _fadingNow.Count - 1; i >= 0; i--)
+		{
+			var fader = _fadingNow[i];
+			if (fader == null)
+			{
+				_fadingNow.RemoveAt(i);
+				continue;
+			}
+
+			if (!hitsThisFrame.Contains(fader))
+			{
+				fader.SetFaded(false);
+				_fadingNow.RemoveAt(i);
+			}
+		}
+	}
 
 }

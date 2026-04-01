@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1102212766679816489
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6921852241815585621}
+  - component: {fileID: 5199147987320568266}
+  - component: {fileID: -8559824455993873175}
+  - component: {fileID: -8758188105892588313}
+  m_Layer: 0
+  m_Name: KonpeitougunManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6921852241815585621
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1102212766679816489}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.12488, y: 9.09, z: 4.04939}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5199147987320568266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1102212766679816489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 532911246
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &-8559824455993873175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1102212766679816489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07a73f22f60fe034d8e2f31600d122f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KonpeitougunManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  spawnOrigin: {fileID: 8732955835690874597, guid: 0de93b644cbce0449808b5266d1d43d9, type: 3}
+  areaCenter: {fileID: 6921852241815585621}
+  areaRadius: 60
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  markerPrefab: {fileID: 8713781882788260469, guid: 0cd4f264ddae60545aa9557d36b7625e, type: 3}
+  meteorPrefab: {fileID: 4380261648293951024, guid: af0a86198553ea8488b09321c8ec2a48, type: 3}
+  playExplosionHere: 1
+  meteorsPerEvent: 60
+  interval: 0.5
+  markerLeadTime: 3.2
+  flightTime: 3
+  arcHeight: 3
+  lateralOffset: 6
+  _konpeitougun: {fileID: 0}
+--- !u!114 &-8758188105892588313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1102212766679816489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6688c6c63bfd56046b84973bf613fcb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NightController
+  ShowTopMostFoldoutHeaderGroup: 1
+  autoFindSunLight: 1
+  autoFindGlobalVolume: 1
+  sunLightTag: 
+  globalVolumeTag: 
+  useManualDayValues: 1
+  daySunIntensity: 1.8
+  daySunColor: {r: 1, g: 0.76862746, b: 0, a: 1}
+  nightSunIntensity: 0.15
+  nightSunColor: {r: 0.55, g: 0.65, b: 1, a: 1}
+  transitionSeconds: 1.2
+  enforceDayForShortTime: 1
+  enforceDaySeconds: 0.6

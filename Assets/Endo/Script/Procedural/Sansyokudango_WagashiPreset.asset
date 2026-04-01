@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f01cab4a821b553408d56f79c6f27ac9, type: 3}
+  m_Name: Sansyokudango_WagashiPreset
+  m_EditorClassIdentifier: Assembly-CSharp::WagashiPreset
+  wagashiName: Sansyokudango
+  deformMode: 1
+  possibleColors:
+  - {r: 1, g: 1, b: 1, a: 0}
+  - {r: 1, g: 0.7528302, b: 0.7528302, a: 0}
+  useSingleMaterialInstance: 1
+  minScale: {x: 0.98, y: 0.98, z: 0.98}
+  maxScale: {x: 1.02, y: 1.02, z: 1.02}
+  mass:
+    min: 3
+    max: 4
+  linearDamping:
+    min: 0.2
+    max: 0.4
+  angularDamping:
+    min: 0.4
+    max: 0.6
+  bounciness:
+    min: 0.3
+    max: 0.5
+  dynamicFriction:
+    min: 0.6
+    max: 0.6
+  staticFriction:
+    min: 0.6
+    max: 0.6
+  frictionCombine: 2
+  bounceCombine: 3
+  useBucketForPhysicsMaterial: 0
+  bucketDivisions: 10
+  mochiStretchFactor:
+    min: 0.1
+    max: 0.25
+  prupru:
+    minImpactVelocity:
+      min: 0.35
+      max: 0.6
+    maxImpactVelocity:
+      min: 4
+      max: 6
+    frequencyHz:
+      min: 2
+      max: 3
+    damping01:
+      min: 0.18
+      max: 0.35
+    impulse:
+      min: 20
+      max: 40
+    maxTiltDeg:
+      min: 8
+      max: 16
+    normalInfluence:
+      min: 0.8
+      max: 1.2
+    verticalResponse:
+      min: 0.2
+      max: 0.5
+    extraDecay:
+      min: 0.97
+      max: 0.995

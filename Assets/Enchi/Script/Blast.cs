@@ -1,12 +1,20 @@
+using System;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Blast : MonoBehaviour
+public class Blast : NetworkBehaviour
 {
     [SerializeField] float _lifeTime = 0.1f;
+    [SerializeField] float _blastTime = 0.5f;
     [SerializeField] float _impactForce = 10.0f;
 
-    Rigidbody _rigidbody;
+	//[SerializeField] int _explosionEffectId = 2;
+
+	Rigidbody _rigidbody;
     float _boneTime = 0.0f;
+    bool _isBlast = false;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -14,15 +22,37 @@ public class Blast : MonoBehaviour
         //Invoke("ActiveFalse", _lifeTime);
         _boneTime = 0.0f;
     }
-    void OnEnable()
+    public override void OnNetworkSpawn()
     {
+        //爆発のSE再生、全Clientで3D空間で流す
+        NetworkSoundManager.Instance.PlaySfx("Explosion", NetworkSoundManager.SoundScope.AllClients, true, transform.position);
+
+        //Debug.Log("Spawn されたよ！");
+        Collider col = GetComponent<Collider>();
+        col.isTrigger = true;
+        _isBlast = true;
         _boneTime = 0.0f;
+        //Invoke("SetColTriggerServerRpc", 0.4f);
     }
+
+    //   void OnEnable()
+    //   {
+    //       _boneTime = 0.0f;
+    //	NetworkEffectSpawner.Instance.PlayEffect(
+    //	   _explosionEffectId,
+    //	   transform.position,
+    //	   Quaternion.identity
+    //   );
+    //}
     // Update is called once per frame
     void Update()
     {
         _boneTime += Time.deltaTime;
 
+        if (_boneTime >= _blastTime)
+        {
+            _isBlast = false;
+        }
         if (_boneTime >= _lifeTime)
         {
             ActiveFalse();
@@ -30,23 +60,26 @@ public class Blast : MonoBehaviour
 
     }
 
+    
     void ActiveFalse()
     {
-        this.gameObject.SetActive(false);
+        GetComponent<PooledNetworkObject>().DestroySelf();
     }
 
     //ぶつかったときの処理
-    void OnCollisionEnter(Collision other)
+    void OnTriggerEnter(Collider other)
     {
-                Debug.Log("Blast Hit : " + other.transform.name);
+        if (!IsServer) return; // ← これが必須
+        if (!_isBlast) return;
         if (other.transform.GetComponent<Rigidbody>() != null)
         {
             if (other.transform.GetComponent<MovePlayerKey>() != null)
             {
                 other.transform.GetComponent<MovePlayerKey>().Stun(2.0f);
-            }
+				other.transform.GetComponent<MovePlayerKey>().PlayCameraShake();
+			}
 
-            Vector3 _distance = other.transform.position - transform.position;
+			Vector3 _distance = other.transform.position - transform.position;
 
             _distance.Normalize();
             _distance.y = 0.0f;

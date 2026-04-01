@@ -1,0 +1,382 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8136259294011377221
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 724504353435010307}
+  - component: {fileID: 5622000459914517194}
+  - component: {fileID: 5874703381638314871}
+  - component: {fileID: 7550963095654367113}
+  - component: {fileID: -7120915012445352639}
+  - component: {fileID: 5836284649128474004}
+  - component: {fileID: -6180074972188493470}
+  - component: {fileID: 3986827641485018724}
+  - component: {fileID: 546970859194657621}
+  - component: {fileID: 2557600072764507866}
+  - component: {fileID: 1789616683787185576}
+  - component: {fileID: -2935703033604779836}
+  - component: {fileID: 6100036057164362159}
+  m_Layer: 0
+  m_Name: NetworkConnectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 16
+  m_IsActive: 1
+--- !u!4 &724504353435010307
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 20.20175, y: 3.39052, z: -9.915}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5622000459914517194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 464179852
+  InScenePlacedSourceGlobalObjectIdHash: 464179852
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &5874703381638314871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63f1e7770b536b742b89cb5daeeb14f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerNetworkConnect
+  ShowTopMostFoldoutHeaderGroup: 1
+  memo: 
+  _playerObject1: {fileID: 7459081349001929016, guid: 87568b16bea6c784a80ba45cf5dd6d07, type: 3}
+  _playerObject2: {fileID: 7459081349001929016, guid: ef24cb88710bbb14ca9cd4e1e0a923e6, type: 3}
+  _delayTime: 0.1
+  gameSceneName: Prot_Endx_3
+--- !u!114 &7550963095654367113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61f8abd1e8cb1d847b56963b2998ab08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RopeSpawner
+  ShowTopMostFoldoutHeaderGroup: 1
+  _ropeObject: {fileID: 8760411629864592299, guid: 764c8895dafe2e14692afc5e3025bafd, type: 3}
+  _delayTime: 0.2
+  _pivotId0: {fileID: 0}
+  _pivotId1: {fileID: 0}
+  _pivotId2: {fileID: 0}
+--- !u!114 &-7120915012445352639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fa3689790309ce44a36b84f5fa5ccbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkObjectSpawner
+  ShowTopMostFoldoutHeaderGroup: 1
+  _prefabDatabase: {fileID: 11400000, guid: a480dd88622b4ab49a612da3b759a321, type: 2}
+--- !u!114 &5836284649128474004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 436a3bf6a1ae4b04e9d83c251cc7d825, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkEffectSpawner
+  ShowTopMostFoldoutHeaderGroup: 1
+  _effectDatabase: {fileID: 11400000, guid: 61e24ca55fa48c74499045329cf5f3d0, type: 2}
+  _poolRoot: {fileID: 0}
+  _prewarmPerEffect: 0
+--- !u!114 &-6180074972188493470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkTransform
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &3986827641485018724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e54d5db18afd059498c601e460327f42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkObjectRandomGenerator
+  ShowTopMostFoldoutHeaderGroup: 1
+  _database: {fileID: 11400000, guid: 0737e321f8da6714594291228cf1f965, type: 2}
+  _pivots:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  _spawnRadius: 1.1
+  _minDistanceBetweenSpawns: 1
+  _maxAttemptsPerSpawn: 40
+  _snapToGround: 1
+  _groundRayStartHeight: 10
+  _groundRayLength: 50
+  _groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _blockedMask:
+    serializedVersion: 2
+    m_Bits: 0
+  _blockedCheckRadius: 0.5
+  _rarity1Percent: 0
+  _rarity2Percent: 0
+  _rarity3Percent: 100
+  _totalSpawnCount: 60
+  _burstSpawnCount: 24
+  _spawnInterval: 40
+  _maxAliveObjects: 30
+  _spawnOnNetworkSpawn: 1
+  _useUniquePivotOverall: 0
+  _useFixedSeed: 0
+  _fixedSeed: 12345
+  _drawGizmos: 1
+--- !u!114 &546970859194657621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e54d5db18afd059498c601e460327f42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkObjectRandomGenerator
+  ShowTopMostFoldoutHeaderGroup: 1
+  _database: {fileID: 11400000, guid: ca7561f719a464c488778e7ab01c71eb, type: 2}
+  _pivots:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  _spawnRadius: 3
+  _minDistanceBetweenSpawns: 1
+  _maxAttemptsPerSpawn: 40
+  _snapToGround: 1
+  _groundRayStartHeight: 10
+  _groundRayLength: 50
+  _groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _blockedMask:
+    serializedVersion: 2
+    m_Bits: 0
+  _blockedCheckRadius: 0.5
+  _rarity1Percent: 0
+  _rarity2Percent: 100
+  _rarity3Percent: 0
+  _totalSpawnCount: 15
+  _burstSpawnCount: 15
+  _spawnInterval: 30
+  _maxAliveObjects: 12
+  _spawnOnNetworkSpawn: 1
+  _useUniquePivotOverall: 0
+  _useFixedSeed: 0
+  _fixedSeed: 12345
+  _drawGizmos: 1
+--- !u!114 &2557600072764507866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e54d5db18afd059498c601e460327f42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkObjectRandomGenerator
+  ShowTopMostFoldoutHeaderGroup: 1
+  _database: {fileID: 11400000, guid: 07b5adb0cb4b86848b7e74678e556b7d, type: 2}
+  _pivots:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  _spawnRadius: 3
+  _minDistanceBetweenSpawns: 1
+  _maxAttemptsPerSpawn: 40
+  _snapToGround: 1
+  _groundRayStartHeight: 10
+  _groundRayLength: 50
+  _groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _blockedMask:
+    serializedVersion: 2
+    m_Bits: 0
+  _blockedCheckRadius: 0.5
+  _rarity1Percent: 100
+  _rarity2Percent: 0
+  _rarity3Percent: 0
+  _totalSpawnCount: 5
+  _burstSpawnCount: 3
+  _spawnInterval: 20
+  _maxAliveObjects: 5
+  _spawnOnNetworkSpawn: 1
+  _useUniquePivotOverall: 0
+  _useFixedSeed: 0
+  _fixedSeed: 12345
+  _drawGizmos: 1
+--- !u!114 &1789616683787185576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57123f7a4d56f004a81a5028693c78ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkSoundManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  bgmDatabase: {fileID: 11400000, guid: 89b2b4d7cd89fb94a9e81177de519d67, type: 2}
+  sfxDatabase: {fileID: 11400000, guid: f86df0e4c4978364e98b439d634e2d2a, type: 2}
+  bgmSource: {fileID: 0}
+  sfx2DSource: {fileID: 0}
+  sfx3DSourcePrefab: {fileID: 6157686613291074379, guid: d48d1d52ac86a5947a29bd303b3276a1, type: 3}
+  sfx3DPoolSize: 35
+--- !u!114 &-2935703033604779836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 042cea74219135546b45908bc598e193, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LanHost
+  _memo: 
+--- !u!114 &6100036057164362159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8136259294011377221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afe0b8fb4364c7f478e26872e8340e11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LanClient

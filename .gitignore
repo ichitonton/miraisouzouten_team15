@@ -64,6 +64,7 @@ sysinfo.txt
 
 # Test folder (Test)
 Assets/Test/
+Recordings/
 
 # Collaborate / PlasticSCM (Unity Version Control)
 .collabignore
@@ -94,3 +95,6 @@ Packages/com.unity.*
 /Temp/
 /obj/
 /DerivedDataCache/
+
+#無視しないでほしいよ
+!Assets/Hashimoto/rustig_koppie_puresky_4k.hdr

@@ -1,6 +1,7 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public class CannonBullet : MonoBehaviour
+public class CannonBullet : NetworkBehaviour
 {
     [SerializeField] GameObject _blast;
     [SerializeField] float _speed = 10.0f;
@@ -13,9 +14,25 @@ public class CannonBullet : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //Debug.Log("Blast enabled? " + this.enabled);
+        //Debug.Log("GameObject active? " + gameObject.activeInHierarchy);
+        //Debug.Log("CannonBullet Start");
         _rigidbody = GetComponent<Rigidbody>();
         //Invoke("ActiveFalse", _lifeTime);
         _boneTime = 0.0f;
+    }
+    public override void OnNetworkSpawn()
+    {
+        //Debug.Log("Spawn されたよ！");
+        Collider col = GetComponent<Collider>();
+        col.isTrigger = true;
+        //Invoke("SetColTriggerServerRpc", 0.4f);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    void SetColTriggerServerRpc()
+    {
+        Collider col = GetComponent<Collider>();
+        col.isTrigger = false;
     }
     void OnEnable()
     {
@@ -24,50 +41,53 @@ public class CannonBullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (IsOwner)
+        {
+            
         _boneTime += Time.deltaTime;
-        _rigidbody.linearVelocity = transform.forward * _speed;
-
+        MoveBulletServerRpc();
         if (_boneTime >= _lifeTime)
         {
-            ActiveFalse();
+            ActiveFalseServerRpc();
+        }
         }
 
     }
-
-    void ActiveFalse()
+    [ServerRpc(RequireOwnership = false)]
+    void MoveBulletServerRpc()
     {
-        this.gameObject.SetActive(false);
+        _rigidbody.linearVelocity = transform.forward * _speed;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void BlastGenerateServerRpc()
+    {
+        NetworkObjectPool _ObjectPool = NetworkObjectPool.Instance;
+        NetworkObject obj = _ObjectPool.Get(_blast.GetComponent<NetworkObject>(), transform.position, Quaternion.identity);
+        obj.Spawn(true);
+        obj.GetComponent<PooledNetworkObject>().SetPrefab(_blast.GetComponent<NetworkObject>());
+        GetComponent<PooledNetworkObject>().DestroySelf();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void ActiveFalseServerRpc()
+    {
+        GetComponent<PooledNetworkObject>().DestroySelf();
     }
 
     //ぶつかったときの処理
     void OnTriggerEnter(Collider other)
     {
-        if (other != this.transform.parent && other.GetComponent<Rigidbody>() != null)
+        if (other == null) return;
+        if (!IsServer) return; // ← これが必
+        if (other.GetComponent<Cannon>() != null) return;
+        if (other.GetComponent<Collider>().isTrigger == false)
         {
-            _isChild = false;
-
-            for (int i = 0; i < transform.childCount; i++)
-            {
-                //非アクティブの子オブジェクト検索
-                _kari = transform.parent.GetChild(i);
-                if (_kari.gameObject.GetComponent<Blast>() != null &&
-                    !_kari.gameObject.activeSelf)
-                {
-                    _kari.gameObject.SetActive(true);
-                    _kari.position = transform.position;
-                    _kari.rotation = transform.rotation;
-
-                    _isChild = true;
-                    break;
-                }
-            }
-
-            //子オブジェクトが足りなければ新規作成
-            if (!_isChild)
-            {
-                Instantiate(_blast, transform.position, transform.rotation, transform.parent);
-            }
-            ActiveFalse();
+            BlastGenerateServerRpc();
+            //爆発のSE再生、全Clientで3D空間で流す
+            NetworkSoundManager.Instance.PlaySfx("Explosion", NetworkSoundManager.SoundScope.AllClients, true, transform.position);
+            Debug.Log("爆発音を再生");
+            //ActiveFalseServerRpc();
         }
     }
 }

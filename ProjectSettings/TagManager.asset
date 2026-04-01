@@ -10,6 +10,13 @@ TagManager:
   - Field
   - Swamp
   - Rope
+  - UI_Cursor
+  - Joint
+  - Iwa
+  - Tetrapod
+  - Ice
+  - EnemyCensour
+  - Taikijo
   layers:
   - Default
   - TransparentFX
@@ -17,13 +24,13 @@ TagManager:
   - Map
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Field
+  - Ground
+  - CameraObstacle
+  - Taikijo
+  - IcePillarPrompt
+  - IcePillar
+  - Punch
   - 
   - 
   - 

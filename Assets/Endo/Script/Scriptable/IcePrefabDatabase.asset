@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8e6e508089d00d4dab58df8b707b408, type: 3}
+  m_Name: IcePrefabDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkPrefabDatabase
+  _entries:
+  - _id: Daifuku
+    _prefab: {fileID: 2801467627326373979, guid: 741a2b78bc9d8db4696ae3b890cd1efb, type: 3}
+    _rarityEnum: 1
+  - _id: Dorayaki
+    _prefab: {fileID: 6845853872365190221, guid: b9abccb11b995ec48a57cd8230f15b8b, type: 3}
+    _rarityEnum: 1
+  - _id: IchigoDaifuku
+    _prefab: {fileID: 8621529653698071139, guid: 62cf487abf119a24bb04a908692fe43e, type: 3}
+    _rarityEnum: 2
+  - _id: Imoyoukan
+    _prefab: {fileID: 4179413458884221484, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
+    _rarityEnum: 1
+  - _id: KuriManzyu
+    _prefab: {fileID: 8160404072800314456, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
+    _rarityEnum: 2
+  - _id: Kohakutou
+    _prefab: {fileID: 6831876321883954817, guid: b59f9fc312882b043b8de1287488fca1, type: 3}
+    _rarityEnum: 1
+  - _id: Ohagi
+    _prefab: {fileID: 660025392728973613, guid: 85860d6972d5d614b81d590de7a0383e, type: 3}
+    _rarityEnum: 2
+  - _id: RingoAme
+    _prefab: {fileID: 6683862319799710109, guid: 86fefe511bda5ac478868983b0ad4473, type: 3}
+    _rarityEnum: 1
+  - _id: Sakuramochi
+    _prefab: {fileID: 4951464363076143965, guid: 66dc2d0ba71baae4998ef22fc2315c2a, type: 3}
+    _rarityEnum: 2
+  - _id: SansyokuDango
+    _prefab: {fileID: 374521452363014917, guid: dd5469db6e1c1f24bb4dafcd49db29cf, type: 3}
+    _rarityEnum: 1

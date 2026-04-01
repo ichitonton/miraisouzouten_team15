@@ -3,7 +3,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using System;
-
+using System.Runtime.InteropServices;
+using UnityEngine.SceneManagement;
 
 
 public class PlayerNetworkConnect : NetworkBehaviour
@@ -13,38 +14,110 @@ public class PlayerNetworkConnect : NetworkBehaviour
     public string memo;
 
 
-    [Header("生成するPlayer")]
-    [SerializeField] private GameObject _playerObject; // Hostが生成する用
-    [Header("Hostが生成する紐Prefab")]
-    [SerializeField] private GameObject ropeObject;
+    [Header("NetworkObject付きの生成するPlayer1")]
+    [SerializeField] private GameObject _playerObject1; // Hostが生成する用
+    [Header("NetworkObject付きの生成するPlayer2")]
+    [SerializeField] private GameObject _playerObject2;
+
     [Header("接続してからプレイヤーを生成するときの遅延")]
-    public float _delayTime = 0.1f; 
-   
+    public float _delayTime = 0.1f;
+
+    private int playerCount = 0;
+
+    private bool _didReplace = false;
+
+    [Tooltip("このシーン名になったときに InGame を監視する")]
+    [SerializeField] private string gameSceneName = "GameScene";
+
+    private bool _hooked = false;
 
     private void Start()
     {
+
+        SceneManager.activeSceneChanged += OnActiveSceneChanged;
+        EvaluateAndHook(SceneManager.GetActiveScene());
+        //DontDestroyOnLoad(gameObject);
+    }
+
+
+
+    //private void OnEnable()
+    //{
+    //    SceneManager.activeSceneChanged += OnActiveSceneChanged;
+    //    EvaluateAndHook(SceneManager.GetActiveScene());
+    //    DontDestroyOnLoad(gameObject);
+    //}
+
+    private void OnDisable()
+    {
+        SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+        Unhook();
+
+    }
+
+    private void OnDestroy()
+    {
+        // 念のため保険（OnDisableが呼ばれない状況もある）
+        Unhook();
+    }
+
+    private void OnActiveSceneChanged(Scene prev, Scene next)
+    {
+        EvaluateAndHook(next);
+
+        Debug.Log($"Scene Changed: {prev.name} -> {next.name}");
+
+    }
+
+    private void EvaluateAndHook(Scene active)
+    {
+        if (!active.IsValid()) return;
+
+        //  対象シーンじゃないなら解除
+        if (!string.Equals(active.name, gameSceneName))
+        {
+            Unhook();
+            return;
+        }
+
+        //  対象シーンなら購読
+        HookOnce();
+
+        //  HostならここでSpawn（必要なら）
         var nm = NetworkManager.Singleton;
-
-        
-
-        nm.OnServerStarted += OnHostStarted;
-        nm.OnClientConnectedCallback += OnClientConnected;
-
-        if (nm.IsServer && !GetComponent<NetworkObject>().IsSpawned)
+        if (nm != null && nm.IsServer && !GetComponent<NetworkObject>().IsSpawned)
         {
             GetComponent<NetworkObject>().Spawn(true);
             Debug.Log("[Host] PlayerNetworkConnect Spawned on Network");
         }
     }
 
-    private void  OnDestroy()
+    private void HookOnce()
     {
-        if (NetworkManager.Singleton != null)
-        {
-            NetworkManager.Singleton.OnServerStarted -= OnHostStarted;
-            //Hostは新しいClientが自分のところに接続したときに呼ばれ、ClientはHostに接続できたときに呼ばれる
-            NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
-        }
+        if (_hooked) return;
+
+        var nm = NetworkManager.Singleton;
+        if (nm == null) return;
+
+        nm.OnServerStarted += OnHostStarted;
+        nm.OnClientConnectedCallback += OnClientConnected;
+        _hooked = true;
+
+        Debug.Log("[PlayerNetworkConnect] Hooked callbacks");
+    }
+
+    private void Unhook()
+    {
+        if (!_hooked) return;
+
+        var nm = NetworkManager.Singleton;
+        if (nm == null) { _hooked = false; return; }
+
+        nm.OnServerStarted -= OnHostStarted;
+        nm.OnClientConnectedCallback -= OnClientConnected;
+        _hooked = false;
+
+        Debug.Log("[PlayerNetworkConnect] Unhooked callbacks");
     }
 
     /// <summary>
@@ -79,24 +152,29 @@ public class PlayerNetworkConnect : NetworkBehaviour
             return;
         }
 
-        // Client側：Hostへの接続完了
-        if (nm.IsClient && !nm.IsServer)
+        if (!NetworkManager.Singleton.IsServer)
         {
-            Debug.Log($"[Client] Hostに接続完了: {clientId}");
-            StartCoroutine(DelayedPlayerReplace());
+            if (clientId == NetworkManager.Singleton.LocalClientId)
+            {
+                StartCoroutine(DelayedPlayerReplace());
+            }
         }
 
     }
 
     private IEnumerator DelayedPlayerReplace()
     {
+        if (_didReplace) yield break;   // ← 二重実行を防止！！
+
+        _didReplace = true;
+
         yield return new WaitForSeconds(_delayTime); // ← 接続安定化のため少し待つ
         ReplaceLocalPlayersWithNetworkPlayers();
     }
 
     // ======== Host側で実行される ==========
     [ServerRpc(RequireOwnership = false)]//このRpcを使えばClientから要求ができるからあとからClient側から追加することも可能
-    private void RequestPlayerSpawnServerRpc(ulong clientId, Vector3 pos, Quaternion rot)
+    private void RequestPlayerSpawnServerRpc(ulong clientId, Vector3 pos, Quaternion rot,int count)
     {
 
         Debug.Log($"[RPC Called] IsServer={NetworkManager.Singleton.IsServer}, IsClient={NetworkManager.Singleton.IsClient}, Mode={NetworkManager.Singleton.IsListening}");
@@ -110,7 +188,18 @@ public class PlayerNetworkConnect : NetworkBehaviour
         
         Debug.Log($"[Host] Client {clientId} からPlayer生成リクエストを受信");
 
-        GameObject newPlayer = Instantiate(_playerObject, pos, rot);
+        GameObject newPlayer = default;
+
+        pos.y += 1f;
+
+        //カウントの数字を見て生成するプレイヤーを分ける
+        if (count == 1)
+            newPlayer = Instantiate(_playerObject1, pos, rot);
+        else if (count == 2)
+            newPlayer = Instantiate(_playerObject2, pos, rot);
+
+        Debug.Log("プレイヤー" + count + "を生成");
+
         GameManager.Instance._objectList.Add(newPlayer);
         
         var netObj = newPlayer.GetComponent<NetworkObject>();
@@ -134,10 +223,12 @@ public class PlayerNetworkConnect : NetworkBehaviour
     private void ReplaceLocalPlayersWithNetworkPlayers()
     {
         var localPlayers = GameObject.FindGameObjectsWithTag("Player");
-
+        Debug.Log("ローカルのプレイヤーの数" + localPlayers.Length);
+        int count = 0;
 
         foreach (var lp in localPlayers)
         {
+
             // NetworkObjectがすでにあるならスキップ
             if (lp.TryGetComponent<NetworkObject>(out var netObj))
             {
@@ -145,20 +236,37 @@ public class PlayerNetworkConnect : NetworkBehaviour
                 continue;
             }
 
+
+            //プレイヤーの数を加算
+            count++;
+
             // Transform情報を保持
             Vector3 pos = lp.transform.position;
             Quaternion rot = lp.transform.rotation;
 
             Debug.Log($"[Network] Local PlayerをNetwork上に再生成: {lp.name} at {pos}");
             //Hostに自分の生成を依頼（ServerRpc）
-            
-            RequestPlayerSpawnServerRpc(NetworkManager.Singleton.LocalClientId, pos, rot);
-            
-            // 元のローカルオブジェクトを削除
-            Destroy(lp);
+
+            RequestPlayerSpawnServerRpc(NetworkManager.Singleton.LocalClientId, pos, rot, count);
+
+            // 元のローカルオブジェクトを削除// NetworkObjectを壊してよいのはホストだけ
+            if (IsServer)
+            {
+                Destroy(lp);
+            }
+            else
+            {
+                // クライアントはローカル用の Player なら DestroyOK
+                if (!lp.TryGetComponent<NetworkObject>(out _))
+                {
+                    Destroy(lp); // NetworkObjectなしならOK
+                }
+            }
+
             //リストからも消す
             GameManager.Instance._objectList.Remove(lp);
         }
+
     }
 
 }

@@ -1,0 +1,249 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dee4a5f14c1859241a2560b8c0d11063, type: 3}
+  m_Name: NetworkSeDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkSeDatabase
+  entries:
+  - tag: Teleport
+    clips:
+    - {fileID: 8300000, guid: b032a668c225fb74e864c26dc85891eb, type: 3}
+    volume: 0.208
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 1
+    maxDistance: 15
+    cooldownSeconds: 0
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Explosion
+    clips:
+    - {fileID: 8300000, guid: 829e5baa8493d744fa8ba28d9fcc09b4, type: 3}
+    volume: 1
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1.1
+    spatialBlend: 1
+    minDistance: 4
+    maxDistance: 40
+    cooldownSeconds: 0
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Punch
+    clips:
+    - {fileID: 8300000, guid: a995ef6ebea390f47871c3b965a100ac, type: 3}
+    volume: 1
+    randomizePitch: 1
+    pitchMin: 0.95
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 1
+    maxDistance: 10
+    cooldownSeconds: 0.1
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: SE_Back
+    clips:
+    - {fileID: 8300000, guid: f1ac9653a95cb6c4f999b9375778e5be, type: 3}
+    volume: 0.56
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: SE_Decision
+    clips:
+    - {fileID: 8300000, guid: 71d27483f4ad07f46a8e737905be3ac0, type: 3}
+    volume: 0.531
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Item_BlackHole
+    clips:
+    - {fileID: 8300000, guid: 9942d4a46b337ce45856993ea581a967, type: 3}
+    volume: 1
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Item_Kanden
+    clips:
+    - {fileID: 8300000, guid: 67e0268340870ba48894baed52e13400, type: 3}
+    volume: 1
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Item_Star
+    clips:
+    - {fileID: 8300000, guid: 577bba15605908344bce2f44c4d101d8, type: 3}
+    volume: 1
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Item_SpeadUP
+    clips:
+    - {fileID: 8300000, guid: 85741a36e2b05694ba808a204d0df10d, type: 3}
+    volume: 1
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Item_Rakurai
+    clips:
+    - {fileID: 8300000, guid: 89792413076cf2d4bb57d0ca070a45a4, type: 3}
+    volume: 1
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: ItemBox
+    clips:
+    - {fileID: 8300000, guid: b017f81ca398ff749b71c12504defd82, type: 3}
+    volume: 0.522
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 30
+    maxDistance: 30
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: Event_IceBreak
+    clips:
+    - {fileID: 8300000, guid: 00033a1d9e22ba94f9c1a87428d16c2d, type: 3}
+    volume: 0.679
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 60
+    maxDistance: 80
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: UI_AlertJingle
+    clips:
+    - {fileID: 8300000, guid: 4aff23b61985ea3478ee57bd8cfb2b60, type: 3}
+    volume: 0.483
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 40
+    maxDistance: 50
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: SE_Gorilla_Land
+    clips:
+    - {fileID: 8300000, guid: d34c01ddcc2b7ec4093a102eb609ce50, type: 3}
+    volume: 0.317
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 4
+    maxDistance: 120
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: SE_Gorilla_Drag
+    clips:
+    - {fileID: 8300000, guid: d91ca43b7b46ff545b7956b213d50d3b, type: 3}
+    volume: 1
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 90
+    maxDistance: 200
+    cooldownSeconds: 0
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: SE_Meteor_FallLoop
+    clips:
+    - {fileID: 8300000, guid: 7403a360133f11548a9011e6d13e3961, type: 3}
+    volume: 1
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 1.5
+    maxDistance: 20
+    cooldownSeconds: 0
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: UI_Start
+    clips:
+    - {fileID: 8300000, guid: d0290d885a081484e940805ca076aa88, type: 3}
+    volume: 0.3
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 60
+    maxDistance: 80
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}
+  - tag: SE_TimeUP
+    clips:
+    - {fileID: 8300000, guid: 92479c7b7be650e43babc35fc0f9e9f4, type: 3}
+    volume: 0.3
+    randomizePitch: 0
+    pitchMin: 0.9
+    pitchMax: 1
+    spatialBlend: 1
+    minDistance: 60
+    maxDistance: 80
+    cooldownSeconds: 0.2
+    maxSimultaneous: 0
+    outputMixerGroup: {fileID: 0}

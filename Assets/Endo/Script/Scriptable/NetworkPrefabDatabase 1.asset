@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8e6e508089d00d4dab58df8b707b408, type: 3}
+  m_Name: NetworkPrefabDatabase 1
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkPrefabDatabase
+  _entries:
+  - _id: Ichigo_Daifuku
+    _prefab: {fileID: 8621529653698071139, guid: 62cf487abf119a24bb04a908692fe43e, type: 3}
+    _rarityEnum: 1
+  - _id: Kohakutou
+    _prefab: {fileID: 6831876321883954817, guid: b59f9fc312882b043b8de1287488fca1, type: 3}
+    _rarityEnum: 1
+  - _id: Ohagi
+    _prefab: {fileID: 660025392728973613, guid: 85860d6972d5d614b81d590de7a0383e, type: 3}
+    _rarityEnum: 1
+  - _id: RingoAme
+    _prefab: {fileID: 6683862319799710109, guid: 86fefe511bda5ac478868983b0ad4473, type: 3}
+    _rarityEnum: 1

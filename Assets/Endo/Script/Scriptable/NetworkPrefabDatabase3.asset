@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8e6e508089d00d4dab58df8b707b408, type: 3}
+  m_Name: NetworkPrefabDatabase3
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkPrefabDatabase
+  _entries:
+  - _id: KintaroAme
+    _prefab: {fileID: 4229715837851546189, guid: 94b4317d37cfe904e9ff1751fbfd9afe, type: 3}
+    _rarityEnum: 3
+  - _id: Imoyoukan
+    _prefab: {fileID: 4179413458884221484, guid: b797157ff05cb094d878f7d136c46a5b, type: 3}
+    _rarityEnum: 3
+  - _id: KuriManzyu
+    _prefab: {fileID: 8160404072800314456, guid: 1a66e9705206be54cbe8ac7ba6704e16, type: 3}
+    _rarityEnum: 3
